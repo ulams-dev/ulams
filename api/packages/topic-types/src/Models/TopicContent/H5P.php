@@ -88,7 +88,7 @@ class H5P extends AbstractTopicContent
             @unlink($filepath);
         }
 
-        return [[$filepath, Storage::path($destination)]];
+        return [[$filepath, $destination]];
     }
 
     public function getLengthAttribute(): ?int
@@ -117,11 +117,6 @@ class H5P extends AbstractTopicContent
     public function getLibraryNameAttribute(): ?string
     {
         return $this->h5pContent->main_library ?? null;
-    }
-
-    public function getMorphClass()
-    {
-        return self::class;
     }
 
     /**

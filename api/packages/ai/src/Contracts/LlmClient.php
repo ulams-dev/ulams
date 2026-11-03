@@ -17,6 +17,18 @@ interface LlmClient
      */
     public function generate(LlmRequest $request): LlmResult;
 
+    /**
+     * Same contract as generate() (one ai_calls row per model call with model, tokens and cost, validation,
+     * one repair attempt), and calls `$onDelta` with the text of the string field `$field` of the structured
+     * output as the model writes it. Deltas come from the first attempt only and are a draft: the returned
+     * result is the only authoritative output. The field must be a top-level string of the schema.
+     *
+     * @param callable(string):void $onDelta
+     *
+     * @throws LlmException as generate()
+     */
+    public function stream(LlmRequest $request, callable $onDelta, string $field = 'answer'): LlmResult;
+
     /** False when AI_DRIVER=disabled (or no API key): builder endpoints answer 503. */
     public function enabled(): bool;
 

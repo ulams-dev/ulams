@@ -51,6 +51,17 @@ final class AnthropicDriver implements LlmDriver
 
     public function send(DriverRequest $request): DriverResponse
     {
+        return $this->run($request, null);
+    }
+
+    public function stream(DriverRequest $request, callable $onText): DriverResponse
+    {
+        return $this->run($request, $onText);
+    }
+
+    /** @param (callable(string):void)|null $onText */
+    private function run(DriverRequest $request, ?callable $onText): DriverResponse
+    {
         $params = $this->params($request);
 
         try {
@@ -58,6 +69,9 @@ final class AnthropicDriver implements LlmDriver
             $accumulator = MessageAccumulator::forBetaMessages();
             foreach ($stream as $event) {
                 $accumulator->accumulate($event);
+                if ($onText !== null && ($text = self::textDelta($event)) !== null) {
+                    $onText($text);
+                }
             }
             /** @var BetaMessage $message */
             $message = $accumulator->message();
@@ -68,6 +82,17 @@ final class AnthropicDriver implements LlmDriver
         }
 
         return self::toResponse($message, $request->model);
+    }
+
+    /** The text of a `text_delta` stream event, null for every other event (thinking, tool input, signatures). */
+    public static function textDelta(object $event): ?string
+    {
+        if (($event->type ?? null) !== 'content_block_delta') {
+            return null;
+        }
+        $delta = $event->delta ?? null;
+
+        return is_object($delta) && ($delta->type ?? null) === 'text_delta' && ($delta->text ?? '') !== '' ? (string) $delta->text : null;
     }
 
     /** @return array<string,mixed> named arguments for messages->createStream() */

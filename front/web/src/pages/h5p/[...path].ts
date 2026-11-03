@@ -1,3 +1,4 @@
+import { tenantFetch } from "../../lib/api-transport.ts";
 import type { APIRoute } from "astro";
 import { h5pSearch, h5pUsesSession } from "../../lib/h5p-proxy.ts";
 
@@ -38,7 +39,7 @@ export const ALL: APIRoute = async ({ params, request, locals, url }) => {
     init.body = request.body;
     init.duplex = "half";
   }
-  const upstream = await fetch(target, init).catch(() => null);
+  const upstream = await tenantFetch(tenant)(target, init).catch(() => null);
   if (!upstream) return new Response("H5P service unreachable", { status: 502 });
   const out = new Headers();
   for (const name of PASS_HEADERS) {

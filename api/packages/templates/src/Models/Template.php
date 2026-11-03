@@ -34,6 +34,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="locale",
+ *          description="language code the template is written for (en, pl, zh); null for a template of no particular language, the last fallback",
+ *          type="string",
+ *          nullable=true
+ *      ),
+ *      @OA\Property(
  *          property="default",
  *          description="this template is default template for given channel and event pair",
  *          type="bool"
@@ -52,6 +58,7 @@ class Template extends Model
         'channel' => 'string',
         'event' => 'string',
         'default' => 'bool',
+        'locale' => 'string',
     ];
 
     protected $guarded = [

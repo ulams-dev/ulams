@@ -20,9 +20,14 @@ final class SyntheticResponders
         $responders->register('lesson', fn (DriverRequest $r) => self::lesson($r));
         $responders->register('grounding', fn (DriverRequest $r) => ['unsupported' => []]);
         $responders->register('quiz', fn (DriverRequest $r) => self::quiz($r));
+        $responders->register('selfcheck', fn (DriverRequest $r) => self::quiz($r));
+        $responders->register('interaction_h5p', fn (DriverRequest $r) => self::h5p($r));
+        $responders->register('interaction_interactive', fn (DriverRequest $r) => self::interactive($r));
         $responders->register('metadata', fn (DriverRequest $r) => self::metadata($r));
         $responders->register('price', fn (DriverRequest $r) => self::price($r));
         $responders->register('patch', fn (DriverRequest $r) => self::patch($r));
+        $responders->register('variant_outline', fn (DriverRequest $r) => self::variantOutline($r));
+        $responders->register('variant_lesson', fn (DriverRequest $r) => self::variantLesson($r));
     }
 
     /** @return array<string,array{id:string,section:string,text:string}> */
@@ -206,6 +211,64 @@ final class SyntheticResponders
         return ['blocks' => $blocks];
     }
 
+    /**
+     * A plan for the audience: an expert skips the first lesson (when there are more than two) and condenses the second,
+     * a beginner gets the first lesson deepened, and the last lesson is deepened for every audience whose notes ask for
+     * "extra"; those notes also add one lesson at the end. Everything else is kept.
+     */
+    private static function variantOutline(DriverRequest $r): array
+    {
+        $input = self::input($r);
+        $lessons = (array) ($input['baseLessons'] ?? []);
+        $audience = (array) ($input['audience'] ?? []);
+        $level = $audience['level'] ?? null;
+        $notes = (string) ($audience['notes'] ?? '');
+        $ids = [];
+        foreach ($r->blocks as $block) {
+            preg_match_all('/^(frg_[a-z2-7]{12}) \| /m', $block->text, $m);
+            array_push($ids, ...$m[1]);
+        }
+        $entries = [];
+        foreach ($lessons as $i => $lesson) {
+            $action = 'keep';
+            $reason = 'The lesson fits this audience as it is.';
+            if ($level === 'expert' && $i === 0 && count($lessons) > 2) {
+                [$action, $reason] = ['skip', 'An expert already knows these basics.'];
+            } elseif ($level === 'expert' && $i === 1) {
+                [$action, $reason] = ['condense', 'An expert needs this shorter.'];
+            } elseif ($level === 'beginner' && $i === 0) {
+                [$action, $reason] = ['deepen', 'A beginner needs more practice with the basics.'];
+            } elseif (str_contains($notes, 'extra') && $i === count($lessons) - 1) {
+                [$action, $reason] = ['deepen', 'This audience asked for more depth here.'];
+            }
+            $entries[] = ['lessonId' => $lesson['id'], 'action' => $action, 'reason' => $reason, 'citations' => $action === 'deepen' ? array_slice(array_values(array_unique([...($lesson['citations'] ?? []), ...$ids])), 0, 2) : []];
+        }
+        $added = [];
+        if (str_contains($notes, 'extra') && $ids !== []) {
+            $added[] = ['afterLessonId' => '', 'title' => 'Going further', 'summary' => 'Material this audience asked for.', 'minutes' => 5,
+                'objectives' => [['text' => 'Apply the material to a case from your own work', 'citations' => [$ids[0]]]], 'citations' => [$ids[0]], 'reason' => 'The audience brief asks for it.'];
+        }
+
+        return ['message' => sprintf('For %s I kept most lessons and changed %d.', $audience['label'] ?? 'this audience', count(array_filter($entries, fn ($e) => $e['action'] !== 'keep'))), 'lessons' => $entries, 'added' => $added];
+    }
+
+    /** The lesson, shorter for `condense` and with a worked example for `deepen`. */
+    private static function variantLesson(DriverRequest $r): array
+    {
+        $result = self::lesson($r);
+        $mode = (string) (self::input($r)['variant']['mode'] ?? 'add');
+        $all = self::fragments($r);
+        if ($mode === 'condense') {
+            $result['blocks'] = array_map(fn ($b) => ['markdown' => (self::sentences($b['markdown'])[0] ?? $b['markdown'])] + $b, array_slice($result['blocks'], 0, 2));
+        } elseif ($mode === 'deepen') {
+            $id = $result['blocks'][0]['citations'][0];
+            $result['blocks'][] = ['kind' => 'example', 'markdown' => '**Worked example:** ' . (self::sentences($all[$id]['text'])[1] ?? self::sentences($all[$id]['text'])[0] ?? mb_substr($all[$id]['text'], 0, 200)),
+                'citations' => [$id], 'objectiveIds' => [$result['blocks'][0]['objectiveIds'][0]]];
+        }
+
+        return $result;
+    }
+
     private static function quiz(DriverRequest $r): array
     {
         $input = self::input($r);
@@ -262,6 +325,86 @@ final class SyntheticResponders
         }
 
         return ['questions' => $questions];
+    }
+
+    /** Sentences of the lesson's cited fragments, each with its fragment id. @return array<int,array{id:string,text:string}> */
+    private static function lessonSentences(DriverRequest $r): array
+    {
+        $all = self::fragments($r);
+        $out = [];
+        foreach ((array) (self::input($r)['blocks'] ?? []) as $block) {
+            foreach ($block['citations'] ?? [] as $id) {
+                foreach (isset($all[$id]) ? self::sentences($all[$id]['text']) : [] as $sentence) {
+                    $out[$sentence] = ['id' => $id, 'text' => $sentence];
+                }
+            }
+        }
+
+        return array_values($out);
+    }
+
+    /** A word of at least five letters to blank out of a sentence: letters only, so the markers stay valid. */
+    private static function pickWord(string $sentence): ?string
+    {
+        preg_match_all('/\b\p{L}{5,}\b/u', $sentence, $m);
+
+        return $m[0][0] ?? null;
+    }
+
+    private static function h5p(DriverRequest $r): array
+    {
+        $input = self::input($r);
+        $library = (string) ($input['libraries'][0] ?? 'H5P.Blanks');
+        $sentences = self::lessonSentences($r);
+        $objective = $input['lesson']['objectives'][0]['id'] ?? '';
+        $title = (string) ($input['lesson']['title'] ?? 'Practice');
+        $usable = array_values(array_filter($sentences, fn ($s) => self::pickWord($s['text']) !== null));
+        $cited = array_values(array_unique(array_column($usable ?: $sentences, 'id')));
+        $data = match ($library) {
+            'H5P.DragText' => (function () use ($usable) {
+                $take = array_slice($usable, 0, 3);
+                $text = '';
+                $words = [];
+                foreach ($take as $i => $s) {
+                    $word = self::pickWord($s['text']);
+                    $text .= ($i > 0 ? ' ' : '') . preg_replace('/\\b' . preg_quote($word, '/') . '\\b/u', '{' . (count($words) + 1) . '}', $s['text'], 1);
+                    $words[] = ['answer' => $word, 'tip' => ''];
+                }
+
+                return ['instruction' => 'Drag each word into the gap where it belongs.', 'text' => $text, 'words' => $words, 'distractors' => []];
+            })(),
+            'H5P.Dialogcards' => ['title' => mb_substr($title, 0, 100), 'instruction' => 'Turn each card and check your answer.', 'cards' => array_map(
+                fn ($s, $i) => ['front' => 'What does the source say? (' . ($i + 1) . ')', 'back' => mb_substr($s['text'], 0, 500), 'tip' => ''],
+                array_slice($sentences, 0, 3),
+                array_keys(array_slice($sentences, 0, 3)),
+            )],
+            default => ['instruction' => 'Fill in the missing word in each sentence.', 'items' => array_map(function ($s) {
+                $word = (string) self::pickWord($s['text']);
+
+                return ['text' => preg_replace('/\\b' . preg_quote($word, '/') . '\\b/u', '{1}', $s['text'], 1), 'blanks' => [['answer' => $word, 'alternatives' => [], 'tip' => '']]];
+            }, array_slice($usable, 0, 3))],
+        };
+
+        return ['interaction' => ['library' => $library, 'title' => 'Practice: ' . mb_substr($title, 0, 150), 'citations' => array_slice($cited, 0, 3) ?: [array_key_first(self::fragments($r))], 'objectiveIds' => [$objective], 'data' => $data]];
+    }
+
+    private static function interactive(DriverRequest $r): array
+    {
+        $input = self::input($r);
+        $package = (array) ($input['library'][0] ?? []);
+        $steps = array_column((array) ($package['steps'] ?? []), 'id');
+        $sentences = self::lessonSentences($r);
+        $ids = array_values(array_unique(array_column($sentences, 'id'))) ?: [array_key_first(self::fragments($r))];
+
+        return ['interaction' => [
+            'packageId' => (int) ($package['id'] ?? 0),
+            'title' => (string) ($package['title'] ?? 'Interactive'),
+            'startStep' => $steps[0] ?? '',
+            'endStep' => $steps !== [] ? $steps[array_key_last($steps)] : '',
+            'caption' => implode(' ', array_slice(array_column($sentences, 'text'), 0, 2)) ?: 'Explore the interactive and compare it with the lesson text.',
+            'citations' => array_slice($ids, 0, 2),
+            'objectiveIds' => [$input['lesson']['objectives'][0]['id'] ?? ''],
+        ]];
     }
 
     private static function price(DriverRequest $r): array

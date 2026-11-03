@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 /**
  * "Your course updates itself when your sources change": a looping three-beat story played by the
  * timeline player (elements/story.ts). A source line is edited, ulams finds every lesson and quiz
@@ -22,6 +23,7 @@ interface Props {
   proposal: { title: string; approve: string; done: string };
 }
 const { id = "living-course", eyebrow, title, intro, status, valueLine, description, beats, source, lesson, proposal } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
 const T = { b1: 0, b2: 3300, b3: 6600, end: 9600 };
 ---
 
@@ -32,7 +34,7 @@ const T = { b1: 0, b2: 3300, b3: 6600, end: 9600 };
       {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
       {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
       {intro && <p class="u-lead">{intro}</p>}
-      {status === "coming" && <p class="u-status u-status--coming">On the roadmap</p>}
+      {status === "coming" && <p class="u-status u-status--coming">{t.roadmap}</p>}
     </div>
     <ulams-story class="u-stage u-lc__stage" data-total={T.end} data-hold="3200" loop>
       <p class="u-visually-hidden">{description}</p>
@@ -70,7 +72,7 @@ const T = { b1: 0, b2: 3300, b3: 6600, end: 9600 };
             </p>
             <p class="u-lc__para u-lc__para2" data-at="8500">{source.added}</p>
             <p class="u-lc__quiz" data-at="4300">
-              <span class="u-lc__qlabel">Quiz</span> {lesson.question}
+              <span class="u-lc__qlabel">{t.quiz}</span> {lesson.question}
               <span class="u-chip2 pulse" data-at="4400">{lesson.questionCite}</span>
             </p>
 
@@ -105,8 +107,8 @@ const T = { b1: 0, b2: 3300, b3: 6600, end: 9600 };
         }
       </ol>
       <div class="u-stage__controls">
-        <button type="button" data-pause aria-pressed="false">Pause</button>
-        <button type="button" data-replay>Replay</button>
+        <button type="button" data-pause aria-pressed="false" data-label-pause={t.pause} data-label-play={t.play}>{t.pause}</button>
+        <button type="button" data-replay>{t.replay}</button>
       </div>
     </ulams-story>
     {valueLine && <p class="u-lc__value">{valueLine}</p>}

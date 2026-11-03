@@ -35,6 +35,7 @@ class PersonalAccessTokenService implements PersonalAccessTokenServiceContract
         string $createdVia = 'admin',
         ?int $rateLimitPerMinute = null,
         ?array $callerScopes = null,
+        ?array $resourceIds = null,
     ): IssuedToken {
         $scopes = TokenScopes::normalize($scopes);
         if (!in_array($kind, ApiTokenMeta::KINDS, true)) {
@@ -64,7 +65,7 @@ class PersonalAccessTokenService implements PersonalAccessTokenServiceContract
         try {
             Passport::personalAccessTokensExpireIn(now()->addDays($expiresInDays));
 
-            return DB::transaction(function () use ($user, $name, $scopes, $kind, $agentName, $createdVia, $rateLimitPerMinute) {
+            return DB::transaction(function () use ($user, $name, $scopes, $kind, $agentName, $createdVia, $rateLimitPerMinute, $resourceIds) {
                 $result = $user->createToken(mb_substr($name, 0, 100), $scopes);
                 $meta = ApiTokenMeta::query()->create([
                     'token_id' => $result->token->getKey(),
@@ -72,6 +73,7 @@ class PersonalAccessTokenService implements PersonalAccessTokenServiceContract
                     'agent_name' => $agentName !== null ? mb_substr($agentName, 0, 100) : null,
                     'created_via' => $createdVia,
                     'rate_limit_per_minute' => $rateLimitPerMinute,
+                    'resource_ids' => $resourceIds !== null && $resourceIds !== [] ? array_values(array_unique($resourceIds)) : null,
                 ]);
 
                 return new IssuedToken(self::PREFIX . $result->accessToken, $result->token, $meta->setRelation('token', $result->token));
@@ -109,6 +111,13 @@ class PersonalAccessTokenService implements PersonalAccessTokenServiceContract
     public function revoke(ApiTokenMeta $meta): void
     {
         Token::query()->whereKey($meta->token_id)->update(['revoked' => true]);
+    }
+
+    public function setRateLimit(ApiTokenMeta $meta, ?int $perMinute): ApiTokenMeta
+    {
+        $meta->forceFill(['rate_limit_per_minute' => $perMinute])->save();
+
+        return $meta->refresh()->load('token');
     }
 
     private function query(bool $includeRevoked)

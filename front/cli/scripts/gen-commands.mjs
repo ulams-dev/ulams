@@ -16,17 +16,24 @@ const AREAS = [
   [/^\/api\/admin\/(courses|lessons|topics|categories|tags|file|scorm|cmi5|liascript|interactive|h5p|adapt|gift-|topic-project|video|youtube|images|dictionar|csv\/groups)/, "courses"],
   [/^\/api\/admin\/(users|user-groups|user|roles|permissions|csv\/users|user-submissions)/, "users"],
   [/^\/api\/admin\/(course-access-enquiries|consultation-access)/, "enrolments"],
-  [/^\/api\/admin\/(settings|config|pages|templates|translations|notifications|bulk-notifications|model-fields|mattermost|mailerlite|events)/, "settings"],
+  [/^\/api\/admin\/(settings|config|pages|templates|translations|notifications|bulk-notifications|model-fields|mattermost|mailerlite|events|theme)/, "settings"],
   [/^\/api\/admin\/(webinars|stationary-events|consultations|jitsi|pencil)/, "events"],
-  [/^\/api\/admin\/(pdfs)/, "certificates"],
+  // the compliance report and its schedules are analytics (reports:read, ADR 0194 Q10); the rest of compliance stays with certificates
+  [/^\/api\/admin\/compliance\/(report|schedules)/, "reports"],
+  [/^\/api\/admin\/(pdfs|compliance)/, "certificates"],
   [/^\/api\/admin\/(orders|products|productables|vouchers|payments|invoices)/, "commerce"],
-  [/^\/api\/admin\/(reports|stats|questionnaire|question|quiz-|tasks)/, "reports"],
+  [/^\/api\/admin\/(reports|reporting|stats|questionnaire|question|quiz-|tasks)/, "reports"],
   [/^\/api\/admin\/lti/, "lti"],
-  [/^\/api\/admin\/course-builder/, "builder"],
+  [/^\/api\/admin\/(course-(builder|as-code)|authoring-metrics)/, "builder"],
+  // policy lifecycle: the owner dashboard is a report, the rest prepares and approves training (token-scopes.php)
+  [/^\/api\/admin\/policies\/[^/]+\/dashboard/, "reports"],
+  [/^\/api\/admin\/policies/, "builder"],
+  [/^\/api\/(auth\/tokens|admin\/(tokens|agent-audit))/, "tokens"],
+  [/^\/api\/admin\/webhooks/, "webhooks"],
 ];
 
-/** Areas with hand-written commands only (builder.ts, living.ts, tenants.ts): runs and operations, not CRUD. */
-const HAND_WRITTEN = ["/api/admin/course-builder/", "/api/admin/living-course/", "/api/platform/"];
+/** Areas with hand-written commands only (builder.ts, course.ts, living.ts, tenants.ts): runs and operations, not CRUD. */
+const HAND_WRITTEN = ["/api/admin/course-builder/", "/api/admin/course-as-code/", "/api/admin/living-course/", "/api/admin/reporting/", "/api/platform/"];
 
 const kebab = (s) =>
   s

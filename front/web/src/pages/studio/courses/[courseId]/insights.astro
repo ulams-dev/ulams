@@ -1,0 +1,50 @@
+---
+import Studio from "../../../../layouts/Studio.astro";
+import { courseTitleFor } from "../../../../lib/studio.ts";
+import { fill, INSIGHTS_LOCALES, INSIGHTS_STRINGS, pickInsightsLocale } from "../../../../studio/insights-i18n.ts";
+
+const raw = Astro.params.courseId ?? "";
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+if (!/^[1-9]\d{0,9}$/.test(raw)) return new Response("Not found", { status: 404 });
+const courseId = Number(raw);
+
+const locale = pickInsightsLocale(Astro.url.searchParams.get("lang"), Astro.request.headers.get("accept-language"));
+const t = INSIGHTS_STRINGS[locale];
+const course = await courseTitleFor(tenant, Astro.locals.authorToken!, courseId);
+if (!course.found) return new Response("Not found", { status: 404 });
+const name = course.title ?? fill(t.courseFallback, { id: courseId });
+const LANGUAGE_NAME: Record<string, string> = { en: "English", pl: "Polski", zh: "简体中文" };
+---
+
+<Studio title={`${t.pageTitle}: ${name}`} crumb={name} active="insights" courseId={courseId}>
+  <main id="main" class="st-page" tabindex="-1" lang={t.htmlLang}>
+    <div class="st-ins-head">
+      <h1 class="cb-serif cb-h2" style="flex:1">{t.heading}</h1>
+      <nav class="st-ins-lang" aria-label={t.languageLabel}>
+        {
+          INSIGHTS_LOCALES.map((code) => (
+            <a href={`?lang=${code}`} lang={INSIGHTS_STRINGS[code].htmlLang} hreflang={INSIGHTS_STRINGS[code].htmlLang} aria-current={code === locale ? "true" : undefined}>
+              {LANGUAGE_NAME[code]}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+    <p class="cb-muted">{t.intro}</p>
+    <div
+      class="st-ins"
+      data-studio-insights
+      data-course={courseId}
+      data-locale={locale}
+      data-admin-url={tenant.adminUrl}
+    >
+      <p class="cb-muted" role="status">{t.loading}</p>
+    </div>
+    <noscript><p class="cb-error">{t.needsScript}</p></noscript>
+  </main>
+</Studio>
+
+<script>
+  import "../../../../studio/insights.ts";
+</script>

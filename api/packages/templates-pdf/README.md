@@ -25,13 +25,26 @@ rendered by the `api/pdf` service (see `api/pdf/README.md`).
   variables of the event (`template_create` or `template_update` permission).
 - `GET /api/pdfs/fonts` and `/api/pdfs/fonts/{file}` (public) proxy the renderer's OFL fonts for the designer.
 - Every PDF gets `@VarCertificateId` (random UUID, also `fabric_pdfs.certificate_id`) and
-  `@VarCertificateVerifyUrl` (`verify_url`, default `{APP_URL}/certificates/verify/{id}`; the verification
-  page is not built yet), which the default certificate encodes as a QR code.
+  `@VarCertificateVerifyUrl` (`verify_url`, default `{FRONTEND_URL}/certificates/verify/{id}`: the tenant's learner site
+  from the setting `global.frontURL`, the API host when it is not set; the learner site serves the page), which the default certificate encodes as a QR code.
+
+## Certificate lifecycle
+
+- `fabric_pdfs` carries `expires_at`, `revoked_at`/`revoked_reason`/`revoked_by`, `course_version` and
+  `superseded_by_id`. `FabricPDF::status()` is `valid`, `expired` or `revoked` (revoked wins).
+- Expiry is decided when the certificate is issued by `CertificateValidityContract` (default:
+  `validity_days`, 0 = never). Rebind the contract to decide per course; the planned compliance package will.
+  `@VarCertificateExpiresAt` carries the date to the template.
+- `GET /api/certificates/verify/{certificateId}` (public, throttled by `verify.throttle`): status, course, holder
+  name (`verify.holder_name`: `full`, `initials`, `none`), issue and expiry dates; 404 for an unknown id.
+- `POST /api/admin/pdfs/{id}/revoke` `{reason}` (permission `fabricjs_pdf_revoke`) marks it revoked and fires
+  `CertificateRevoked`; the certificate stays verifiable as revoked.
 
 Config (`ulams_templates_pdf`): `pdf.service_url` (`PDF_SERVICE_URL`, default `http://pdf:3000`),
 `pdf.internal_token` (`PDF_INTERNAL_TOKEN`), `pdf.timeout`, `storage.disk` / `storage.directory` /
 `storage.render_on_create`, `verify_url` (`PDF_CERTIFICATE_VERIFY_URL`, placeholders `{APP_URL}`,
-`{FRONTEND_URL}`, `{id}`).
+`{FRONTEND_URL}`, `{id}`), `verify.holder_name` (`PDF_CERTIFICATE_VERIFY_NAME`), `verify.throttle`
+(`PDF_CERTIFICATE_VERIFY_THROTTLE`), `validity_days` (`PDF_CERTIFICATE_VALIDITY_DAYS`).
 
 Certificate templates (`resources/pdfme`, built by `api/pdf/scripts/certificate-templates.mjs`): `default`
 (A4 landscape; seeded as the default `CourseFinished` template) and `coffee`, `oncall`, `nightsky`, `gravity`, `poland`, `ulam` for the

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/compliance/competency-tags-output.json",
+  "title": "Competencies a course teaches",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["suggestions"],
+  "properties": {
+    "suggestions": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["competencyId", "rationale", "lessonIds"],
+        "properties": {
+          "competencyId": { "type": "integer", "minimum": 1 },
+          "rationale": { "type": "string", "minLength": 5, "maxLength": 400 },
+          "lessonIds": { "type": "array", "minItems": 1, "maxItems": 10, "items": { "type": "integer", "minimum": 1 } }
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import { UMAMI_SCRIPT_ORIGIN, UMAMI_COLLECT_ORIGIN } from "@ulams/ui/analytics";
 import type { Tenant } from "@ulams/sdk";
 
 /**
@@ -9,6 +10,8 @@ import type { Tenant } from "@ulams/sdk";
 export interface CspInput {
   /** The tenant of the request; null on the platform host, which has no API to report to. */
   tenant: Tenant | null;
+  /** Allow the public-site analytics script and its Cloud collector only on owned hosts. */
+  analytics?: boolean;
   /** Origins of the tenant's registered external tools (GET /api/lti/frame-origins). */
   toolOrigins: readonly string[];
   /** The tenant's content origin (packages, LiaScript), or null when it has none. */
@@ -21,6 +24,7 @@ export interface CspInput {
 export const EMBED_PROVIDERS = ["https://www.youtube-nocookie.com", "https://player.vimeo.com"] as const;
 
 const unique = (values: Array<string | null | undefined>): string[] => [...new Set(values.filter((v): v is string => Boolean(v)))];
+const PUBLIC_CONTACT_API_ORIGIN = "https://api.ulams.app";
 
 /** `http://coffee.localhost/api` to `http://coffee.localhost`; null for anything that is not an http(s) URL. */
 export function originOf(url: string | null | undefined): string | null {
@@ -43,7 +47,7 @@ export function reportUrl(tenant: Tenant): string {
 const sources = (values: Array<string | null | undefined>, keywords: readonly string[] = ["'self'", "data:", "blob:"]): string[] =>
   unique(values).filter((v) => keywords.includes(v) || safeSource(v));
 
-export function buildCsp({ tenant, toolOrigins, contentOrigin, storageOrigins }: CspInput): string {
+export function buildCsp({ tenant, toolOrigins, contentOrigin, storageOrigins, analytics = false }: CspInput): string {
   const api = originOf(tenant?.apiUrl);
   const content = originOf(contentOrigin);
   const storage = storageOrigins.map(originOf);
@@ -55,13 +59,13 @@ export function buildCsp({ tenant, toolOrigins, contentOrigin, storageOrigins }:
 
   return [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval'${analytics ? ` ${UMAMI_SCRIPT_ORIGIN}` : ""}`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' data: https://fonts.gstatic.com",
     // Authors embed remote images and videos in rich text; scripts, frames and connections stay listed.
     `img-src ${[...files, "https:"].join(" ")}`,
     `media-src ${[...media, "https:"].join(" ")}`,
-    `connect-src ${sources(["'self'", api]).join(" ")}`,
+    `connect-src ${sources(["'self'", api, PUBLIC_CONTACT_API_ORIGIN, analytics ? UMAMI_COLLECT_ORIGIN : null]).join(" ")}`,
     `frame-src ${frame.join(" ")}`,
     "frame-ancestors 'self'",
     "form-action 'self'",

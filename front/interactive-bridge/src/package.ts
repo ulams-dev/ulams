@@ -1,4 +1,4 @@
-import { PROTOCOL, parseMessage, withinSize, type Capabilities, type Envelope, type InitPayload, type PackageMessage, type ParentMessage } from "./protocol.ts";
+import { PROTOCOL, parseMessage, withinSize, type Capabilities, type Envelope, type InitPayload, type PackageMessage, type ParentMessage, type RunResultPayload } from "./protocol.ts";
 
 export interface ConnectOptions {
   /** The step ids this package knows (or a function that returns them when `ready` is sent). */
@@ -15,6 +15,10 @@ export interface ConnectOptions {
   onLocale?: (locale: string) => void;
   onPause?: () => void;
   onResume?: () => void;
+  /** Code exercises (ADR 0170): the exercise's tests and limits, a run request, and a request to stop everything. */
+  onLoadExercise?: (message: Extract<ParentMessage, { type: "loadExercise" }>) => void;
+  onRun?: (message: Extract<ParentMessage, { type: "run" }>) => void;
+  onReset?: () => void;
   /** Override for tests; defaults to the global window. */
   window?: Window;
 }
@@ -29,6 +33,7 @@ export interface Bridge {
   event(verb: string, object: string, result?: { response?: string; success?: boolean; score?: number }): void;
   resize(height: number): void;
   error(code: string, message?: string): void;
+  runResult(result: RunResultPayload): void;
   destroy(): void;
 }
 
@@ -43,6 +48,7 @@ const NOOP: Bridge = {
   event() {},
   resize() {},
   error() {},
+  runResult() {},
   destroy() {},
 };
 
@@ -114,6 +120,15 @@ export function connect(options: ConnectOptions = {}): Bridge {
         return;
       case "resume":
         options.onResume?.();
+        return;
+      case "loadExercise":
+        options.onLoadExercise?.(msg);
+        return;
+      case "run":
+        options.onRun?.(msg);
+        return;
+      case "reset":
+        options.onReset?.();
     }
   };
   win.addEventListener("message", listener);
@@ -127,6 +142,7 @@ export function connect(options: ConnectOptions = {}): Bridge {
     event: (verb, object, result) => send(result ? { type: "event", verb, object, result } : { type: "event", verb, object }),
     resize: (height) => send({ type: "resize", height: Math.round(height) }),
     error: (code, message) => send(message === undefined ? { type: "error", code } : { type: "error", code, message }),
+    runResult: (result) => send({ type: "runResult", ...result }),
     destroy: () => win.removeEventListener("message", listener),
   };
 }

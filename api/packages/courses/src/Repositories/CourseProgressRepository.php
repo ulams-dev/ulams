@@ -4,6 +4,7 @@ namespace Ulams\Courses\Repositories;
 
 use Ulams\Courses\Enum\ProgressStatus;
 use Ulams\Courses\Events\TopicFinished;
+use Ulams\Courses\Events\TopicProgressUpdated;
 use Ulams\Courses\Jobs\CheckFinishedLessons;
 use Ulams\Courses\Models\CourseProgress;
 use Ulams\Courses\Models\CourseUserAttendance;
@@ -53,6 +54,7 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
         }
 
         $progress = $this->findProgress($topic, $user);
+        $previousSeconds = (int) ($progress?->seconds ?? 0);
         $finished = $status === ProgressStatus::COMPLETE && $progress && $progress->status !== ProgressStatus::COMPLETE;
         if ($finished) {
             $update['finished_at'] = Carbon::now();
@@ -86,6 +88,14 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             event(new TopicFinished($user, $topic));
             CheckFinishedLessons::dispatch($topic->getKey(), $user->getKey());
         }
+
+        // ids only (learner-insights reads it); the seconds delta is never negative
+        event(new TopicProgressUpdated(
+            (int) $user->getKey(),
+            (int) $topic->getKey(),
+            $status,
+            is_null($seconds) ? null : max(0, $seconds - $previousSeconds),
+        ));
     }
 
     /**

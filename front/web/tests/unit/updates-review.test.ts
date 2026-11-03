@@ -2,7 +2,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import axe from "axe-core";
 import type { ProposalDetail, ProposalItem, ProposalSummary } from "@ulams/sdk";
-import { detail, item, question } from "./updates-fixtures.ts";
+import { detail, insightsDetail, item, question } from "./updates-fixtures.ts";
 
 const S = "01m4fj5zsgfxhzh3cantwevncw";
 const P = "01m4fj5zsgfxhzh3cantwevnaa";
@@ -33,6 +33,8 @@ interface Server {
   connection: (body: { settings?: Record<string, boolean> }) => { status: number; body: unknown };
   /** Called on every GET of the proposal, to move a running state forward. */
   onGet?: (s: Server) => void;
+  /** Answer of accept-in-group: how many items it accepted in the other proposals of the group. */
+  elsewhere?: number;
   /** Serve an open event stream (otherwise the endpoint answers 404 and the page polls). */
   sse?: boolean;
   events?: ReadableStreamDefaultController<Uint8Array>;
@@ -87,6 +89,12 @@ function stub(initial: ProposalDetail, over: Partial<Server> = {}): Server {
       const row = setItem(decide[1]!, { status });
       return json({ item: row, proposal: summary(server.detail) });
     }
+    const group = /^\/proposals\/[^/]+\/items\/([^/]+)\/accept-in-group$/.exec(path);
+    if (group) {
+      const row = setItem(group[1]!, { status: "accepted" });
+      server.detail = { ...server.detail, siblings: (server.detail.siblings ?? []).map((x) => ({ ...x, decisions: { ...x.decisions, accepted: (x.decisions.accepted ?? 0) + (server.elsewhere ?? 0), pending: Math.max(0, (x.decisions.pending ?? 0) - (server.elsewhere ?? 0)) } })) };
+      return json({ item: row, proposal: summary(server.detail), accepted: server.elsewhere ?? 0, proposals: [] });
+    }
     const regen = /^\/proposals\/[^/]+\/items\/([^/]+)\/regenerate$/.exec(path);
     if (regen) {
       const current = server.detail.items.find((i) => i.id === regen[1])!;
@@ -121,8 +129,8 @@ function stub(initial: ProposalDetail, over: Partial<Server> = {}): Server {
   return server;
 }
 
-function mount(pollMs = 20): HTMLElement {
-  document.body.innerHTML = `<main><div data-studio-review data-session="${S}" data-proposal="${P}"></div></main><div data-announcer></div>`;
+function mount(pollMs = 20, locale = "en"): HTMLElement {
+  document.body.innerHTML = `<main><div data-studio-review data-session="${S}" data-proposal="${P}" data-locale="${locale}"></div></main><div data-announcer></div>`;
   const root = document.querySelector<HTMLElement>("[data-studio-review]")!;
   mountReview(root, { pollMs });
   return root;
@@ -160,6 +168,34 @@ describe("update review: ready", () => {
     expect(root.querySelector("[data-apply-summary]")?.textContent).toBe("1 accepted · 2 undecided · 0 rejected");
     expect(button(root, "Apply 1 accepted change").disabled).toBe(false);
     expect(root.querySelector("[data-learner-impact]")).not.toBeNull();
+  });
+
+  it("names the merged pull request a Git source change came from, as plain text with a safe link", async () => {
+    const change = { commit: "abcdef1234567", subject: "Rename the <b>--namespace</b> flag", url: "https://github.com/acme/docs/commit/abcdef1", pullRequest: 123, pullRequestUrl: "https://github.com/acme/docs/pull/123", source: "webhook" as const };
+    stub(detail(item3(), { change }));
+    const root = mount();
+    await ready(root);
+    const line = root.querySelector("[data-git-change]")!;
+    expect(line.textContent).toBe("From PR #123: Rename the <b>--namespace</b> flag");
+    expect(line.querySelector("b")).toBeNull();
+    expect(line.querySelector("a")).toMatchObject({ href: "https://github.com/acme/docs/pull/123", rel: "noopener noreferrer" });
+    const result = await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+    expect(result.violations).toEqual([]);
+  });
+
+  it("falls back to the commit, and never links a URL that is not https", async () => {
+    stub(detail(item3(), { change: { commit: "abcdef1234567", subject: null, url: "javascript:alert(1)", pullRequest: null, pullRequestUrl: null, source: "ci" } }));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-git-change]")?.textContent).toBe("From commit abcdef1");
+    expect(root.querySelector("[data-git-change] a")).toBeNull();
+  });
+
+  it("shows no Git line for an upload", async () => {
+    stub(detail(item3()));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-git-change]")).toBeNull();
   });
 
   it("is accessible", async () => {
@@ -562,5 +598,196 @@ describe("update review: learners", () => {
     await wait(() => expect(root.querySelector("[data-learner-switches]")).not.toBeNull());
     const result = await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
     expect(result.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.html).join(" | ")}`)).toEqual([]);
+  });
+});
+
+describe("update review: improvement from learner insights", () => {
+  const improvement = () => [item({ id: "i2", elementId: "q1", type: "question", label: "Lesson 1.1 › Q1", changeClass: "major", reason: "38 % of 42 learners struggled here in the last 30 days.", fragments: [{ fragmentId: "frg_aaaaaaaaaaa2", label: "§3.2 Ratios" }] })];
+
+  it("shows the evidence card instead of the source changes and never asks for revisions", async () => {
+    const s = stub(insightsDetail(improvement()));
+    const root = mount();
+    await ready(root);
+
+    const header = root.querySelector("[data-header]")!;
+    expect(header.querySelector("h2")!.textContent).toBe("Improvement from learner insights");
+    expect(header.textContent).toContain("Proposal 1 · Lesson 1.1 › Q1");
+    const card = header.querySelector("[data-evidence]")!;
+    expect(card.querySelector("h3")!.textContent).toBe("Why this was proposed");
+    expect(card.textContent).toContain("Results of 42 learners in the last 30 days");
+    expect(card.textContent).toContain("38%");
+    expect(card.textContent).toContain("1:17");
+    expect(card.textContent).not.toContain("What the AI receives");
+    expect(root.querySelector('[data-component="ImpactSummary"]')).toBeNull();
+    expect(root.querySelector<HTMLElement>("[data-source-changes]")!.hidden).toBe(true);
+    expect(s.calls.some((c) => c.path.startsWith("/revisions"))).toBe(false);
+    expect(root.querySelectorAll("[data-update-item]")).toHaveLength(1);
+    expect(root.querySelector("[data-group]")).not.toBeNull();
+    // the same decisions and apply bar as for a source update
+    button(root.querySelector<HTMLElement>('[data-update-item="i2"]')!, "Accept").click();
+    await wait(() => expect(root.querySelector("[data-apply-summary]")?.textContent).toBe("1 accepted · 0 undecided · 0 rejected"));
+    expect(button(root, "Apply 1 accepted change").disabled).toBe(false);
+  });
+
+  it("is accessible, with the evidence card in the heading order", async () => {
+    stub(insightsDetail(improvement()));
+    const root = mount();
+    await ready(root);
+
+    const result = await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+    expect(result.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.html.slice(0, 120)).join(" | ")}`)).toEqual([]);
+    expect([...root.querySelectorAll("[data-evidence] h3, [data-evidence] h4")].map((h) => h.tagName)).toEqual(["H3", "H4", "H4"]);
+  });
+
+  it.each([
+    ["pl", "Poprawka na podstawie wyników kursantów", "Dlaczego to zaproponowano", "pl"],
+    ["zh", "来自学员洞察的改进建议", "提出此建议的原因", "zh-Hans"],
+  ])("speaks %s in the parts that belong to improvements", async (locale, heading, title, lang) => {
+    stub(insightsDetail(improvement()));
+    const root = mount(20, locale);
+    await ready(root);
+
+    expect(root.querySelector("[data-header] h2")!.textContent).toBe(heading);
+    expect(root.querySelector("[data-header] h2")!.getAttribute("lang")).toBe(lang);
+    expect(root.querySelector("[data-evidence] h3")!.textContent).toBe(title);
+    expect(root.querySelector("[data-evidence]")!.getAttribute("lang")).toBe(lang);
+  });
+
+  it("does not talk about source revisions when rejecting or after applying", async () => {
+    stub(insightsDetail(improvement()));
+    const root = mount();
+    await ready(root);
+
+    button(root, "Reject all").click();
+    await wait(() => expect(root.querySelector(".st-confirm")).not.toBeNull());
+    expect(root.querySelector(".st-confirm")!.textContent).toContain("Reject the whole improvement?");
+    expect(root.querySelector(".st-confirm")!.textContent).toContain("keeps your course exactly as it is");
+    expect(root.querySelector(".st-confirm")!.textContent).not.toContain("revision");
+    expect(root.querySelector(".st-bulk")!.textContent).not.toContain("source revision");
+  });
+
+  it("shows what the AI could not ground, so the author edits it", async () => {
+    stub(insightsDetail([item({ id: "i2", kind: "manual", after: null, changeClass: null, reason: "The AI could not propose a grounded change; edit it yourself.", flags: { ungrounded: ["Possibly unsupported: pour at 99 degrees (the source says 96)"] } })]));
+    const root = mount();
+    await ready(root);
+
+    const host = root.querySelector('[data-update-item="i2"]')!;
+    expect(host.textContent).toContain("The AI could not propose a grounded change; edit it yourself.");
+    expect(host.textContent).toContain("pour at 99 degrees (the source says 96)");
+  });
+
+  it("says an applied improvement is applied, without a revision", async () => {
+    stub(insightsDetail(improvement(), { status: "applied" }));
+    const root = mount();
+    await wait(() => expect(root.querySelector("[data-done]")).not.toBeNull());
+
+    expect(root.querySelector("[data-done]")!.textContent).toContain("The improvement is applied");
+    expect(root.querySelector("[data-done]")!.textContent).toContain("Learners keep their progress");
+    expect(root.querySelector("[data-done]")!.textContent).not.toContain("revision");
+  });
+});
+
+describe("update review: variants of a course (ADR 0192)", () => {
+  const base = { id: "pb", number: 1, status: "ready", variant: null, decisions: { pending: 2 } } as const;
+  const expert = { id: "pe", number: 2, status: "ready", variant: { id: "v1", key: "expert", label: "Expert" }, decisions: { accepted: 1, pending: 1 } } as const;
+  const grouped = (items: ProposalItem[], over: Partial<ProposalDetail> = {}) =>
+    detail(items, { number: 2, variant: { id: "v1", key: "expert", label: "Expert" }, proposalGroup: "g1", siblings: [{ ...base }], ...over });
+
+  it("looks exactly as before without a group: no badge, no navigation, no group action", async () => {
+    stub(detail(item3()));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-course-badge]")).toBeNull();
+    expect(root.querySelector("[data-group-nav]")).toBeNull();
+    expect(root.querySelector("[data-accept-in-group]")).toBeNull();
+  });
+
+  it("names the course in words and lists the versions with their status and decisions", async () => {
+    stub(grouped(item3(), { siblings: [{ ...base }, { ...expert, id: "pe2", number: 3, variant: { id: "v2", key: "novice", label: "Novice" }, status: "applied", decisions: { accepted: 2 } }] }));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-header] [data-course-badge]")?.textContent).toBe("Expert");
+    const nav = root.querySelector<HTMLElement>("[data-group-nav]")!;
+    expect(nav.getAttribute("aria-label")).toBe("Versions of this update");
+    const entries = [...nav.querySelectorAll("li")];
+    expect(entries.map((li) => li.querySelector(".st-vg-name")?.textContent)).toEqual(["Base course", "Expert", "Novice"]);
+    expect(entries[0]!.textContent).toContain("Ready to review");
+    expect(entries[0]!.textContent).toContain("0 decided, 2 undecided");
+    expect(entries[2]!.textContent).toContain("Applied");
+    expect(entries[2]!.textContent).toContain("2 decided, 0 undecided");
+    const links = [...nav.querySelectorAll("a")];
+    expect(links.map((a) => a.getAttribute("aria-current"))).toEqual([null, "page", null]);
+    expect(links[0]!.getAttribute("href")).toBe(`/studio/s/${S}/updates/pb`);
+    expect(links[1]!.textContent).toContain("(open now)");
+  });
+
+  it("calls the base proposal the base course", async () => {
+    stub(grouped(item3(), { variant: null, siblings: [{ ...expert }] }));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-header] [data-course-badge]")?.textContent).toBe("Base course");
+  });
+
+  it("offers Accept in all versions on shared kinds and a note on reused items", async () => {
+    stub(grouped([item(), item({ id: "i4", kind: "uncovered", status: "pending" }), item({ id: "i5", kind: "update", flags: { reusedFrom: "bi5" } }), question()]));
+    const root = mount();
+    await ready(root);
+    const has = (id: string) => root.querySelector(`[data-update-item="${id}"] [data-accept-in-group]`) !== null;
+    expect([has("i1"), has("i2"), has("i4"), has("i5")]).toEqual([true, true, false, true]);
+    expect(root.querySelector('[data-update-item="i5"] [data-reused-note]')?.textContent).toBe("Same change as in the base course; no extra analysis was needed.");
+    expect(root.querySelector('[data-update-item="i1"] [data-reused-note]')).toBeNull();
+  });
+
+  it("accepts in all versions, says how many others, refreshes the group and keeps the focus", async () => {
+    const s = stub(grouped(item3()), { elsewhere: 2 });
+    const root = mount();
+    await ready(root);
+    button(root.querySelector<HTMLElement>('[data-update-item="i1"]')!, "Accept in all versions").click();
+    await wait(() => expect(root.querySelector("[data-notices] [role='status']")?.textContent).toBe("Accepted here and in 2 other versions"));
+    expect(s.calls.some((c) => c.method === "POST" && c.path === `/proposals/${P}/items/i1/accept-in-group`)).toBe(true);
+    await wait(() => expect(root.querySelector('[data-update-item="i1"]')?.getAttribute("data-status")).toBe("accepted"));
+    expect(root.querySelector('[data-group-entry="pb"]')?.textContent).toContain("2 decided, 0 undecided");
+    expect(document.activeElement).toBe(root.querySelector('[data-update-item="i1"] [data-focus-target]'));
+    expect(root.querySelector('[data-update-item="i1"] [data-accept-in-group]')?.hasAttribute("hidden")).toBe(true);
+  });
+
+  it("says so when nothing else was waiting, and when saving fails", async () => {
+    const s = stub(grouped(item3()), { elsewhere: 0 });
+    const root = mount();
+    await ready(root);
+    button(root.querySelector<HTMLElement>('[data-update-item="i1"]')!, "Accept in all versions").click();
+    await wait(() => expect(root.querySelector("[data-notices] [role='status']")?.textContent).toContain("No other version had the same change"));
+    void s;
+    vi.stubGlobal("fetch", async (url: string) => (/accept-in-group/.test(url) ? new Response(JSON.stringify({ message: "This proposal is already settled." }), { status: 409 }) : new Response("{}", { status: 404 })));
+    button(root.querySelector<HTMLElement>('[data-update-item="i2"]')!, "Accept in all versions").click();
+    await wait(() => expect(root.querySelector("[data-notices] [role='alert']")?.textContent).toContain("already settled"));
+    expect(root.querySelector('[data-update-item="i2"]')?.getAttribute("data-status")).toBe("pending");
+  });
+
+  it.each([
+    ["pl", "Wersje tej aktualizacji", "Kurs bazowy", "Zaakceptuj we wszystkich wersjach", "pl"],
+    ["zh", "此更新的各个版本", "基础课程", "在所有版本中接受", "zh-Hans"],
+  ])("speaks %s in the group navigation and the group action, marked with its language", async (locale, nav, baseName, action, lang) => {
+    stub(grouped(item3()));
+    const root = mount(20, locale);
+    await ready(root);
+    const navEl = root.querySelector("[data-group-nav]")!;
+    expect(navEl.getAttribute("aria-label")).toBe(nav);
+    expect(navEl.getAttribute("lang")).toBe(lang);
+    expect(navEl.querySelector(".st-vg-name")?.textContent).toBe(baseName);
+    expect(navEl.querySelector("a")?.getAttribute("href")).toContain(`?lang=${locale}`);
+    const group = root.querySelector('[data-update-item="i1"] [data-accept-in-group]')!;
+    expect(group.textContent).toContain(action);
+    expect(group.getAttribute("lang")).toBe(lang);
+    // a variant label is the author's own text: no language is claimed for it
+    expect(root.querySelector("[data-header] [data-course-badge]")?.getAttribute("lang")).toBeNull();
+  });
+
+  it("is accessible", async () => {
+    stub(grouped([item(), item({ id: "i5", flags: { reusedFrom: "bi5" } })]));
+    const root = mount();
+    await ready(root);
+    const result = await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+    expect(result.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.html.slice(0, 120)).join(" | ")}`)).toEqual([]);
   });
 });

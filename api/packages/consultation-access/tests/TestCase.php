@@ -2,6 +2,7 @@
 
 namespace Ulams\ConsultationAccess\Tests;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Auth\Models\User;
 use Ulams\Auth\Tests\Models\Client;
@@ -20,6 +21,7 @@ class TestCase extends CoreTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        MorphMap::register(\Ulams\Courses\UlamsCourseServiceProvider::MORPH_ALIASES);
         Passport::useClientModel(Client::class);
     }
 

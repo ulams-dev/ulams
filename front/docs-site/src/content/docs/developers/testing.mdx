@@ -115,14 +115,27 @@ docker compose -f api/docker-compose.yml exec -T -e TENANCY_INTEGRATION=1 api \
 ## Tenant isolation tests
 
 The spec requires a tenant isolation test for every new endpoint (`docs/ROADMAP-PROMPT.md`,
-quality bar). The tracker item for full coverage is still open. Two patterns exist:
+quality bar). Three layers exist:
+
+- **Every route, in one test** (ADR 0190): `api/tests/Integrations/TenantIsolationCoverageTest.php`
+  walks all registered routes. A route behind `auth:api` must answer 401 to a request with no token and
+  to one with a token signed by another tenant's key pair. A route that is not behind `auth:api` must
+  be listed with a reason in `api/tests/fixtures/public-routes.php`, or the test fails. It runs in the
+  `platform` shard on every pull request and takes about ten seconds. How to add a route:
+  [Adding an endpoint](/developers/adding-an-endpoint/#tenant-isolation-test).
 
 - **In-process**, inside the package suite: switch the tenant secrets and check that a value
   issued for tenant A is rejected. Example:
   [`api/packages/lti/tests/Feature/TenantIsolationTest.php`](https://github.com/ulams-dev/ulams/blob/main/api/packages/lti/tests/Feature/TenantIsolationTest.php)
   replaces `APP_KEY` (and the LTI key set) with `becomeAnotherTenant()` and asserts that login
   hints, AGS tokens and deep-linking data of the first tenant fail.
-- **End to end**, against two provisioned tenants: the opt-in tenancy and demo tests above.
+- **End to end**, against two provisioned tenants: the opt-in tenancy and demo tests above. The tenancy
+  test runs every night in the `Nightly conformance` workflow (job `tenancy`, it brings up the compose
+  stack); run it by hand from Actions with the `tenancy` input.
+
+`api/tests/Integrations/NoPublicStorageFetchTest.php` is the guard for a related container pitfall:
+server-side code must not fetch `Storage::url()` addresses (`storage.localhost` does not resolve inside
+a container); read through the disk instead.
 
 See [Adding an endpoint](/developers/adding-an-endpoint/) for where the test goes.
 
@@ -168,6 +181,34 @@ corepack yarn test:web:e2e            # yarn workspace @ulams/web test:e2e
 
 Add every new learner page to the `PAGES` list in `a11y.spec.ts`.
 
+### Accessibility in CI (no API stack)
+
+`yarn workspace @ulams/web test:a11y` builds nothing itself: run `yarn workspace @ulams/web build`
+first. It starts a mock tenant API (`front/web/tests/mock-api/server.mjs`, the captured coffee
+fixtures plus a two-question quiz) and the built server, then runs `tests/a11y` in the two projects.
+CI runs it as the `Web accessibility (axe, keyboard)` job.
+
+- `learner.a11y.spec.ts`: axe (WCAG 2.2 AA tags) over home, course page, lesson player, quiz intro
+  and question, finish, account, login and 404, in a light theme (`coffee`) and a dark one
+  (`nightsky`), at desktop and 360 px, with reduced motion on. The platform landing is scanned once.
+- `keyboard.a11y.spec.ts`: the skip link is the first Tab stop and leads into `main`, every Tab
+  stop is visible and shows a focus indicator, and no infinite animation runs under reduced motion.
+
+A new learner page goes into `PAGES` in `learner.a11y.spec.ts` (and, if the mock does not serve its
+data, a route into `mock-api/server.mjs`).
+
+**Checklist for a new learner-facing page or component**
+
+1. One `h1`, landmarks (`header`, `main#main`, `footer`), the skip link from `Base.astro`.
+2. Every control is reachable and operable by keyboard, with a visible focus indicator of 3 px or
+   more; no keyboard trap; focus order follows the visual order.
+3. Targets are at least 24×24 CSS px (WCAG 2.5.8), also on a 360 px screen.
+4. Text contrast 4.5:1 (3:1 for large text and UI parts) in every theme the page can show in.
+5. Motion respects `prefers-reduced-motion`: no looping animation, no auto-advancing content.
+6. Do not move the browser's Tab starting point on load (`scrollIntoView` does: scroll the
+   container instead).
+7. Add the page to the axe suite and run it light and dark, desktop and phone.
+
 </TabItem>
 <TabItem label="admin">
 
@@ -195,7 +236,7 @@ node front/tests/visual/visual.mjs --help
 
 ## H5P integration tests
 
-`api/h5p/test/http.test.ts` and `test/pg-storage.test.ts` need real Postgres, Valkey and MinIO.
+`api/h5p/test/http.test.ts` and `test/pg-storage.test.ts` need real Postgres, Valkey and SeaweedFS.
 In CI they run only from the **H5P integration tests** workflow (manual dispatch). Locally:
 
 ```bash
@@ -206,6 +247,51 @@ corepack yarn test:h5p:integration                 # turbo run test:integration 
 The defaults in `api/h5p/src/config.ts` point at compose service names; set `DB_HOST`,
 `REDIS_HOST`, `S3_ENDPOINT` and the S3 credentials when the services run on `localhost`, as
 `.github/workflows/h5p-integration.yml` does.
+
+## SCORM playback tests
+
+`api/packages/scorm/tests/fixtures/playback` holds original SCORM 1.2 and 2004 test packages (MIT,
+written for ulams, no third-party content). Each SCO runs a scripted learner session against the
+SCORM API (status, score, suspend data, commits, session time, completion and success status,
+validation errors) and records every call, return value and error code. They exist so a SCORM
+player change, such as the `scorm-again` upgrade, can be proved not to change what learners get.
+Plan: `docs/plans/scorm-playback-tests.md`, decision: ADR 0197.
+
+```bash
+node api/packages/scorm/tests/fixtures/playback/build.mjs --check   # the committed zips match the sources
+corepack yarn workspace front test                                   # includes the fixture, zip and trace unit tests
+./vendor/bin/phpunit --testsuite scorm --filter ScormPlaybackFixturesTest   # parser and upload
+```
+
+The React player (`front/src/lib/scorm-player`, shared by the legacy front and the admin preview) is
+played in a real browser by `front/tests/scorm-playback/react-player.spec.ts`, once with the legacy
+front's service worker and once with the admin's. No API stack and no network are needed: a small
+server builds the harness page, serves each app's own service worker, the fixture zips and mock LMS
+endpoints. Each scenario's runtime calls, final CMI, commit object (status, score, total time),
+scorm-again settings and host requests are compared with a golden trace in
+`api/packages/scorm/tests/fixtures/playback/golden/react-player`.
+
+```bash
+corepack yarn playwright install chromium     # once
+corepack yarn workspace front test:scorm      # both apps against the golden traces
+UPDATE_GOLDEN=1 corepack yarn workspace front test:scorm   # rewrite them; explain the change in the PR
+```
+
+The API content player (`api/packages/scorm/resources/content-player`, the player of the reference
+front, with the vendored `scorm-again`) is played the same way by `content-player.spec.ts`: the mock
+server stands in for the content origin and the LMS, returns a canned launch `cmi` (first launch,
+resumed session, mastery score) and the golden traces record every request the player sends, in
+order, with headers and body. The spec also checks that the player refuses to start without a
+token, with a non-http API address, with an entry URL on another origin, or when the API rejects
+the token. The stored tracking on the PHP side is not simulated: that stays with `ScormTrackApiTest`
+and `ScormContentOriginApiTest`.
+
+CI runs this as the **SCORM playback (Playwright)** job whenever the players, the service workers,
+the fixtures or the harness change. A changed golden trace is a behaviour change for learners and
+needs a reason in the pull request. To try another scorm-again release against the golden traces without changing the repository, unpack
+its npm package and run `SCORM_AGAIN_DIR=<dir> corepack yarn workspace front test:scorm`. The 3.4.7 result is in
+section 11 of the plan: it differs from 2.6 in ways settings cannot pin, so the apps stay on 2.6.x. After editing a fixture, rebuild the zips with `build.mjs`; the
+fixtures README lists the query parameters of each SCO.
 
 ## Performance
 

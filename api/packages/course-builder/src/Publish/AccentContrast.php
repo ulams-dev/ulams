@@ -2,19 +2,19 @@
 
 namespace Ulams\CourseBuilder\Publish;
 
+use Ulams\Settings\Support\ThemePresets;
+
 /**
  * The accent adjustment of `front/ui/src/theme/contrast.ts`, in PHP: an accent that does not reach 5:1
  * on the theme background is moved towards black or white until it does (WCAG AA for text on cards).
  */
 final class AccentContrast
 {
-    public const BACKGROUNDS = ['coffee' => '#f6f1e9', 'oncall' => '#0b0f14', 'nightsky' => '#13153a', 'gravity' => '#05070f', 'poland' => '#f4efe6', 'ulam' => '#f7f3e8'];
-
     /** @return array{value:string,adjusted:bool}|null */
     public static function adjust(string $accent, string $preset, float $ratio = 5.0): ?array
     {
         $rgb = self::parse($accent);
-        $bg = self::parse(self::BACKGROUNDS[$preset] ?? '');
+        $bg = self::parse(ThemePresets::background($preset) ?? '');
         if ($rgb === null || $bg === null) {
             return null;
         }

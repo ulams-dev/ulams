@@ -100,6 +100,129 @@ class TenantIsolationTest extends TestCase
         $this->assertNotSame(200, $wrong->getStatusCode());
     }
 
+    public function testLearnerInsightsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $created = $this->request(self::A, 'POST', '/api/admin/courses', $tokenA, ['title' => 'Insights probe ' . bin2hex(random_bytes(4)), 'status' => 'published']);
+        $this->assertContains($created->getStatusCode(), [200, 201], (string) $created->getBody());
+        $courseId = json_decode((string) $created->getBody(), true)['data']['id'];
+        $summary = "/api/admin/learner-insights/courses/{$courseId}/summary";
+
+        // the learner's own view and the aggregates of a course work in tenant A with A's token...
+        $this->assertSame(200, $this->request(self::A, 'GET', '/api/learner-insights/me', $tokenA)->getStatusCode());
+        $this->assertNotSame(401, $this->request(self::A, 'GET', $summary, $tokenA)->getStatusCode());
+        // ...and are refused on tenant B, whose Passport keys differ
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/learner-insights/me', $tokenA)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'GET', $summary, $tokenA)->getStatusCode());
+    }
+
+    public function testIdentityProvidersAndSignInStateDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $slug = 'probe-' . bin2hex(random_bytes(3));
+
+        $created = $this->request(self::A, 'POST', '/api/admin/identity/providers', $tokenA, [
+            'slug' => $slug,
+            'name' => 'Isolation probe',
+            'enabled' => false,
+            'oidc' => ['issuer' => 'https://idp.example.com/realms/probe', 'client_id' => 'probe'],
+        ]);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+
+        // the provider is A's: listed and readable there, unknown at B
+        $slugsOf = fn (string $tenant, string $token): array => array_column(json_decode((string) $this->request($tenant, 'GET', '/api/admin/identity/providers', $token)->getBody(), true)['data'] ?? [], 'slug');
+        $this->assertContains($slug, $slugsOf(self::A, $tokenA));
+        $this->assertNotContains($slug, $slugsOf(self::B, $tokenB));
+        $this->assertSame(200, $this->request(self::A, 'GET', "/api/admin/identity/providers/{$id}", $tokenA)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'GET', "/api/admin/identity/providers/{$id}", $tokenB)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenB)->getStatusCode());
+
+        // every tenant signs tokens with its own keys, so A's admin token is nothing at B
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/identity/providers', $tokenA)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/identity/audit', $tokenA)->getStatusCode());
+
+        // a sign-in cannot start at B for A's provider (and B has no such enabled provider either)
+        $noRedirects = fn (string $tenant, string $uri) => self::$http->request('GET', $uri, ['allow_redirects' => false, 'headers' => ['Host' => "{$tenant}.localhost", 'Accept' => 'application/json']]);
+        $this->assertSame(404, $noRedirects(self::B, "/api/identity/sso/{$slug}/start")->getStatusCode());
+        $this->assertSame(400, $noRedirects(self::B, "/api/identity/oidc/{$slug}/callback?state=" . str_repeat('a', 43) . '.9999999999.' . str_repeat('b', 43))->getStatusCode());
+
+        $this->request(self::A, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenA);
+    }
+
+    public function testSamlProvidersAndTheirEndpointsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $slug = 'saml-probe-' . bin2hex(random_bytes(3));
+        $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
+        openssl_x509_export(openssl_csr_sign(openssl_csr_new(['commonName' => 'probe.example.test'], $key, ['digest_alg' => 'sha256']), null, $key, 30, ['digest_alg' => 'sha256']), $certificate);
+
+        $created = $this->request(self::A, 'POST', '/api/admin/identity/providers', $tokenA, [
+            'protocol' => 'saml',
+            'slug' => $slug,
+            'name' => 'SAML isolation probe',
+            'enabled' => false,
+            'saml' => ['entity_id' => 'https://idp.example.com/probe', 'sso_url' => 'https://idp.example.com/sso', 'idp_certificates' => [$certificate]],
+        ]);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+        $this->assertStringNotContainsString('PRIVATE KEY', (string) $created->getBody());
+
+        $noRedirects = fn (string $tenant, string $method, string $uri, array $form = []) => self::$http->request($method, $uri, [
+            'allow_redirects' => false,
+            'headers' => ['Host' => "{$tenant}.localhost", 'Accept' => 'application/json'],
+            'form_params' => $form ?: null,
+        ]);
+
+        // the service provider metadata exists at A, names A's host, carries no private key, and does not exist at B
+        $metadata = $noRedirects(self::A, 'GET', "/api/identity/saml/{$slug}/metadata");
+        $this->assertSame(200, $metadata->getStatusCode());
+        $this->assertMatchesRegularExpression('#entityID="https?://' . preg_quote(self::A, '#') . '\.localhost(:\d+)?/api/identity/saml/' . preg_quote($slug, '#') . '/metadata"#', (string) $metadata->getBody());
+        $this->assertStringNotContainsString('PRIVATE KEY', (string) $metadata->getBody());
+        $this->assertSame(404, $noRedirects(self::B, 'GET', "/api/identity/saml/{$slug}/metadata")->getStatusCode());
+
+        // B's ACS and SLO know nothing of A's provider, and a response without B's own state is refused
+        $this->assertSame(400, $noRedirects(self::B, 'POST', "/api/identity/saml/{$slug}/acs", ['SAMLResponse' => base64_encode('<x/>'), 'RelayState' => str_repeat('a', 43) . '.9999999999.' . str_repeat('b', 43)])->getStatusCode());
+        $this->assertSame(404, $noRedirects(self::B, 'GET', "/api/identity/saml/{$slug}/slo?SAMLRequest=eA")->getStatusCode());
+        $this->assertSame(404, $noRedirects(self::B, 'GET', "/api/identity/sso/{$slug}/start")->getStatusCode());
+
+        // the admin endpoints of A's provider do not exist at B and A's token is nothing there
+        $this->assertSame(404, $this->request(self::B, 'POST', "/api/admin/identity/providers/{$id}/sp-keys/rotate", $tokenB, ['step' => 'prepare'])->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'POST', "/api/admin/identity/providers/{$id}/metadata/refresh", $tokenB)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'POST', "/api/admin/identity/providers/{$id}/sp-keys/rotate", $tokenA, ['step' => 'prepare'])->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'POST', "/api/identity/saml/{$slug}/logout", $tokenA)->getStatusCode());
+
+        $this->request(self::A, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenA);
+    }
+
+    public function testSocialLoginStateAndCodesDoNotCrossTenants(): void
+    {
+        $verifier = bin2hex(random_bytes(32));
+        $challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
+        $query = http_build_query(['challenge' => $challenge, 'return_url' => 'http://' . self::A . '.app.localhost/auth/social/callback']);
+        $noRedirects = fn (string $slug, string $method, string $uri, ?array $json = null) => self::$http->request($method, $uri, [
+            'allow_redirects' => false,
+            'headers' => ['Host' => "{$slug}.localhost", 'Accept' => 'application/json'],
+            'json' => $json,
+        ]);
+
+        // tenant A starts a login (the provider's client id may be a placeholder on a test tenant)
+        $start = $noRedirects(self::A, 'GET', '/api/auth/social/google?' . $query);
+        if ($start->getStatusCode() !== 302) {
+            $this->markTestSkipped('Google login is not configured on the test tenant (status ' . $start->getStatusCode() . ').');
+        }
+        parse_str((string) parse_url($start->getHeaderLine('Location'), PHP_URL_QUERY), $params);
+        $this->assertNotEmpty($params['state'] ?? null, 'the redirect to the provider carries our signed state');
+
+        // the state is signed with A's APP_KEY and kept in A's database: B refuses it, and so does the platform host
+        $this->assertSame(400, $noRedirects(self::B, 'GET', '/api/auth/social/google/callback?state=' . urlencode($params['state']))->getStatusCode());
+        $this->assertSame(400, $noRedirects('api', 'GET', '/api/auth/social/google/callback?state=' . urlencode($params['state']))->getStatusCode());
+        // a code that was never issued on B is refused there, whatever tenant it is taken from
+        $this->assertSame(400, $noRedirects(self::B, 'POST', '/api/auth/social/exchange', ['code' => $challenge, 'verifier' => $verifier])->getStatusCode());
+    }
+
     public function testLtiKeySetsAndRegistrationsDoNotCrossTenants(): void
     {
         $kids = fn (string $slug) => array_column(json_decode((string) $this->request($slug, 'GET', '/api/lti/jwks')->getBody(), true)['keys'] ?? [], 'kid');
@@ -135,7 +258,7 @@ class TenantIsolationTest extends TestCase
         $course = $this->request(self::A, 'POST', '/api/admin/courses', $tokenA, ['title' => 'Layout isolation course', 'status' => 'published']);
         $this->assertContains($course->getStatusCode(), [200, 201], (string) $course->getBody());
         $courseId = json_decode((string) $course->getBody(), true)['data']['id'];
-        $lesson = $this->request(self::A, 'POST', '/api/admin/lessons', $tokenA, ['title' => 'Layout isolation lesson', 'course_id' => $courseId, 'active' => true]);
+        $lesson = $this->request(self::A, 'POST', '/api/admin/lessons', $tokenA, ['title' => 'Layout isolation lesson', 'course_id' => $courseId, 'active' => true, 'order' => 1]);
         $this->assertContains($lesson->getStatusCode(), [200, 201], (string) $lesson->getBody());
         $lessonId = json_decode((string) $lesson->getBody(), true)['data']['id'];
 
@@ -243,6 +366,34 @@ class TenantIsolationTest extends TestCase
         }
         $list = json_decode((string) $this->request(self::B, 'GET', '/api/admin/course-builder/sessions', $tokenB)->getBody(), true);
         $this->assertNotContains($id, array_column($list['data'] ?? [], 'id'));
+    }
+
+    /**
+     * Course-as-code endpoints (ADR 0160) resolve only inside their tenant: another tenant's token gets 404 for
+     * A's session and version ids and A's token is rejected on B. Needs a session, so it is skipped with AI off.
+     */
+    public function testCourseAsCodeEndpointsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $created = $this->request(self::A, 'POST', '/api/admin/course-builder/sessions', $tokenA, ['title' => 'Isolation probe']);
+        if ($created->getStatusCode() === 503) {
+            $this->markTestSkipped('AI is disabled on the probe tenants');
+        }
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['session']['id'];
+        $versionId = '01aaaaaaaaaaaaaaaaaaaaaaaa';
+        $body = ['document' => ['schemaVersion' => 3], 'baseVersionId' => $versionId];
+
+        foreach ([['POST', "/api/admin/course-as-code/sessions/{$id}/imports", $body], ['POST', "/api/admin/course-as-code/sessions/{$id}/apply", []], ['POST', "/api/admin/course-as-code/sessions/{$id}/publish", []], ['POST', "/api/admin/course-as-code/sessions/{$id}/drift", []]] as [$method, $uri, $payload]) {
+            $onB = $this->request(self::B, $method, $uri, $tokenB, $payload);
+            $this->assertSame(404, $onB->getStatusCode(), "{$method} {$uri}");
+            $this->assertStringNotContainsString('Isolation probe', (string) $onB->getBody());
+            $this->assertSame(401, $this->request(self::B, $method, $uri, $tokenA, $payload)->getStatusCode(), "{$method} {$uri} with A's token");
+        }
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/course-as-code/courses/1/blueprint', $tokenA)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'GET', "/api/admin/course-as-code/versions/{$versionId}", $tokenB)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'GET', "/api/admin/course-as-code/versions/{$versionId}", $tokenA)->getStatusCode());
     }
 
     private function login(string $slug): string

@@ -11,7 +11,7 @@ interface GiftQuizApiAdminSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/gift-quizes",
+     *     path="/api/admin/gift-quizes", operationId="admin.gift-quizes.get",
      *     summary="List gift quizes of a course (for report filter select)",
      *      tags={"Gift Quiz"},
      *     security={
@@ -54,7 +54,7 @@ interface GiftQuizApiAdminSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/gift-quizes/{id}",
+     *     path="/api/admin/gift-quizes/{id}", operationId="admin.gift-quizes.by-id.get",
      *     summary="Get gift quiz by id",
      *      tags={"Gift Quiz"},
      *     security={
@@ -96,7 +96,7 @@ interface GiftQuizApiAdminSwagger
 
     /**
      * @OA\Put(
-     *     path="/api/admin/gift-quizes/{id}",
+     *     path="/api/admin/gift-quizes/{id}", operationId="admin.gift-quizes.by-id.put",
      *     summary="Update gift quiz by id",
      *      tags={"Gift Quiz"},
      *     security={

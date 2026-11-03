@@ -1,0 +1,274 @@
+---
+/**
+ * A code exercise topic (ADR 0170): the task, the learner's files in labelled text areas, the visible tests, a
+ * results list and the runner, a sandboxed frame on the tenant content origin that is the only place the code
+ * runs. The text areas work without a script and with a screen reader; the Tab key moves on. Results are
+ * practice grades reported through the learner's session (the BFF); the frame never receives a token. The
+ * behaviour is in elements/code-exercise.ts, the strings in lib/code-exercise-strings.ts.
+ */
+import { SANDBOX_CODE } from "@ulams/sdk/frames";
+import { renderMarkdown } from "../lib/markdown.ts";
+import { codeStrings, fill } from "../lib/code-exercise-strings.ts";
+
+interface ExerciseFile {
+  path: string;
+  content: string;
+}
+interface Props {
+  /** The runner page on the content origin (from POST /api/code-exercises/launches/{topic}). */
+  src: string;
+  title: string;
+  topicId?: number;
+  language?: "javascript" | "typescript";
+  files: ExerciseFile[];
+  tests: ExerciseFile[];
+  timeoutMs?: number;
+  passScore?: number;
+  completionRule?: "on_pass" | "on_attempt";
+  text?: string;
+  locale?: string;
+  attempts?: { count: number; best_score: number | null };
+}
+const { src, title, topicId, language = "javascript", files, tests, timeoutMs = 5000, text, locale = "en", attempts } = Astro.props;
+const s = codeStrings(locale);
+const html = text ? renderMarkdown(text) : "";
+const id = `ce-${topicId ?? "preview"}`;
+// the parser drops the first newline of a text area: put one in front so the content is exact
+const exact = (content: string) => `\n${content}`;
+---
+
+<ulams-code-exercise
+  class="u-ce"
+  lang={locale}
+  topic-id={topicId}
+  language={language}
+  timeout-ms={timeoutMs}
+  data-tests={JSON.stringify(tests)}
+  runner="idle"
+>
+  {html && (
+    <section class="u-ce__task" aria-labelledby={`${id}-task`}>
+      <h2 id={`${id}-task`}>{s.task}</h2>
+      <div class="u-prose" set:html={html} />
+    </section>
+  )}
+
+  <section class="u-ce__files" aria-labelledby={`${id}-files`}>
+    <h2 id={`${id}-files`}>{s.files}</h2>
+    {
+      files.map((file, i) => (
+        <div class="u-ce__file">
+          <label for={`${id}-f${i}`} class="u-ce__path">{file.path}</label>
+          <textarea
+            id={`${id}-f${i}`}
+            data-editor
+            data-path={file.path}
+            aria-label={fill(s.fileLabel, { path: file.path })}
+            spellcheck="false"
+            autocapitalize="off"
+            autocomplete="off"
+            wrap="off"
+            rows={Math.min(24, Math.max(6, file.content.split("\n").length + 1))}>{exact(file.content)}</textarea>
+        </div>
+      ))
+    }
+    <p class="u-ce__hint" id={`${id}-hint`}>{s.shortcut}</p>
+    <div class="u-ce__actions">
+      <button class="u-btn u-btn--sm" type="button" data-run disabled aria-describedby={`${id}-hint`}>{s.run}</button>
+      <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-reset>{s.reset}</button>
+    </div>
+    <div class="u-ce__confirm" data-reset-confirm hidden role="group" aria-label={s.reset}>
+      <p>{s.resetConfirm}</p>
+      <button class="u-btn u-btn--sm" type="button" data-reset-yes>{s.resetYes}</button>
+      <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-reset-keep>{s.resetKeep}</button>
+    </div>
+    <p class="u-ce__runner-status" data-runner-status role="status">{s.loading}</p>
+  </section>
+
+  <section class="u-ce__results" aria-labelledby={`${id}-results`}>
+    <h2 id={`${id}-results`}>{s.results}</h2>
+    <p class="u-ce__summary" data-summary role="status">{s.noResults}</p>
+    <ul class="u-ce__list" data-results></ul>
+    <details class="u-ce__output" data-output hidden>
+      <summary>{s.output}</summary>
+      <pre tabindex="0"></pre>
+    </details>
+    <p class="u-ce__saved" data-saved role="status"></p>
+    <p class="u-ce__note">{s.practiceNote}</p>
+    {attempts && attempts.count > 0 && <p class="u-ce__attempts">{fill(s.attempts, { n: attempts.count, best: attempts.best_score ?? 0 })}</p>}
+  </section>
+
+  <details class="u-ce__tests">
+    <summary>{s.tests}</summary>
+    <p>{s.testsHint}</p>
+    {
+      tests.map((file) => (
+        <div class="u-ce__test">
+          <h3>{file.path}</h3>
+          <pre tabindex="0"><code>{file.content}</code></pre>
+        </div>
+      ))
+    }
+  </details>
+
+  <iframe class="u-ce__runner" data-src={src} title={`${title}: ${s.loading}`} sandbox={SANDBOX_CODE} referrerpolicy="no-referrer" tabindex="-1" aria-hidden="true" hidden></iframe>
+  <p class="u-visually-hidden" aria-live="polite" data-live></p>
+</ulams-code-exercise>
+
+<script>
+  import "../elements/code-exercise.ts";
+</script>
+
+<style is:global>
+  ulams-code-exercise.u-ce {
+    display: grid;
+    /* a grid track is as wide as its widest content unless it may shrink: long lines of code must scroll inside their box */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+  ulams-code-exercise.u-ce > * {
+    min-width: 0;
+  }
+  .u-ce h2 {
+    font-size: 1.15rem;
+    margin: 0 0 8px;
+  }
+  .u-ce__file + .u-ce__file {
+    margin-top: 14px;
+  }
+  .u-ce__path {
+    display: block;
+    font-family: var(--ulams-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .u-ce textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 8rem;
+    padding: 10px 12px;
+    font-family: var(--ulams-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    tab-size: 2;
+    white-space: pre;
+    overflow: auto;
+    resize: vertical;
+    color: var(--ulams-color-text);
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+  }
+  .u-ce textarea:focus-visible,
+  .u-ce pre:focus-visible {
+    outline: 3px solid var(--ulams-color-primary-on-light, var(--ulams-color-primary));
+    outline-offset: 2px;
+  }
+  .u-ce__hint,
+  .u-ce__note,
+  .u-ce__attempts,
+  .u-ce__runner-status,
+  .u-ce__saved {
+    font-size: 0.875rem;
+    margin: 8px 0 0;
+  }
+  .u-ce__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .u-ce__actions .u-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .u-ce__confirm {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .u-ce__confirm[hidden] {
+    display: none;
+  }
+  .u-ce__confirm p {
+    flex-basis: 100%;
+    margin: 0;
+  }
+  /* the runner frame is never shown (some resets give iframes a display that beats the hidden attribute) */
+  ulams-code-exercise .u-ce__runner {
+    display: none;
+  }
+  ulams-code-exercise[runner="ready"] .u-ce__runner-status {
+    display: none;
+  }
+  .u-ce__summary {
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .u-ce__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .u-ce__line {
+    padding: 6px 10px;
+    border: 1px solid var(--ulams-color-border);
+    border-inline-start-width: 5px;
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-card-bg);
+    color: var(--ulams-color-text);
+    overflow-wrap: anywhere;
+  }
+  .u-ce__line--pass {
+    border-inline-start-color: var(--ulams-color-positive);
+  }
+  .u-ce__line--fail,
+  .u-ce__line--error {
+    border-inline-start-color: var(--ulams-color-error);
+  }
+  .u-ce__badge {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .u-ce__message,
+  .u-ce__output pre,
+  .u-ce__test pre {
+    margin: 6px 0 0;
+    padding: 8px 10px;
+    overflow: auto;
+    max-height: 18rem;
+    font-size: 0.8125rem;
+    background: var(--ulams-color-surface);
+    color: var(--ulams-color-text);
+    border-radius: var(--ulams-radius);
+    white-space: pre-wrap;
+  }
+  .u-ce__test pre {
+    white-space: pre;
+  }
+  .u-ce__test h3 {
+    font-family: var(--ulams-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 0.875rem;
+    margin: 12px 0 0;
+  }
+  .u-ce details > summary {
+    cursor: pointer;
+    font-weight: 600;
+    min-height: 32px;
+  }
+  @media (max-width: 720px) {
+    .u-ce textarea {
+      font-size: 0.8125rem;
+    }
+  }
+</style>

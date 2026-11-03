@@ -10,7 +10,7 @@ interface ProductablesSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/productables/attach",
+     *      path="/api/productables/attach", operationId="productables.attach.post",
      *      description="Attach productable to user",
      *      tags={"Products"},
      *      security={
@@ -37,9 +37,7 @@ interface ProductablesSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

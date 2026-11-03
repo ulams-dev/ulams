@@ -1,3 +1,10 @@
+# Caddy's own Prometheus metrics (served by the internal listener on :9180 at the end of this file)
+{
+	servers {
+		metrics
+	}
+}
+
 # Content origin (docs/content-origin.md): serves package files read-only, with a CSP of its own and
 # nothing else (no API, no cookies). Third-party SCORM/cmi5/Adapt/LiaScript JavaScript runs here,
 # never on the API, front or admin origins. Files come from the tenant API (GET /api/content/...),
@@ -6,7 +13,8 @@
 (content_origin) {
 	header {
 		# `?`: only when the API did not set one. The API sets the CSP of interactive packages itself,
-		# per version (ADR 0086); every other package type gets this one.
+		# per version (ADR 0086), and of the code exercises runner under /runtime/ (ADR 0170); every other
+		# package type gets this one.
 		?Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
 		Reporting-Endpoints `csp-endpoint="{args[1]}/api/csp-report"`
 		>X-Content-Type-Options nosniff
@@ -23,7 +31,7 @@
 
 	@package {
 		method GET HEAD
-		path /scorm/* /cmi5/* /adapt/* /liascript/* /interactive/*
+		path /scorm/* /cmi5/* /adapt/* /liascript/* /interactive/* /runtime/*
 	}
 	handle @package {
 		request_header -Cookie
@@ -67,7 +75,11 @@ http://storage.localhost {
     header >X-Content-Type-Options nosniff
     @svg path *.svg *.svgz
     header @svg Content-Security-Policy "script-src 'none'; sandbox"
-    reverse_proxy minio:9000
+    # Browsers only read here (uploads go through the API). The S3 port also serves the IAM API and every
+    # write, signed with the store's keys; none of that is reachable from outside (ADR 0041).
+    @writes not method GET HEAD OPTIONS
+    respond @writes 405
+    reverse_proxy storage:8333
 }
 
 # Tenant content origins: <slug>.content.localhost -> tenant API <slug>.localhost
@@ -78,18 +90,6 @@ http://*.content.localhost {
 # Platform content origin -> platform API
 http://content.localhost {
     import content_origin api.localhost http://api.localhost "http://app.localhost http://app.localhost:4321 http://admin.localhost http://localhost:3000 http://localhost:4321 http://localhost:8000"
-}
-
-http://minio.localhost {
-    reverse_proxy minio:9001
-}
-
-http://ws.localhost {
-    reverse_proxy soketi:6001
-}
-
-http://metrics.localhost {
-    reverse_proxy soketi:9601
 }
 
 http://*.admin.localhost {
@@ -161,6 +161,13 @@ http://*.localhost {
 
     # Provide Zstd and Gzip compression
     encode zstd gzip
+
+    # Never serve Prometheus metrics on a public host: the API's /metrics is for the internal listener below
+    # (docs/operators/monitoring). The PHP side also refuses requests that carry forwarding headers.
+    @metrics path /metrics
+    handle @metrics {
+        respond "Not found" 404
+    }
 
     # H5P core sends the access token as ?_token= on its AJAX calls (it cannot set
     # headers): keep it, the Authorization header and the internal token out of the log.
@@ -361,4 +368,24 @@ http://*.localhost {
     }
 }
 
-
+# Prometheus scrape targets (internal listener, not published; never add a `ports:` entry for it).
+# /metrics: Caddy's own request, latency and status metrics (enabled by `servers { metrics }`).
+# /php-metrics: the platform API's gauges (queues, failed jobs, heartbeats, tenants, AI usage), served only
+# to private addresses or with METRICS_TOKEN. Other services expose their own /metrics (h5p:8080, pdf:3000).
+http://:9180 {
+    handle /metrics {
+        metrics
+    }
+    handle /php-metrics {
+        rewrite * /metrics
+        reverse_proxy api:9000 {
+            header_up Host api.localhost
+            transport fastcgi {
+                env SCRIPT_FILENAME /var/www/html/index.php
+            }
+        }
+    }
+    handle {
+        respond "Not found" 404
+    }
+}

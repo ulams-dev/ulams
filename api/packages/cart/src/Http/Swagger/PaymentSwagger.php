@@ -11,7 +11,7 @@ interface PaymentSwagger
 {
     /**
      * @OA\Post(
-     *      path="/api/cart/pay",
+     *      path="/api/cart/pay", operationId="cart.pay.post",
      *      description="Pay for cart",
      *      tags={"Cart"},
      *      security={
@@ -70,9 +70,7 @@ interface PaymentSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -87,7 +85,7 @@ interface PaymentSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/product/{id}/pay",
+     *      path="/api/product/{id}/pay", operationId="product.by-id.pay.post",
      *      description="Pay for single product",
      *      tags={"Cart"},
      *      security={
@@ -155,9 +153,7 @@ interface PaymentSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=403,

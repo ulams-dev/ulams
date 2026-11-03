@@ -69,6 +69,9 @@ class UlamsTemplatesEmailServiceProvider extends ServiceProvider
         if (class_exists(\Ulams\LivingCourse\UlamsLivingCourseServiceProvider::class)) {
             $this->app->register(\Ulams\TemplatesEmail\Providers\LivingCourseTemplatesServiceProvider::class);
         }
+        if (class_exists(\Ulams\LearnerInsights\UlamsLearnerInsightsServiceProvider::class)) {
+            $this->app->register(\Ulams\TemplatesEmail\Providers\LearnerInsightsTemplatesServiceProvider::class);
+        }
         if (class_exists(\Ulams\CsvUsers\UlamsCsvUsersServiceProvider::class)) {
             $this->app->register(CsvUsersTemplatesServiceProvider::class);
         }

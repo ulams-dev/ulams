@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ulams.dev/schemas/ulams-ix/v1/envelope.json",
   "title": "ulams-ix envelope",
-  "description": "Every message: {\"ulams-ix\":1,\"type\":...,\"nonce\":...,...payload}. Messages over 16 KB are dropped.",
+  "description": "Every message: {\"ulams-ix\":1,\"type\":...,\"nonce\":...,...payload}. Messages over 16 KB are dropped (640 KB for loadExercise, run and runResult).",
   "type": "object",
   "required": [
     "ulams-ix",
@@ -28,7 +28,11 @@
         "complete",
         "score",
         "event",
-        "error"
+        "error",
+        "loadExercise",
+        "run",
+        "reset",
+        "runResult"
       ]
     },
     "nonce": {

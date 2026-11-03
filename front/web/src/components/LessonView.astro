@@ -1,0 +1,238 @@
+---
+/**
+ * "Lesson view": the learner's own presentation settings as a disclosure with a plain form (works without
+ * JavaScript: it posts to /learn/:course/presentation and comes back), and, when the tenant derives a
+ * suggestion, a short notice that says why the layout was adjusted with a one-click "Show the whole lesson".
+ * The panel and the notice are two pieces so the page can put the control in its header and the notice
+ * above the lesson. Strings come from the catalogue (EN, PL, ZH).
+ */
+import Icon from "@ulams/ui/components/Icon.astro";
+import WhyThis from "@ulams/ui/components/WhyThis.astro";
+import { uiStrings, type UiLocale } from "@ulams/ui/i18n";
+import type { PresentationState } from "@ulams/sdk";
+import { hasSuggestion } from "../lib/presentation.ts";
+
+interface Props {
+  state: PresentationState;
+  courseId: number;
+  locale: UiLocale;
+  /** Where the form returns to (the current page). */
+  next: string;
+  part: "control" | "notice";
+  /** The result of the last save, from the query string. */
+  saved?: "ok" | "failed" | null;
+}
+const { state, courseId, locale, next, part, saved = null } = Astro.props;
+const t = uiStrings(locale);
+const p = state.profile;
+const action = `/learn/${courseId}/presentation`;
+const lang = locale === "en" ? undefined : locale;
+const groups = [
+  { name: "density", legend: t.lessonViewDensity, options: [["comfortable", t.lessonViewComfortable], ["compact", t.lessonViewCompact]] },
+  { name: "chunking", legend: t.lessonViewChunking, options: [["whole", t.lessonViewWhole], ["steps", t.lessonViewSteps]] },
+  { name: "navigation", legend: t.lessonViewNavigation, options: [["overview", t.lessonViewOverview], ["linear", t.lessonViewLinear]] },
+  { name: "hints", legend: t.lessonViewHints, options: [["0", t.lessonViewHintsNone], ["1", "1"], ["2", "2"], ["3", "3"]] },
+] as const;
+const hasOverrides = Object.keys(state.overrides).length > 0;
+---
+
+{
+  part === "control" && (
+    <details class="u-lv" data-lesson-view lang={lang}>
+      <summary class="u-lv__summary">
+        <Icon name="eye" />
+        <span class="u-lv__label">{t.lessonViewTitle}</span>
+      </summary>
+      <form class="u-lv__panel" method="post" action={action}>
+        <p class="u-lv__help">{t.lessonViewHelp}</p>
+        {groups.map((group) => (
+          <fieldset class="u-lv__group">
+            <legend>{group.legend}</legend>
+            <div class="u-lv__options">
+              {group.options.map(([value, label]) => (
+                <label class="u-lv__option">
+                  <input type="radio" name={group.name} value={value} checked={String(p[group.name]) === value} />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+        <input type="hidden" name="next" value={next} />
+        <div class="u-lv__actions">
+          <button class="u-btn u-btn--sm" type="submit" name="action" value="save">{t.lessonViewSave}</button>
+          <button class="u-btn u-btn--ghost u-btn--sm" type="submit" name="action" value="reset">{t.lessonViewReset}</button>
+        </div>
+      </form>
+    </details>
+  )
+}
+
+{
+  part === "notice" && saved && (
+    <p class={saved === "ok" ? "u-lv__saved" : "u-lv__failed"} role={saved === "ok" ? "status" : "alert"} lang={lang}>
+      {saved === "ok" ? t.lessonViewSaved : t.lessonViewFailed}
+    </p>
+  )
+}
+
+{
+  part === "notice" && hasSuggestion(state) && (
+    <section class="u-lv-notice" aria-label={t.lessonViewTitle} lang={lang}>
+      {!hasOverrides ? (
+        <>
+          <p class="u-lv-notice__text">{t.lessonViewSuggested}</p>
+          {state.why.length > 0 && <WhyThis summary={t.lessonViewWhy} reasons={state.why} locale={locale} />}
+          {p.chunking === "steps" && (
+            <form method="post" action={action}>
+              <input type="hidden" name="next" value={next} />
+              <button class="u-btn u-btn--ghost u-btn--sm" type="submit" name="action" value="whole">{t.lessonViewShowWhole}</button>
+            </form>
+          )}
+        </>
+      ) : (
+        <>
+          <p class="u-lv-notice__text">{t.lessonViewYours}</p>
+          <form method="post" action={action}>
+            <input type="hidden" name="next" value={next} />
+            <button class="u-btn u-btn--ghost u-btn--sm" type="submit" name="action" value="reset">{t.lessonViewReset}</button>
+          </form>
+        </>
+      )}
+    </section>
+  )
+}
+
+<style>
+  .u-lv {
+    position: relative;
+  }
+  .u-lv__summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+  .u-lv__summary::-webkit-details-marker {
+    display: none;
+  }
+  .u-lv__summary:hover {
+    border-color: var(--ulams-color-primary);
+  }
+  .u-lv__summary:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-lv[open] > .u-lv__summary {
+    border-color: var(--ulams-color-primary);
+  }
+  .u-lv__panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 40;
+    display: grid;
+    gap: 14px;
+    width: min(26rem, calc(100vw - 32px));
+    max-height: calc(100dvh - 90px);
+    overflow-y: auto;
+    padding: 16px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-bg);
+    box-shadow: var(--ulams-shadow-hover);
+  }
+  .u-lv__help {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-lv__saved,
+  .u-lv__failed,
+  .u-lv-notice {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-lv__failed {
+    border-color: var(--ulams-color-error);
+  }
+  .u-lv__group {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .u-lv__group legend {
+    padding: 0;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .u-lv__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .u-lv__option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 6px 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    cursor: pointer;
+  }
+  .u-lv__option input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: var(--ulams-color-primary);
+  }
+  .u-lv__option:has(input:checked) {
+    border-color: var(--ulams-color-primary);
+    box-shadow: inset 0 0 0 1px var(--ulams-color-primary);
+  }
+  .u-lv__option:has(input:focus-visible) {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-lv__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .u-lv-notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+  }
+  .u-lv-notice__text {
+    margin: 0;
+    font-weight: 600;
+  }
+  @media (max-width: 520px) {
+    .u-lv__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .u-lv__summary {
+      width: 44px;
+      justify-content: center;
+      padding: 0;
+    }
+  }
+</style>

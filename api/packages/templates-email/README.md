@@ -2,7 +2,6 @@
 
 Package for email notifications with editable templates (for important user-related events)
 
-
 ## Purpose
 
 This package allows you to create email notifications for events emitted in Laravel app.
@@ -34,12 +33,31 @@ Each notification is created as a class describing available variables that can 
 2. To render MJML you need to either:
     - install `mjml` npm package and configure path to executable binary in this package config `binary_path` key
     - register to MJML API and configure api id & secret in this package config file
+    - calls to the MJML HTTP service (`MJML_API_URL`) use a connect timeout of `MJML_CONNECT_TIMEOUT` (5 s) and a total timeout of `MJML_TIMEOUT` (20 s), do not follow redirects, and log or raise the error list the service returns
+
+### Draft preview and test send
+
+`POST /api/admin/templates/email/render` renders an unsaved draft (`event`, `title`, `content`, optional
+`sample_overrides`) with the `mockedVariables()` of the event's variable class and returns
+`{title, html, errors, missing_variables, warnings}`. `POST /api/admin/templates/email/test-send` does the same and
+sends the e-mail (subject prefixed `[Test]`) only to the signed-in user. Both need `template_update`, are throttled
+(30 and 5 per minute per user) and store nothing. `errors` are the MJML errors of the render service; `warnings` come
+from `Ulams\TemplatesEmail\Accessibility\EmailA11yChecker` (missing image alt, no `lang`, no `<title>`, links without
+text, layout tables without `role="presentation"`, low contrast of inline colours) and never fail the request.
+Content is treated as MJML when it contains a `<mjml>` element, with or without attributes (`<mjml lang="en">`).
+
+### Variable values are escaped
+
+Variable values are HTML-escaped when they are put into the `contentHtml` section, so a user named
+`<script>` cannot inject markup. The subject (a text section) receives the raw value. A variable that
+is intentionally HTML (a link or button block, a table) must be returned from
+`variablesFromEvent()` as an `Illuminate\Support\HtmlString` (any `Htmlable`); it is inserted as is,
+so build it from escaped parts (Blade `{{ }}` or `e()`). Markdown global settings are marked this way
+by `SettingsVariables::getHtmlSettingsValues()`.
 
 ## Tests
 
 Run `./vendor/bin/phpunit --filter 'Ulams\\TemplatesEmail\\Tests'` to run tests. See [tests](https://github.com/EscolaLMS/Templates-Email/tree/main/tests) folder as it contains a basic implementation of Variable (or Template description) class with minimal customisation - a quite good starting point for creating your own.
-
-Test details [![codecov](https://codecov.io/gh/Ulams/Templates-Email/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/Ulams/Templates-Email) [![Tests PHPUnit in environments](https://github.com/EscolaLMS/Templates-Email/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Templates-Email/actions/workflows/test.yml)
 
 ## Permissions
 

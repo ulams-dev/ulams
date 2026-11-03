@@ -35,6 +35,7 @@ export const FORMAT_BY_KIND: Record<TopicKind, Format | undefined> = {
   scorm: "scorm",
   liascript: "interactive",
   interactive: "interactive",
+  code_exercise: "interactive",
   layout: "interactive",
   lti: "interactive",
   cmi5: "tracked",
@@ -112,6 +113,8 @@ export interface CourseModel {
   previewHref: string;
   image?: ImageModel;
   durationLabel?: string;
+  /** `hours_to_complete` of the course, for the localized facts. */
+  hours?: number;
   lessonCount: number;
   topicCount: number;
   /** "6 lessons · 18 topics · ~9 h · 6 lessons" style summary from the API numbers. */
@@ -122,6 +125,9 @@ export interface CourseModel {
   tutors: PersonModel[];
   facts: Array<{ label: string; value: string; note?: string }>;
   price?: string;
+  /** Price in minor units and its currency, only when the course has a price above zero (for structured data). */
+  priceMinor?: number;
+  currency?: string;
   testimonials: Array<{ quote: string; author: string }>;
   faq: Array<{ q: string; a: string }>;
   /** String lists from the landing fields (e.g. for_parents) as `{title}` items. */
@@ -345,6 +351,7 @@ export function courseModel(course: Course, currency = "EUR", tutors: UserSummar
     previewHref: preview ? links.topic(course.id, preview.id) : links.learn(course.id),
     image: imageFromUrl(course.image_url ?? course.poster_url, course.title),
     durationLabel: clean(course.duration),
+    ...(course.hours_to_complete ? { hours: Number(course.hours_to_complete) } : {}),
     lessonCount: lessons.length,
     topicCount: topics.length,
     lessonsLabel: [`${lessons.length} lessons`, `${topics.length} topics`, minutes ? `about ${Math.round(minutes / 60)} h of material` : ""]
@@ -356,6 +363,7 @@ export function courseModel(course: Course, currency = "EUR", tutors: UserSummar
     tutors: people,
     facts,
     price,
+    ...(course.product && course.product.price > 0 ? { priceMinor: course.product.price, currency } : {}),
     testimonials: pairs<{ quote: string; author: string }>(landing.testimonials, ["quote", "author"]),
     faq: pairs<{ q: string; a: string }>(landing.faq, ["q", "a"]),
     lists: stringLists(landing),

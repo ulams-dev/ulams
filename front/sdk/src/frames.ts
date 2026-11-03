@@ -47,6 +47,15 @@ export const SANDBOX_THIRD_PARTY = [...BASE, "allow-same-origin", "allow-modals"
  */
 export const SANDBOX_INTERACTIVE = ["allow-scripts", "allow-popups", "allow-popups-to-escape-sandbox"].join(" ");
 
+/**
+ * The code exercise runner (ADR 0170): a page on the tenant content origin that bundles and runs the
+ * learner's code. Scripts only: an opaque origin (no `allow-same-origin`), no popups, forms, modals or
+ * downloads. It talks to the lesson page only through `ulams-ix` and holds no token. It embeds a second
+ * frame, with the same policy, for each run of the tests, and its content security policy (set by the API)
+ * lets only the runner's own files load.
+ */
+export const SANDBOX_CODE = "allow-scripts";
+
 /** The strictest policy for frames that can run without their own origin (opaque origin). */
 export const SANDBOX_OPAQUE = [...BASE, "allow-modals", "allow-presentation"].join(" ");
 

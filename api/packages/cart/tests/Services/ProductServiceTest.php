@@ -97,7 +97,7 @@ class ProductServiceTest extends TestCase
     {
         $this->productService->registerProductableClass(ExampleProductable::class);
         $this->assertContains(ExampleProductable::class, $this->productService->listRegisteredProductableClasses());
-        $this->assertArrayHasKey(ExampleProductable::getMorphClassStatic(), $this->productService->listRegisteredMorphClasses());
+        $this->assertArrayHasKey(\Ulams\Core\Support\MorphMap::classOf(ExampleProductable::getMorphClassStatic()), $this->productService->listRegisteredMorphClasses());
     }
 
     private function assertHasProductsUsers(Product $product, User $user, ?Carbon $endDate = null): void

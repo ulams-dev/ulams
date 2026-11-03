@@ -44,7 +44,7 @@ Verified by a read-only survey of an MD2 account on 2026-10-09:
 | OS | FreeBSD 14.3 |
 | Limits | 4 GB memory, **70 processes**, 3000 open files, no disk quota shown (MD2 is 50 GB) |
 | PHP | 5.6 to 8.5; `php84` has `pdo_pgsql`, `redis`, `imagick`, `gd`, `intl`, `zip`, `bcmath`, `sodium`, `pcntl`, `posix`, `apcu`, `mbstring`, OPcache, `exif`; `disable_functions` empty |
-| PostgreSQL | 16.10 on a shared server, databases made with `devil pgsql`. ulams targets 12 to 17 and uses nothing version-specific, and a full migration on a fresh PostgreSQL 16.15 passes; the whole test suite has not been run on 16 |
+| PostgreSQL | 16.10 on a shared server, databases made with `devil pgsql`. ulams runs on 17 everywhere else and uses nothing version-specific, and a full migration on a fresh PostgreSQL 16.15 passes; the whole test suite has not been run on 16 |
 | Node | 16 to 26, default 22.22 (the services need 22.12 or later) |
 | Tools | `redis-server`, `ffmpeg`, `ffprobe`, `screen`, `tmux`, `flock`, `rsync`, `git`, `curl`, `pg_dump` |
 | Network | outbound HTTPS to the Anthropic API works |
@@ -186,5 +186,5 @@ The runbook was run on a real account (2026-10-09; `deploy/mydevil/STAGING-NOTES
 - Database names are cut at 16 characters including the account prefix: use `TENANCY_DATABASE=<prefix>_u_{slug}`.
 - The cache is `CACHE_DRIVER=file` (there is no `cache` table).
 - The `/h5p/*` path of every API host is a Cloudflare Worker route to the H5P site (a MyDevil host is PHP or Node).
-- Sharp has no FreeBSD binary: build the Astro front with `ULAMS_IMAGE_SERVICE=noop` so `/_image` returns the original.
+- Sharp has no FreeBSD binary, so `ULAMS_IMAGE_SERVICE=astro` cannot work here. Behind a proxied Cloudflare zone use `ULAMS_IMAGE_SERVICE=cloudflare` (images become `/cdn-cgi/image/...` URLs; check each host first with `sh bin/check-images.sh <host>`), otherwise `noop` (originals). The admin takes its mode from `runtime-config.json` (`bin/set-admin-images.sh`), and the optional WAF rule, the storage Worker cache header and the free-plan budget are described in [Image service](/operators/image-service/).
 - The tenant bucket is created by hand in R2 when the server token is limited to the staging buckets.

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Ulams\Core\Enums\UserRole;
 use Ulams\Settings\Models\Setting;
+use Ulams\Settings\Support\DefaultLanguage;
 use Ulams\Tenancy\Support\TenantContext;
 
 /**
@@ -22,6 +23,7 @@ class SeedTenantDemoCommand extends Command
         {--name= : Display name, stored as global.companyName}
         {--theme= : Front theme preset key, stored as theme.theme}
         {--accent= : Accent colour, stored as theme.accent}
+        {--language= : Default language of the account pages and of courses without one (en, pl or zh), stored as global.language; without it an existing value is kept, else en}
         {--front-url= : Stored as global.frontURL}
         {--email-domain= : Domain of the demo e-mail addresses}';
 
@@ -33,6 +35,13 @@ class SeedTenantDemoCommand extends Command
     {
         if (TenantContext::isPlatform()) {
             $this->error('This command seeds a tenant: run it with --domain=<tenant host>.');
+
+            return self::FAILURE;
+        }
+
+        $language = $this->option('language');
+        if ($language !== null && !in_array($language, DefaultLanguage::VALUES, true)) {
+            $this->error('--language must be one of: ' . implode(', ', DefaultLanguage::VALUES) . '.');
 
             return self::FAILURE;
         }
@@ -51,6 +60,11 @@ class SeedTenantDemoCommand extends Command
             $this->setting('global', 'companyName', $this->option('name'));
         } elseif (!Setting::query()->where(['group' => 'global', 'key' => 'companyName'])->exists()) {
             $this->setting('global', 'companyName', (string) config('app.name'));
+        }
+        if ($language !== null) {
+            $this->setting(DefaultLanguage::GROUP, DefaultLanguage::KEY, $language);
+        } elseif (!Setting::query()->where(['group' => DefaultLanguage::GROUP, 'key' => DefaultLanguage::KEY])->exists()) {
+            $this->setting(DefaultLanguage::GROUP, DefaultLanguage::KEY, 'en');
         }
         if ($this->option('front-url')) {
             $this->setting('global', 'frontURL', $this->option('front-url'));

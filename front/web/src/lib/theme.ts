@@ -1,25 +1,21 @@
 import type { ThemeName } from "@ulams/ui/registry";
+import { PLATFORM_THEME, TENANT_THEMES, themeColorOf } from "@ulams/ui/theme/presets.ts";
 
 /** Themes a tenant can use ("platform" is the product site's own theme, never a tenant's). */
 export type TenantTheme = Exclude<ThemeName, "platform">;
 
 /** Tenant theme from settings (`theme.theme`), else the slug when it names a preset. */
 export function themeFor(settingsTheme: unknown, slug: string): TenantTheme {
-  const known: TenantTheme[] = ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"];
-  if (typeof settingsTheme === "string" && (known as string[]).includes(settingsTheme)) return settingsTheme as TenantTheme;
-  if ((known as string[]).includes(slug)) return slug as TenantTheme;
+  const known: readonly string[] = TENANT_THEMES;
+  if (typeof settingsTheme === "string" && known.includes(settingsTheme)) return settingsTheme as TenantTheme;
+  if (known.includes(slug)) return slug as TenantTheme;
   return "coffee";
 }
 
-/** Browser chrome colour per theme. */
+/** Browser chrome colour per theme, from the shared preset list. */
 export const THEME_COLOR: Record<ThemeName, string> = {
-  coffee: "#f6f1e9",
-  oncall: "#0b0f14",
-  nightsky: "#13153a",
-  gravity: "#05070f",
-  poland: "#f4efe6",
-  ulam: "#f7f3e8",
-  platform: "#fafaf9",
+  ...(Object.fromEntries(TENANT_THEMES.map((name) => [name, themeColorOf(name)])) as Record<TenantTheme, string>),
+  platform: PLATFORM_THEME.themeColor,
 };
 
 export const DEMO_TENANTS: Array<{ slug: string; name: string }> = [

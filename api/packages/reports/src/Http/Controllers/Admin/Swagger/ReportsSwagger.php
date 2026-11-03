@@ -10,7 +10,7 @@ interface ReportsSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/reports/metrics",
+     *     path="/api/admin/reports/metrics", operationId="admin.reports.metrics.get",
      *     summary="Get list of available metrics",
      *     description="",
      *     tags={"Admin Reports"},
@@ -33,7 +33,7 @@ interface ReportsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/reports/report",
+     *     path="/api/admin/reports/report", operationId="admin.reports.report.get",
      *     summary="Get list of available metrics",
      *     description="",
      *     tags={"Admin Reports"},
@@ -83,7 +83,7 @@ interface ReportsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/reports/available-for-user",
+     *     path="/api/admin/reports/available-for-user", operationId="admin.reports.available-for-user.get",
      *     summary="Get list of available metrics for logged user",
      *     description="",
      *     tags={"Admin Reports"},

@@ -1,0 +1,24 @@
+{
+  "_comment": "The content security policies of the runner's two pages (ADR 0170). The single source: RunnerHeaders sends them, front/code-runner and the Playwright mock content origin read the same file. {ancestors} is replaced with the origins that may frame the runner (the tenant's front and admin). exec.html has no frame-ancestors on purpose: the runner frames it and the runner is sandboxed, an opaque origin that no frame-ancestors source can match (not even 'self'), so any restriction would block it; the page has no network and an opaque origin, and runs only code that arrives with the nonce in its URL fragment.",
+  "runner": [
+    "default-src 'none'",
+    "script-src 'self' 'wasm-unsafe-eval'",
+    "connect-src 'self'",
+    "frame-src 'self'",
+    "frame-ancestors {ancestors}",
+    "form-action 'none'",
+    "base-uri 'none'",
+    "object-src 'none'",
+    "sandbox allow-scripts"
+  ],
+  "exec": [
+    "default-src 'none'",
+    "script-src 'self' blob:",
+    "worker-src blob:",
+    "form-action 'none'",
+    "base-uri 'none'",
+    "object-src 'none'",
+    "sandbox allow-scripts"
+  ],
+  "other": "default-src 'none'; sandbox"
+}

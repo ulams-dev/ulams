@@ -15,7 +15,7 @@ interface H5PContentAdminApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/h5p/contents",
+     *      path="/api/admin/h5p/contents", operationId="admin.h5p.contents.get",
      *      summary="List H5P contents with the number of topics using each",
      *      tags={"Admin H5P"},
      *      description="Needs h5p_list, or h5p_author_list (then only own contents are listed).",
@@ -50,7 +50,7 @@ interface H5PContentAdminApiSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/h5p/unused",
+     *      path="/api/admin/h5p/unused", operationId="admin.h5p.unused.delete",
      *      summary="Delete H5P contents that no topic uses",
      *      tags={"Admin H5P"},
      *      description="Needs h5p_delete. Deletes through the H5P service (content files, user states, results).",

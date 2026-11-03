@@ -1,7 +1,9 @@
 import { defineMiddleware } from "astro:middleware";
+import { umamiEnabled } from "@ulams/ui/analytics";
 import { config } from "./lib/config.ts";
 import { isPlatformHost, tenantForHost } from "./lib/tenant.ts";
-import { getFrameOrigins, warm } from "./lib/data.ts";
+import { getFrameOrigins, getSettings, warm } from "./lib/data.ts";
+import { tenantLogo } from "./lib/tenant-logo.ts";
 import { contentOriginFor, cspHeaders, wantsCsp } from "./lib/csp.ts";
 import { ensureSession, readSession } from "./lib/session.ts";
 import { H5P_ROUTE } from "./lib/h5p-proxy.ts";
@@ -12,6 +14,7 @@ import { isSecureRequest } from "./lib/cookies.ts";
 import { authorCookieName, authorToken } from "./lib/studio.ts";
 import { PREVIEW_HEADERS, isPreviewPath } from "./lib/preview.ts";
 import { CLI_HEADERS, isCliPath } from "./lib/cli-authorize.ts";
+import { SOCIAL_HEADERS, isSocialPath } from "./lib/social-login.ts";
 
 let warmed = false;
 function warmOnce(): void {
@@ -24,7 +27,8 @@ function warmOnce(): void {
   warm(tenants);
 }
 
-const SESSION_ROUTES = /^\/(learn|bff|account)(\/|$)/;
+// the placement check (CV-5) is a learner action like the lessons: it starts the demo session too
+const SESSION_ROUTES = /^\/((learn|bff|account)(\/|$)|courses\/\d+\/placement\/?$)/;
 const STUDIO_ROUTES = /^\/studio(\/|$)/;
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -76,11 +80,21 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // CSP: the tool origins are cached (5 min), asked for while the page renders
   const csp = wantsCsp(url.pathname, null) && !url.pathname.startsWith("/_") ? (locals.tenant ? getFrameOrigins(locals.tenant) : Promise.resolve([] as string[])) : null;
 
+  // The tenant's logo for the site header: cached public settings, never a reason to hold the page up
+  if (csp && locals.tenant) {
+    const tenant = locals.tenant;
+    locals.tenantLogo = await Promise.race([
+      getSettings(tenant).then((settings) => tenantLogo(settings)).catch(() => null),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 900)),
+    ]);
+  }
+
   const response = await next();
   if (csp && wantsCsp(url.pathname, response.headers.get("content-type"))) {
     const headers = cspHeaders(
       {
         tenant: locals.tenant,
+        analytics: umamiEnabled(host),
         toolOrigins: await csp,
         contentOrigin: locals.tenant ? contentOriginFor(config.contentOrigin, locals.tenant.slug) : null,
         storageOrigins: config.storageOrigins,
@@ -97,6 +111,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (isCliPath(url.pathname)) {
     // device-login approval: never cached, never framed, the code never leaves through Referer
     for (const [name, value] of Object.entries(CLI_HEADERS)) response.headers.set(name, value);
+  }
+  if (isSocialPath(url.pathname)) {
+    // the callback URL carries a one-time code: never cached, never passed on in a Referer
+    for (const [name, value] of Object.entries(SOCIAL_HEADERS)) response.headers.set(name, value);
   }
   if (!response.headers.has("Cache-Control") && (response.headers.get("content-type") ?? "").includes("text/html")) {
     response.headers.set("Cache-Control", "private, no-cache");

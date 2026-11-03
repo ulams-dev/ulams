@@ -1,13 +1,21 @@
 ---
+import { ctaEvent } from "../lib/analytics.ts";
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 import Logo from "../brand/Logo.astro";
+import ObfuscatedMail from "./ObfuscatedMail.astro";
+import NewTabMark from "./NewTabMark.astro";
+import { linkTarget } from "../lib/links.ts";
 
 interface Props {
   brand: string;
   text?: string;
   links?: Array<{ label: string; href: string }>;
   note?: string;
+  mail?: boolean;
 }
-const { brand, text, links = [], note } = Astro.props;
+const { brand, text, links = [], note, mail = false } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
+const [builtPre = "", builtPost = ""] = t.footerBuiltOn.split("{link}");
 ---
 
 <footer class="u-footer">
@@ -15,14 +23,15 @@ const { brand, text, links = [], note } = Astro.props;
     <div class="u-footer__brand">
       <p class="u-footer__name">{brand}</p>
       {text && <p class="u-footer__text">{text}</p>}
+      {mail && <p class="u-footer__mail"><ObfuscatedMail label={t.mailLabel} /></p>}
     </div>
     {
       links.length > 0 && (
-        <nav aria-label="Footer">
+        <nav aria-label={t.navFooter}>
           <ul role="list">
             {links.map((link) => (
               <li>
-                <a href={link.href}>{link.label}</a>
+                <a href={link.href} {...linkTarget(link.href)} data-umami-event={ctaEvent(link.href)}>{link.label}<NewTabMark href={link.href} /></a>
               </li>
             ))}
           </ul>
@@ -33,7 +42,7 @@ const { brand, text, links = [], note } = Astro.props;
   <div class="u-container u-footer__base">
     <p>{note ?? `© ${new Date().getFullYear()} ${brand}`}</p>
     <p class="u-footer__powered">
-      Built on <a href="https://github.com/ulams-dev"><Logo variant="symbol" mono />ulams</a>, the open headless LMS.
+      {builtPre}<a href="https://github.com/ulams-dev" {...linkTarget("https://github.com/ulams-dev")}><Logo variant="symbol" mono />ulams<NewTabMark href="https://github.com/ulams-dev" /></a>{builtPost}
     </p>
   </div>
 </footer>
@@ -60,6 +69,19 @@ const { brand, text, links = [], note } = Astro.props;
     margin-top: 10px;
     max-width: 44ch;
     color: var(--ulams-color-muted);
+  }
+  .u-footer__mail {
+    margin-top: 14px;
+  }
+  .u-footer__mail :global(a) {
+    color: var(--ulams-color-text);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .u-footer__mail :global(a:hover) {
+    color: var(--ulams-color-primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
   .u-footer nav ul {
     list-style: none;

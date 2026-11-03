@@ -9,7 +9,7 @@ interface HealthCheckSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/health-check",
+     *     path="/api/health-check", operationId="health-check.get",
      *     summary="Check health of the application",
      *     tags={"Api"},
      *     @OA\Response(

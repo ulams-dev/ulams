@@ -9,6 +9,7 @@ use Ulams\CourseBuilder\Models\Fragment;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Source;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\Llm;
 
@@ -94,8 +95,10 @@ final class Surfaces
         $this->emit($session, $run, 'interview', 'interview', $components);
     }
 
+    /** A variant's outline is the same card against the base outline, with its own kind so the studio shows only those after the apply. */
     public function outline(Session $session, ?Run $run, Version $version, ?array $previous = null, string $status = 'proposed', ?string $comment = null): void
     {
+        $kind = $version->variant_id !== null ? 'variant_outline' : 'outline';
         $doc = $version->document;
         $fragments = self::labels($doc);
         $changes = $previous !== null ? BlueprintDiff::compare($previous, $doc) : [];
@@ -116,6 +119,8 @@ final class Surfaces
             return $out;
         };
         $stats = Blueprint::stats($doc);
+        $registry = app(\Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry::class);
+        $formats = $status === 'proposed' ? array_values(array_map(fn ($t) => ['value' => $t->key(), 'label' => $t->label(), 'description' => $t->description()], $registry->enabled())) : [];
         $removed = [];
         foreach ($changes as $c) {
             if ($c['kind'] === 'removed' && in_array($c['type'], ['module', 'lesson'], true)) {
@@ -148,6 +153,7 @@ final class Surfaces
                         'change' => $mark($l['id']),
                         'objectives' => array_map($objective, $l['objectives'] ?? []),
                         'citations' => $cite($l['citations'] ?? []),
+                        'format' => $l['contentType'] ?? 'richtext',
                     ], fn ($v) => $v !== null);
                     foreach ($byId[$l['id']]['fields'] ?? [] as $f) {
                         if ($f['field'] === 'title' && is_string($f['before'])) {
@@ -159,10 +165,11 @@ final class Surfaces
                 }, $m['lessons']),
             ], fn ($v) => $v !== null), $doc['modules']),
             'removed' => $removed,
+            'formats' => count($formats) > 1 ? $formats : null,
             'comment' => $comment,
         ], fn ($v) => $v !== null);
 
-        $this->emit($session, $run, "outline-{$version->id}", 'outline', [['id' => 'root', 'component' => 'OutlineDiff'] + $props], ['versionId' => $version->id]);
+        $this->emit($session, $run, "outline-{$version->id}", $kind, [['id' => 'root', 'component' => 'OutlineDiff'] + $props], ['versionId' => $version->id]);
         if ($status !== 'proposed') {
             $this->close($session, "outline-{$version->id}");
         }
@@ -171,7 +178,7 @@ final class Surfaces
     /** @param array<string,mixed> $props GenerationProgress props */
     public function progress(Session $session, Run $run, array $props): void
     {
-        $this->emit($session, $run, "progress-{$run->id}", 'progress', [['id' => 'root', 'component' => 'GenerationProgress'] + $props], ['runId' => $run->id]);
+        $this->emit($session, $run, "progress-{$run->id}", isset($run->input['variantId']) ? 'variant_progress' : 'progress', [['id' => 'root', 'component' => 'GenerationProgress'] + $props], ['runId' => $run->id]);
     }
 
     /** @param array<string,mixed> $plan ApplySummary props without versionId/status */
@@ -190,6 +197,62 @@ final class Surfaces
     }
 
     /**
+     * A variant of the course for review (ADR 0192): what differs from the base course, by id with the existing builder
+     * diff, as counts of lessons kept, changed, added and removed and the changed text, with the cost of the variant.
+     */
+    public function variantReview(Session $session, ?Run $run, Variant $variant, Version $version, ?Version $base, string $status = 'proposed'): void
+    {
+        $changes = $base !== null ? BlueprintDiff::compare($base->document, $version->document) : [];
+        $lessonsNow = array_column(array_map(fn ($i) => $i['lesson'], iterator_to_array(Blueprint::lessons($version->document), false)), 'id');
+        $lessonsBase = $base !== null ? array_column(array_map(fn ($i) => $i['lesson'], iterator_to_array(Blueprint::lessons($base->document), false)), 'id') : [];
+        $added = array_values(array_diff($lessonsNow, $lessonsBase));
+        $removed = array_values(array_diff($lessonsBase, $lessonsNow));
+        $changed = [];
+        foreach ($changes as $c) {
+            foreach (array_filter([...$c['ancestors'], $c['type'] === 'lesson' ? $c['id'] : null]) as $id) {
+                if (in_array($id, $lessonsNow, true) && in_array($id, $lessonsBase, true)) {
+                    $changed[$id] = true;
+                }
+            }
+        }
+        $rows = [];
+        foreach ($changes as $c) {
+            foreach ($c['fields'] as $f) {
+                if (!is_scalar($f['before'] ?? '') || !is_scalar($f['after'] ?? '')) {
+                    continue;
+                }
+                $rows[] = array_filter([
+                    'path' => $c['id'] . '.' . $f['field'],
+                    'label' => $c['label'] . ' · ' . $f['label'],
+                    'kind' => $c['kind'],
+                    'before' => $f['before'] !== null ? mb_substr(self::scalar($f['before']), 0, 20000) : null,
+                    'after' => $f['after'] !== null ? mb_substr(self::scalar($f['after']), 0, 20000) : null,
+                ], fn ($v) => $v !== null);
+            }
+        }
+        $cost = (int) \Ulams\Ai\Models\AiCall::query()->forSubject(Variant::SUBJECT_TYPE, $variant->id)->sum('cost_micro_usd');
+        $fragments = self::labels($version->document);
+        $props = array_filter([
+            'versionId' => $version->id,
+            'variantKey' => $variant->key,
+            'label' => $variant->label,
+            'level' => $variant->level,
+            'role' => $variant->role,
+            'status' => $status,
+            'baseNumber' => $base?->number,
+            'summary' => ['lessons' => count($lessonsNow), 'kept' => count($lessonsNow) - count($added) - count($changed), 'changed' => count($changed), 'added' => count($added), 'removed' => count($removed), 'citations' => count($fragments)],
+            'changes' => array_slice($rows, 0, 150),
+            'truncated' => count($rows) > 150 ? count($rows) - 150 : null,
+            'costMicroUsd' => $cost,
+            'courseId' => $variant->course_id,
+        ], fn ($v) => $v !== null);
+        $this->emit($session, $run, "variant-{$version->id}", 'variant', [['id' => 'root', 'component' => 'VariantReview'] + $props], ['versionId' => $version->id, 'variantId' => $variant->id]);
+        if ($status !== 'proposed') {
+            $this->close($session, "variant-{$version->id}");
+        }
+    }
+
+    /**
      * Proposed element change: always a DiffView (the approval surface); the model may ask for a
      * preview card of the new element next to it (validated against the catalogue).
      */
@@ -198,19 +261,7 @@ final class Surfaces
         $doc = $version->document;
         $parent = $version->parent?->document ?? [];
         $fragments = self::labels($doc);
-        $changes = BlueprintDiff::forElement(BlueprintDiff::compare($parent, $doc), $elementId);
-        $rows = [];
-        foreach ($changes as $c) {
-            foreach ($c['fields'] as $f) {
-                $rows[] = array_filter([
-                    'path' => $c['id'] . '.' . $f['field'],
-                    'label' => $c['label'] . ' · ' . $f['label'],
-                    'kind' => $c['kind'] === 'changed' ? 'changed' : $c['kind'],
-                    'before' => is_scalar($f['before']) ? mb_substr(self::scalar($f['before']), 0, 20000) : null,
-                    'after' => is_scalar($f['after']) ? mb_substr(self::scalar($f['after']), 0, 20000) : null,
-                ], fn ($v) => $v !== null);
-            }
-        }
+        $rows = self::changeRows($doc, $parent, $elementId);
         $element = Blueprint::find($doc, $elementId);
         $cited = $element ? array_values(array_unique(array_filter(Blueprint::citations($element['node'])))) : [];
         $components = [
@@ -225,6 +276,58 @@ final class Surfaces
         $this->emit($session, $run, "patch-{$version->id}", 'patch', $components, ['versionId' => $version->id, 'elementId' => $elementId]);
         if ($status !== 'proposed') {
             $this->close($session, "patch-{$version->id}");
+        }
+    }
+
+    /** @return array<int,array<string,string>> DiffView rows for one element between two documents */
+    private static function changeRows(array $doc, array $parent, string $elementId): array
+    {
+        $rows = [];
+        foreach (BlueprintDiff::forElement(BlueprintDiff::compare($parent, $doc), $elementId) as $c) {
+            foreach ($c['fields'] as $f) {
+                $rows[] = array_filter([
+                    'path' => $c['id'] . '.' . $f['field'],
+                    'label' => $c['label'] . ' · ' . $f['label'],
+                    'kind' => $c['kind'] === 'changed' ? 'changed' : $c['kind'],
+                    'before' => is_scalar($f['before']) ? mb_substr(self::scalar($f['before']), 0, 20000) : null,
+                    'after' => is_scalar($f['after']) ? mb_substr(self::scalar($f['after']), 0, 20000) : null,
+                ], fn ($v) => $v !== null);
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * "Give me options": the proposals of one variant group side by side.
+     *
+     * @param array<int,array{version:Version,reply:string}> $made
+     */
+    public function variants(Session $session, ?Run $run, string $group, string $elementId, string $label, string $instruction, array $made, string $status): void
+    {
+        $fragments = [];
+        foreach ($made as $m) {
+            $fragments += self::labels($m['version']->document);
+        }
+        $variants = [];
+        foreach ($made as $i => $m) {
+            /** @var Version $v */
+            $v = $m['version'];
+            $element = Blueprint::find($v->document, $elementId);
+            $cited = $element ? array_values(array_unique(Blueprint::citations($element['node']))) : [];
+            $variants[] = array_filter([
+                'versionId' => $v->id,
+                'label' => 'Option ' . chr(65 + $i),
+                'reply' => $m['reply'] !== '' ? mb_substr($m['reply'], 0, 1000) : null,
+                'status' => $v->status,
+                'changes' => array_slice(self::changeRows($v->document, $v->parent?->document ?? [], $elementId), 0, 40),
+                'citations' => array_map(fn ($id) => ['fragmentId' => $id, 'label' => $fragments[$id] ?? $id], array_slice($cited, 0, 10)),
+            ], fn ($x) => $x !== null);
+        }
+        $this->emit($session, $run, "variants-{$group}", 'variants', [['id' => 'root', 'component' => 'VariantComparison', 'group' => $group, 'elementId' => $elementId,
+            'elementLabel' => mb_substr($label, 0, 200), 'instruction' => mb_substr($instruction, 0, 1000), 'status' => $status, 'variants' => $variants]], ['group' => $group, 'elementId' => $elementId]);
+        if ($status !== 'proposed') {
+            $this->close($session, "variants-{$group}");
         }
     }
 

@@ -10,7 +10,7 @@ interface DeviceTokenControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/notifications/tokens",
+     *      path="/api/notifications/tokens", operationId="notifications.tokens.post",
      *      summary="Store a newly notification device token",
      *      tags={"Notification Device Tokens"},
      *      description="Store Notification Device Token",

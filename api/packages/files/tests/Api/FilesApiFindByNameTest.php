@@ -42,14 +42,14 @@ class FilesApiFindByNameTest extends TestCase
         $response->assertJsonFragment(['data' => [
             [
                 'name' => $file->getClientOriginalName(),
-                'created_at' => date(DATE_RFC3339, $file->getCTime()),
+                'created_at' => $this->storedAt($directory1.'/'.$file->getClientOriginalName()),
                 'mime' => $file->getMimeType(),
                 'url' => $path1.'/'.$file->getClientOriginalName(),
                 'isDir' => false
             ],
             [
                 'name' => $file->getClientOriginalName(),
-                'created_at' => date(DATE_RFC3339, $file->getCTime()),
+                'created_at' => $this->storedAt($directory2.'/'.$file->getClientOriginalName()),
                 'mime' => $file->getMimeType(),
                 'url' => $path2.'/'.$file->getClientOriginalName(),
                 'isDir' => false
@@ -86,14 +86,14 @@ class FilesApiFindByNameTest extends TestCase
         $response->assertJsonFragment(['data' => [
             [
                 'name' => $filename,
-                'created_at' => date(DATE_RFC3339, $file->getCTime()),
+                'created_at' => $this->storedAt($directory1.'/'.$file->getClientOriginalName()),
                 'mime' => $file->getMimeType(),
                 'url' => $path1.'/'.$file->getClientOriginalName(),
                 'isDir' => false
             ],
             [
                 'name' => $filename,
-                'created_at' => date(DATE_RFC3339, $file->getCTime()),
+                'created_at' => $this->storedAt($directory2.'/'.$file->getClientOriginalName()),
                 'mime' => $file->getMimeType(),
                 'url' => $path2.'/'.$file->getClientOriginalName(),
                 'isDir' => false

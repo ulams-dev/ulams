@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Services;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Cart\Contracts\Productable;
 use Ulams\Cart\Dtos\PageDto;
 use Ulams\Cart\Dtos\ProductSearchMyCriteriaDto;
@@ -58,6 +59,10 @@ class ProductService implements ProductServiceContract
 
     public function isProductableClassRegistered(string $productableClass): bool
     {
+        $productableClass = MorphMap::classOf($productableClass);
+        if (!class_exists($productableClass)) {
+            return false;
+        }
         if (in_array($productableClass, $this->productables)) {
             return true;
         }
@@ -71,9 +76,15 @@ class ProductService implements ProductServiceContract
         return $this->productables;
     }
 
+    /** @return array<string, class-string> the class name behind each registered morph alias => the registered productable class */
     public function listRegisteredMorphClasses(): array
     {
-        return $this->productablesMorphs;
+        $classes = [];
+        foreach ($this->productablesMorphs as $morph => $productable) {
+            $classes[MorphMap::classOf($morph)] = $productable;
+        }
+
+        return $classes;
     }
 
     public function listAllProductables(): Collection
@@ -104,7 +115,7 @@ class ProductService implements ProductServiceContract
 
             $resultsCollection = $productables->map(function ($row) use ($productableClass, $morphClass) {
                 $row->productable_type = $productableClass;
-                $row->morph_class = $morphClass;
+                $row->morph_class = MorphMap::classOf($morphClass);
                 return $row;
             });
 
@@ -125,6 +136,7 @@ class ProductService implements ProductServiceContract
 
     public function canonicalProductableClass(string $productableClass): ?string
     {
+        $productableClass = MorphMap::classOf($productableClass);
         if (in_array($productableClass, $this->productables)) {
             return $productableClass;
         }
@@ -199,7 +211,7 @@ class ProductService implements ProductServiceContract
         }
 
         if (!is_null($searchDto->getProductableType())) {
-            $class = $searchDto->getProductableType();
+            $class = MorphMap::classOf($searchDto->getProductableType());
             /** @var Model $model */
             $model = new $class();
             if (!is_null($searchDto->getProductableId())) {

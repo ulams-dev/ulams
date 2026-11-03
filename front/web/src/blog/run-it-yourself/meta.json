@@ -1,0 +1,83 @@
+{
+  "slug": "run-it-yourself",
+  "date": "2026-10-15",
+  "series": true,
+  "en": {
+    "title": "Run it yourself: ulams stack up",
+    "description": "A CLI launcher starts the API, admin panel, Studio and learner interface with one command, and writes the passwords to a file.",
+    "tags": [
+      "Self-hosting",
+      "CLI"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "In the clip: the requirements from the docs, ulams 0.2.0, the plan printed by ulams stack up --dry-run (port 8480), and the On-Call academy at the end. The full image download is not shown and the credentials file is not displayed."
+    },
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "cli",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The plan printed by ulams stack up --dry-run: ports, mode, where credentials go.",
+        "caption": "The plan printed by ulams stack up --dry-run: ports, mode, where credentials go."
+      },
+      {
+        "name": "docs",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The guide: one-command Docker and Kubernetes.",
+        "caption": "The guide: one-command Docker and Kubernetes."
+      },
+      {
+        "name": "academy",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The first academy, On-Call, once the stack is up.",
+        "caption": "The first academy, On-Call, once the stack is up."
+      }
+    ]
+  },
+  "pl": {
+    "title": "Uruchom to sam: ulams stack up",
+    "description": "Launcher CLI uruchamia API, panel administratora, Studio i interfejs ucznia jedną komendą, a hasła zapisuje do pliku.",
+    "tags": [
+      "Własny hosting",
+      "CLI"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "W filmie: wymagania z dokumentacji, ulams 0.2.0, plan wypisany przez ulams stack up --dry-run (port 8480) i akademia On-Call na końcu. Pełne pobieranie obrazów nie jest pokazane, a plik z danymi logowania nie jest wyświetlany."
+    },
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "cli",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Plan wypisany przez ulams stack up --dry-run: porty, tryb, gdzie trafiają dane logowania.",
+        "caption": "Plan wypisany przez ulams stack up --dry-run: porty, tryb, gdzie trafiają dane logowania."
+      },
+      {
+        "name": "docs",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Przewodnik: Docker i Kubernetes jedną komendą.",
+        "caption": "Przewodnik: Docker i Kubernetes jedną komendą."
+      },
+      {
+        "name": "academy",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Pierwsza akademia, On-Call, gdy stos już działa.",
+        "caption": "Pierwsza akademia, On-Call, gdy stos już działa."
+      }
+    ]
+  }
+}

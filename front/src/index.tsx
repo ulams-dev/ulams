@@ -12,6 +12,7 @@ declare global {
   interface Window {
     VITE_APP_API_URL: string;
     VITE_APP_URL: string;
+    VITE_APP_ULAMS_DOCS_URL?: string;
     VITE_APP_FIREBASE_VAPID_KEY: string;
     VITE_APP_FIREBASE_APIKEY: string;
     VITE_APP_FIREBASE_AUTHDOMAIN: string;
@@ -23,6 +24,9 @@ declare global {
     VITE_APP_ANDROID_APIKEY: string;
     VITE_APP_PUBLIC_IMG_URL: string;
     VITE_APP_PUBLIC_IMG_BUCKET_FOLDER: string;
+    VITE_ULAMS_IMAGE_SERVICE: string;
+    VITE_ULAMS_IMAGE_SOURCES: string;
+    VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN: string;
   }
 }
 

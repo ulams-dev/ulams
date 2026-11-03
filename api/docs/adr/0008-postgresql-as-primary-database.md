@@ -19,7 +19,7 @@ PostgreSQL became the de-facto and then only tested engine.
 
 - From the first commit CI ran both MySQL and Postgres suites (`f13ad63e` "mysql & postgres
   rtests"); MySQL was replaced with MariaDB 10.5 in CI (`7ddeb79c`, 2021-12-23).
-- `.env.example` and `docker-compose.yml` default to `DB_CONNECTION=pgsql` / `postgres:12`;
+- `.env.example` and `docker-compose.yml` default to `DB_CONNECTION=pgsql` / `postgres:12` (moved to `postgres:17.11-alpine` in 2026-10, ADR 0040);
   the multi-domain tooling creates per-tenant Postgres databases (`DB_ROOT_HOST=postgres`).
 - 2025-01-08 `3dc533be` commented out the `phpunit-mysql-php81` job; active CI jobs are only
   `phpunit-postgres-php82/83/84`.
@@ -38,4 +38,4 @@ Remaining MySQL traces: `phpunit-cc.yml` and `swagger.yml` still start MariaDB/M
   `a657ee49` 2021-03-03 "mysql/posgres docker update" — `api/docker/envs/.env.ci.{mysql,postgres}`.
 - `7ddeb79c` 2021-12-23 "replacing mysql with mariadb" — `api/.github/workflows/*.yml`.
 - `3dc533be` 2025-01-08 "8.3 alpine" — `api/.github/workflows/phpunit-tests.yml`.
-- `api/.env.example` (`DB_CONNECTION=pgsql`), `api/docker-compose.yml` (`postgres:12`).
+- `api/.env.example` (`DB_CONNECTION=pgsql`), `api/docker-compose.yml` (`postgres:12`, now `postgres:17.11-alpine`).

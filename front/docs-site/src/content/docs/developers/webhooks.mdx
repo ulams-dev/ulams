@@ -1,13 +1,13 @@
 ---
 title: Webhooks
-description: The inbound webhooks the API accepts (Living Course Git pushes, Stripe, Jitsi recordings), how each one is authenticated, their status codes, and the fact that there are no outgoing webhooks yet.
+description: The inbound webhooks the API accepts (Living Course Git pushes, Stripe, Jitsi recordings), how each one is authenticated, their status codes, and a pointer to the outgoing webhooks.
 sidebar:
   order: 8
 ---
 
 The API **receives** three kinds of webhook. All are public routes (no `Authorization` header): the
-signature or shared secret is the credential, and the request is rejected without it. There is **no
-outgoing webhook mechanism** today; see [Events and listeners](/extending/events-and-listeners/#webhooks).
+signature or shared secret is the credential, and the request is rejected without it. Webhooks the API
+**sends** are a separate feature, see [Outgoing webhooks](/developers/outgoing-webhooks/).
 The commerce package has a provider contract for verified order events (`CommerceProvider`) but
 registers no webhook route.
 

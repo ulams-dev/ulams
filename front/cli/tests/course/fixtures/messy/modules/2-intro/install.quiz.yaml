@@ -1,0 +1,10 @@
+questions:
+  - type: single
+    stem: Which command prints the client version?
+    explanation: The client flag skips the server call.
+    origin: author
+    options:
+      - text: kubectl version --client
+        correct: true
+      - text: kubectl get version
+      - text: kube --v

@@ -10,7 +10,7 @@ interface LoginSwagger
 {
     /**
      * @OA\Post(
-     *      path="/api/auth/login",
+     *      path="/api/auth/login", operationId="auth.login.post",
      *      description="User login",
      *      tags={"Auth"},
      *      @OA\Parameter(
@@ -39,9 +39,7 @@ interface LoginSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -56,7 +54,7 @@ interface LoginSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/auth/impersonate",
+     *      path="/api/auth/impersonate", operationId="auth.impersonate.post",
      *      description="User impersonate",
      *      tags={"Auth"},
      *      @OA\Parameter(
@@ -70,9 +68,7 @@ interface LoginSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson"),
      *      ),
      *      @OA\Response(
      *          response=422,

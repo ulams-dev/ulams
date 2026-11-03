@@ -2,6 +2,7 @@
 
 namespace Ulams\ModelFields\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -36,6 +37,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Field extends Model
 {
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['class_type'];
+
     protected $table = 'model_fields_values';
 
     protected $casts = [

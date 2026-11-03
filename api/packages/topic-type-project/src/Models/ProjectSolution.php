@@ -2,6 +2,7 @@
 
 namespace Ulams\TopicTypeProject\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Auth\Models\User;
 use Ulams\Courses\Models\Topic;
 use Ulams\TopicTypeProject\Database\Factories\ProjectSolutionFactory;
@@ -31,6 +32,7 @@ use Illuminate\Support\Carbon;
  */
 class ProjectSolution extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
 
     protected $table = 'topic_project_solutions';

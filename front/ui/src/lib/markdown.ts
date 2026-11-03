@@ -3,12 +3,9 @@
  * raw HTML in the source is escaped, links and images must use safe schemes, and math
  * ($$…$$ and $…$) is rendered by KaTeX as MathML (no client CSS or fonts needed).
  */
-import { Marked, type Tokens } from "marked";
+import { Marked } from "marked";
 import katex from "katex";
-import { isSafeHref } from "../schema.ts";
-
-const escapeHtml = (s: string): string =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+import { baseRenderer, escapeHtml } from "./markdown-basic.ts";
 
 const math = (tex: string, displayMode: boolean): string => {
   try {
@@ -46,30 +43,7 @@ const marked = new Marked({
       renderer: (token) => math((token as unknown as { text: string }).text, false),
     },
   ],
-  renderer: {
-    html: (token: Tokens.HTML | Tokens.Tag) => escapeHtml(token.text),
-    link(token: Tokens.Link) {
-      const text = this.parser.parseInline(token.tokens);
-      if (!isSafeHref(token.href)) return text;
-      const external = /^https?:\/\//i.test(token.href);
-      const title = token.title ? ` title="${escapeHtml(token.title)}"` : "";
-      return `<a href="${escapeHtml(token.href)}"${title}${external ? ' rel="noopener noreferrer" target="_blank"' : ""}>${text}</a>`;
-    },
-    image(token: Tokens.Image) {
-      if (!isSafeHref(token.href)) return escapeHtml(token.text);
-      return `<img src="${escapeHtml(token.href)}" alt="${escapeHtml(token.text)}" loading="lazy" decoding="async">`;
-    },
-    code(token: Tokens.Code) {
-      return `<pre tabindex="0"><code>${escapeHtml(token.text)}</code></pre>\n`;
-    },
-    table(token: Tokens.Table) {
-      const head = token.header.map((cell) => `<th scope="col"${cell.align ? ` style="text-align:${cell.align}"` : ""}>${this.parser.parseInline(cell.tokens)}</th>`).join("");
-      const rows = token.rows
-        .map((row) => `<tr>${row.map((cell) => `<td${cell.align ? ` style="text-align:${cell.align}"` : ""}>${this.parser.parseInline(cell.tokens)}</td>`).join("")}</tr>`)
-        .join("");
-      return `<div class="u-table" tabindex="0" role="region" aria-label="Table"><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
-    },
-  },
+  renderer: baseRenderer,
 });
 
 /** Renders untrusted Markdown to safe HTML. */
@@ -83,4 +57,62 @@ export function stripLeadingTitle(source: string, title: string): string {
   const match = source.match(/^\s*#\s+(.+)\n/);
   if (match && match[1]!.trim().toLowerCase() === title.trim().toLowerCase()) return source.slice(match[0].length);
   return source;
+}
+
+export interface MarkdownSection {
+  /** The heading as plain text (inline Markdown marks removed). */
+  heading: string;
+  level: 2 | 3;
+  /** The section body as Markdown, without its own heading line; deeper headings stay inside. */
+  body: string;
+}
+
+export interface MarkdownSections {
+  /** Text before the first split heading. */
+  intro: string;
+  sections: MarkdownSection[];
+}
+
+const plainHeading = (raw: string): string =>
+  raw
+    .replace(/\s+#+\s*$/, "")
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/[`*_~]/g, "")
+    .trim();
+
+/**
+ * Splits Markdown at its H2 headings (at H3 when there are fewer than two H2s) so a lesson can be shown
+ * one part at a time. Only an ATX heading at the start of a line counts: a `#` inside a fenced code block,
+ * a list item, a block quote or an indented code block never splits. Returns no sections when there are
+ * fewer than two, because one part is the whole lesson.
+ */
+export function splitMarkdownSections(source: string | null | undefined): MarkdownSections {
+  const text = source ?? "";
+  const lines = text.split("\n");
+  const heads: Array<{ line: number; level: 2 | 3; text: string }> = [];
+  let fence: { char: string; size: number } | null = null;
+  lines.forEach((line, i) => {
+    const open = /^ {0,3}(`{3,}|~{3,})/.exec(line);
+    if (fence) {
+      const close = /^ {0,3}(`{3,}|~{3,})\s*$/.exec(line);
+      if (close && close[1]![0] === fence.char && close[1]!.length >= fence.size) fence = null;
+      return;
+    }
+    if (open) {
+      fence = { char: open[1]![0]!, size: open[1]!.length };
+      return;
+    }
+    const match = /^(#{2,3})[ \t]+(\S.*)$/.exec(line);
+    if (match) heads.push({ line: i, level: match[1]!.length as 2 | 3, text: match[2]! });
+  });
+  const level: 2 | 3 | null = heads.filter((h) => h.level === 2).length >= 2 ? 2 : heads.filter((h) => h.level === 3).length >= 2 ? 3 : null;
+  if (level === null) return { intro: text, sections: [] };
+  // an H3 inside an H2 section stays in it when the split is at H2; at H3 the (single) H2s are plain text
+  const cuts = heads.filter((h) => h.level === level);
+  const sections = cuts.map((cut, k) => ({
+    heading: plainHeading(cut.text),
+    level,
+    body: lines.slice(cut.line + 1, cuts[k + 1]?.line ?? lines.length).join("\n").trim(),
+  }));
+  return { intro: lines.slice(0, cuts[0]!.line).join("\n").trim(), sections };
 }

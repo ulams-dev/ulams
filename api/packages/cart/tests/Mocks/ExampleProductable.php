@@ -24,18 +24,8 @@ class ExampleProductable extends ExampleProductableBase implements Productable
         $this->users()->detach($user->getKey());
     }
 
-    public function getMorphClass()
-    {
-        return ExampleProductableBase::class;
-    }
-
     protected static function newFactory(): ExampleProductableFactory
     {
         return ExampleProductableFactory::new();
-    }
-
-    public static function getMorphClassStatic(): string
-    {
-        return parent::class;
     }
 }

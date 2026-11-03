@@ -1,0 +1,57 @@
+<mjml>
+  <mj-head>
+    <mj-breakpoint width="520px"></mj-breakpoint>
+    <mj-html-attributes
+      ><mj-selector path=".x"
+        ><mj-html-attribute name="data-a">1</mj-html-attribute></mj-selector
+      ></mj-html-attributes
+    >
+  </mj-head>
+  <mj-body width="560px">
+    <mj-raw
+      >><!--[if mso]><table><tr><td><!
+    [endif]--></mj-raw>
+    <mj-wrapper padding="8px" background-color="#fafafa">
+      <mj-section>
+        <mj-group>
+          <mj-column width="40%"
+            ><mj-text>Line one<br />Line two &amp; &copy;</mj-text></mj-column
+          >
+          <mj-column width="60%"
+            ><mj-divider border-color="#ccc"></mj-divider><mj-spacer height="8px"></mj-spacer
+          ></mj-column>
+        </mj-group>
+      </mj-section>
+      <mj-section>
+        <mj-column>
+          <mj-table
+            ><tr>
+              <th>Course</th>
+              <th>Due</th>
+            </tr>
+            <tr>
+              <td>@VarCourseTitle</td>
+              <td>@VarDueDate</td>
+            </tr></mj-table
+          >
+          <mj-social
+            ><mj-social-element name="github" href="https://github.com"
+              >Git</mj-social-element
+            ></mj-social
+          >
+          <mj-accordion
+            ><mj-accordion-element
+              ><mj-accordion-title>Q</mj-accordion-title
+              ><mj-accordion-text>A</mj-accordion-text></mj-accordion-element
+            ></mj-accordion
+          >
+          <mj-navbar><mj-navbar-link href="/a">A</mj-navbar-link></mj-navbar>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-hero background-url="https://example.com/h.jpg" background-height="120px"
+      ><mj-text>Hero</mj-text></mj-hero
+    >
+    <mj-raw>><!--[if mso]></td></tr></table><![endif]--></mj-raw</mj-raw>
+  </mj-body>
+</mjml>

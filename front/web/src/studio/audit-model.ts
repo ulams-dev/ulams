@@ -21,10 +21,12 @@ export const ACTION_LABEL: Record<string, string> = {
   "proposal.superseded": "Proposal replaced by a newer one",
   "proposal.rejected": "Update proposal rejected",
   "proposal.applied": "Update applied",
+  "proposal.reopened": "Update proposal reopened",
   "item.accepted": "Change accepted",
   "item.rejected": "Change rejected",
   "item.regenerated": "New version requested",
   "item.reset": "Decision taken back",
+  "item.lesson_suggested": "New lesson suggested",
   "progress.rules_applied": "Learner progress rules applied",
   "notice.created": "Learner notices created",
 };

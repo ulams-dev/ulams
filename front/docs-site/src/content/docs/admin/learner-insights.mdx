@@ -1,0 +1,118 @@
+---
+title: Learner Insights settings
+description: Turn on learner insights for a tenant, tune the struggling and at-risk rules, choose privacy and retention settings and backfill existing data.
+sidebar:
+  order: 27
+modules:
+  - learner-insights
+---
+
+Learner Insights records what learners do in a course as small, structured signals and scores them with transparent rules into two statuses: **struggling** (with an element, such as a quiz question) and **at risk** (of dropping out). Every status carries the reasons in plain language. Later steps of the personalisation phase add nudges, personal help and author analytics. This page covers the signal stream and the rules. It adds no admin route yet: it is configured with settings, one set of permissions and a few commands. Signals and statuses are never sent to an AI provider, and a status never affects grades, access or certificates.
+
+## Turn it on
+
+The module ships with the API and is always loaded, but it is **off for every tenant** until you switch it on. After an upgrade run once per tenant:
+
+```bash
+php artisan migrate --force
+php artisan db:seed --class="Ulams\\LearnerInsights\\Database\\Seeders\\LearnerInsightsPermissionSeeder" --force
+php artisan learner-insights:backfill --dry-run   # how many signals existing data would give
+```
+
+Switch it on with the tenant setting `learner_insights.enabled` (`POST /api/admin/config`, or `LEARNER_INSIGHTS_ENABLED=true` for the whole installation). The seeder creates the permissions `learner_insights_view`, `learner_insights_view_individuals` and `learner_insights_manage` and gives them to the `admin` role. Tutors get none of them by default.
+
+## What is recorded
+
+| Signal | From |
+|---|---|
+| `course.started`, `course.completed` | enrolment progress events |
+| `topic.opened`, `topic.progressed`, `topic.completed` | progress saves (time spent as seconds, never page content) |
+| `quiz.attempt_started`, `quiz.attempt_finished`, `quiz.answer` | GIFT quizzes (score ratio and whether the answer was fully correct, never the answer text) |
+| `code.attempt_finished` | a run of a [code exercise](/creators/code-exercises/): the attempt number and whether it passed, never the code (counted by the failed-attempts rule like quiz attempts) |
+| `scorm.status` | SCORM completion |
+| `h5p.result` | H5P results (the scaled score and the verb, never the xAPI statement) |
+| `media.replayed`, `media.seeked_back` | the video and audio players |
+| `session.login` | sign-in |
+
+Each signal belongs to a learner, usually a course and an element: the element of the Course Builder blueprint when the course was built with it, otherwise the topic or question id. There is no free text in any signal.
+
+## The rules
+
+All values are defaults; change them per tenant with the settings `learner_insights.rules.<rule>.<parameter>` (`POST /api/admin/config`) and per course with `PUT /api/admin/learner-insights/courses/{course}/settings` (permission `learner_insights_manage`), for example `{"rules": {"inactivity": {"inactive_days": 5}}}`.
+
+| Rule | Fires when | Result | Defaults |
+|---|---|---|---|
+| `inactivity` | no activity in the course for `inactive_days` | learner **at risk** | 7 days; `struggling_elements_at_risk` = 3 struggling elements plus 3 inactive days is also at risk |
+| `failed_attempts` | the same question answered wrongly `failed_answers` times since the last correct answer, or `failed_quiz_attempts` failed attempts of one quiz since the last pass | element **struggling** | 2 and 2 |
+| `slow_element` | time on an element is more than `slow_factor` times the cohort median (cohort of at least `min_cohort` learners who finished it) | element **struggling** | 3 times, cohort 10 |
+| `abandoned_element` | an element was opened `abandoned_days` ago, not finished, while the learner worked on other parts | element **struggling** | 5 days |
+| `repetition` | `replays` replays or seeks back in media, or `revisits` revisits of a finished topic within 7 days | low weight: only counts together with another rule | 3 and 3 |
+
+A finished course is always on track. A struggling element returns to on track when the learner passes or finishes it. Statuses change only on transitions: the events `LearnerStruggling`, `LearnerAtRisk` and `LearnerRecovered` fire once per transition, never on a repeated evaluation. The first evaluation follows new signals within about a minute (one evaluation per learner and course per minute); the nightly `learner-insights:evaluate` covers the rules that depend on time passing, and `learner-insights:cohort-stats` computes the medians.
+
+## Personal help
+
+For courses built with the [Course Builder](/admin/course-builder/), a learner who is struggling with an element gets short extra help: an explanation and a practice question, or an explanation and a worked example. It is written from the sources the course cites, shown with those sources, an "AI-generated" label and the reason it was offered, and checked before it is shown: a claim the sources do not support means nothing is shown. Help is cached per difficulty and per version of the element, so most learners cost nothing, and it is retired when an author changes the element. AI must be configured (`AI_DRIVER`); without it nothing is generated and the rest of Learner Insights works as before. Learners can say "helpful" or "not helpful", hide a piece of help, or switch it off for a course or entirely. Learners can also paste their own explanation of the idea and get feedback (the text is sent to the AI provider and not stored). What reaches the provider is described in [data flows and DPIA](/operators/dpia-learner-insights/).
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `LEARNER_INSIGHTS_REMEDIATION_ENABLED` | `true` | Tenant switch for personal help (the module itself must be on) |
+| `LEARNER_INSIGHTS_REMEDIATION_PER_LEARNER_DAY` | `3` | New generations per learner per day |
+| `LEARNER_INSIGHTS_REFLECTIONS_PER_DAY` | `5` | Feedback requests on a learner's own explanation per day |
+| `LEARNER_INSIGHTS_MONTHLY_USD` | `20` | Monthly AI spend of personal help for the tenant |
+| `LEARNER_INSIGHTS_COURSE_MONTHLY_USD` | `5` | Monthly AI spend of personal help for one course |
+| `LEARNER_INSIGHTS_EVAL_MONTHLY_USD` | `5` | Monthly cap of `learner-insights:eval --live`, see [evals](/developers/learner-evals/) |
+| `AI_TASK_REMEDIATION_PROFILE`, `AI_TASK_REFLECTION_PROFILE` | `default`, `light` | Model profiles of the two tasks |
+
+### Measuring whether the help works
+
+A recovery rate alone does not prove that the help worked. `LEARNER_INSIGHTS_REMEDIATION_HOLDOUT_PERCENT` (default `0`, off) keeps that share of learners (the same learners every time) out of personal help, while their progress is still measured. Compare the recovery of both groups before you claim a benefit; ask your learners' representatives or data protection officer before switching it on, because some learners then get no help on purpose.
+
+## Adaptive interface
+
+With `learner_insights.adaptive_interface` on (default off), the reference frontend asks `GET /api/learner-insights/courses/{course}/presentation` and shows lessons in steps with hints for a learner who has struggled with several parts, keeps the outline linear for a learner at risk, and uses a compact layout for a learner who moves through the course quickly. The answer says why, and the learner can switch any choice back (for example "show the whole lesson"). No AI is involved.
+
+## Reminders
+
+An at-risk learner gets one reminder per course per 7 days and at most two per week in total, in the app and by e-mail, with the reason and a link to the next unfinished topic. Each suppressed reminder is logged with its reason. After 14 days the reminder counts as recovered (the learner finished a topic or passed a quiz again) or not recovered. Switch reminders off for the tenant with `learner_insights.nudges.enabled`; learners switch them off in their settings.
+
+## Analytics for authors and admins
+
+`GET /api/admin/learner-insights/courses/{course}/summary` gives the per-course picture: how many learners are enrolled, active and finished, quiz scores and pass rate, how many learners are on track, struggling or at risk, and what reminders and personal help achieved. `.../elements` lists the sections that confuse people, ranked by the share of their learners who struggled, with the reasons and the share who recovered. Both accept `period=7|30|90` days. They are open to holders of the permission `learner_insights_view` (admins) and to the authors of the course.
+
+Nothing is shown for a group smaller than `LEARNER_INSIGHTS_MIN_GROUP_SIZE` (default 10): the API answers `smallGroup` or `hidden` instead of numbers, so a screen cannot leak a single learner. Names are available only through `.../learners` (struggling and at-risk learners with their reasons) and `/learners/{user}/courses/{course}/timeline`, which need the permission `learner_insights_view_individuals`. Authors of a course may use `.../learners` only when the tenant setting `learner_insights.instructors_see_individuals` is on (default off). `POST /api/admin/learner-insights/backfill` queues the backfill. Authors read the same aggregates on the course's Insights page in the studio, described in [See where learners struggle](/creators/course-insights/); the **Insights** tab of a course in the admin summarises it and links to it.
+
+## Privacy controls
+
+| Control | Effect |
+|---|---|
+| `learner_insights.enabled` (tenant) | Nothing is recorded while it is off |
+| `learner_insights.require_consent` (tenant) | Nothing is recorded for a learner until the user setting `insights.consent` exists |
+| `insights.enabled` = false (user setting) | The learner opted out: nothing is recorded about them |
+| `learner_insights.retention.signals_days` (tenant, default 180) | Older signals are deleted by the daily `learner-insights:prune` |
+
+## Environment variables
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `LEARNER_INSIGHTS_ENABLED` | `false` | Master switch for the installation (the tenant setting overrides it) |
+| `LEARNER_INSIGHTS_REQUIRE_CONSENT` | `false` | Consent mode |
+| `LEARNER_INSIGHTS_QUEUE_CONNECTION`, `LEARNER_INSIGHTS_QUEUE` | default queue | Where signals are recorded and statuses evaluated |
+| `LEARNER_INSIGHTS_AI_QUEUE_CONNECTION`, `LEARNER_INSIGHTS_AI_QUEUE` | the Course Builder queue | Where personal help is generated (the long queue with a `retry_after` above the job timeout, see [queues and scheduler](/operators/queues-and-scheduler/)) |
+| `LEARNER_INSIGHTS_RETENTION_SIGNALS_DAYS` | `180` | Retention window |
+| `LEARNER_INSIGHTS_CLIENT_SIGNALS_PER_MINUTE` | `60` | Rate limit of the player endpoint, per learner |
+| `LEARNER_INSIGHTS_EVALUATE_DEBOUNCE_SECONDS` | `60` | One evaluation per learner and course in this window |
+| `LEARNER_INSIGHTS_MIN_GROUP_SIZE` | `10` | Smallest group an aggregate may describe |
+| `LEARNER_INSIGHTS_INSTRUCTORS_SEE_INDIVIDUALS` | `false` | Whether course authors may list individual statuses |
+
+## Commands
+
+```bash
+php artisan learner-insights:backfill --course=1     # build signals from existing progress, enrolments and quiz data (idempotent, --dry-run, --since=)
+php artisan learner-insights:timeline --user=42 --course=1   # one learner's journey with element labels (support)
+php artisan learner-insights:prune                   # runs daily at 02:40 per tenant
+php artisan learner-insights:cohort-stats            # runs daily at 03:00 per tenant
+php artisan learner-insights:evaluate                # runs daily at 03:30 per tenant (--course=)
+```
+
+Progress and SCORM keep only their latest state, so backfilled history is coarse. The backfill respects the module switch, opt-outs and the retention window.

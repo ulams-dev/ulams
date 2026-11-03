@@ -1,0 +1,43 @@
+---
+import { pageLocale, uiStrings } from "../lib/i18n.ts";
+
+interface Props {
+  items: Array<{ label: string; href?: string }>;
+  label?: string;
+  locale?: string;
+  id?: string;
+}
+const { items, label, locale, id } = Astro.props;
+const t = uiStrings(locale ?? pageLocale(Astro));
+const hash = [...items.map((i) => i.label).join("|")].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0, 7).toString(36);
+const headingId = `u-cite-${id ?? hash}-title`;
+---
+
+<section class="u-cite" id={id} aria-labelledby={headingId}>
+  <h4 class="u-cite__title" id={headingId}>{label ?? t.supportSources}</h4>
+  <ul class="u-cite__list">
+    {items.map((item) => <li>{item.href ? <a href={item.href}>{item.label}</a> : item.label}</li>)}
+  </ul>
+</section>
+
+<style>
+  .u-cite {
+    display: grid;
+    gap: 0.3em;
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted, inherit);
+  }
+  .u-cite__title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--ulams-color-header);
+  }
+  .u-cite__list {
+    padding-left: 1.2em;
+    overflow-wrap: anywhere;
+  }
+  .u-cite__list a {
+    color: var(--ulams-color-primary-on-light);
+    text-underline-offset: 3px;
+  }
+</style>

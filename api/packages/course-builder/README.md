@@ -18,7 +18,16 @@ Upload ─▶ IngestRun: Source Document + fragments (frg_… ids from the headi
        ─▶ GenerateRun: lessons ▸ grounding ▸ quizzes + final test ▸ metadata ▸ content version (resumable steps)
        ─▶ apply proposal ── author approves ─▶ ApplyRun: course, lessons, topics, GIFT questions, landing page
        ─▶ element chat: patch version as a DiffView ── approve ─▶ re-apply of the changed elements; undo/redo/restore
+       ─▶ variants (ADR 0192): after the first apply, one VariantPlan per audience of the brief (light model, fragment index)
+          ── author approves each outline ─▶ GenerateRun for the lessons that changed ─▶ VariantReview (diff against the base)
+          ── author approves ─▶ ApplyRun into the variant's own course, registered as a family in `course-variants`
 ```
+
+Variants (level and role, `variant_id` on versions and the entity map, `course_builder_variants`) are branches of the session:
+they share its sources and citations, keep the base element ids, and log every model call against the variant
+(`subject_type = course_builder_variant`). The entity map has a global scope on the base branch, so every reader that predates
+variants (Living Course, Tutor, Learner Insights) still means the base course; the branch-aware code reads
+`EntityMapEntry::branch($sessionId, $variantId)`. Cap: `COURSE_BUILDER_MAX_VARIANTS` (default 6).
 
 Everything the browser sees is an AG-UI event (`GET …/sessions/{id}/events`, SSE with resume); the
 interactive cards are A2UI v0.9 surfaces from the `@ulams/ui` builder catalogue, built by code from

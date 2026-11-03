@@ -35,6 +35,10 @@ echo "== 1. Moodle (platform) launches ulams (tool), ulams sends the grade back 
 step "Moodle: register ulams as an external tool"
 $MOODLE_EXEC env ULAMS_URL=http://ulams.test:18000 ULAMS_COURSE_ID="$COURSE_ID" "$MOODLE_PHP" /conformance/moodle-setup.php setup > "$WORK/moodle.json"
 cat "$WORK/moodle.json"
+# The setup runs as root through docker exec and may create cache and session files in moodledata that
+# the web server (another user) can then neither read nor write: every page then answers 500 or
+# rejects the login. Give moodledata back to its owner.
+$MOODLE_EXEC sh -c 'owner=$(stat -c %U /bitnami/moodledata) && chown -R "$owner" /bitnami/moodledata' || true
 ulams platform "$(cat "$WORK/moodle.json")"
 done_
 step "Browser: Moodle student opens the activity"

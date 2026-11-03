@@ -2,7 +2,7 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist/**", ".astro/**", "node_modules/**", "test-results/**", "playwright-report/**"] },
+  { ignores: ["dist/**", ".astro/**", "node_modules/**", "test-results/**", "playwright-report/**", "src/embed/**"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -11,7 +11,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["tests/perf/**/*.mjs", "tests/fixtures/**/*.mjs", "*.mjs"],
+    files: ["tests/perf/**/*.mjs", "tests/fixtures/**/*.mjs", "tests/mock-api/**/*.mjs", "*.mjs"],
     languageOptions: { globals: { console: "readonly", process: "readonly", URL: "readonly" } },
   },
   {

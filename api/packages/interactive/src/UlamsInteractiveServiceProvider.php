@@ -2,6 +2,7 @@
 
 namespace Ulams\Interactive;
 
+use Ulams\Core\Support\MorphMap;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Courses\Facades\Topic;
 use Ulams\Courses\UlamsCourseServiceProvider;
@@ -37,6 +38,10 @@ class UlamsInteractiveServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        MorphMap::register([
+            'topic.interactive' => \Ulams\Interactive\Models\InteractiveTopic::class,
+        ]);
+
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
         $this->app->register(UlamsUploadsServiceProvider::class);
         $this->app->register(UlamsTopicTypesServiceProvider::class);

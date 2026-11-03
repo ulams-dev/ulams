@@ -8,10 +8,11 @@ sidebar:
 import { Aside } from "@astrojs/starlight/components";
 
 The API is documented with OpenAPI annotations (`darkaonline/l5-swagger`, swagger-php) on the
-controllers of the app and the packages. There are four ways to read it.
+controllers of the app and the packages. There are five ways to read it.
 
 | What | Where | Best for |
 |---|---|---|
+| API browser | [API browser](/developers/api-browser/) on this site | Searching and reading every endpoint, request and response examples, trying calls against the demo tenant |
 | Swagger UI | `/api/documentation` on any API host | Trying endpoints against a running tenant |
 | OpenAPI JSON | `storage/api-docs/api-docs.json` inside the API container | Tools, code generation |
 | TypeScript path types | `front/sdk/src/generated/openapi.ts` | Typed requests in `@ulams/sdk` |
@@ -28,6 +29,24 @@ Every API host serves the UI at `/api/documentation` (`routes.api` in
 Use **Authorize** with a token from `POST /api/auth/login` (or a scoped `ulams_pat_` token, see [Scoped API tokens](/developers/scoped-tokens/)) to call authenticated endpoints. The host
 decides the tenant, so requests made from the coffee host hit coffee's database
 ([Tenancy](/developers/tenancy/)). Unknown hosts get 404 before Laravel routes the request.
+
+## API browser
+
+The [API browser](/developers/api-browser/) is [Scalar](https://github.com/scalar/scalar)'s API reference
+(MIT) over the generated document, served from the docs site itself: nothing loads from a CDN and no
+request goes through a third-party proxy. `yarn workspace @ulams/docs api-browser` builds its two files
+into `public/` (both ignored by git):
+
+- `vendor/scalar/standalone.js`: the pinned Scalar browser bundle, fetched from the npm registry and
+  checked against its integrity hash (`scripts/vendor-scalar.mjs`). It is not a yarn dependency, so the
+  monorepo lockfile stays untouched.
+- `openapi.json`: from `php api/scripts/openapi.php`, which scans the same paths as
+  `l5-swagger:generate` (the `annotations` list in `api/config/l5-swagger.php`) without booting Laravel or a
+  database; it needs only `composer install --no-scripts` in `api/`. Without PHP the script falls back to
+  the local API container. `DOCS_OPENAPI=<file>` uses a ready document. In CI a missing spec fails the build.
+
+Try-it-out calls go straight from the browser to the server picked in the page, so that server must
+allow the docs origin (CORS). The demo tenant does.
 
 ## Generating the spec
 

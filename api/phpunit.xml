@@ -130,11 +130,44 @@
     <testsuite name="commerce">
       <directory suffix="Test.php">./packages/commerce/tests</directory>
     </testsuite>
+    <testsuite name="entitlements">
+      <directory suffix="Test.php">./packages/entitlements/tests</directory>
+    </testsuite>
     <testsuite name="course-builder">
       <directory suffix="Test.php">./packages/course-builder/tests</directory>
     </testsuite>
+    <testsuite name="course-variants">
+      <directory suffix="Test.php">./packages/course-variants/tests</directory>
+    </testsuite>
+    <testsuite name="policy-lifecycle">
+      <directory suffix="Test.php">./packages/policy-lifecycle/tests</directory>
+    </testsuite>
     <testsuite name="living-course">
       <directory suffix="Test.php">./packages/living-course/tests</directory>
+    </testsuite>
+    <testsuite name="identity">
+      <directory suffix="Test.php">./packages/identity/tests</directory>
+    </testsuite>
+    <testsuite name="knowledge-export">
+      <directory suffix="Test.php">./packages/knowledge-export/tests</directory>
+    </testsuite>
+    <testsuite name="webhooks">
+      <directory suffix="Test.php">./packages/webhooks/tests</directory>
+    </testsuite>
+    <testsuite name="authoring-metrics">
+      <directory suffix="Test.php">./packages/authoring-metrics/tests</directory>
+    </testsuite>
+    <testsuite name="reporting">
+      <directory suffix="Test.php">./packages/reporting/tests</directory>
+    </testsuite>
+    <testsuite name="learner-insights">
+      <directory suffix="Test.php">./packages/learner-insights/tests</directory>
+    </testsuite>
+    <testsuite name="compliance">
+      <directory suffix="Test.php">./packages/compliance/tests</directory>
+    </testsuite>
+    <testsuite name="tutor">
+      <directory suffix="Test.php">./packages/tutor/tests</directory>
     </testsuite>
     <testsuite name="adapt">
       <directory suffix="Test.php">./packages/adapt/tests</directory>
@@ -144,6 +177,9 @@
     </testsuite>
     <testsuite name="interactive">
       <directory suffix="Test.php">./packages/interactive/tests</directory>
+    </testsuite>
+    <testsuite name="code-exercises">
+      <directory suffix="Test.php">./packages/code-exercises/tests</directory>
     </testsuite>
     <testsuite name="lti">
       <directory suffix="Test.php">./packages/lti/tests</directory>
@@ -165,6 +201,9 @@
     </testsuite>
     <testsuite name="webinar">
       <directory suffix="Test.php">./packages/webinar</directory>
+    </testsuite>
+    <testsuite name="youtube">
+      <directory suffix="Test.php">./packages/youtube/tests</directory>
     </testsuite>
     <testsuite name="cmi5">
       <directory suffix="Test.php">./packages/cmi5</directory>
@@ -232,11 +271,23 @@
       <directory suffix=".php">./packages/lti/</directory>
       <directory suffix=".php">./packages/liascript/</directory>
       <directory suffix=".php">./packages/interactive/</directory>
+      <directory suffix=".php">./packages/code-exercises/</directory>
       <directory suffix=".php">./packages/adapt/</directory>
+      <directory suffix=".php">./packages/compliance/</directory>
       <directory suffix=".php">./packages/ai/</directory>
       <directory suffix=".php">./packages/commerce/</directory>
+      <directory suffix=".php">./packages/entitlements/</directory>
 <directory suffix=".php">./packages/course-builder/</directory>
+      <directory suffix=".php">./packages/course-variants/</directory>
       <directory suffix=".php">./packages/living-course/</directory>
+      <directory suffix=".php">./packages/policy-lifecycle/</directory>
+      <directory suffix=".php">./packages/knowledge-export/</directory>
+      <directory suffix=".php">./packages/identity/</directory>
+      <directory suffix=".php">./packages/webhooks/</directory>
+      <directory suffix=".php">./packages/authoring-metrics/</directory>
+      <directory suffix=".php">./packages/reporting/</directory>
+      <directory suffix=".php">./packages/learner-insights/</directory>
+      <directory suffix=".php">./packages/tutor/</directory>
       <directory suffix=".php">./packages/vouchers/</directory>
       <directory suffix=".php">./packages/consultations/</directory>
       <directory suffix=".php">./packages/consultation-access/</directory>

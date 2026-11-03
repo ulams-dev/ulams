@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Cart\Database\Factories\OrderFactory;
 use Ulams\Cart\Enums\OrderStatus;
 use Ulams\Cart\QueryBuilders\OrderModelQueryBuilder;
@@ -85,6 +86,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Order extends Model implements PayableContract
 {
+    use HasMorphAlias;
     use Payable;
     use HasFactory;
 

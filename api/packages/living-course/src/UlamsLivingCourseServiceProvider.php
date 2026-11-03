@@ -11,7 +11,9 @@ use Illuminate\Support\ServiceProvider;
 use Ulams\Ai\Fake\FakeResponders;
 use Ulams\Ai\Prompts\PromptRegistry;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
+use Ulams\CourseBuilder\Contracts\PendingChanges;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
+use Ulams\CourseBuilder\Contracts\SourceHistory;
 use Ulams\CourseBuilder\Events\ElementPatched;
 use Ulams\Courses\Services\Contracts\CourseCompletionGuardContract;
 use Ulams\LivingCourse\Events\ProposalApplied;
@@ -19,6 +21,8 @@ use Ulams\LivingCourse\Jobs\ProgressRulesJob;
 use Ulams\LivingCourse\Progress\LivingCourseAttemptAllowance;
 use Ulams\LivingCourse\Progress\LivingCourseCompletionGuard;
 use Ulams\LivingCourse\Progress\LivingCourseFragmentArchive;
+use Ulams\LivingCourse\Progress\LivingCourseSourceHistory;
+use Ulams\LivingCourse\Progress\LivingCoursePendingChanges;
 use Ulams\LivingCourse\Progress\LivingCourseRemovalPolicy;
 use Ulams\LivingCourse\Services\ProgressRules;
 use Ulams\TopicTypeGift\Events\QuizAttemptFinishedEvent;
@@ -31,8 +35,12 @@ use Ulams\CourseBuilder\Pipeline\Llm;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\SessionState;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
+use Ulams\LivingCourse\Connectors\Google\GoogleDriveConnector;
+use Ulams\LivingCourse\Connectors\GitCliConnector;
 use Ulams\LivingCourse\Connectors\GitConnector;
+use Ulams\LivingCourse\Connectors\Notion\NotionConnector;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
+use Ulams\LivingCourse\Oauth\OAuthService;
 use Ulams\LivingCourse\Connectors\UploadConnector;
 use Ulams\LivingCourse\Connectors\UrlConnector;
 use Ulams\LivingCourse\Console\BackfillCommand;
@@ -60,6 +68,7 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         RevisionService::class => RevisionService::class,
         StalenessService::class => StalenessService::class,
         SourceConnectorRegistry::class => SourceConnectorRegistry::class,
+        OAuthService::class => OAuthService::class,
     ];
 
     public function register(): void
@@ -69,6 +78,10 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         // progress preservation (ADR 0033): the contracts of the builder, courses and GIFT packages
         $this->app->singleton(RemovalPolicy::class, LivingCourseRemovalPolicy::class);
         $this->app->singleton(FragmentArchive::class, LivingCourseFragmentArchive::class);
+        // the semantic diff of course versions (ADR 0192) reads the source history
+        $this->app->singleton(SourceHistory::class, LivingCourseSourceHistory::class);
+        // a course-as-code push waits for open update proposals that edit the same elements (plan 9.5)
+        $this->app->singleton(PendingChanges::class, LivingCoursePendingChanges::class);
         $this->app->singleton(CourseCompletionGuardContract::class, LivingCourseCompletionGuard::class);
         $this->app->singleton(QuizAttemptAllowanceContract::class, LivingCourseAttemptAllowance::class);
     }
@@ -87,6 +100,9 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         $registry->register(new UploadConnector());
         $registry->register(new GitConnector());
         $registry->register(new UrlConnector());
+        $registry->register(new GitCliConnector());
+        $registry->register(new GoogleDriveConnector(null, $this->app->make(OAuthService::class)));
+        $registry->register(new NotionConnector());
         $this->app->make(PromptRegistry::class)->addPath('living-course', __DIR__ . '/../resources/prompts');
         UpdateResponder::register($this->app->make(FakeResponders::class));
         SessionState::extendSummary('living-course', fn (Session $s) => ['freshness' => $this->app->make(StalenessService::class)->summary($s)]);
@@ -95,6 +111,10 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
             $this->commands([BackfillCommand::class, PollCommand::class, EvalCommand::class]);
         }
 
+        // the model calls of proposals are the maintenance cost of a course (authoring metric, ADR 0194); optional package
+        if (interface_exists(\Ulams\AuthoringMetrics\Contracts\SubjectCourseResolver::class)) {
+            $this->app->make(\Ulams\AuthoringMetrics\Services\SubjectResolvers::class)->register(new \Ulams\LivingCourse\Support\ProposalSubjectResolver());
+        }
         Event::listen(ProposalApplied::class, fn (ProposalApplied $e) => ProgressRulesJob::dispatchFor($e->proposal->id));
         Event::listen(QuizAttemptFinishedEvent::class, fn (QuizAttemptFinishedEvent $e) => $this->app->make(ProgressRules::class)->attemptFinished($e->getAttempt()));
 

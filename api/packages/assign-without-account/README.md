@@ -34,15 +34,12 @@ POST /api/admin/user-submissions
 2. Create a new account.
 3. The product is assigned to your account.
 
-
 ## Endpoints
 All the endpoints are defined in swagger
 
 ## Tests
 Run `./vendor/bin/phpunit` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
-Test details 
-![Tests PHPUnit in environments](https://github.com/EscolaLMS/Assign-Without-Account/actions/workflows/test.yml/badge.svg)
 
 ## Events
 1. `AssignToProduct` - event dispatched after assigning user to product.
@@ -56,7 +53,6 @@ Test details
 ### Admin panel
 **List of user submissions**
 ![List of stationary events](docs/list.png "List of user submissions")
-
 
 ## Permissions
 Permissions are defined in [seeder](database/seeders/AssignWithoutAccountPermissionSeeder.php)

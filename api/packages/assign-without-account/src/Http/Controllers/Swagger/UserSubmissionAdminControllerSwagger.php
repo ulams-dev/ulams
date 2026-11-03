@@ -12,7 +12,7 @@ interface UserSubmissionAdminControllerSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/user-submissions",
+     *     path="/api/admin/user-submissions", operationId="user-submissions.list",
      *     summary="Lists available user submissions",
      *     tags={"Assign Without Account"},
      *     security={
@@ -72,10 +72,7 @@ interface UserSubmissionAdminControllerSwagger
      *             type="string"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of available user submissions",
-     *      ),
+     *     @OA\Response(response=200, description="List of available user submissions", @OA\JsonContent(ref="#/components/schemas/UserSubmissionPageResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="Endpoint requires authentication",
@@ -97,7 +94,7 @@ interface UserSubmissionAdminControllerSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/admin/user-submissions",
+     *     path="/api/admin/user-submissions", operationId="user-submissions.create",
      *     summary="Create a new user submission identified by id",
      *     tags={"Assign Without Account"},
      *     security={
@@ -108,10 +105,7 @@ interface UserSubmissionAdminControllerSwagger
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/UserSubmission")
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="User submission created successfully",
-     *      ),
+     *     @OA\Response(response=200, description="User submission created successfully", @OA\JsonContent(ref="#/components/schemas/UserSubmissionResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="Endpoint requires authentication",
@@ -137,7 +131,7 @@ interface UserSubmissionAdminControllerSwagger
 
     /**
      * @OA\Put (
-     *     path="/api/admin/user-submissions/{id}",
+     *     path="/api/admin/user-submissions/{id}", operationId="user-submissions.update",
      *     summary="Update an existing user submission identified by id",
      *     tags={"Assign Without Account"},
      *     security={
@@ -157,10 +151,7 @@ interface UserSubmissionAdminControllerSwagger
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/UserSubmission")
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="User submission created successfully",
-     *      ),
+     *     @OA\Response(response=200, description="User submission created successfully", @OA\JsonContent(ref="#/components/schemas/UserSubmissionResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="Endpoint requires authentication",
@@ -187,7 +178,7 @@ interface UserSubmissionAdminControllerSwagger
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/user-submissions/{id}",
+     *     path="/api/admin/user-submissions/{id}", operationId="user-submissions.delete",
      *     summary="Delete user submission identified by a id",
      *     tags={"Assign Without Account"},
      *     security={
@@ -202,10 +193,7 @@ interface UserSubmissionAdminControllerSwagger
      *             type="integer"
      *         )
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="User submission eleted successfully",
-     *      ),
+     *     @OA\Response(response=200, description="User submission eleted successfully", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *     @OA\Response(
      *          response=401,
      *          description="Endpoint requires authentication",

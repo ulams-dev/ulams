@@ -5,7 +5,7 @@ Laravel Headless LMS REST API.
 
 ## Documentation
 
-Most of the documentation is hosted at [docs.ulams.app](https://docs.ulams.app/).
+Most of the documentation is hosted at [the documentation site](https://ulams-dev.github.io/ulams/).
 
 ## Configuration
 
@@ -22,7 +22,7 @@ Application is designed to be stateless - it is controlled by [environmental var
 
 If you want to use the software consider using our docker images or using [Create-LMS-App/](https://github.com/EscolaLMS/Create-LMS-App/) helper.
 
-You should consider install with our [installation package](https://docs.ulams.app/getting-started/guide.html).
+You should consider install with our [installation package](https://ulams-dev.github.io/ulams/getting-started/quick-start/).
 
 To install default docker environment either clone this repo or use
 

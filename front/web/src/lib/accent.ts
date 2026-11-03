@@ -6,19 +6,15 @@
  * (`--ulams-color-on-primary`) is black or white, whichever contrasts more.
  */
 import { contrast, parseHex, readableOn, toHex, type Rgb } from "@ulams/ui/theme/contrast.ts";
+import { PLATFORM_THEME, THEME_PRESETS, TENANT_THEMES } from "@ulams/ui/theme/presets.ts";
 
 export { contrast, parseHex, readableOn, toHex };
 export type { Rgb };
 
-/** Background of each tenant theme (must match src/styles/themes in @ulams/ui). */
+/** Background of each theme: the tenant presets of the shared list, and the product site's own. */
 export const THEME_BACKGROUND: Record<string, string> = {
-  coffee: "#f6f1e9",
-  oncall: "#0b0f14",
-  nightsky: "#13153a",
-  gravity: "#05070f",
-  poland: "#f4efe6",
-  ulam: "#f7f3e8",
-  platform: "#fafaf9",
+  ...Object.fromEntries(TENANT_THEMES.map((name) => [name, THEME_PRESETS[name].bg])),
+  platform: PLATFORM_THEME.bg,
 };
 
 /** `[data-theme="x"]{…}` overriding the accent variables, or "" when the accent is missing or invalid. */

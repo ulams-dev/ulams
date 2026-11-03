@@ -4,7 +4,7 @@ namespace Ulams\PencilSpaces\Http\Controllers\Swagger;
 
 /**
  * @OA\Post(
- *      path="/api/pencil-spaces/login",
+ *      path="/api/pencil-spaces/login", operationId="pencil-spaces.login.post",
  *      summary="Generate a direct login link",
  *      tags={"Pencil Spaces"},
  *      security={

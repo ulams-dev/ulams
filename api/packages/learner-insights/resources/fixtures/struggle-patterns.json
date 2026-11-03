@@ -1,0 +1,15 @@
+{
+  "description": "Golden struggle patterns of the learner-insights:eval command. A target picks an element of the built course by type and position (ids are generated per run). Each pattern is replayed for a first learner (generates) and a second learner (must reuse the cached help).",
+  "patterns": [
+    {"id": "two_wrong_answers", "rule": "failed_attempts", "target": {"type": "question", "index": 0}},
+    {"id": "second_question_missed", "rule": "failed_attempts", "target": {"type": "question", "index": 1}},
+    {"id": "slow_lesson", "rule": "slow_element", "target": {"type": "lesson", "index": 0}},
+    {"id": "abandoned_block", "rule": "abandoned_element", "target": {"type": "block", "index": 0}},
+    {"id": "repeated_lesson", "rule": "repetition", "target": {"type": "lesson", "index": 1}}
+  ],
+  "fixtures": {
+    "coffee": ["two_wrong_answers", "second_question_missed", "slow_lesson", "abandoned_block", "repeated_lesson"],
+    "git": ["two_wrong_answers", "slow_lesson", "abandoned_block", "repeated_lesson"],
+    "injection": ["two_wrong_answers", "slow_lesson", "abandoned_block"]
+  }
+}

@@ -375,15 +375,6 @@ class CourseTutorApiTest extends TestCase
         $this->response->assertOk();
         $this->response
             ->assertJsonCount(1, 'data')
-            ->assertJsonMissing([
-                'id' => $course->getKey(),
-                'title' => $course->title,
-            ])
-            ->assertJsonMissing([
-                'id' => $admin->getKey(),
-                'first_name' => $admin->first_name,
-                'last_name' => $admin->last_name,
-            ])
             ->assertJsonFragment([
                 'id' => $courseAuthor->getKey(),
                 'title' => $courseAuthor->title,
@@ -393,6 +384,11 @@ class CourseTutorApiTest extends TestCase
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
             ]);
+        // assertJsonMissing() matches every key/value pair on its own anywhere in the payload, so a bare
+        // `id` equal to some other id in the response (a user and a course draw from separate sequences) fails
+        // it at random. Compare the listed course ids instead.
+        $this->assertSame([$courseAuthor->getKey()], array_column($this->response->json('data'), 'id'));
+        $this->assertNotContains($course->getKey(), array_column($this->response->json('data'), 'id'));
     }
 
     public function test_assignable_users(): void

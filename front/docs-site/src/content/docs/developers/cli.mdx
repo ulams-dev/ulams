@@ -17,6 +17,8 @@ Decision records: [ADR 0072](/decisions/0072-agent-first-cli-command-registry/) 
 [ADR 0073](/decisions/0073-cli-machine-contract/) (output contract) and
 [ADR 0077](/decisions/0077-cli-distribution/) (distribution).
 
+For a complete installation with generated credentials and readiness checks, use the [one-command Docker and Kubernetes launcher](/operators/one-command-stack/).
+
 ## Install
 
 <Aside type="note" title="Install from the repository for now">
@@ -30,7 +32,7 @@ build the CLI from a checkout. You need Node 22.12 or newer.
 1. Build it:
 
    ```bash
-   corepack yarn install --ignore-engines
+   corepack yarn install
    corepack yarn workspace ulams build        # writes front/cli/dist/ulams.mjs
    ```
 
@@ -113,6 +115,7 @@ environment, then profile. A profile token is never sent to another `--url`.
 | Variable | Meaning |
 |---|---|
 | `ULAMS_URL`, `ULAMS_TOKEN` | instance origin and token (`--url`, `--token-stdin` on the command line) |
+| `ULAMS_COMMIT`, `ULAMS_CHANGE_URL` | The commit and the pull request or commit address a CI job acts for. Sent as `X-Ulams-Commit` and `X-Ulams-Change-Url` with every request; the server records them in the audit event of a course-as-code import and approval (one printable line, 500 characters). The course action sets both |
 | `ULAMS_PROFILE` | profile to use |
 | `ULAMS_CONFIG_DIR` | directory of `config.json` and `credentials.json` |
 | `ULAMS_OUTPUT` | default output mode (`json`, `ndjson`, `yaml`, `table`, `text`) |

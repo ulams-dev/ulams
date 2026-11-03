@@ -6,14 +6,15 @@
   "description": "ulams reference frontend: Astro SSR, zero JS by default, tenant-aware.",
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "node scripts/build-embed.mjs && astro dev",
+    "build": "node scripts/build-embed.mjs && astro build",
     "start": "HOST=0.0.0.0 PORT=4321 node --env-file-if-exists=.env ./dist/server/entry.mjs",
     "preview": "astro preview",
     "typecheck": "astro check && tsc --noEmit -p tsconfig.json",
     "lint": "eslint src tests",
     "test": "vitest run",
     "test:e2e": "playwright install chromium && playwright test",
+    "test:a11y": "playwright install chromium && playwright test -c playwright.a11y.config.ts",
     "perf": "node tests/perf/measure.mjs"
   },
   "dependencies": {
@@ -29,10 +30,11 @@
     "@emnapi/runtime": "1.11.3",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.63.0",
+    "esbuild": "^0.27.0",
     "eslint": "10.12.0",
     "jsdom": "^20.0.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.1",
-    "vitest": "3.2.4"
+    "vitest": "5.0.3"
   }
 }

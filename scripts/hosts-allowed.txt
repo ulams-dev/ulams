@@ -1,0 +1,49 @@
+# Allowed `ulams.app` hosts in source files, checked by scripts/check-hosts.mjs.
+# Format: <path prefix> <host>. Every entry must still match something (stale entries fail the check).
+# Documentation links never belong here: they come from ULAMS_DOCS_URL (default
+# https://ulams-dev.github.io/ulams/) until the owner sets up the docs subdomain.
+
+# Public landing and company links (the product's own website)
+admin/src/components/Footer/index.tsx www.ulams.app
+admin/src/pages/Settings/global.tsx www.ulams.app
+front/src/components/_App/Footer/index.tsx www.ulams.app
+front/web/src/lib/config.ts ulams.app
+front/web/src/blog/ ulams.app
+
+# Demo credentials and example e-mail addresses (not endpoints)
+admin/src/e2e/consts.ts ulams.app
+api/packages/auth/src/Console/Commands/CreateAdminCommand.php ulams.app
+api/packages/demo/src/Support/DemoBaseline.php ulams.app
+api/packages/tenancy/src/Console/SeedTenantDemoCommand.php ulams.app
+front/src/lib/components/utils/components/authbtn/index.tsx ulams.app
+front/web/src/data/ coffee.ulams.app
+
+# Example values in OpenAPI docblocks (rendered as examples in the API reference)
+api/packages/auth/src/Http/Controllers/Swagger/ ulams.app
+api/packages/auth/src/Http/Controllers/Swagger/DeviceAuthSwagger.php coffee.app.ulams.app
+api/packages/csv-users/src/Http/Controllers/Swagger/ ulams.app
+api/packages/webinar/src/Services/Contracts/WebinarServiceContract.php meet-stage.ulams.app
+
+# Defaults and documented host patterns of the tenancy and tenant-host code (overridable by settings)
+api/packages/tenancy/src/config.php ulams.app
+api/packages/tenancy/src/config.php content.ulams.app
+api/packages/tenancy/src/config.php files.ulams.app
+api/packages/lrs/src/Services/LrsService.php ulams.app
+front/src/config/index.ts ulams.app
+front/src/config/index.ts api.ulams.app
+front/src/lib/tenant/resolveApiUrl.ts ulams.app
+front/src/lib/tenant/resolveApiUrl.ts api.ulams.app
+front/src/lib/tenant/resolveApiUrl.ts stage.ulams.app
+front/web/src/lib/bff.ts content.ulams.app
+front/web/src/lib/cookies.ts app.ulams.app
+front/web/src/lib/cookies.ts content.ulams.app
+front/web/src/lib/csp.ts api.ulams.app
+
+# Public site data: the live case-study academies and the public API example
+front/web/src/lib/course-generation.ts microdosing.ulams.app
+front/web/src/lib/course-generation.ts stablecoins.ulams.app
+front/web/src/docs/ api.ulams.app
+
+# Legacy references that predate the hosts rule; the owner decides what to do with them
+api/README.md api-stage.ulams.app
+front/src/utils/constants.ts rekomender2.ulams.app

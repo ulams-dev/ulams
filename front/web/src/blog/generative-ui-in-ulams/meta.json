@@ -1,0 +1,129 @@
+{
+  "slug": "generative-ui-in-ulams",
+  "date": "2026-10-19",
+  "series": false,
+  "en": {
+    "title": "Generative UI in ULAMS: from a source document to a standards-compliant course",
+    "description": "How ULAMS uses declarative generative UI: the model composes a validated document from approved components, the author approves, and every block cites its source.",
+    "tags": [
+      "Generative UI",
+      "Course generation"
+    ],
+    "video": {
+      "file": "clip-en.mp4",
+      "poster": "poster.jpg",
+      "width": 960,
+      "height": 540,
+      "caption": "Two minutes: how a source document and a design system become a course. English narration; the Polish version of this post has a Polish-narrated clip."
+    },
+    "imagesHeading": "The steps, in screenshots",
+    "imagesIntro": "These are the screens of the microdosing course. The stablecoin course went through the same steps.",
+    "images": [
+      {
+        "name": "interview",
+        "width": 1200,
+        "height": 1179,
+        "alt": "The interview: the audience question",
+        "caption": "The interview: twelve short questions about audience, level, duration, tone, assessments and theme."
+      },
+      {
+        "name": "outline",
+        "width": 1200,
+        "height": 1179,
+        "alt": "The proposed outline",
+        "caption": "The outline the author approves before a single lesson is written."
+      },
+      {
+        "name": "generating",
+        "width": 1200,
+        "height": 1179,
+        "alt": "Generation in progress",
+        "caption": "Generation: the model composes the course out of the approved components."
+      },
+      {
+        "name": "checks",
+        "width": 1200,
+        "height": 847,
+        "alt": "The checks before publishing",
+        "caption": "The checks: citations, quiz answers backed by the source, heading structure."
+      },
+      {
+        "name": "course",
+        "width": 1200,
+        "height": 1179,
+        "alt": "The published course page",
+        "caption": "The course page the learner sees."
+      },
+      {
+        "name": "lesson",
+        "width": 1200,
+        "height": 1179,
+        "alt": "A lesson with citations",
+        "caption": "A lesson. Every block points at the passage it came from."
+      }
+    ],
+    "footer": "## Related\n\n- [Living Course](/blog/living-course/): what happens when the source changes.\n- [Where did the AI get that?](/blog/where-did-the-ai-get-that/): the citation dialog.\n- [Course Builder](https://ulams-dev.github.io/ulams/creators/course-builder/) in the docs."
+  },
+  "pl": {
+    "title": "Generative UI w ULAMS: od dokumentu źródłowego do kursu zgodnego ze standardami",
+    "description": "Jak ULAMS używa deklaratywnego generative UI: model składa zwalidowany dokument z zatwierdzonych komponentów, autor zatwierdza, a każdy blok cytuje źródło.",
+    "tags": [
+      "Generative UI",
+      "Generowanie kursów"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 960,
+      "height": 540,
+      "caption": "Dwie minuty: jak dokument źródłowy i design system stają się kursem. Narracja po polsku; angielska wersja wpisu ma klip z angielską narracją."
+    },
+    "imagesHeading": "Kroki, na zrzutach ekranu",
+    "imagesIntro": "To ekrany kursu o mikrodawkowaniu. Kurs o stablecoinach przeszedł te same kroki.",
+    "images": [
+      {
+        "name": "interview",
+        "width": 1200,
+        "height": 1179,
+        "alt": "Wywiad: pytanie o odbiorców",
+        "caption": "Wywiad: dwanaście krótkich pytań o odbiorców, poziom, czas, ton, sprawdziany i motyw."
+      },
+      {
+        "name": "outline",
+        "width": 1200,
+        "height": 1179,
+        "alt": "Proponowany konspekt",
+        "caption": "Konspekt, który autor zatwierdza, zanim powstanie choćby jedna lekcja."
+      },
+      {
+        "name": "generating",
+        "width": 1200,
+        "height": 1179,
+        "alt": "Generowanie w toku",
+        "caption": "Generowanie: model składa kurs z zatwierdzonych komponentów."
+      },
+      {
+        "name": "checks",
+        "width": 1200,
+        "height": 847,
+        "alt": "Kontrole przed publikacją",
+        "caption": "Kontrole: cytowania, odpowiedzi w quizie poparte źródłem, struktura nagłówków."
+      },
+      {
+        "name": "course",
+        "width": 1200,
+        "height": 1179,
+        "alt": "Opublikowana strona kursu",
+        "caption": "Strona kursu, którą widzi uczeń."
+      },
+      {
+        "name": "lesson",
+        "width": 1200,
+        "height": 1179,
+        "alt": "Lekcja z cytowaniami",
+        "caption": "Lekcja. Każdy blok wskazuje fragment, z którego pochodzi."
+      }
+    ],
+    "footer": "## Zobacz też\n\n- [Living Course](/pl/blog/living-course/): co się dzieje, gdy zmienia się źródło.\n- [Skąd AI to wzięło?](/pl/blog/where-did-the-ai-get-that/): okno cytowania.\n- [Course Builder](https://ulams-dev.github.io/ulams/creators/course-builder/) w dokumentacji."
+  }
+}

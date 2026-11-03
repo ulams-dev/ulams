@@ -9,7 +9,7 @@ interface RegisterSwagger
 {
     /**
      * @OA\Post(
-     *      path="/api/auth/register",
+     *      path="/api/auth/register", operationId="auth.register.post",
      *      description="Register new user",
      *      tags={"Auth"},
      *      @OA\Parameter(
@@ -64,9 +64,7 @@ interface RegisterSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")
      *      )
      *   )
      */

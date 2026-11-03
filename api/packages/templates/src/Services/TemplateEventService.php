@@ -11,11 +11,13 @@ use Ulams\Templates\Facades\Template as FacadesTemplate;
 use Ulams\Templates\Helpers\Models;
 use Ulams\Templates\Models\Template;
 use Ulams\Templates\Repository\Contracts\TemplateRepositoryContract;
+use Ulams\Templates\Support\TemplateLocale;
 use Ulams\Templates\Services\Contracts\TemplateChannelServiceContract;
 use Ulams\Templates\Services\Contracts\TemplateEventServiceContract;
 use Ulams\Templates\Services\Contracts\TemplateVariablesServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 class TemplateEventService implements TemplateEventServiceContract
@@ -140,25 +142,71 @@ class TemplateEventService implements TemplateEventServiceContract
             $assignableId = $event->extractIdForPropertyOfClass($variableClass::assignableClass());
             $template = is_null($assignableId) ? null : $this->repository->findTemplateAssigned($event->eventClass(), $channelClass, $variableClass::assignableClass(), $assignableId);
         }
-        return $template ?? $this->repository->findTemplateDefault($event->eventClass(), $channelClass);
+        return $template ?? $this->findDefaultTemplateForLanguage($event, $channelClass);
     }
 
-    public function createDefaultTemplatesForChannel(string $channelClass): void
+    /**
+     * The default template in the language of the event (a course's language), else in the tenant default language,
+     * else in English, else the one without a language (see TemplateLocale).
+     */
+    protected function findDefaultTemplateForLanguage(EventWrapper $event, string $channelClass): ?Template
+    {
+        foreach (TemplateLocale::fallbackChain($event->language()) as $locale) {
+            $template = $this->repository->findTemplateDefaultForLocale($event->eventClass(), $channelClass, $locale);
+            if ($template) {
+                return $template;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Creates the default template of every event of the channel that has none: one template without a language,
+     * or, with `$locales`, one per language, written in that language. An event that already has a default is left
+     * alone: its operator may have edited it, and a template in a language would take over from it.
+     *
+     * @param string[] $locales language codes, for example `['en', 'pl', 'zh']`
+     */
+    public function createDefaultTemplatesForChannel(string $channelClass, array $locales = []): void
     {
         foreach ($this->events as $eventClass => $channels) {
-            if (array_key_exists($channelClass, $channels)) {
-                $variableClass = $channels[$channelClass];
-                $template = $this->repository->findTemplateDefault($eventClass, $channelClass);
-                if (!$template) {
-                    $template = $this->repository->createWithSections([
-                        'name' => 'Default template for event ' . class_basename($eventClass) . ' on ' . class_basename($channelClass) . ' channel',
-                        'event' => $eventClass,
-                        'channel' => $channelClass,
-                        'default' => true,
-                    ], $variableClass::defaultSectionsContent());
-                    $this->processTemplateAfterSaving($template);
-                }
+            if (!array_key_exists($channelClass, $channels) || $this->repository->findTemplateDefault($eventClass, $channelClass)) {
+                continue;
             }
+            $variableClass = $channels[$channelClass];
+            $name = 'Default template for event ' . class_basename($eventClass) . ' on ' . class_basename($channelClass) . ' channel';
+
+            if (empty($locales)) {
+                $this->processTemplateAfterSaving($this->repository->createWithSections([
+                    'name' => $name,
+                    'event' => $eventClass,
+                    'channel' => $channelClass,
+                    'default' => true,
+                ], $variableClass::defaultSectionsContent()));
+                continue;
+            }
+
+            foreach (array_unique($locales) as $locale) {
+                $this->processTemplateAfterSaving($this->repository->createWithSections([
+                    'name' => $name . ' (' . $locale . ')',
+                    'event' => $eventClass,
+                    'channel' => $channelClass,
+                    'default' => true,
+                    'locale' => $locale,
+                ], $this->inLocale($locale, fn () => $variableClass::defaultSectionsContent())));
+            }
+        }
+    }
+
+    private function inLocale(string $locale, callable $callback): mixed
+    {
+        $previous = App::getLocale();
+        App::setLocale($locale);
+        try {
+            return $callback();
+        } finally {
+            App::setLocale($previous);
         }
     }
 

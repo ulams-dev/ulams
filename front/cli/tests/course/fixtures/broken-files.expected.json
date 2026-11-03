@@ -1,0 +1,290 @@
+[
+  {
+    "code": "SCHEMA_INVALID",
+    "severity": "error",
+    "file": "course.yaml",
+    "line": 2,
+    "column": 1,
+    "element": "01jb00000000000000000000c1",
+    "message": "title: Too small: expected string to have >=3 characters",
+    "hint": "Check the field against the file schema (docs: course folder format)."
+  },
+  {
+    "code": "SCHEMA_INVALID",
+    "severity": "error",
+    "file": "course.yaml",
+    "line": 3,
+    "column": 1,
+    "element": "01jb00000000000000000000c1",
+    "message": "language: Two lowercase letters, for example en.",
+    "hint": "Check the field against the file schema (docs: course folder format)."
+  },
+  {
+    "code": "ID_MISSING",
+    "severity": "error",
+    "file": "course.yaml",
+    "line": 7,
+    "column": 5,
+    "message": "objectives[1] has no id.",
+    "hint": "Run `ulams course fmt` to mint ids."
+  },
+  {
+    "code": "ID_MISSING",
+    "severity": "error",
+    "file": "final-test.quiz.yaml",
+    "line": 1,
+    "column": 1,
+    "message": "The file has no id.",
+    "hint": "Run `ulams course fmt` to mint ids."
+  },
+  {
+    "code": "FIELD_REQUIRED",
+    "severity": "error",
+    "file": "final-test.quiz.yaml",
+    "line": 2,
+    "column": 5,
+    "message": "questions[0].options is required.",
+    "hint": "Add the field."
+  },
+  {
+    "code": "FIELD_REQUIRED",
+    "severity": "error",
+    "file": "final-test.quiz.yaml",
+    "line": 2,
+    "column": 5,
+    "message": "questions[0].explanation is required.",
+    "hint": "Add the field."
+  },
+  {
+    "code": "ID_MISSING",
+    "severity": "error",
+    "file": "final-test.quiz.yaml",
+    "line": 2,
+    "column": 5,
+    "message": "questions[0] has no id.",
+    "hint": "Run `ulams course fmt` to mint ids."
+  },
+  {
+    "code": "SCHEMA_INVALID",
+    "severity": "error",
+    "file": "final-test.quiz.yaml",
+    "line": 2,
+    "column": 5,
+    "message": "questions[0].type: Invalid option: expected one of \"single\"|\"multiple\"|\"truefalse\"|\"short\"",
+    "hint": "Check the field against the file schema (docs: course folder format)."
+  },
+  {
+    "code": "FIELD_REQUIRED",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 2,
+    "column": 1,
+    "element": "01jb00000000000000000000l1",
+    "message": "minutes is required.",
+    "hint": "Add the field."
+  },
+  {
+    "code": "UNKNOWN_FIELD",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 8,
+    "column": 1,
+    "element": "01jb00000000000000000000l1",
+    "message": "Unknown field \"flavour\".",
+    "hint": "Remove it or fix the spelling."
+  },
+  {
+    "code": "DIRECTIVE_ATTR_UNKNOWN",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 11,
+    "column": 42,
+    "message": "Unknown attribute \"variant\".",
+    "hint": "Use #id, cite, origin or objectives."
+  },
+  {
+    "code": "DIRECTIVE_ATTR_INVALID",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 15,
+    "column": 14,
+    "message": "\"NOT-AN-ID\" is not an element id (26 lowercase letters and digits).",
+    "hint": "Ids are 26 lowercase letters and digits; cite takes frg_ ids; origin is ai or author."
+  },
+  {
+    "code": "DIRECTIVE_KIND_UNKNOWN",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 19,
+    "column": 4,
+    "message": "Unknown block kind \"banner\".",
+    "hint": "Use paragraph, callout, steps, code, table or example."
+  },
+  {
+    "code": "DIRECTIVE_ATTR_INVALID",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 23,
+    "column": 14,
+    "message": "\"frg_nope\" is not a fragment id (frg_ and 12 characters a-z, 2-7).",
+    "hint": "Ids are 26 lowercase letters and digits; cite takes frg_ ids; origin is ai or author."
+  },
+  {
+    "code": "DIRECTIVE_UNCLOSED",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 27,
+    "column": 1,
+    "message": "The directive opened on line 27 is never closed.",
+    "hint": "Add a line holding only the closing colons (same count as the opening line)."
+  },
+  {
+    "code": "FRONT_MATTER_MISSING",
+    "severity": "error",
+    "file": "modules/01-a/02-second.md",
+    "line": 1,
+    "column": 1,
+    "message": "The file does not start with a --- front matter block.",
+    "hint": "Start the file with a --- fenced block holding at least title and minutes."
+  },
+  {
+    "code": "LOOSE_MARKDOWN",
+    "severity": "info",
+    "file": "modules/01-a/02-second.md",
+    "line": 1,
+    "column": 1,
+    "element": "00000000000000000000000008",
+    "message": "Markdown outside a directive becomes an author paragraph.",
+    "hint": "Run `ulams course fmt` to wrap it in author paragraphs."
+  },
+  {
+    "code": "YAML_SYNTAX",
+    "severity": "error",
+    "file": "modules/01-a/03-third.md",
+    "line": 2,
+    "column": 1,
+    "message": "Flow sequence in block collection must be sufficiently indented and end with a ]",
+    "hint": "Fix the YAML syntax at the reported position."
+  },
+  {
+    "code": "DIRECTIVE_STRAY_CLOSER",
+    "severity": "error",
+    "file": "modules/01-a/04-fourth.md",
+    "line": 11,
+    "column": 1,
+    "message": "A closing fence with no directive open.",
+    "hint": "Remove it, or add the opening :::kind line."
+  },
+  {
+    "code": "CITATION_MISSING",
+    "severity": "error",
+    "file": "modules/01-a/04-fourth.md",
+    "line": 13,
+    "column": 1,
+    "element": "00000000000000000000000012",
+    "message": "This block cites no source and is not marked origin=author.",
+    "hint": "Cite at least one fragment, or set origin: author if you wrote it yourself."
+  },
+  {
+    "code": "ID_MISSING",
+    "severity": "error",
+    "file": "modules/01-a/04-fourth.md",
+    "line": 13,
+    "column": 1,
+    "element": "01jb00000000000000000000l4",
+    "message": "This block has no #id.",
+    "hint": "Run `ulams course fmt` to mint ids."
+  },
+  {
+    "code": "DIRECTIVE_EMPTY",
+    "severity": "error",
+    "file": "modules/01-a/04-fourth.md",
+    "line": 17,
+    "column": 1,
+    "message": "The directive has no content.",
+    "hint": "Write the block's Markdown between the fences, or remove the directive."
+  },
+  {
+    "code": "DIRECTIVE_NESTED",
+    "severity": "error",
+    "file": "modules/01-a/04-fourth.md",
+    "line": 23,
+    "column": 1,
+    "message": "A directive opens on line 23 while the one from line 21 is still open.",
+    "hint": "Close the first one, or give the outer directive a longer fence (::::)."
+  },
+  {
+    "code": "SCHEMA_INVALID",
+    "severity": "error",
+    "file": "modules/01-a/module.yaml",
+    "line": 3,
+    "column": 1,
+    "element": "01jb00000000000000000000m1",
+    "message": "key: A key is a lowercase slug: a-z, 0-9 and dashes, at most 64 characters.",
+    "hint": "Check the field against the file schema (docs: course folder format)."
+  },
+  {
+    "code": "ID_MISSING",
+    "severity": "error",
+    "file": "modules/02-b/01-only.md",
+    "line": 2,
+    "column": 1,
+    "message": "The file has no id.",
+    "hint": "Run `ulams course fmt` to mint ids."
+  },
+  {
+    "code": "SCHEMA_INVALID",
+    "severity": "error",
+    "file": "modules/02-b/01-only.md",
+    "line": 3,
+    "column": 1,
+    "message": "minutes: Too small: expected number to be >=1",
+    "hint": "Check the field against the file schema (docs: course folder format)."
+  },
+  {
+    "code": "SCHEMA_INVALID",
+    "severity": "error",
+    "file": "modules/02-b/01-only.md",
+    "line": 4,
+    "column": 1,
+    "message": "objectives: Too small: expected array to have >=1 items",
+    "hint": "Check the field against the file schema (docs: course folder format)."
+  },
+  {
+    "code": "ID_INVALID",
+    "severity": "error",
+    "file": "modules/02-b/module.yaml",
+    "line": 1,
+    "column": 1,
+    "element": "not-a-ulid",
+    "message": "id: An element id is 26 lowercase letters and digits.",
+    "hint": "Use a lowercase ULID; quote it in YAML when it is all digits."
+  },
+  {
+    "code": "UNKNOWN_FILE",
+    "severity": "warning",
+    "file": "modules/02-b/notes.txt",
+    "line": 1,
+    "column": 1,
+    "message": "modules/02-b/notes.txt is not used by the course folder format.",
+    "hint": "Lessons are .md, quizzes .quiz.yaml, modules module.yaml."
+  },
+  {
+    "code": "QUIZ_ORPHAN",
+    "severity": "error",
+    "file": "modules/03-orphan/01-gone.quiz.yaml",
+    "line": 1,
+    "column": 1,
+    "message": "modules/03-orphan/01-gone.quiz.yaml has no lesson file modules/03-orphan/01-gone.md.",
+    "hint": "Name it after its lesson: 01-install.md pairs with 01-install.quiz.yaml."
+  },
+  {
+    "code": "UNKNOWN_FIELD",
+    "severity": "error",
+    "file": "ulams.yaml",
+    "line": 3,
+    "column": 1,
+    "message": "Unknown field \"colour\".",
+    "hint": "Remove it or fix the spelling."
+  }
+]

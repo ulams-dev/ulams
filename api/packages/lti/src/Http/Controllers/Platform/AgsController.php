@@ -15,32 +15,32 @@ use Ulams\Lti\Support\Lti;
  * AGS 2.0 endpoints of the platform side. Authenticated with an access token from
  * /api/lti/platform/token; every line item belongs to the token's tool and the course in the URL.
  *
- * @OA\Get(path="/api/lti/platform/ags/{course}/lineitems", summary="AGS: list line items", tags={"LTI"},
+ * @OA\Get(path="/api/lti/platform/ags/{course}/lineitems", operationId="lti.platform.ags.by-course.lineitems.get", summary="AGS: list line items", tags={"LTI"},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="line item container"), @OA\Response(response=401, description="invalid token"))
- * @OA\Post(path="/api/lti/platform/ags/{course}/lineitems", summary="AGS: create a line item", tags={"LTI"},
+ *     @OA\Response(response=200, description="line item container", @OA\JsonContent(ref="#/components/schemas/ApiJson")), @OA\Response(response=401, description="invalid token"))
+ * @OA\Post(path="/api/lti/platform/ags/{course}/lineitems", operationId="lti.platform.ags.by-course.lineitems.post", summary="AGS: create a line item", tags={"LTI"},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=201, description="line item"), @OA\Response(response=403, description="scope lineitem required"))
- * @OA\Get(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}", summary="AGS: read a line item", tags={"LTI"},
- *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Parameter(name="lineItem", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="line item"))
- * @OA\Put(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}", summary="AGS: update a line item", tags={"LTI"},
+ *     @OA\Response(response=201, description="line item", @OA\JsonContent(ref="#/components/schemas/ApiJson")), @OA\Response(response=403, description="scope lineitem required"))
+ * @OA\Get(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}", operationId="lti.platform.ags.by-course.lineitems.by-lineitem.get", summary="AGS: read a line item", tags={"LTI"},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Parameter(name="lineItem", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="line item"))
- * @OA\Delete(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}", summary="AGS: delete a line item", tags={"LTI"},
+ *     @OA\Response(response=200, description="line item", @OA\JsonContent(ref="#/components/schemas/ApiJson")))
+ * @OA\Put(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}", operationId="lti.platform.ags.by-course.lineitems.by-lineitem.put", summary="AGS: update a line item", tags={"LTI"},
+ *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
+ *     @OA\Parameter(name="lineItem", in="path", required=true, @OA\Schema(type="integer")),
+ *     @OA\Response(response=200, description="line item", @OA\JsonContent(ref="#/components/schemas/ApiJson")))
+ * @OA\Delete(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}", operationId="lti.platform.ags.by-course.lineitems.by-lineitem.delete", summary="AGS: delete a line item", tags={"LTI"},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Parameter(name="lineItem", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Response(response=204, description="deleted"))
- * @OA\Post(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}/scores", summary="AGS: post a score", tags={"LTI"},
+ * @OA\Post(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}/scores", operationId="lti.platform.ags.by-course.lineitems.by-lineitem.scores.post", summary="AGS: post a score", tags={"LTI"},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Parameter(name="lineItem", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Response(response=204, description="stored; completes the topic when Completed or FullyGraded"))
- * @OA\Get(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}/results", summary="AGS: latest result per learner", tags={"LTI"},
+ * @OA\Get(path="/api/lti/platform/ags/{course}/lineitems/{lineItem}/results", operationId="lti.platform.ags.by-course.lineitems.by-lineitem.results.get", summary="AGS: latest result per learner", tags={"LTI"},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Parameter(name="lineItem", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="result container"))
+ *     @OA\Response(response=200, description="result container", @OA\JsonContent(ref="#/components/schemas/ApiJson")))
  */
 class AgsController extends Controller
 {

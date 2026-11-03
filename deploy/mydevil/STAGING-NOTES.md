@@ -1,4 +1,55 @@
-# ulams staging on MyDevil s51: what was installed (2026-10-09, updated 2026-10-10: current main and the six demos)
+# ulams on MyDevil s51: what was installed (2026-10-09, updated 2026-10-11: production host names)
+
+## Production host names (2026-10-11): the word "staging" is gone from every URL
+
+The install keeps running on the same MyDevil account, databases, buckets and Workers; only the names changed. Everything below
+the next heading describes the install as it was built and still uses the old names (they now redirect, see the end of this section).
+
+| Old | New |
+|---|---|
+| `staging.ulams.app` | `ulams.app` (the landing, Cloudflare Pages project `ulams-landing`; `www` redirects to it) |
+| `staging-api` / `-admin` / `-h5p` / `-pdf` | `api.ulams.app`, `admin.ulams.app`, `h5p.ulams.app`, `pdf.ulams.app` |
+| `staging-content`, `staging-storage` | `content.ulams.app`, `storage.ulams.app` (Workers `ulams-content`, `ulams-storage`) |
+| `<slug>-staging` / `-api` / `-admin` / `-content` | `<slug>.ulams.app`, `<slug>-api`, `<slug>-admin`, `<slug>-content` |
+
+Storage URLs are `https://storage.ulams.app/<slug>/<key>` (`ulams` for the platform): R2 buckets cannot be renamed, so they keep the names
+`ulams-staging-<slug>` and the Worker maps the short name to the bucket (the long form still works). `TENANCY_BUCKET_PUBLIC_URL`
+(`https://storage.ulams.app/{slug}`) makes every tenant's `AWS_URL` use it.
+
+How it was done, in order; each step leaves the old names working:
+
+1. `python3 cloudflare/production-hosts.py dns`: proxied A records of the MyDevil hosts and `www`.
+2. `sh bin/add-production-hosts.sh`: the new MyDevil sites (PHP vhosts on the shared app, the admin symlink, Node sites for the fronts, H5P and
+   PDF with the staging `app.js` rewritten), each with the Origin CA certificate. (`add-vhost.sh` and `add-flat-hosts.sh` matched host names as
+   substrings, so `api.ulams.app` looked like it already existed because of `staging-api.ulams.app`; they match the whole name now.)
+3. `wrangler deploy -c *.wrangler.toml` for `ulams-content`, `ulams-storage`, `ulams-h5p-proxy`, then `production-hosts.py workers`.
+4. `sh bin/switch-to-production-names.sh`: the platform `.env`, the `api_host`/`front_host`/`admin_host` columns of `tenants`, `ulams:tenant:sync-env`
+   (new `.env.<host>` files, registrations, keys, H5P config), and a restart of the H5P and PDF sites.
+5. Per tenant: `ulams:tenant:seed-demo --front-url=https://<slug>.ulams.app`, then `ulams:demo:reset --recapture --force`. The demo baseline stores
+   `global.frontURL` and the reset restores it, and the reseed rewrites the course text that embedded storage URLs. A scan of every text column of the
+   six tenant databases for "staging" found nothing afterwards.
+6. Admin rebuilt with `REACT_APP_API_URL=https://api.ulams.app` and `REACT_APP_TENANT_API_HOST_PATTERN={slug}-admin.ulams.app=>https://{slug}-api.ulams.app`,
+   rsynced to `~/ulams/admin` (keeping `.htaccess`).
+7. `node cloudflare/landing-static.mjs <dir> ulams.app` (production mode: crawlable, `robots.txt` with the sitemap, `sitemap.xml`, no noindex header),
+   `wrangler pages deploy`, `production-hosts.py pages` (apex domain and CNAME).
+8. `production-hosts.py rules`: `X-Robots-Tag: noindex` on every host except `ulams.app` and `www` (the demo academies, APIs and admins are not indexed
+   yet; relax the expression to index a demo), and `X-Ulams-Content-Origin` stripped on `api.ulams.app` and every `*-api.ulams.app` (a client that sends it gets 404).
+9. `production-hosts.py redirects`: `staging.*` and `www` 301 to the new page hosts; every old API, admin, content, storage, H5P and PDF host 308s to its new name
+   with path and query.
+10. The old env files and registrations (`.env.<slug>-staging-api.ulams.app`, `config/domain.php`, `h5p-config`) were removed so cron does not run every job
+    twice; `TENANCY_PLATFORM_HOSTS` is `api.ulams.app`. A backup of them is in `~/ulams/backups/`.
+
+Left in place on purpose: the old MyDevil sites (idle, nothing reaches them), the old DNS records and Worker domains (the redirects need the records), the
+old Workers `ulams-staging-*`, and the R2 bucket names. Remove them when the redirects are no longer needed.
+
+New tenant: add `<slug>.ulams.app`, `<slug>-api`, `<slug>-admin` with `ULAMS_HOST_LABEL= sh bin/add-flat-hosts.sh <slug>`, DNS and the `<slug>-content` Worker domain
+with `production-hosts.py` (add the slug to `ULAMS_SLUGS`), a bucket and its binding and alias in `storage.worker.js` / `storage.wrangler.toml`, then
+`ulams:tenant:create <slug> ...` as before.
+
+Two reading academies (2026-10-15), one course each, rebuilt by the hourly demo reset from `database/seeds/Demo/content/reports/`:
+`microdosing.ulams.app` (`/learn/1/1`, database `p1157_u_micro` because `p1157_u_microdosing` exceeds MyDevil's 16-character name) and
+`stablecoins.ulams.app` (`/learn/1/1`, database `p1157_u_stable`). Hosts, buckets and the storage Worker aliases use the full slug.
+
 
 A STAGING install on the product owner's MyDevil account (issue #159), done from the runbook in
 `README.md`. The same text is kept on the server as `~/ulams/DEPLOY-NOTES.md`. No secrets are written
@@ -87,7 +138,7 @@ Keep APP_KEY in a password manager (ADR 0066). `AI_DRIVER=fake`, `ANTHROPIC_API_
 - `CACHE_DRIVER=database` cannot work: no migration creates the `cache` table. The template uses `file`.
 - `backup.sh` treated `.env.example` as a tenant.
 - `redis-start.sh` can listen on a reserved loopback port (`ULAMS_REDIS_PORT`).
-- Astro: the `/_image` endpoint needs `sharp`, which has no FreeBSD binary: `ULAMS_IMAGE_SERVICE=noop` at build time serves the original image.
+- Astro: the `/_image` endpoint needs `sharp`, which has no FreeBSD binary: `ULAMS_IMAGE_SERVICE=noop` at build time serves the original image (since IMG-6a the fronts use `cloudflare`, see "Images through Cloudflare" below).
 - H5P service: `@node-rs/crc32` has a FreeBSD binary (`@node-rs/crc32-freebsd-x64`, copied into `node_modules` on the server; the macOS one removed).
   The service calls the API for the user profile on `https://127.0.0.1` with the tenant `Host` header and `NODE_TLS_REJECT_UNAUTHORIZED=0` (loopback only).
 - `api/public/robots.txt` disallows everything (an API host is never meant to be indexed).
@@ -166,3 +217,87 @@ rm -rf ~/ulams
 # Cloudflare (zone ulams.app): delete the DNS records and Worker domains above, the Workers and routes, the two rulesets,
 # the R2 buckets of all six tenants (empty them first), the DNS records and Worker domains `<slug>-staging*` of the five added tenants and the token `ulams-staging-r2-server`, revoke the Origin CA certificate, set SSL mode back to `full`.
 ```
+
+## Platform landing on Cloudflare Pages
+
+`https://staging.ulams.app` (plus `/pl/` and `/zh/`) is a static copy of the Astro landing, served
+by the Cloudflare Pages project `ulams-landing`, not by the MyDevil Passenger site. The tenant
+landings (`<slug>-staging.ulams.app`) stay on MyDevil because they read live tenant-API data.
+
+Rebuild and publish after a landing change (needs the staging env of the front in the shell; the
+Cloudflare token stays in the root `.env` and is never printed):
+
+```sh
+ULAMS_IMAGE_SERVICE=cloudflare ULAMS_ADMIN_URL='https://{slug}-admin.ulams.app' corepack yarn workspace @ulams/web build
+ULAMS_IMAGE_SERVICE=cloudflare ULAMS_ADMIN_URL='https://{slug}-admin.ulams.app' node deploy/mydevil/cloudflare/landing-static.mjs /tmp/landing-static staging.ulams.app
+cd "$(mktemp -d)" && npx wrangler@4 pages deploy /tmp/landing-static --project-name ulams-landing --branch main
+```
+
+Run wrangler from an empty directory: from the repo root it stops with a "workspace" error. The
+project was created with `wrangler pages project create ulams-landing --force` (wrangler 4.149
+otherwise delegates Pages commands to Workers); later commands do not need `--force`. The domain
+`staging.ulams.app` is attached to the project and the zone record is a proxied CNAME to
+`ulams-landing.pages.dev`. The MyDevil `staging` Passenger site is unused now and can be removed.
+
+## Images through Cloudflare (IMG-6a, ADR 0193)
+
+The demo fronts and the landing build with `ULAMS_IMAGE_SERVICE=cloudflare` instead of `noop`: an image is
+`https://<host>/cdn-cgi/image/width=<w>,quality=<q>,format=auto,fit=scale-down,onerror=redirect/https://storage.ulams.app/<slug>/<key>`.
+
+- Smoke first: `sh deploy/mydevil/bin/check-images.sh <host> [source-url]` (200, `image/avif` or `image/webp`, `cf-resized`; a missing source with
+  `onerror=redirect` answers 3xx). Run on 2026-10-22 against `coffee.ulams.app` (with a `storage.ulams.app` source, so the Worker-served source origin is
+  fine, no error 9524) and `ulams.app`: all passed.
+- The landing export needs `ULAMS_IMAGE_SERVICE=cloudflare` (or `noop`) and `ULAMS_ADMIN_URL='https://{slug}-admin.ulams.app'` in the shell; `landing-static.mjs`
+  stops with a message otherwise.
+- Front deploy as before (local build with the production env, rsync of `front/web/dist`, `front/ui`, `front/sdk`, `front/interactive-bridge` without `node_modules`,
+  then `tmp/restart.txt`), built with `ULAMS_IMAGE_SERVICE=cloudflare`. The mode is read at runtime from `process.env`, so each front's `public_nodejs/app.js` also lists
+  `ULAMS_IMAGE_SERVICE: 'cloudflare'` in its `defaults` (next to `ULAMS_STORAGE_ORIGINS`); a copied `app.js` for a new host needs the line. Rollback is `'noop'` there plus a restart.
+  Deployed 2026-10-22 on the eight Node sites (coffee, oncall, nightsky, gravity, poland, microdosing, stablecoins, ulam); the old `dist` is `front/web/dist-before-img6a-20261022`
+  and each `app.js` has a `.bak-img6a` copy. Verified: the coffee home page has `/cdn-cgi/image/width=96…1280` URLs (distinct widths per image, 14 of 14 return 200 `image/avif`).
+- Rollback: rebuild with `ULAMS_IMAGE_SERVICE=noop` and restart. No data change.
+- Free plan quota: 5,000 unique transformations a month; watch Images > Transformations > Analytics. Record the first count here after the first week.
+
+## Images: admin, storage cache and WAF rule (IMG-6b, ADR 0193) - owner steps
+
+Prepared in the repository; **nothing below has been applied to Cloudflare, DNS or MyDevil**. Do the steps in this order; each one is
+reversible and none changes data.
+
+1. **Storage Worker cache header** (`cloudflare/storage.worker.js`). Image objects (`content-type: image/*`) now answer
+   `cache-control: public, max-age=3600` with their `ETag` (everything else stays `max-age=300`). An hourly demo reset rewrites the same
+   keys, so a longer lifetime would show stale images. Deploy from `deploy/mydevil/cloudflare` (an empty working directory for wrangler,
+   as for the landing): `wrangler deploy -c storage.wrangler.toml`. Check:
+   `curl -sI https://staging-storage.ulams.app/<slug>/<an image key> | grep -i -E 'cache-control|etag'` shows `max-age=3600` and an ETag.
+   Rollback: deploy the previous Worker version (`wrangler rollback`).
+2. **Admin runtime config** (needs an admin build with IMG-3, `REACT_APP_IMAGE_SERVICE`). The admin is static and shared by every
+   `<slug>-staging-admin` host, so the mode is a file, not a rebuild. Smoke one admin host first:
+   `sh deploy/mydevil/bin/check-images.sh coffee-staging-admin.ulams.app https://staging-storage.ulams.app/coffee/<an image key>`
+   (the admin host must be proxied and the source must pass). Then on MyDevil:
+   `sh ~/ulams/bin/set-admin-images.sh cloudflare` (second argument: comma-separated source origins, default
+   `https://staging-storage.ulams.app`). It writes `REACT_APP_IMAGE_SERVICE` and `REACT_APP_IMAGE_SOURCES` into
+   `~/ulams/admin/runtime-config.json`, keeping other keys; a page reload picks it up. Copy the step again whenever the admin build is
+   replaced wholesale (like `.htaccess`). Rollback: `sh ~/ulams/bin/set-admin-images.sh noop` (originals) or `php` (the API resizer).
+3. **Optional WAF rule** that blocks `/cdn-cgi/image/*` requests whose option string the builder never emits, so nobody can burn the
+   5,000-a-month free quota with arbitrary widths. Apply it **after** the fronts, the landing and the admin run in `cloudflare` mode, and
+   again after every change of the presets (`front/sdk/src/images/presets.json`):
+   - Print it: `node --experimental-strip-types --no-warnings deploy/mydevil/cloudflare/image-waf-rule.mjs --expression` (the expression;
+     `--rule` prints the rule as JSON for the API, `--list` the allowed option strings). The rule is built from `allowedCloudflareOptions()`
+     in `front/sdk/src/images.ts`, so it cannot drift from what the clients emit; a test checks that.
+   - Dashboard, zone `ulams.app`: Security > WAF > Custom rules > Create rule. Name `ulams: image options`, switch to "Edit expression",
+     paste the expression, action **Block**, Deploy. (The Free plan allows 5 custom rules and has no regex, so the expression is a list of
+     `starts_with` prefixes, about 1.5 KB of the 4 KB limit.) Through the API instead: `POST /zones/<zone id>/rulesets/<id of the
+     http_request_firewall_custom ruleset>/rules` with the `--rule` JSON and a token with "Zone WAF: Edit"; do not `PUT` the whole
+     entrypoint ruleset, that replaces the rules you already have.
+   - Verify: `ULAMS_EXPECT_WAF=1 sh deploy/mydevil/bin/check-images.sh coffee.ulams.app` must print `ok` for the transformation, the
+     `onerror=redirect` fallback and `WAF rule: width=777 blocked with 403`. The smoke's own option string is one of the allowed ones.
+   - If real pages show original images or 403s on `/cdn-cgi/image/`, a client emits an option string that is not on the list: disable the
+     rule (toggle it off in the dashboard), then fix the list or the client. Rollback: disable or delete the rule.
+
+The storage Worker header and the WAF rule change what Cloudflare caches and blocks only; the pages, the API and the stored content are
+untouched.
+
+## Admin deep links
+
+The admin is a history-routed SPA in `~/ulams/admin` (shared by every `<slug>-staging-admin` host).
+Without `deploy/mydevil/admin.htaccess` as `~/ulams/admin/.htaccess`, every route except `/` (for
+example `/login` or a reload) is MyDevil's 404 page. Copy it again whenever the admin build is
+replaced wholesale.

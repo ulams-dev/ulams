@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 interface MetaSwagger
 {
     /**
-     * @OA\Get(path="/api/meta", summary="Capabilities of this host", tags={"Auth"},
+     * @OA\Get(path="/api/meta", operationId="meta.get", summary="Capabilities of this host", tags={"Auth"},
      *     @OA\Response(response=200, description="API name, version, contract, host kind and feature flags", @OA\JsonContent(
      *         @OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
      *         @OA\Property(property="data", type="object",

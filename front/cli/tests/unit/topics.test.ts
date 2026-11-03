@@ -184,6 +184,55 @@ describe("topic commands", () => {
     expect(JSON.parse(r.stdout).error).toMatchObject({ code: "VALIDATION_FAILED", details: { fields: { document: [expect.stringContaining("not an approved layout component")] } } });
   });
 
+  it("code exercise sends the files and tests as one topic, with the lists read from disk", async () => {
+    const files = [{ path: "sum.js", content: "export const sum = () => 0;\n" }];
+    const tests = [{ path: "sum.test.js", content: "import { sum } from './sum.js';\ntest('adds', () => expect(sum(1, 2)).toBe(3));\n" }];
+    const r = await runCli(["topics", "create-code-exercise", ...base, "--files", "@starter.json", "--tests", "@tests.json", "--text", "@task.md", "--timeout-ms", "8000", "--completion", "on_attempt"], {
+      env,
+      routes: lmsRoutes(),
+      files: { "starter.json": JSON.stringify(files), "tests.json": JSON.stringify(tests), "task.md": "Make **sum** add." },
+    });
+    expect(r.code).toBe(0);
+    expect(r.requests.filter((q) => q.method === "POST")).toHaveLength(1);
+    expect(r.requests.at(-1)?.body).toMatchObject({
+      topicable_type: "Ulams\\CodeExercises\\Models\\CodeExerciseTopic",
+      lesson_id: 12,
+      order: 3,
+      language: "javascript",
+      files,
+      visible_tests: tests,
+      timeout_ms: 8000,
+      completion_rule: "on_attempt",
+      text: "Make **sum** add.",
+    });
+    expect(r.requests.at(-1)?.body).not.toHaveProperty("value");
+  });
+
+  it("code exercise defaults to JavaScript and completing after a pass, and takes TypeScript and a pass score", async () => {
+    const lists = [`--files`, '[{"path":"a.ts","content":"export {}"}]', `--tests`, '[{"path":"a.test.ts","content":"test(\'x\', () => {})"}]'];
+    const plain = await runCli(["topics", "create-code-exercise", ...base, ...lists], { env, routes: lmsRoutes() });
+    expect(plain.requests.at(-1)?.body).toMatchObject({ language: "javascript", completion_rule: "on_pass" });
+    expect(plain.requests.at(-1)?.body).not.toHaveProperty("timeout_ms");
+    const ts = await runCli(["topics", "create-code-exercise", ...base, ...lists, "--language", "typescript", "--pass-score", "60"], { env, routes: lmsRoutes() });
+    expect(ts.requests.at(-1)?.body).toMatchObject({ language: "typescript", pass_score: 60 });
+  });
+
+  it("code exercise needs files and tests, and a sensible timeout and language", async () => {
+    const lists = [`--files`, '[{"path":"a.js","content":"x"}]', `--tests`, '[{"path":"a.test.js","content":"y"}]'];
+    expect((await runCli(["topics", "create-code-exercise", ...base, "--tests", lists[3]!], { env, routes: lmsRoutes() })).code).toBe(2);
+    expect((await runCli(["topics", "create-code-exercise", ...base, "--files", lists[1]!], { env, routes: lmsRoutes() })).code).toBe(2);
+    expect((await runCli(["topics", "create-code-exercise", ...base, "--files", "[]", "--tests", lists[3]!], { env, routes: lmsRoutes() })).code).toBe(2);
+    expect((await runCli(["topics", "create-code-exercise", ...base, ...lists, "--timeout-ms", "100"], { env, routes: lmsRoutes() })).code).toBe(2);
+    expect((await runCli(["topics", "create-code-exercise", ...base, ...lists, "--language", "python"], { env, routes: lmsRoutes() })).code).toBe(2);
+  });
+
+  it("code exercise shows the API's validation problems", async () => {
+    const routes = lmsRoutes({ "POST /api/admin/topics": { status: 422, body: { success: false, message: "Topic Content Validation fails", data: { files: ["The files are not valid: File #1 (../a.js): use a relative path"] } } } });
+    const r = await runCli(["topics", "create-code-exercise", ...base, "--files", '[{"path":"../a.js","content":"x"}]', "--tests", '[{"path":"a.test.js","content":"y"}]'], { env, routes });
+    expect(r.code).not.toBe(0);
+    expect(JSON.parse(r.stdout).error).toMatchObject({ code: "VALIDATION_FAILED", details: { fields: { files: [expect.stringContaining("relative path")] } } });
+  });
+
   it("quiz creates the topic then one GIFT question per entry", async () => {
     const routes = lmsRoutes({ "POST /api/admin/gift-questions": (req) => ({ body: { success: true, data: { id: 1, ...(req.body as object) } } }) });
     const r = await runCli(["topics", "create-quiz", ...base, "--input", "@q.yaml"], {

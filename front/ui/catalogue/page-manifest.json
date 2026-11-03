@@ -176,6 +176,51 @@
             ],
             "description": "A link or call to action",
             "additionalProperties": false
+          },
+          "homeHref": {
+            "type": "string",
+            "format": "href",
+            "description": "Where the brand links to; the language home on a translated landing",
+            "maxLength": 2048
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Language code of the page it links to (BCP 47)",
+                  "maxLength": 10
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Name of the language in that language, e.g. PL or 中文",
+                  "maxLength": 20
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "URL of the page in that language",
+                  "maxLength": 2048
+                },
+                "current": {
+                  "type": "boolean",
+                  "description": "True for the language of this page",
+                  "default": false
+                }
+              },
+              "required": [
+                "code",
+                "label",
+                "href"
+              ],
+              "description": "One language of the switcher",
+              "additionalProperties": false
+            },
+            "description": "Language switcher: one entry per language, in display order; the current one is marked",
+            "default": [],
+            "maxItems": 4
           }
         },
         "required": [
@@ -239,7 +284,7 @@
       }
     },
     "Hero": {
-      "description": "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
+      "description": "First screen of a landing page. A product variant may show an animated, pausable six-step policy-to-certification lifecycle. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
       "children": false,
       "props": {
         "type": "object",
@@ -730,72 +775,378 @@
           "diff": {
             "type": "object",
             "properties": {
+              "ariaLabel": {
+                "type": "string",
+                "description": "Accessible description of the product example",
+                "maxLength": 280
+              },
+              "badge": {
+                "type": "string",
+                "description": "Short status label on the example card",
+                "maxLength": 40
+              },
               "title": {
                 "type": "string",
-                "description": "Card title, e.g. the lesson being updated",
-                "maxLength": 80
-              },
-              "source": {
-                "type": "string",
-                "description": "Source the change comes from, e.g. docs/slo.md",
+                "description": "Title of the illustrative journey, e.g. 'Privacy policy v1 → v2'",
                 "maxLength": 80
               },
               "note": {
                 "type": "string",
                 "description": "Small note under the card",
-                "maxLength": 160
+                "maxLength": 240
               },
-              "lines": {
+              "visual": {
+                "type": "object",
+                "properties": {
+                  "chapters": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Short navigation label",
+                      "maxLength": 24
+                    },
+                    "description": "Seven story chapters",
+                    "default": [],
+                    "maxItems": 7,
+                    "minItems": 7
+                  },
+                  "intake": {
+                    "type": "object",
+                    "properties": {
+                      "uploader": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: uploader",
+                        "maxLength": 120
+                      },
+                      "upload": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: upload",
+                        "maxLength": 120
+                      },
+                      "uploaded": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: uploaded",
+                        "maxLength": 120
+                      },
+                      "styleguide": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: styleguide",
+                        "maxLength": 120
+                      },
+                      "extract": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: extract",
+                        "maxLength": 120
+                      },
+                      "context": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: context",
+                        "maxLength": 120
+                      },
+                      "llm": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: llm",
+                        "maxLength": 120
+                      },
+                      "sourceReady": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: sourceReady",
+                        "maxLength": 120
+                      },
+                      "briefTitle": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: briefTitle",
+                        "maxLength": 120
+                      },
+                      "ready": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: ready",
+                        "maxLength": 120
+                      },
+                      "questions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "question": {
+                              "type": "string",
+                              "description": "Course brief question",
+                              "maxLength": 140
+                            },
+                            "answer": {
+                              "type": "string",
+                              "description": "Illustrative CEO answer",
+                              "maxLength": 140
+                            }
+                          },
+                          "required": [
+                            "question",
+                            "answer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Four audience and duration questions",
+                        "default": [],
+                        "maxItems": 4,
+                        "minItems": 4
+                      }
+                    },
+                    "required": [
+                      "uploader",
+                      "upload",
+                      "uploaded",
+                      "styleguide",
+                      "extract",
+                      "context",
+                      "llm",
+                      "sourceReady",
+                      "briefTitle",
+                      "ready",
+                      "questions"
+                    ],
+                    "description": "PDF extraction, cited source context and the course briefing interview",
+                    "additionalProperties": false
+                  },
+                  "audiences": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Department",
+                      "maxLength": 30
+                    },
+                    "description": "Three example departments",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 3
+                  },
+                  "roleTopics": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Role-specific learning focus",
+                      "maxLength": 80
+                    },
+                    "description": "One learning focus per department",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 3
+                  },
+                  "learners": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Illustrative learner label",
+                      "maxLength": 40
+                    },
+                    "description": "Three anonymous learner rows in the owner view",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 3
+                  },
+                  "formats": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Learning activity",
+                      "maxLength": 40
+                    },
+                    "description": "Three activities ending with an exam",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 3
+                  },
+                  "policy": {
+                    "type": "string",
+                    "description": "Localized illustration copy: policy",
+                    "maxLength": 120
+                  },
+                  "section": {
+                    "type": "string",
+                    "description": "Localized illustration copy: section",
+                    "maxLength": 120
+                  },
+                  "before": {
+                    "type": "string",
+                    "description": "Localized illustration copy: before",
+                    "maxLength": 120
+                  },
+                  "after": {
+                    "type": "string",
+                    "description": "Localized illustration copy: after",
+                    "maxLength": 120
+                  },
+                  "academy": {
+                    "type": "string",
+                    "description": "Localized illustration copy: academy",
+                    "maxLength": 120
+                  },
+                  "lesson": {
+                    "type": "string",
+                    "description": "Localized illustration copy: lesson",
+                    "maxLength": 120
+                  },
+                  "exam": {
+                    "type": "string",
+                    "description": "Localized illustration copy: exam",
+                    "maxLength": 120
+                  },
+                  "certificate": {
+                    "type": "string",
+                    "description": "Localized illustration copy: certificate",
+                    "maxLength": 120
+                  },
+                  "completed": {
+                    "type": "string",
+                    "description": "Localized illustration copy: completed",
+                    "maxLength": 120
+                  },
+                  "pending": {
+                    "type": "string",
+                    "description": "Localized illustration copy: pending",
+                    "maxLength": 120
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "Localized illustration copy: owner",
+                    "maxLength": 120
+                  },
+                  "progress": {
+                    "type": "string",
+                    "description": "Localized illustration copy: progress",
+                    "maxLength": 120
+                  },
+                  "later": {
+                    "type": "string",
+                    "description": "Localized illustration copy: later",
+                    "maxLength": 120
+                  },
+                  "proposal": {
+                    "type": "string",
+                    "description": "Localized illustration copy: proposal",
+                    "maxLength": 120
+                  },
+                  "approval": {
+                    "type": "string",
+                    "description": "Localized illustration copy: approval",
+                    "maxLength": 120
+                  },
+                  "renewal": {
+                    "type": "string",
+                    "description": "Localized illustration copy: renewal",
+                    "maxLength": 120
+                  },
+                  "expired": {
+                    "type": "string",
+                    "description": "Localized illustration copy: expired",
+                    "maxLength": 120
+                  },
+                  "minor": {
+                    "type": "string",
+                    "description": "Localized illustration copy: minor",
+                    "maxLength": 120
+                  },
+                  "major": {
+                    "type": "string",
+                    "description": "Localized illustration copy: major",
+                    "maxLength": 120
+                  },
+                  "notification": {
+                    "type": "string",
+                    "description": "Localized illustration copy: notification",
+                    "maxLength": 120
+                  },
+                  "renewed": {
+                    "type": "string",
+                    "description": "Localized illustration copy: renewed",
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "chapters",
+                  "intake",
+                  "audiences",
+                  "roleTopics",
+                  "learners",
+                  "formats",
+                  "policy",
+                  "section",
+                  "before",
+                  "after",
+                  "academy",
+                  "lesson",
+                  "exam",
+                  "certificate",
+                  "completed",
+                  "pending",
+                  "owner",
+                  "progress",
+                  "later",
+                  "proposal",
+                  "approval",
+                  "renewal",
+                  "expired",
+                  "minor",
+                  "major",
+                  "notification",
+                  "renewed"
+                ],
+                "description": "Localized copy for the policy document, role-specific courses, learning site, certificates, completion view and reviewed source update",
+                "additionalProperties": false
+              },
+              "journey": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "op": {
+                    "title": {
                       "type": "string",
-                      "enum": [
-                        "add",
-                        "del",
-                        "ctx"
-                      ],
-                      "description": "Diff line kind",
-                      "default": "ctx"
+                      "description": "Story step title",
+                      "maxLength": 60
                     },
                     "text": {
                       "type": "string",
-                      "description": "Line",
-                      "maxLength": 160
+                      "description": "What happens and why this step matters",
+                      "maxLength": 180
+                    },
+                    "bullets": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Concise action or outcome",
+                        "maxLength": 140
+                      },
+                      "description": "Practical explanation of this step",
+                      "default": [],
+                      "maxItems": 4,
+                      "minItems": 2
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "available",
+                        "coming"
+                      ],
+                      "description": "Whether this capability is available or on the roadmap",
+                      "default": "available"
                     }
                   },
                   "required": [
+                    "title",
                     "text"
                   ],
                   "additionalProperties": false
                 },
-                "description": "Diff lines",
+                "description": "Steps in the product story",
                 "default": [],
-                "maxItems": 8
-              },
-              "citations": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "description": "Citation chip, e.g. docs/slo.md §2",
-                  "maxLength": 40
-                },
-                "description": "Citations",
-                "default": [],
-                "maxItems": 4
-              },
-              "action": {
-                "type": "string",
-                "description": "Label of the approve button",
-                "maxLength": 30
+                "maxItems": 7,
+                "minItems": 7
               }
             },
             "required": [
-              "lines"
+              "journey",
+              "visual"
             ],
-            "description": "Update-proposal card for the product variant",
+            "description": "A single visual story at the top of the product page: policy v1, learning, oversight, reviewed policy v2 changes and planned recertification",
             "additionalProperties": false
           },
           "id": {
@@ -1023,6 +1374,139 @@
         },
         "required": [
           "lessons"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "HeritageStory": {
+      "description": "An editorial brand-origin story with an attributed portrait, sourced historical context, a separate product connection and a call to action. Never invent quotations or historical facts.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "Image URL (local /images/… or the tenant storage)",
+                "maxLength": 2048
+              },
+              "alt": {
+                "type": "string",
+                "description": "Text alternative; empty string only for decorative images",
+                "maxLength": 300
+              },
+              "width": {
+                "type": "integer",
+                "description": "Intrinsic width in px",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Intrinsic height in px",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "src",
+              "alt",
+              "width",
+              "height"
+            ],
+            "description": "An image with explicit size (prevents layout shift)",
+            "additionalProperties": false
+          },
+          "caption": {
+            "type": "string",
+            "description": "Illustration caption",
+            "maxLength": 160
+          },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Sourced historical paragraph",
+              "maxLength": 600
+            },
+            "description": "Historical context",
+            "default": [],
+            "maxItems": 3,
+            "minItems": 1
+          },
+          "connection": {
+            "type": "string",
+            "description": "How this history inspires the product",
+            "maxLength": 600
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "image",
+          "paragraphs",
+          "connection",
+          "source",
+          "cta"
         ],
         "additionalProperties": false
       }
@@ -1896,8 +2380,103 @@
         "additionalProperties": false
       }
     },
+    "ContactForm": {
+      "description": "An accessible contact form that sends messages to the private ULAMS contact inbox through the platform API.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "contact"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 120
+          },
+          "intro": {
+            "type": "string",
+            "description": "Short introduction",
+            "maxLength": 400
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "Platform API base URL",
+            "maxLength": 254
+          },
+          "nameLabel": {
+            "type": "string",
+            "description": "Name field label",
+            "maxLength": 80
+          },
+          "emailLabel": {
+            "type": "string",
+            "description": "Reply-to field label",
+            "maxLength": 80
+          },
+          "subjectLabel": {
+            "type": "string",
+            "description": "Subject field label",
+            "maxLength": 80
+          },
+          "messageLabel": {
+            "type": "string",
+            "description": "Message field label",
+            "maxLength": 80
+          },
+          "submitLabel": {
+            "type": "string",
+            "description": "Submit button label",
+            "maxLength": 80
+          },
+          "sendingLabel": {
+            "type": "string",
+            "description": "Submitting state label",
+            "maxLength": 80
+          },
+          "successMessage": {
+            "type": "string",
+            "description": "Successful submission message",
+            "maxLength": 200
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Submission failure message",
+            "maxLength": 200
+          },
+          "note": {
+            "type": "string",
+            "description": "Submission behavior note",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "title",
+          "intro",
+          "endpoint",
+          "nameLabel",
+          "emailLabel",
+          "subjectLabel",
+          "messageLabel",
+          "submitLabel",
+          "sendingLabel",
+          "successMessage",
+          "errorMessage",
+          "note"
+        ],
+        "additionalProperties": false
+      }
+    },
     "Faq": {
-      "description": "Questions and answers as an accessible disclosure list (no JavaScript).",
+      "description": "Questions and answers as an accessible disclosure list, or as open question-and-answer cards (no JavaScript).",
       "children": false,
       "props": {
         "type": "object",
@@ -1944,10 +2523,497 @@
             "default": [],
             "maxItems": 12,
             "minItems": 1
+          },
+          "jsonLd": {
+            "type": "boolean",
+            "description": "Emit schema.org FAQPage JSON-LD; turn off when the page emits one FAQPage for several sections",
+            "default": true
+          },
+          "collapsible": {
+            "type": "boolean",
+            "description": "Render each question as a disclosure; turn off to show every answer, e.g. on a dedicated FAQ page",
+            "default": true
+          },
+          "more": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "Link under the list to the full FAQ page",
+            "additionalProperties": false
           }
         },
         "required": [
           "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "FeatureIndex": {
+      "description": "Everything the product does, grouped and collapsed by default: one native disclosure per group with short feature lines, status badges and links to the package docs (no JavaScript, content stays in the HTML for search engines). Emits ItemList JSON-LD. Use it for a long, honest capability list, not for the three-to-six headline benefits (FeatureList).",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "features"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "docsBase": {
+            "type": "string",
+            "format": "href",
+            "description": "Docs site root; a package name links to <docsBase>/reference/packages/<name>/",
+            "maxLength": 2048
+          },
+          "jsonLd": {
+            "type": "boolean",
+            "description": "Emit schema.org ItemList JSON-LD of the groups and features",
+            "default": true
+          },
+          "navLabel": {
+            "type": "string",
+            "description": "Accessible stakeholder-navigation label",
+            "maxLength": 80
+          },
+          "audiences": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Stakeholder id",
+                  "maxLength": 40
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Stakeholder title",
+                  "maxLength": 100
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "How these capabilities help this stakeholder",
+                  "maxLength": 300
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "summary"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Stakeholders; categories link to them with audience",
+            "default": [],
+            "maxItems": 8
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Group anchor id",
+                  "maxLength": 40
+                },
+                "audience": {
+                  "type": "string",
+                  "description": "Stakeholder id for this category",
+                  "maxLength": 40
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Group title",
+                  "maxLength": 80
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "One sentence under the title when the group is open",
+                  "maxLength": 300
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "description": "Feature",
+                        "maxLength": 80
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "What it does, in one or two sentences",
+                        "maxLength": 320
+                      },
+                      "packages": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "description": "Package name under api/packages",
+                          "maxLength": 60
+                        },
+                        "description": "Packages that implement it",
+                        "default": [],
+                        "maxItems": 6
+                      },
+                      "href": {
+                        "type": "string",
+                        "format": "href",
+                        "description": "Docs page for the feature",
+                        "maxLength": 2048
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "available",
+                          "coming",
+                          "preview"
+                        ],
+                        "description": "Shipped today, on the roadmap or off by default (say so honestly)",
+                        "default": "available"
+                      }
+                    },
+                    "required": [
+                      "title"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Features",
+                  "default": [],
+                  "maxItems": 14
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "Name",
+                    "maxLength": 60
+                  },
+                  "description": "Short names shown as a tag cloud (for example the content types of a standard)",
+                  "default": [],
+                  "maxItems": 80
+                }
+              },
+              "required": [
+                "id",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Groups",
+            "default": [],
+            "maxItems": 16,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "groups"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "BlogIndex": {
+      "description": "The list of blog posts as cards, newest first: date, title, description, topics and an optional thumbnail. The whole card links to the post. Renders the page heading (h1), so use it once, as the lead of a blog index page.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "posts"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Post title",
+                  "maxLength": 160
+                },
+                "description": {
+                  "type": "string",
+                  "description": "One or two sentences about the post",
+                  "maxLength": 300
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Link to the post",
+                  "maxLength": 2048
+                },
+                "date": {
+                  "type": "string",
+                  "description": "Publication date, YYYY-MM-DD",
+                  "maxLength": 10
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "Topic",
+                    "maxLength": 40
+                  },
+                  "description": "Topics",
+                  "default": [],
+                  "maxItems": 6
+                },
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Thumbnail URL (decorative, the title says what the post is)",
+                      "maxLength": 2048
+                    },
+                    "width": {
+                      "type": "integer",
+                      "description": "Intrinsic width in px",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "description": "Intrinsic height in px",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "width",
+                    "height"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "title",
+                "href",
+                "date"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Posts",
+            "default": [],
+            "maxItems": 200,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "title",
+          "posts"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "BlogPost": {
+      "description": "One blog post: back link, date and byline, title (h1), lead, topics, an optional clip with a caption (native controls), the Markdown body, an optional gallery of captioned screenshots and an optional Markdown footer. Use it once, as the lead of a post page.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "post"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "lead": {
+            "type": "string",
+            "description": "Standfirst under the title",
+            "maxLength": 400
+          },
+          "date": {
+            "type": "string",
+            "description": "Publication date, YYYY-MM-DD",
+            "maxLength": 10
+          },
+          "author": {
+            "type": "string",
+            "description": "Author name for the byline",
+            "maxLength": 80
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Topic",
+              "maxLength": 40
+            },
+            "description": "Topics",
+            "default": [],
+            "maxItems": 6
+          },
+          "backHref": {
+            "type": "string",
+            "format": "href",
+            "description": "Link back to the list of posts",
+            "maxLength": 2048
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Post body in Markdown",
+            "maxLength": 60000
+          },
+          "video": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "MP4 URL",
+                "maxLength": 2048
+              },
+              "poster": {
+                "type": "string",
+                "format": "href",
+                "description": "Poster image URL",
+                "maxLength": 2048
+              },
+              "width": {
+                "type": "integer",
+                "description": "Width in px",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Height in px",
+                "minimum": 1
+              },
+              "caption": {
+                "type": "string",
+                "description": "Says what the clip shows (also its text alternative)",
+                "maxLength": 600
+              }
+            },
+            "required": [
+              "src",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          },
+          "imagesHeading": {
+            "type": "string",
+            "description": "Heading of the screenshot gallery",
+            "maxLength": 120
+          },
+          "imagesIntro": {
+            "type": "string",
+            "description": "Sentence under the gallery heading",
+            "maxLength": 300
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "src": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Image URL",
+                  "maxLength": 2048
+                },
+                "alt": {
+                  "type": "string",
+                  "description": "Text alternative",
+                  "maxLength": 300
+                },
+                "width": {
+                  "type": "integer",
+                  "description": "Intrinsic width in px",
+                  "minimum": 1
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "Intrinsic height in px",
+                  "minimum": 1
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Caption",
+                  "maxLength": 300
+                }
+              },
+              "required": [
+                "src",
+                "alt",
+                "width",
+                "height"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Screenshots",
+            "default": [],
+            "maxItems": 20
+          },
+          "footer": {
+            "type": "string",
+            "description": "Markdown after the gallery (related posts)",
+            "maxLength": 4000
+          }
+        },
+        "required": [
+          "title",
+          "date",
+          "backHref",
+          "markdown"
         ],
         "additionalProperties": false
       }
@@ -1963,9 +3029,10 @@
             "enum": [
               "banner",
               "newsletter",
-              "terminal"
+              "terminal",
+              "feature"
             ],
-            "description": "Style; terminal shows `code` lines in a terminal window",
+            "description": "Style; terminal shows `code` lines in a terminal window; feature shows big `stats`, outcome `bullets`, a schematic `panel` and `chips`",
             "default": "banner"
           },
           "eyebrow": {
@@ -1983,6 +3050,170 @@
             "description": "One or two sentences under the title",
             "maxLength": 600
           },
+          "bullets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Bullet heading",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Short explanation",
+                  "maxLength": 200
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Guide or supporting resource",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Concise call-to-action details",
+            "default": [],
+            "maxItems": 6
+          },
+          "note": {
+            "type": "string",
+            "description": "Short closing note",
+            "maxLength": 200
+          },
+          "stats": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Big figure",
+                  "maxLength": 24
+                },
+                "label": {
+                  "type": "string",
+                  "description": "What it is",
+                  "maxLength": 80
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Small note or source",
+                  "maxLength": 80
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "own",
+                    "benchmark"
+                  ],
+                  "description": "Our own measurement or a third-party benchmark",
+                  "default": "own"
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Source of a benchmark",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Feature variant: big figures (a benchmark one is shown apart)",
+            "default": [],
+            "maxItems": 6
+          },
+          "statsLabel": {
+            "type": "string",
+            "description": "Feature variant: label above the figures",
+            "maxLength": 100
+          },
+          "chips": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Capability",
+              "maxLength": 60
+            },
+            "description": "Feature variant: capability chips",
+            "default": [],
+            "maxItems": 8
+          },
+          "panel": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Panel title",
+                "maxLength": 60
+              },
+              "label": {
+                "type": "string",
+                "description": "Label that says the panel is an illustration",
+                "maxLength": 40
+              },
+              "alt": {
+                "type": "string",
+                "description": "Text alternative for the whole panel",
+                "maxLength": 300
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Row label",
+                      "maxLength": 60
+                    },
+                    "level": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100,
+                      "description": "Bar length in percent (drawn without a number)"
+                    },
+                    "tone": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "warn",
+                        "muted"
+                      ],
+                      "description": "Bar colour",
+                      "default": "ok"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "level"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Bars",
+                "default": [],
+                "maxItems": 6
+              }
+            },
+            "required": [
+              "title",
+              "label",
+              "alt",
+              "rows"
+            ],
+            "description": "Feature variant: schematic illustration of the product",
+            "additionalProperties": false
+          },
           "code": {
             "type": "array",
             "items": {
@@ -1993,6 +3224,12 @@
             "description": "Terminal lines (terminal variant); lines starting with $ are commands",
             "default": [],
             "maxItems": 10
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40,
+            "default": "join"
           },
           "cta": {
             "type": "object",
@@ -2037,11 +3274,6 @@
             ],
             "description": "A link or call to action",
             "additionalProperties": false
-          },
-          "id": {
-            "type": "string",
-            "description": "Anchor id for in-page links (letters, digits, dashes)",
-            "maxLength": 40
           }
         },
         "required": [
@@ -2341,7 +3573,7 @@
       }
     },
     "WorkflowShowcase": {
-      "description": "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers are typed line by line, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
+      "description": "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers can type line by line or stay on a settled example, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
       "children": false,
       "props": {
         "type": "object",
@@ -2381,6 +3613,11 @@
             "description": "Trademark line, e.g. that product names belong to their owners and are not endorsements",
             "maxLength": 300
           },
+          "staticPreview": {
+            "type": "boolean",
+            "description": "Show a settled transcript without automatically typing it",
+            "default": false
+          },
           "tabs": {
             "type": "array",
             "items": {
@@ -2410,7 +3647,8 @@
                   "enum": [
                     "terminal",
                     "chat",
-                    "studio"
+                    "studio",
+                    "admin"
                   ],
                   "description": "Look of the window frame",
                   "default": "terminal"
@@ -3663,6 +4901,11 @@
                         "type": "string",
                         "description": "Short neutral note",
                         "maxLength": 120
+                      },
+                      "kind": {
+                        "type": "string",
+                        "description": "Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming",
+                        "maxLength": 16
                       }
                     },
                     "required": [
@@ -3761,6 +5004,11 @@
                               "type": "string",
                               "description": "Short neutral note",
                               "maxLength": 120
+                            },
+                            "kind": {
+                              "type": "string",
+                              "description": "Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming",
+                              "maxLength": 16
                             }
                           },
                           "required": [
@@ -3823,6 +5071,11 @@
                                     "type": "string",
                                     "description": "Short neutral note",
                                     "maxLength": 120
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "description": "Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming",
+                                    "maxLength": 16
                                   }
                                 },
                                 "required": [
@@ -3940,6 +5193,81 @@
             "description": "One or two sentences under the title",
             "maxLength": 600
           },
+          "research": {
+            "type": "object",
+            "properties": {
+              "eyebrow": {
+                "type": "string",
+                "description": "Small label above the title",
+                "maxLength": 80
+              },
+              "title": {
+                "type": "string",
+                "description": "Section title",
+                "maxLength": 160
+              },
+              "text": {
+                "type": "string",
+                "description": "Sourced summary of the foundational paper",
+                "maxLength": 600
+              },
+              "author": {
+                "type": "string",
+                "description": "Documented author",
+                "maxLength": 100
+              },
+              "date": {
+                "type": "string",
+                "description": "PDF version date in ISO format",
+                "maxLength": 10
+              },
+              "dateLabel": {
+                "type": "string",
+                "description": "Localized version-date label",
+                "maxLength": 100
+              },
+              "links": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Visible text",
+                      "maxLength": 80
+                    },
+                    "href": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Target URL",
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ],
+                  "description": "A link or call to action",
+                  "additionalProperties": false
+                },
+                "description": "Verified paper and source links",
+                "default": [],
+                "maxItems": 3,
+                "minItems": 1
+              }
+            },
+            "required": [
+              "eyebrow",
+              "title",
+              "text",
+              "author",
+              "date",
+              "dateLabel",
+              "links"
+            ],
+            "description": "Optional scholarly context, separate from the standards and integration badges",
+            "additionalProperties": false
+          },
           "items": {
             "type": "array",
             "items": {
@@ -4035,6 +5363,11 @@
             "type": "string",
             "description": "Small print",
             "maxLength": 200
+          },
+          "mail": {
+            "type": "boolean",
+            "description": "Show the contact address, assembled in the browser so it is not in the HTML",
+            "default": false
           }
         },
         "required": [
@@ -4263,6 +5596,11 @@
             "minimum": 0,
             "maximum": 100
           },
+          "progressNote": {
+            "type": "string",
+            "description": "Line under the progress bar: what is next and how much is left",
+            "maxLength": 200
+          },
           "id": {
             "type": "string",
             "description": "Anchor id for in-page links (letters, digits, dashes)",
@@ -4352,6 +5690,11 @@
       "props": {
         "type": "object",
         "properties": {
+          "title": {
+            "type": "string",
+            "description": "Optional heading shown above the text (as a third-level heading)",
+            "maxLength": 120
+          },
           "markdown": {
             "type": "string",
             "description": "Markdown source",
@@ -4380,6 +5723,83 @@
         },
         "required": [
           "markdown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ProseSteps": {
+      "description": "A long reading shown one part at a time: an optional introduction and 2-12 parts, each with a heading and Markdown text. Previous and next controls move between parts with JavaScript; without it every part is on the page. Used by the adaptive lesson view for a learner who prefers lessons in parts.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "parts"
+          },
+          "intro": {
+            "type": "string",
+            "description": "Markdown shown above the first part",
+            "maxLength": 60000
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "heading": {
+                  "type": "string",
+                  "description": "Heading of the part",
+                  "maxLength": 160
+                },
+                "level": {
+                  "type": "integer",
+                  "description": "Heading level, 2 or 3",
+                  "minimum": 2,
+                  "maximum": 3,
+                  "default": 2
+                },
+                "markdown": {
+                  "type": "string",
+                  "description": "Markdown of the part",
+                  "maxLength": 60000
+                }
+              },
+              "required": [
+                "heading",
+                "markdown"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The parts, in reading order",
+            "default": [],
+            "maxItems": 12,
+            "minItems": 2
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "sm",
+              "md",
+              "lg"
+            ],
+            "description": "Text size",
+            "default": "md"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          }
+        },
+        "required": [
+          "sections"
         ],
         "additionalProperties": false
       }
@@ -4605,6 +6025,13 @@
             "maxLength": 40,
             "default": "practice"
           },
+          "initialHints": {
+            "type": "integer",
+            "description": "Hints already shown when the learner opens a challenge (0 to 3); set by the learner's lesson view, not by authors",
+            "minimum": 0,
+            "maximum": 3,
+            "default": 0
+          },
           "title": {
             "type": "string",
             "description": "Section title",
@@ -4804,6 +6231,103 @@
         },
         "required": [
           "image"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "FrameSlider": {
+      "description": "A walk-through of captioned frames: previous and next controls, then the explanation, then the image at full width. One frame at a time with JavaScript; every frame stays in the HTML without it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "frames"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "previous": {
+            "type": "string",
+            "description": "Previous-frame control",
+            "maxLength": 40,
+            "default": "Previous"
+          },
+          "next": {
+            "type": "string",
+            "description": "Next-frame control",
+            "maxLength": 40,
+            "default": "Next"
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Image URL (local /images/… or the tenant storage)",
+                      "maxLength": 2048
+                    },
+                    "alt": {
+                      "type": "string",
+                      "description": "Text alternative; empty string only for decorative images",
+                      "maxLength": 300
+                    },
+                    "width": {
+                      "type": "integer",
+                      "description": "Intrinsic width in px",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "description": "Intrinsic height in px",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "alt",
+                    "width",
+                    "height"
+                  ],
+                  "description": "An image with explicit size (prevents layout shift)",
+                  "additionalProperties": false
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Explanation under the image",
+                  "maxLength": 400
+                }
+              },
+              "required": [
+                "image",
+                "caption"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Frames in order",
+            "default": [],
+            "maxItems": 24,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "frames"
         ],
         "additionalProperties": false
       }
@@ -5256,6 +6780,157 @@
         "additionalProperties": false
       }
     },
+    "CodeExerciseLesson": {
+      "description": "A code exercise (JavaScript or TypeScript): the task, the learner's files in labelled text areas, the visible tests and their results. The code runs only in a sandboxed runner frame on the tenant content origin; results are practice grades reported through the learner session.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "href",
+            "description": "The runner page on the content origin (from POST /api/code-exercises/launches/{topic})",
+            "maxLength": 2048
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "topicId": {
+            "type": "integer",
+            "description": "Topic id for the attempts call (omitted in a preview: nothing is tracked)",
+            "minimum": 0
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "javascript",
+              "typescript"
+            ],
+            "description": "Language of the exercise",
+            "default": "javascript"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Relative path of the file",
+                  "maxLength": 80
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Starter content",
+                  "maxLength": 65536
+                }
+              },
+              "required": [
+                "path",
+                "content"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The learner's starter files",
+            "default": [],
+            "maxItems": 20
+          },
+          "tests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Relative path of the test file",
+                  "maxLength": 80
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Test source",
+                  "maxLength": 65536
+                }
+              },
+              "required": [
+                "path",
+                "content"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The visible test files",
+            "default": [],
+            "maxItems": 10
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "description": "A run is stopped after this many milliseconds",
+            "minimum": 500,
+            "default": 5000,
+            "maximum": 30000
+          },
+          "passScore": {
+            "type": "integer",
+            "description": "Percentage of passing tests that completes the topic",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "completionRule": {
+            "type": "string",
+            "enum": [
+              "on_pass",
+              "on_attempt"
+            ],
+            "description": "When the topic completes",
+            "default": "on_pass"
+          },
+          "text": {
+            "type": "string",
+            "description": "The task (Markdown)",
+            "maxLength": 20000
+          },
+          "locale": {
+            "type": "string",
+            "description": "Language of the interface texts",
+            "maxLength": 16,
+            "default": "en"
+          },
+          "attempts": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "integer",
+                "description": "Attempts so far",
+                "minimum": 0
+              },
+              "best_score": {
+                "type": "integer",
+                "description": "Best score in percent",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "count"
+            ],
+            "description": "The learner's attempts so far",
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "src",
+          "title",
+          "files",
+          "tests"
+        ],
+        "additionalProperties": false
+      }
+    },
     "ActivityCard": {
       "description": "Launch card for an activity that runs outside the page (cmi5 tracked activity, project hand-in).",
       "children": false,
@@ -5617,6 +7292,417 @@
           }
         },
         "required": [],
+        "additionalProperties": false
+      }
+    },
+    "WorkedExample": {
+      "description": "A worked example inside extra help: a title and the steps as Markdown (at most 1 800 characters). Static; it is one of the blocks generated for a learner who struggled with a part of the course, and every block cites its source fragments.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading of the block",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown, at most 1 800 characters; raw HTML is escaped",
+            "maxLength": 1800
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "markdown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "PracticeQuestion": {
+      "description": "One multiple-choice practice question with exactly one right option. The learner picks an option and presses Check; the result is stated in words and the explanation appears only after that first attempt. Nothing is recorded or sent. Used in extra help; the plain-text fallback leaves out the answer.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading of the block",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown, at most 1 800 characters; raw HTML is escaped",
+            "maxLength": 1800
+          },
+          "practice": {
+            "type": "object",
+            "properties": {
+              "stem": {
+                "type": "string",
+                "description": "The question",
+                "maxLength": 400
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "Answer option",
+                      "maxLength": 200
+                    },
+                    "correct": {
+                      "type": "boolean",
+                      "description": "Whether this option is right",
+                      "default": false
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "correct"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "2 to 5 answer options; exactly one is correct",
+                "maxItems": 5,
+                "minItems": 2
+              },
+              "explanation": {
+                "type": "string",
+                "description": "Why the right option is right; shown only after the learner checks an answer",
+                "maxLength": 400
+              }
+            },
+            "required": [
+              "stem",
+              "options",
+              "explanation"
+            ],
+            "additionalProperties": false
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "markdown",
+          "practice"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ElaborativeQuestion": {
+      "description": "An open question that asks the learner to explain an idea in their own words, with an optional notes field. What the learner types stays on their device; nothing is sent. Used in extra help.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading of the block",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown, at most 1 800 characters; raw HTML is escaped",
+            "maxLength": 1800
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "markdown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "CitationList": {
+      "description": "The sources a block is based on: a visible heading and a list of source names, each a link only when the API gives a lesson to open. Filled by the app next to generated blocks; authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Name of the cited source section",
+                  "maxLength": 200
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Lesson the source belongs to; leave out when there is none",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "1 to 12 sources",
+            "maxItems": 12,
+            "minItems": 1
+          },
+          "label": {
+            "type": "string",
+            "description": "Heading of the list; the interface word for \"Sources\" when left out",
+            "maxLength": 60
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "AiLabel": {
+      "description": "A short label that says content was written or assisted by AI, with an icon and the words (never colour alone). Filled by the app next to generated content; authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The label text",
+            "maxLength": 120
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "generated",
+              "assisted"
+            ],
+            "description": "generated = written by AI; assisted = written by the author with AI help",
+            "default": "generated"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "WhyThis": {
+      "description": "A collapsed 'Why am I seeing this?' disclosure listing the plain-text reasons something was shown to the learner. Filled by the app; authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string",
+            "description": "Text of the disclosure; the interface wording of 'Why am I seeing this?' when left out",
+            "maxLength": 80
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "One reason in plain text",
+              "maxLength": 300
+            },
+            "description": "1 to 6 reasons",
+            "maxItems": 6,
+            "minItems": 1
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "reasons"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "SupportCard": {
+      "description": "The 'Extra help for you' card on a lesson page: a labelled region with a short summary, the generated blocks as children, the reasons it is shown, and 'This helped' / 'Not helpful' / 'Hide' controls. Status changes are announced politely. Filled by the app from the learner's own support items; authors and models do not place it.",
+      "children": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "description": "Id of the learner's assignment (26-character ULID); without it the controls are not shown",
+            "maxLength": 26
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "generating",
+              "ready",
+              "failed"
+            ],
+            "description": "generating = still being prepared; ready = the blocks are the children; failed = nothing to show",
+            "default": "ready"
+          },
+          "summary": {
+            "type": "string",
+            "description": "One or two sentences on what the help covers",
+            "maxLength": 300
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "One reason in plain text",
+              "maxLength": 300
+            },
+            "description": "Why this help is shown",
+            "default": [],
+            "maxItems": 6
+          },
+          "aiLabel": {
+            "type": "string",
+            "description": "The AI label shown in the heading row",
+            "maxLength": 120
+          },
+          "feedback": {
+            "type": "string",
+            "enum": [
+              "helpful",
+              "not_helpful"
+            ],
+            "description": "The learner's earlier answer, if any"
+          },
+          "position": {
+            "type": "integer",
+            "description": "Number of this card when the lesson has several (1, 2, …), so each region has its own name",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many cards the lesson has",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "FeynmanReflection": {
+      "description": "A box where the learner writes an explanation in their own words and asks for AI feedback: what they got right, what is missing, a follow-up question and the course sources. The text is sent once to the AI provider and is not stored. Filled by the app inside the extra-help card; authors and models do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "description": "Id of the learner's assignment (26-character ULID); without it the box is not shown",
+            "maxLength": 26
+          },
+          "prompt": {
+            "type": "string",
+            "description": "The prompt above the box; the interface wording of 'Explain it in your own words' when left out",
+            "maxLength": 120
+          },
+          "maxLength": {
+            "type": "integer",
+            "description": "Longest explanation in characters",
+            "minimum": 10,
+            "maximum": 2000,
+            "default": 2000
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "assignmentId"
+        ],
         "additionalProperties": false
       }
     }

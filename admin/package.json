@@ -7,6 +7,8 @@
   "scripts": {
     "analyze": "cross-env ANALYZE=1 node scripts/max.cjs build",
     "build": "node scripts/max.cjs build",
+    "postbuild": "node scripts/editor-budget.cjs",
+    "budget": "node scripts/editor-budget.cjs",
     "deploy": "npm run build && npm run gh-pages",
     "dev": "env-cmd -f .env npm run start:dev",
     "gh-pages": "gh-pages -d dist",
@@ -20,6 +22,7 @@
     "playwright": "PORT=8000 playwright install && playwright test",
     "playwright:debug": "PORT=8000 playwright install && playwright test --debug",
     "playwright:headed": "PORT=8000 playwright install && playwright test --headed --project=chromium",
+    "playwright:mock": "playwright test -c playwright.mock.config.ts",
     "playwright:local": "PORT=8000 playwright test",
     "prettier": "prettier -c --write \"**/**.{js,jsx,tsx,ts,less,md,json}\"",
     "preview": "npm run build && node scripts/max.cjs preview --port 8000",
@@ -61,6 +64,10 @@
     "setupFilesAfterEnv": [
       "<rootDir>/config/jest/setupTests.js"
     ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@ulams/images$": "<rootDir>/../front/sdk/src/images.ts"
+    },
     "testPathIgnorePatterns": [
       "/e2e/"
     ],
@@ -92,7 +99,7 @@
     "antd": "^5.15.3",
     "antd-style": "^3.6.1",
     "array-move": "^4.0.0",
-    "babel-jest": "^29.7.0",
+    "babel-jest": "^30.5.2",
     "babel-preset-react-app": "^10.1.0",
     "classnames": "^2.5.1",
     "conditional-wrap": "^1.0.3",
@@ -102,6 +109,8 @@
     "enzyme": "^3.11.0",
     "export-to-csv": "^1.5.0",
     "file-saver": "^2.0.5",
+    "grapesjs": "0.23.8",
+    "grapesjs-mjml": "1.0.8",
     "jest-esm-transformer": "^1.0.0",
     "jsoneditor": "^10.4.3",
     "jsoneditor-react": "^3.1.2",
@@ -152,6 +161,8 @@
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^3.4.0",
+    "@babel/plugin-syntax-import-attributes": "^7.26.0",
+    "@axe-core/playwright": "4.13.0",
     "@playwright/test": "^1.63.0",
     "@testing-library/react": "^13.4.0",
     "@types/classnames": "^2.3.1",
@@ -173,8 +184,8 @@
     "eslint": "^8.56.0",
     "express": "^4.18.2",
     "gh-pages": "^5.0.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
     "madge": "6.0.0",
     "mockjs": "^1.1.0",
     "prettier": "^2.8.8",

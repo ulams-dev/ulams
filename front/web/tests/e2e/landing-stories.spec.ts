@@ -1,11 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-/**
- * The three animated stories on the platform landing (Living Course update, course builder,
- * "run it from anywhere" tabs): structure, keyboard tabs, transcripts, reduced motion, layout shift,
- * and the final frame of each story as a screenshot under tests/screens/ for review.
- * Needs the API for the demo cards of the page, like the other platform tests.
- */
+/** The how-it-works story under the hero and the separate agent-interface showcase. */
 const port = process.env.WEB_BASE_PORT ?? "4321";
 const url = `http://app.localhost:${port}/`;
 
@@ -14,28 +9,19 @@ async function open(page: Page) {
   await expect(page.locator("#agents")).toHaveCount(1);
 }
 
-test("stories are on the landing, in order, and the final mode shows no roadmap labels", async ({ page }) => {
+test("the how-it-works story appears once, right after the hero, with no tabbed policy lifecycle", async ({ page }) => {
   await open(page);
-  const ids = await page.locator("main > section[id]").evaluateAll((els) => els.map((e) => e.id));
-  expect(ids.indexOf("living")).toBeGreaterThanOrEqual(0);
-  expect(ids.indexOf("living")).toBeLessThan(ids.indexOf("builder"));
-  expect(ids.indexOf("builder")).toBeLessThan(ids.indexOf("agents"));
-  expect(ids.indexOf("agents")).toBeLessThan(ids.indexOf("product"));
-  await expect(page.locator("#agents .u-status--coming")).toHaveCount(0);
-  await expect(page.locator("#living .u-status--coming")).toHaveCount(0);
-  await expect(page.locator("#agents")).not.toContainText("planned interface");
-  for (const id of ["living", "builder", "agents", "product", "how", "compare-intro"]) {
-    if (await page.locator(`#${id}`).count()) await expect(page.locator(`#${id}`)).not.toContainText(/roadmap|coming soon/i);
-  }
-  await expect(page.locator(".u-status--coming")).toHaveCount(0);
+  await expect(page.locator("#how-it-works")).toHaveCount(1);
+  await expect(page.locator("ulams-policy-story, .u-lc, #builder")).toHaveCount(0);
+  await expect(page.locator("#how-it-works .hs-visual__tag").first()).toBeVisible();
 });
 
 test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", async ({ page }) => {
   await open(page);
   const tabs = page.locator('#agents [role="tab"]');
-  await expect(tabs).toHaveCount(5);
+  await expect(tabs).toHaveCount(6);
   await expect(page.locator("#agents ulams-workflows")).toBeVisible();
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     const controls = await tabs.nth(i).getAttribute("aria-controls");
     await expect(page.locator(`#${controls}[role="tabpanel"]`)).toHaveCount(1);
   }
@@ -47,15 +33,15 @@ test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", asy
   await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
   await expect(tabs.nth(1)).toBeFocused();
   await page.keyboard.press("End");
-  await expect(tabs.nth(4)).toHaveAttribute("aria-selected", "true");
+  await expect(tabs.nth(5)).toHaveAttribute("aria-selected", "true");
   await page.keyboard.press("Home");
   await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
   // the transcript is plain text in the DOM, whatever the animation shows
   const transcript = page.locator("#agents-panel-claude-code ul.u-visually-hidden");
-  await expect(transcript).toContainText("ulams builder start --source runbook.md --tenant oncall --json");
+  await expect(transcript).toContainText("ulams builder start --from runbook.md --defaults --json");
   await expect(transcript).toContainText("ulams courses publish");
-  await expect(page.locator("#agents-panel-claude-mcp ul.u-visually-hidden")).toContainText("ulams.analytics.at_risk");
-  await expect(page.locator("#agents-panel-cli ul.u-visually-hidden")).toContainText("ulams courses push course/ --dry-run");
+  await expect(page.locator("#agents-panel-claude-mcp ul.u-visually-hidden")).toContainText("courses_publish");
+  await expect(page.locator("#agents-panel-cli ul.u-visually-hidden")).toContainText("ulams apply --file course.yaml --dry-run");
   await expect(page.locator("#agents-panel-api ul.u-visually-hidden")).toContainText("/api/admin/topics");
 });
 
@@ -69,14 +55,6 @@ test("tabs auto-advance slowly and Pause stops them", async ({ page }) => {
   await expect(page.locator('#agents [role="tab"]').first()).toHaveAttribute("aria-selected", "true");
 });
 
-test("typing is in progress, then reaches the whole text", async ({ page }) => {
-  await open(page);
-  await page.locator("#living").scrollIntoViewIfNeeded();
-  const added = page.locator("#living .u-lc__added span[data-at]");
-  await expect(added).toHaveClass(/on/, { timeout: 8000 });
-  await expect(added).toContainText("Budget over 30 days: 21.6 minutes", { timeout: 8000 });
-});
-
 test("no layout shift while the stories play", async ({ page }) => {
   await page.addInitScript(() => {
     (window as unknown as { __cls: number }).__cls = 0;
@@ -85,7 +63,12 @@ test("no layout shift while the stories play", async ({ page }) => {
     }).observe({ type: "layout-shift", buffered: true });
   });
   await open(page);
-  for (const id of ["living", "builder", "agents"]) {
+  // Measure playback after the initial page fonts settle, separately from navigation loading.
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    (window as unknown as { __cls: number }).__cls = 0;
+  });
+  for (const id of ["how-sources", "how-draft", "how-evidence", "agents"]) {
     await page.locator(`#${id}`).scrollIntoViewIfNeeded();
     await page.waitForTimeout(2500);
   }
@@ -96,30 +79,72 @@ test("no layout shift while the stories play", async ({ page }) => {
 test.describe("reduced motion", () => {
   test.use({ contextOptions: { reducedMotion: "reduce" } });
 
-  test("shows the final frame of every story without typing, and the captions", async ({ page }, info) => {
+  test("the story stays still and complete, while agent examples show their complete transcript", async ({ page }) => {
     await open(page);
-    for (const id of ["living", "builder", "agents"]) {
-      await page.locator(`#${id}`).scrollIntoViewIfNeeded();
-      await expect(page.locator(`#${id} ulams-story`).first()).toHaveAttribute("data-static", "");
-    }
-    // no half-typed text: nothing is waiting to be typed
-    await expect(page.locator("#living .u-rest")).toHaveText(["", ""]);
-    await expect(page.locator("#living .u-lc__done")).toHaveClass(/on/);
-    await expect(page.locator("#living .u-lc__new2")).toHaveClass(/on/);
-    await expect(page.locator("#builder .u-bs__pub")).toHaveClass(/on/);
-    await expect(page.locator("#builder .u-bs__cost b")).toHaveText("$0.18");
-    for (const caption of ["Your source changes", "ulams finds every lesson that cites it", "You approve, learners keep their progress"]) {
-      await expect(page.locator("#living")).toContainText(caption);
-    }
+    await expect(page.locator("html.js-dg")).toHaveCount(0);
+    await expect(page.locator("#how-it-works [data-dg-control]:visible")).toHaveCount(0);
+    await expect(page.locator("#how-evidence")).toContainText("Mandatory training overdue");
+    await page.locator("#agents").scrollIntoViewIfNeeded();
+    await expect(page.locator("#agents ulams-story").first()).toHaveAttribute("data-static", "");
     await expect(page.locator("#agents [data-pause]")).toBeHidden();
-    // screenshots of each story's final frame
-    const dir = `tests/screens/${info.project.name}`;
-    await page.locator("#living ulams-story").screenshot({ path: `${dir}-living.png` });
-    await page.locator("#builder ulams-story").screenshot({ path: `${dir}-builder.png` });
-    const keys = ["claude-code", "claude-mcp", "cli", "api", "studio"];
-    for (let i = 0; i < keys.length; i++) {
+    for (let i = 0; i < 5; i++) {
       await page.locator('#agents [role="tab"]').nth(i).click();
-      await page.locator("#agents .u-wf__stage").screenshot({ path: `${dir}-agents-${keys[i]}.png` });
+      await expect(page.locator("#agents .u-wf__panel[data-active] .u-rest")).toHaveText(await page.locator("#agents .u-wf__panel[data-active] .u-rest").evaluateAll((els) => els.map(() => "")));
     }
   });
 });
+
+test("interface buttons have equal widths and heights", async ({ page }, info) => {
+  test.skip(info.project.name === "phone", "narrow screens scroll a row of label-sized chips");
+  await open(page);
+  const sizes = await page.locator('#agents [role="tab"]').evaluateAll((els) => els.map((el) => {
+    const box = el.getBoundingClientRect();
+    return { width: box.width, height: box.height };
+  }));
+  expect(Math.max(...sizes.map((s) => s.width)) - Math.min(...sizes.map((s) => s.width))).toBeLessThan(1);
+  expect(Math.max(...sizes.map((s) => s.height)) - Math.min(...sizes.map((s) => s.height))).toBeLessThan(1);
+});
+
+test("interface selector has icons, no redundant availability badges and a visible active state", async ({ page }) => {
+  await open(page);
+  const selector = page.locator("#agents .u-wf__tabs");
+  await expect(selector.locator(".u-status--available")).toHaveCount(0);
+  await expect(selector.locator(".u-wf__tab-icon")).toHaveCount(6);
+  const tabs = selector.locator('[role="tab"]');
+  const inactive = await tabs.nth(2).evaluate((el) => getComputedStyle(el).backgroundColor);
+  await tabs.nth(2).click();
+  await expect(tabs.nth(2)).toHaveAttribute("aria-selected", "true");
+  await page.waitForTimeout(250);
+  const active = await tabs.nth(2).evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(active).not.toBe(inactive);
+});
+
+test("the interface stage fits the active panel, so no tab leaves empty space", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await open(page);
+  const tabs = page.locator('#agents [role="tab"]');
+  const heights = new Set<number>();
+  for (let i = 0; i < (await tabs.count()); i++) {
+    await tabs.nth(i).click();
+    const { box, panel } = await page.evaluate(() => ({
+      box: document.querySelector("#agents .u-wf__panels")!.getBoundingClientRect().height,
+      panel: document.querySelector("#agents .u-wf__panel[data-active]")!.getBoundingClientRect().height,
+    }));
+    expect(Math.abs(box - panel)).toBeLessThan(1);
+    heights.add(Math.round(panel));
+  }
+  expect(heights.size).toBeGreaterThan(1);
+});
+
+test("documentation and GitHub links open in a new tab and say so", async ({ page }) => {
+  await open(page);
+  const links = page.locator('a[href^="https://ulams-dev.github.io"], a[href^="https://github.com"]');
+  expect(await links.count()).toBeGreaterThan(3);
+  for (const link of await links.all()) {
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", /noopener/);
+    await expect(link.locator(".u-newtab")).toHaveCount(1);
+  }
+  await expect(page.locator('a[href^="/"][target="_blank"]')).toHaveCount(0);
+});
+

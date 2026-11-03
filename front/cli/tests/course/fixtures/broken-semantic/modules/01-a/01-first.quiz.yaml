@@ -1,0 +1,17 @@
+id: 01jb00000000000000000000q1
+questions:
+  - id: 01jb00000000000000000000x1
+    type: single
+    stem: Two options, none correct?
+    explanation: The shape rules refuse this.
+    origin: author
+    options:
+      - { id: 01jb00000000000000000000y1, text: One }
+      - { id: 01jb00000000000000000000y2, text: Two }
+  - id: 01jb00000000000000000000x2
+    type: truefalse
+    stem: No citation and no author mark?
+    explanation: AI-written questions must cite.
+    options:
+      - { id: 01jb00000000000000000000y3, text: "True", correct: true }
+      - { id: 01jb00000000000000000000y4, text: "False" }

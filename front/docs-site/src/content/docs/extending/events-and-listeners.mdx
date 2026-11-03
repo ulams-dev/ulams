@@ -92,12 +92,11 @@ The API **receives** webhooks: Stripe (`POST /api/payments-gateways/webhook/stri
 Przelewy24 callbacks and Jitsi recordings (`POST /api/jitsi/recorded-video`, signature checked by
 `VerifyJitsiWebhook`).
 
-There is **no outgoing webhook mechanism** today: no subscriptions, no signed delivery, no
-delivery log. To notify an external system now, write a listener in your package that calls
-it from a queued job, with retries and a signature you define.
+The `webhooks` package **sends** signed, versioned webhooks for five of these events (course
+completed, enrolment created, update proposal ready and applied, certificate issued): see
+[Outgoing webhooks](/developers/outgoing-webhooks/). To feed another event into it, add its class
+and a payload to `EventCatalog` in `api/packages/webhooks/src/Support/EventCatalog.php`; to react
+to an event in some other way, write a listener in your package as above.
 
-<Badge text="Coming" variant="caution" /> Stripe-style outgoing webhooks are planned in roadmap
-7.3: signed payloads, retries with backoff, replay, a delivery log, test sends in the admin UI
-and versioned event types (enrolment, progress, completion, certificates, update proposals).
-"Webhook consumers" are also listed as a plugin extension point (7.4). See the
-[roadmap](/roadmap/).
+<Badge text="Coming" variant="caution" /> "Webhook consumers" as a plugin extension point (7.4)
+and more event types (course published, order paid, refunds). See the [roadmap](/roadmap/).

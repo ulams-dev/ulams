@@ -93,10 +93,20 @@ final class SessionState
 
         return [
             'adminPath' => "/courses/list/{$session->course_id}",
-            'learnerPath' => "/courses/{$session->course_id}",
+            'learnerPath' => self::learnerPath((int) $session->course_id),
             'landingSlug' => "course-{$session->course_id}",
             'admin' => $admin !== '' ? "{$admin}/courses/list/{$session->course_id}" : null,
-            'learner' => $front !== '' ? "{$front}/courses/{$session->course_id}" : null,
+            'learner' => $front !== '' ? "{$front}" . self::learnerPath((int) $session->course_id) : null,
         ];
     }
+    public static function learnerPath(int $courseId): string
+    {
+        $pattern = (string) config('course_builder.learner_path', '/courses/{id}');
+        if (!str_starts_with($pattern, '/') || str_starts_with($pattern, '//') || str_contains($pattern, '://')) {
+            $pattern = '/courses/{id}';
+        }
+
+        return str_replace('{id}', (string) $courseId, $pattern);
+    }
+
 }

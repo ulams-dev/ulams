@@ -16,9 +16,4 @@ class ExampleTopicType extends AbstractTopicContent
     {
         return ExampleTopicTypeFactory::new();
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

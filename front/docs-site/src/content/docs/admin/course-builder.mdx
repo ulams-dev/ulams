@@ -62,9 +62,29 @@ Sessions are visible to their author and to admins; only the author can act on a
 | `COURSE_BUILDER_CONCURRENT_RUNS` | 2 | AI runs at once per author |
 | `COURSE_BUILDER_SESSIONS_PER_DAY` | 10 | New sessions per author per day |
 | `COURSE_BUILDER_LESSON_CONCURRENCY` | 4 | Lessons generated at once per run |
+| `COURSE_BUILDER_MAX_VARIANTS` | 6 | Variants of one course by level and role, besides its base; `0` removes the question from the interview. See [course variants](/creators/course-versions-and-variants/) |
+| `COURSE_BUILDER_VARIANT_LESSON_USD` | 0.06 | Cost of one lesson assumed in the estimate shown before variants are drafted, until the session has lessons of its own |
+| `AI_TASK_VARIANT_OUTLINE_PROFILE`, `AI_TASK_VARIANT_LESSON_PROFILE` | `light`, `default` | The profile of the two tasks of course variants: the plan per lesson, and a lesson condensed, deepened or added for one audience |
 | `AI_LIMIT_TENANT_MONTHLY_USD` | 50 | AI spend per tenant per month (all tasks); `0` turns the cap off |
 | `COURSE_BUILDER_EVAL_MONTHLY_USD` | 20 | Spend cap of the eval command |
 | `COURSE_BUILDER_DOCX_UNCOMPRESSED_MB` | 100 | Largest unpacked size of a DOCX (zip-bomb guard) |
+
+### Lesson formats
+
+LiaScript, H5P and interactive lessons are offered in the outline only when the installation can create them. Each can be turned
+off for the whole installation:
+
+| Variable | Default | |
+|---|---|---|
+| `COURSE_BUILDER_LIASCRIPT` | true | LiaScript lessons with self-checks |
+| `COURSE_BUILDER_H5P` | true | Lessons with an H5P activity (needs the H5P service and the libraries Blanks, Drag the Words and Dialog Cards) |
+| `COURSE_BUILDER_INTERACTIVE` | true | Lessons with an interactive from the library (needs at least one package, and the interactive topic type switched on) |
+| `COURSE_BUILDER_AUTO_FORMATS` | false | The outline gives every lesson with two or more objectives the LiaScript format; authors can still change it |
+
+The libraries the builder may use are listed in `config/course_builder.php` (`h5p_libraries`). Install them in the H5P service
+([H5P libraries](/admin/h5p-libraries/)). The extra generation tasks (`selfcheck`, `interaction_h5p`, `interaction_interactive`) use the same models
+as the other tasks and can be given another profile with `AI_TASK_SELFCHECK_PROFILE`, `AI_TASK_INTERACTION_H5P_PROFILE` and
+`AI_TASK_INTERACTION_INTERACTIVE_PROFILE`.
 
 Before every model call the budget is checked against the session tokens, the session cost and the tenant's month. The first
 that would be exceeded stops the call: the run fails with `RUN_ERROR` (`code: "budget"`) and a message such as "Budget

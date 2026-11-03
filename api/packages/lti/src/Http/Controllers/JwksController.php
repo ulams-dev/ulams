@@ -10,11 +10,11 @@ class JwksController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/lti/jwks",
+     *     path="/api/lti/jwks", operationId="lti.jwks.get",
      *     summary="Public key set of this tenant (LTI platform and tool side)",
      *     description="Also served at /.well-known/jwks.json. Contains the next, active and recently retired keys.",
      *     tags={"LTI"},
-     *     @OA\Response(response=200, description="JWKS")
+     *     @OA\Response(response=200, description="JWKS", @OA\JsonContent(ref="#/components/schemas/ApiJson"))
      * )
      */
     public function __invoke(KeyService $keys): JsonResponse

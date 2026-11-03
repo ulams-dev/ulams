@@ -15,7 +15,7 @@ interface ConsultationSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/consultations",
+     *      path="/api/admin/consultations", operationId="admin.consultations.get",
      *      tags={"Admin Consultations"},
      *      security={
      *          {"passport": {}},
@@ -88,9 +88,7 @@ interface ConsultationSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -114,7 +112,7 @@ interface ConsultationSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/consultations",
+     *      path="/api/admin/consultations", operationId="admin.consultations.post",
      *      summary="Store a newly created Consultation in storage",
      *      tags={"Admin Consultations"},
      *      description="Store Consultation",
@@ -131,9 +129,7 @@ interface ConsultationSwagger
      *      @OA\Response(
      *          response=201,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -156,7 +152,7 @@ interface ConsultationSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/consultations/{id}",
+     *      path="/api/admin/consultations/{id}", operationId="admin.consultations.by-id.get",
      *      summary="Display the specified Consultation",
      *      tags={"Admin Consultations"},
      *      description="Get Consultation",
@@ -175,9 +171,7 @@ interface ConsultationSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -200,7 +194,7 @@ interface ConsultationSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/consultations/{id}",
+     *      path="/api/admin/consultations/{id}", operationId="admin.consultations.by-id.put",
      *      summary="Update the specified Consultation in storage",
      *      tags={"Admin Consultations"},
      *      description="Update Consultation",
@@ -226,9 +220,7 @@ interface ConsultationSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -251,7 +243,7 @@ interface ConsultationSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/consultations/{id}",
+     *      path="/api/admin/consultations/{id}", operationId="admin.consultations.by-id.delete",
      *      summary="Remove the specified Consultation from storage",
      *      tags={"Admin Consultations"},
      *      description="Delete Consultation",
@@ -270,9 +262,7 @@ interface ConsultationSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -295,7 +285,7 @@ interface ConsultationSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/consultations/{id}/schedule",
+     *      path="/api/admin/consultations/{id}/schedule", operationId="admin.consultations.by-id.schedule.get",
      *      tags={"Consultations"},
      *      description="Get Consultation schedule",
      *      security={
@@ -341,9 +331,7 @@ interface ConsultationSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -426,7 +414,7 @@ interface ConsultationSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/consultations/change-term/{consultationTermId}",
+     *      path="/api/consultations/change-term/{consultationTermId}", operationId="consultations.change-term.by-consultationtermid.post",
      *      summary="Change term in consultation with tutor",
      *      tags={"Consultations"},
      *      description="Change term consultation with tutor",
@@ -434,14 +422,13 @@ interface ConsultationSwagger
      *          {"passport": {}},
      *      },
      *      @OA\Parameter(
-     *          name="termId",
+     *          name="consultationTermId",
      *          description="id of Consultation Term",
      *          required=true,
      *          in="path",
      *          @OA\Schema(
      *              type="integer",
      *          ),
-     *          name="id",
      *      ),
      *      @OA\RequestBody(
      *          required=true,
@@ -465,9 +452,7 @@ interface ConsultationSwagger
      *      @OA\Response(
      *          response=201,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -487,7 +472,7 @@ interface ConsultationSwagger
     /**
      * @OA\Get(
      *      tags={"Admin Consultations"},
-     *      path="/api/admin/consultations/users/assignable",
+     *      path="/api/admin/consultations/users/assignable", operationId="admin.consultations.users.assignable.get",
      *      description="Get users assignable to consultations",
      *      security={
      *          {"passport": {}},
@@ -503,9 +488,7 @@ interface ConsultationSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,

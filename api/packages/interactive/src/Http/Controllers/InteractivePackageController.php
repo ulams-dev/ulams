@@ -16,33 +16,33 @@ use Ulams\Interactive\Services\Contracts\InteractivePackageServiceContract;
 /**
  * The interactive package library (ADR 0086): uploaded zip packages, versioned and immutable.
  *
- * @OA\Get(path="/api/admin/interactive", summary="List interactive packages", tags={"Admin Interactive"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/interactive", operationId="interactive.list", summary="List interactive packages", tags={"Admin Interactive"}, security={{"passport": {}}},
  *     @OA\Parameter(name="search", in="query", required=false, @OA\Schema(type="string")),
  *     @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="packages"), @OA\Response(response=403, description="interactive_manage required"))
- * @OA\Post(path="/api/admin/interactive", summary="Upload a package (.zip with ulams-interactive.json)", tags={"Admin Interactive"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="packages", @OA\JsonContent(ref="#/components/schemas/InteractivePackagePageResponse")), @OA\Response(response=403, description="interactive_manage required"))
+ * @OA\Post(path="/api/admin/interactive", operationId="interactive.create", summary="Upload a package (.zip with ulams-interactive.json)", tags={"Admin Interactive"}, security={{"passport": {}}},
  *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(required={"file"},
  *         @OA\Property(property="file", type="string", format="binary"), @OA\Property(property="title", type="string"), @OA\Property(property="change_note", type="string"),
  *         @OA\Property(property="accept_network", type="boolean", description="Confirm the manifest's network origins; without it a manifest that lists some answers 422 with errors.network")))),
- *     @OA\Response(response=201, description="package with version 1"), @OA\Response(response=422, description="rejected upload or invalid manifest"))
- * @OA\Get(path="/api/admin/interactive/{id}", summary="Show a package with its current manifest", tags={"Admin Interactive"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="package"), @OA\Response(response=404, description="not found"))
- * @OA\Put(path="/api/admin/interactive/{id}", summary="Rename a package", tags={"Admin Interactive"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="package"))
- * @OA\Delete(path="/api/admin/interactive/{id}", summary="Delete a package with all versions and files", tags={"Admin Interactive"}, security={{"passport": {}}},
+ *     @OA\Response(response=201, description="package with version 1", @OA\JsonContent(ref="#/components/schemas/InteractivePackageDetailResponse")), @OA\Response(response=422, description="rejected upload or invalid manifest"))
+ * @OA\Get(path="/api/admin/interactive/{id}", operationId="interactive.get", summary="Show a package with its current manifest", tags={"Admin Interactive"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="package", @OA\JsonContent(ref="#/components/schemas/InteractivePackageDetailResponse")), @OA\Response(response=404, description="not found"))
+ * @OA\Put(path="/api/admin/interactive/{id}", operationId="interactive.update", summary="Rename a package", tags={"Admin Interactive"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="package", @OA\JsonContent(ref="#/components/schemas/InteractivePackageDetailResponse")))
+ * @OA\Delete(path="/api/admin/interactive/{id}", operationId="interactive.delete", summary="Delete a package with all versions and files", tags={"Admin Interactive"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="deleted"), @OA\Response(response=409, description="topics use this package"))
- * @OA\Get(path="/api/admin/interactive/{id}/versions", summary="List versions", tags={"Admin Interactive"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="versions"))
- * @OA\Post(path="/api/admin/interactive/{id}/versions", summary="Upload a new version (the manifest id must match)", tags={"Admin Interactive"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=409, description="topics use this package"))
+ * @OA\Get(path="/api/admin/interactive/{id}/versions", operationId="interactive.versions", summary="List versions", tags={"Admin Interactive"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="versions", @OA\JsonContent(ref="#/components/schemas/InteractiveVersionListResponse")))
+ * @OA\Post(path="/api/admin/interactive/{id}/versions", operationId="interactive.add-version", summary="Upload a new version (the manifest id must match)", tags={"Admin Interactive"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(required={"file"},
  *         @OA\Property(property="file", type="string", format="binary"), @OA\Property(property="change_note", type="string")))),
- *     @OA\Response(response=201, description="package with the new current version"), @OA\Response(response=422, description="rejected upload or invalid manifest"))
- * @OA\Get(path="/api/admin/interactive/{id}/preview", summary="Admin preview of a version on the content origin (nothing is tracked)", tags={"Admin Interactive"}, security={{"passport": {}}},
+ *     @OA\Response(response=201, description="package with the new current version", @OA\JsonContent(ref="#/components/schemas/InteractivePackageDetailResponse")), @OA\Response(response=422, description="rejected upload or invalid manifest"))
+ * @OA\Get(path="/api/admin/interactive/{id}/preview", operationId="interactive.preview", summary="Admin preview of a version on the content origin (nothing is tracked)", tags={"Admin Interactive"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Parameter(name="version", in="query", required=false, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="{url, nonce, version, manifest}"), @OA\Response(response=503, description="no content origin"))
+ *     @OA\Response(response=200, description="{url, nonce, version, manifest}", @OA\JsonContent(ref="#/components/schemas/InteractivePreviewResponse")), @OA\Response(response=503, description="no content origin"))
  */
 class InteractivePackageController extends Controller
 {

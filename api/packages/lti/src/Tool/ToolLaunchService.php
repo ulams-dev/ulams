@@ -2,6 +2,7 @@
 
 namespace Ulams\Lti\Tool;
 
+use Ulams\CourseAccess\Support\AccessSourceContext;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -210,7 +211,11 @@ class ToolLaunchService
         }
 
         $course = $this->course($platform, $body);
-        $this->access->addAccessForUsers(AccessCourse::query()->findOrFail($course->getKey()), [$user->getKey()]);
+        AccessSourceContext::as(
+            'lti',
+            fn () => $this->access->addAccessForUsers(AccessCourse::query()->findOrFail($course->getKey()), [$user->getKey()]),
+            ['platform' => $platform->getKey()],
+        );
         $this->rememberGradeTarget($platform, $user->getKey(), $course->getKey(), $body);
         $this->record($platform, $user->getKey(), Lti::MSG_RESOURCE_LINK, $course->getKey());
 

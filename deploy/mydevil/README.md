@@ -20,7 +20,7 @@ operator-facing summary is the docs page *Install on MyDevil (shared hosting)*
 | Plan | MD2 (50 GB SSD/NVMe), valid until 2026-12-18; 2FA on; the account also hosts the owner's other live sites (PHP and pointer types): never change them while testing |
 | Limits | max memory **4 GB** (`ulimit -m 4096000`), max user processes **70**, open files 3000, no disk quota shown, CPU time unlimited |
 | PHP | `php56` to `php85`; default CLI 8.3. `php84` has `pdo_pgsql`, `pgsql`, `redis`, `imagick`, `gd`, `intl`, `zip`, `bcmath`, `sodium`, `pcntl`, `posix`, `sockets`, `apcu`, `memcached`, `mbstring`, OPcache, `gmp`, `exif`: every extension ulams needs. CLI `memory_limit` 512M, `disable_functions` empty |
-| PostgreSQL | **16.10** on the shared server `pgsql51.mydevil.net`, created with `devil pgsql`; no databases yet. ulams is developed against 12 and its default for 0-2 is 17 (#41): 16 is in between and no migration uses a version-specific feature, and a full `php artisan migrate` on a fresh PostgreSQL 16.15 passes (168 tables); the full test suite has not been run on 16 |
+| PostgreSQL | **16.10** on the shared server `pgsql51.mydevil.net`, created with `devil pgsql`; no databases yet. ulams runs on 17 everywhere else (#41): 16 is one major behind and no migration uses a version-specific feature, and a full `php artisan migrate` on a fresh PostgreSQL 16.15 passes (168 tables); the full test suite has not been run on 16 |
 | Node | `node16` to `node26`; default 22.22 |
 | Tools present | `redis-server`, `redis-cli`, `ffmpeg`, `ffprobe`, `screen`, `tmux`, `flock`, `rsync`, `git`, `curl`, `openssl`, `psql`, `pg_dump`. `composer84` is not on the path (not needed: `vendor/` is built elsewhere) |
 | Network | outbound HTTPS works (`api.anthropic.com` answers) |
@@ -82,6 +82,14 @@ sh check-host.sh            # upload it first: scp deploy/mydevil/bin/check-host
 It prints the PHP extensions of `php84`, the tools present (`ffmpeg`, `redis-server`, `screen`, `flock`,
 `node22`, ...), outbound reachability (Anthropic API), `devil info`, `ulimit` and the process count.
 Send the output to the repository (an issue) so the "to confirm" items here can be closed.
+
+The survey also **checks the PHP version** and ends with exit code 1 (and a `FAIL` line) when it is below the
+fixed release of its branch: 8.4.27, 8.3.36, 8.5.12 or 8.2.35 (php.net advisory
+[2026-10-21-5](https://www.php.net/archive/2026.php#2026-10-21-5), two critical unauthenticated RCE bugs;
+issue #327). 8.1 and older get no fix at all. MyDevil's PHP is theirs to update, so on `FAIL` keep the host
+offline (Cloudflare) and ask support for the patched `php84`; re-run the script after they confirm, and lift the
+block only on a pass. The comparison can be tried without a host: `sh check-host.sh --check-version 8.4.26`
+(exit 1), and `sh deploy/mydevil/test/check-host-version.sh` runs the whole test (CI runs it in the "Deploy files" job).
 
 Make PHP 8.4 the CLI default (the account default is 8.3; the CLI binary is `php84`:
 <https://pomoc.mydevil.net/PHP/>). Binexec (running your own binaries from your home directory, off on
@@ -300,6 +308,21 @@ The Astro front (`output: server`, `@astrojs/node` standalone, `dist/server/entr
 application with its own processes, so it suits one to three tenants (see the resource plan) and does
 not scale to a wildcard of tenants: use Cloudflare Workers beyond that. Passenger stops an app after 24 h
 without requests and starts it on the next, so the first request after a quiet day is slow.
+
+**Images** (ADR 0193). Sharp has no FreeBSD binary, so the `astro` image mode cannot run here. Behind the proxied
+Cloudflare zone build and run the fronts and the landing export with `ULAMS_IMAGE_SERVICE=cloudflare`: images
+become same-host `/cdn-cgi/image/<options>/<storage URL>` URLs resized and converted to AVIF/WebP at Cloudflare's edge
+(Images Free plan: 5,000 unique transformations a month, `onerror=redirect` falls back to the original). `noop` keeps
+the originals. Before switching a host run `sh bin/check-images.sh <host> [source-image-url]`: it expects a 200
+`image/avif` or `image/webp` with `cf-resized`, and a redirect for a missing source with `onerror=redirect`
+(`sh test/check-images.sh` tests the script offline; CI runs it). The static landing export
+(`cloudflare/landing-static.mjs`) refuses to run unless `ULAMS_IMAGE_SERVICE` is `cloudflare` or `noop` and
+`ULAMS_ADMIN_URL` is set, for staging `ULAMS_ADMIN_URL='https://{slug}-admin.ulams.app'` (the default points at
+localhost). Rollback: rebuild with `ULAMS_IMAGE_SERVICE=noop`.
+The static admin takes its mode from `runtime-config.json` (`sh bin/set-admin-images.sh cloudflare|noop|php [sources]`, no rebuild;
+`sh test/set-admin-images.sh` tests it). The storage Worker sends `max-age=3600` with an ETag for `image/*`. An optional WAF custom rule
+(`cloudflare/image-waf-rule.mjs`) blocks option strings the builder never emits; `ULAMS_EXPECT_WAF=1 sh bin/check-images.sh <host>` verifies
+it. These Cloudflare and MyDevil steps are the owner's: see "Images: admin, storage cache and WAF rule" in `STAGING-NOTES.md`.
 
 ### Resource plan (MD2: 4 GB, 70 processes)
 

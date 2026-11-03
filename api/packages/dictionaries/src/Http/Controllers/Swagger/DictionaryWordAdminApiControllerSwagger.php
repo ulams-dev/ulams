@@ -14,7 +14,7 @@ interface DictionaryWordAdminApiControllerSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/dictionary-words",
+     *      path="/api/admin/dictionary-words", operationId="admin.dictionary-words.get",
      *      summary="Get a listing of the Dictionary Word",
      *      tags={"Admin Dictionary Words"},
      *      security={
@@ -113,7 +113,7 @@ interface DictionaryWordAdminApiControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/dictionary-words",
+     *      path="/api/admin/dictionary-words", operationId="admin.dictionary-words.post",
      *      summary="Store a newly created dictionary word in storage",
      *      tags={"Admin Dictionary Words"},
      *      security={
@@ -154,7 +154,7 @@ interface DictionaryWordAdminApiControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/dictionary-words/{id}",
+     *      path="/api/admin/dictionary-words/{id}", operationId="admin.dictionary-words.by-id.get",
      *      summary="Display the specified Dictionary Word",
      *      tags={"Admin Dictionary Words"},
      *      security={
@@ -197,7 +197,7 @@ interface DictionaryWordAdminApiControllerSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/dictionary-words/{id}",
+     *      path="/api/admin/dictionary-words/{id}", operationId="admin.dictionary-words.by-id.put",
      *      summary="Update the specified Dictionary Word in storage",
      *      tags={"Admin Dictionary Words"},
      *      security={
@@ -247,7 +247,7 @@ interface DictionaryWordAdminApiControllerSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/dictionary-words/{id}",
+     *      path="/api/admin/dictionary-words/{id}", operationId="admin.dictionary-words.by-id.delete",
      *      summary="Remove the specified Dictionary Word from storage",
      *      tags={"Admin Dictionary Words"},
      *      security={
@@ -286,7 +286,7 @@ interface DictionaryWordAdminApiControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/dictionary-words/import",
+     *      path="/api/admin/dictionary-words/import", operationId="admin.dictionary-words.import.post",
      *      summary="Import dictionary words from file",
      *      tags={"Admin Dictionary Words"},
      *      security={

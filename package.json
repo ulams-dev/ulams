@@ -12,7 +12,9 @@
       "front",
       "front/sdk",
       "front/interactive-bridge",
+      "front/code-runner",
       "front/cli",
+      "front/create-ulams",
       "front/ui",
       "front/web",
       "front/docs-site",
@@ -44,7 +46,7 @@
     "brand:build": "node front/docs/design/brand/build.mjs",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test --filter=admin --filter=front --filter=api-h5p --filter=api-pdf --filter=@ulams/sdk --filter=@ulams/interactive-bridge --filter=@ulams/demo-content --filter=@ulams/demo-gravity --filter=ulams --filter=@ulams/ui --filter=@ulams/web",
+    "test": "turbo run test --filter=admin --filter=front --filter=api-h5p --filter=api-pdf --filter=@ulams/sdk --filter=@ulams/interactive-bridge --filter=@ulams/code-runner --filter=@ulams/demo-content --filter=@ulams/demo-gravity --filter=ulams --filter=@ulams/ui --filter=@ulams/web",
     "test:api": "yarn workspace api test",
     "prepare": "husky",
     "test:h5p:integration": "turbo run test:integration --filter=api-h5p",
@@ -53,15 +55,31 @@
   "devDependencies": {
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "turbo": "^2.11.7"
+    "turbo": "^2.11.9"
   },
   "resolutions": {
+    "@types/mjml-core": "4.15.2",
     "**/dva-immer/immer": "^9.0.6",
     "**/fmin/rollup": "^2.79.2",
     "underscore": "^1.12.1",
     "body-parser": "^1.20.3",
     "node-fetch": "^2.6.7",
     "internal-slot": "^1.1.0",
-    "**/enzyme/cheerio": "1.0.0-rc.12"
+    "**/enzyme/cheerio": "1.0.0-rc.12",
+    "**/umi-serve/express": "4.22.3",
+    "**/@lumieducation/h5p-express/express": "4.22.3",
+    "**/@firebase/firestore/@grpc/grpc-js": "1.13.6",
+    "**/@firebase/auth/undici": "6.29.1",
+    "**/@firebase/auth-compat/undici": "6.29.1",
+    "**/umi-core/extend2": "1.0.1",
+    "**/umi-mock/path-to-regexp": "1.9.0",
+    "**/@ant-design/pro-layout/path-to-regexp": "8.4.0",
+    "**/replace/minimatch": "3.1.4",
+    "**/request/form-data": "2.5.6",
+    "**/@umijs/bundler-vite/vite": "7.3.7",
+    "**/@firebase/firestore/undici": "6.29.1",
+    "**/@firebase/functions/undici": "6.29.1",
+    "**/@firebase/storage/undici": "6.29.1",
+    "**/@umijs/preset-umi/path-to-regexp": "1.9.0"
   }
 }

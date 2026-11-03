@@ -41,8 +41,8 @@ class VideoTest extends TestCase
         Mail::assertSent(EmailMailable::class, function (EmailMailable $mailable) use ($topic, $tutor) {
             $this->assertTrue($mailable->hasTo($tutor->email));
             $this->assertEquals(__('Video processing progress starting for topic - :topic', ['topic' => $topic->title]), $mailable->subject);
-            $this->assertStringContainsString($tutor->name, $mailable->getHtml());
-            $this->assertStringContainsString($topic->title, $mailable->getHtml());
+            $this->assertStringContainsString(e($tutor->name), $mailable->getHtml());
+            $this->assertStringContainsString(e($topic->title), $mailable->getHtml());
 
             return true;
         });
@@ -59,8 +59,8 @@ class VideoTest extends TestCase
         Mail::assertSent(EmailMailable::class, function (EmailMailable $mailable) use ($topic, $tutor) {
             $this->assertTrue($mailable->hasTo($tutor->email));
             $this->assertEquals(__('Video processing finished for topic - :topic', ['topic' => $topic->title]), $mailable->subject);
-            $this->assertStringContainsString($tutor->name, $mailable->getHtml());
-            $this->assertStringContainsString($topic->title, $mailable->getHtml());
+            $this->assertStringContainsString(e($tutor->name), $mailable->getHtml());
+            $this->assertStringContainsString(e($topic->title), $mailable->getHtml());
 
             return true;
         });
@@ -78,8 +78,8 @@ class VideoTest extends TestCase
         Mail::assertSent(EmailMailable::class, function (EmailMailable $mailable) use ($topic, $tutor) {
             $this->assertTrue($mailable->hasTo($tutor->email));
             $this->assertEquals(__('Video processing progress failed for topic - :topic', ['topic' => $topic->title]), $mailable->subject);
-            $this->assertStringContainsString($tutor->name, $mailable->getHtml());
-            $this->assertStringContainsString($topic->title, $mailable->getHtml());
+            $this->assertStringContainsString(e($tutor->name), $mailable->getHtml());
+            $this->assertStringContainsString(e($topic->title), $mailable->getHtml());
 
             return true;
         });
@@ -98,8 +98,8 @@ class VideoTest extends TestCase
             $this->assertTrue($mailable->hasTo($tutor->email));
             $this->assertEquals(__('Video processing progress update for topic - :topic - :percentage%', ['topic' => $topic->title, 'percentage' => 60]), $mailable->subject);
             $this->assertStringContainsString('60%', $mailable->getHtml());
-            $this->assertStringContainsString($tutor->name, $mailable->getHtml());
-            $this->assertStringContainsString($topic->title, $mailable->getHtml());
+            $this->assertStringContainsString(e($tutor->name), $mailable->getHtml());
+            $this->assertStringContainsString(e($topic->title), $mailable->getHtml());
 
             return true;
         });

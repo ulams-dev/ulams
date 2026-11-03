@@ -42,6 +42,30 @@ class HelpersMethodTest extends TestCase
         $this->assertTrue(isset($result['results'][0]) && is_array($result['results'][0]));
     }
 
+    public function testConvertImagesApiKeepsTheImagesApiUrlByDefault(): void
+    {
+        $prefix = sprintf('course/%d/topic/%d/', $this->course->id, $this->topic->id);
+        Storage::put($prefix . 'test.jpg', (string) file_get_contents(__DIR__ . '/test.jpg'));
+
+        $result = Markdown::convertAssetPaths("![Image](api/images/img?path={$prefix}test.jpg&w=1000)", $prefix);
+
+        $this->assertStringContainsString('api/images/img', $result['value']);
+        $this->assertStringContainsString('path=' . $prefix . 'test.jpg', $result['value']);
+    }
+
+    public function testConvertImagesApiWritesThePlainStorageUrlWhenContentUrlsAreOriginal(): void
+    {
+        config(['images.content_urls' => 'original']);
+        $prefix = sprintf('course/%d/topic/%d/', $this->course->id, $this->topic->id);
+        Storage::put($prefix . 'test.jpg', (string) file_get_contents(__DIR__ . '/test.jpg'));
+
+        $result = Markdown::convertAssetPaths("![Image](api/images/img?path={$prefix}test.jpg&w=1000)", $prefix);
+
+        $this->assertSame('![Image](' . Storage::url($prefix . 'test.jpg') . ')', $result['value']);
+        $this->assertStringNotContainsString('api/images/img', $result['value']);
+        $this->assertSame([$prefix . 'test.jpg', $prefix . 'test.jpg'], $result['results'][0]);
+    }
+
     public function testGetImagesPathsWithoutImageApi(): void
     {
         $result = Markdown::getImagesPathsWithoutImageApi("![Image] (api/images/img?path=course/1234/topic/123/test.jpg)");
@@ -73,5 +97,51 @@ class HelpersMethodTest extends TestCase
         $result = Markdown::convertAssetPaths($markdownLink, $destinationPrefix);
         $this->assertArrayHasKey('results', $result);
         $this->assertEmpty($result['results']);
+    }
+
+    public function testALinkToAFileOnThisOriginIsReadFromThePublicDirectoryNotOverHttp(): void
+    {
+        Storage::fake(config('filesystems.default'));
+        $destinationPrefix = sprintf('course/%d/topic/%d/', $this->topic->lesson->course->id, $this->topic->id);
+        $directory = public_path('ulams-markdown-test');
+        @mkdir($directory, 0777, true);
+        // a 1x1 PNG
+        file_put_contents($directory . '/pixel.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='));
+
+        try {
+            $result = Markdown::convertAssetPaths('![Pixel](' . url('ulams-markdown-test/pixel.png') . ')', $destinationPrefix);
+        } finally {
+            @unlink($directory . '/pixel.png');
+            @rmdir($directory);
+        }
+
+        $this->assertCount(1, $result['results']);
+        $this->assertStringContainsString($destinationPrefix . 'pixelpng.png', $result['value']);
+        Storage::assertExists($destinationPrefix . 'pixelpng.png');
+    }
+
+    public function testALinkToAMissingFileOnThisOriginStaysAsItIsAndIsNotFetched(): void
+    {
+        Storage::fake(config('filesystems.default'));
+        $destinationPrefix = sprintf('course/%d/topic/%d/', $this->topic->lesson->course->id, $this->topic->id);
+        $markdown = '![Gone](' . url('ulams-markdown-test/missing.png') . ')';
+
+        $result = Markdown::convertAssetPaths($markdown, $destinationPrefix);
+
+        $this->assertSame($markdown, $result['value']);
+        $this->assertSame([null], $result['results']);
+        $this->assertSame([], Storage::allFiles());
+    }
+
+    public function testALinkThatClimbsOutOfThePublicDirectoryIsNotRead(): void
+    {
+        Storage::fake(config('filesystems.default'));
+        $destinationPrefix = sprintf('course/%d/topic/%d/', $this->topic->lesson->course->id, $this->topic->id);
+        $markdown = '![Env](' . url('../../.env') . ')';
+
+        $result = Markdown::convertAssetPaths($markdown, $destinationPrefix);
+
+        $this->assertSame($markdown, $result['value']);
+        $this->assertSame([], Storage::allFiles());
     }
 }

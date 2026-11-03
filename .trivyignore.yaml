@@ -1,0 +1,201 @@
+# Accepted Trivy findings. Every entry needs a reason (statement) and an expiry (expired_at, YYYY-MM-DD);
+# `node scripts/check-trivyignore.mjs` (CI) fails on a missing field or an expired entry, so nothing is
+# ignored for ever. Review rules: SECURITY.md "Patch policy". Format: https://trivy.dev/docs/latest/configuration/filtering/
+misconfigurations:
+  - id: DS-0002
+    paths:
+      - api/Dockerfile
+      - api/Dockerfile.develop
+      - api/docker/php/Dockerfile
+    statement: >-
+      The PHP images run supervisord as root (it starts php-fpm, Horizon, the scheduler and queue workers
+      from one entrypoint), and the pool workers drop to their own user. Running the whole image as non-root
+      needs a change of the entrypoint and of the writable paths and belongs to the Helm chart work (P8-5,
+      securityContext). Until then the hardening guide recommends dropping capabilities and a read-only
+      root filesystem where it works.
+    expired_at: 2027-10-21
+
+vulnerabilities:
+  - id: CVE-2017-20165
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): debug 0.7.4 is required by streamroller 0.4 (umi dev tooling); dev-only, never shipped."
+    expired_at: 2027-04-30
+  - id: CVE-2022-21680
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): marked 0.6.2 is pinned exactly by umi-core 1.9.10 (umi-serve dev server); dev-only, no release of umi-core accepts a newer marked."
+    expired_at: 2027-04-30
+  - id: CVE-2022-21681
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): marked 0.6.2 is pinned exactly by umi-core 1.9.10 (umi-serve dev server); dev-only, no release of umi-core accepts a newer marked."
+    expired_at: 2027-04-30
+  - id: CVE-2024-21538
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): cross-spawn 5.1.0 is required by execa 0.7 (yeoman tooling inside @ant-design/pro-cli); dev-only, runs on the developer machine with trusted arguments."
+    expired_at: 2027-04-30
+  - id: CVE-2024-4367
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pdfjs-dist 3.11.174 is pinned by react-pdf 8; moving react-pdf to 9+ changes the admin PDF viewer API and is tracked separately. Fix is 4.2.67+."
+    expired_at: 2027-04-30
+  - id: CVE-2025-27152
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2025-47935
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2025-47944
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2025-48997
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2025-71329
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): image-size 1.2.1 is required by @lumieducation/h5p-server 10.0.4; the fix is 2.0.3 (major) and h5p-server has no release that accepts it yet. Tracked with the H5P upgrade."
+    expired_at: 2027-04-30
+  - id: CVE-2025-71330
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): image-size 1.2.1 is required by @lumieducation/h5p-server 10.0.4; the fix is 2.0.3 (major) and h5p-server has no release that accepts it yet. Tracked with the H5P upgrade."
+    expired_at: 2027-04-30
+  - id: CVE-2025-7338
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2026-2359
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2026-23745
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-23950
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-24842
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-25639
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2026-26960
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-27212
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): swiper 11.2.8 is a direct front dependency; the fix is swiper 12 whose slider API changed. Planned with the front UI refresh."
+    expired_at: 2027-04-30
+  - id: CVE-2026-29786
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-31802
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-3304
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2026-34601
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-3520
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2026-41672
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-41673
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-41674
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-41675
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-42033
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2026-42035
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2026-42043
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2026-42089
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): yeoman-environment 3.19.3 is required by @ant-design/pro-cli; the fix is 6.x (major, ESM-only). Dev-only scaffolding CLI, never shipped."
+    expired_at: 2027-04-30
+  - id: CVE-2026-44486
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2026-44487
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2026-44492
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2026-44495
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2026-44496
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
+  - id: CVE-2026-44705
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tmp 0.0.33 is required by external-editor (inquirer in yeoman); fix is tmp 0.2.x. Dev-only CLI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-45623
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): postcss 7 is required by autoprefixer 9, postcss-less, postcss-sass and similar legacy plugins of the umi/ant-design build chain; fix is postcss 8. Build-time only, input is our own CSS."
+    expired_at: 2027-04-30
+  - id: CVE-2026-48815
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): sigstore 1.9.0 is required by pacote 15 (yeoman-generator 5); fix is 4.x. Dev-only CLI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-5079
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2026-59873
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-59874
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-69192
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): ip-address 9 is required by socks (via the npm/yeoman toolchain); fix is 10.x. Dev-only, not in any runtime image."
+    expired_at: 2027-04-30
+  - id: CVE-2026-73566
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
+  - id: CVE-2026-73646
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): postcss 7 is required by autoprefixer 9, postcss-less, postcss-sass and similar legacy plugins of the umi/ant-design build chain; fix is postcss 8. Build-time only, input is our own CSS."
+    expired_at: 2027-04-30
+  - id: CVE-2026-77078
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2026-82333
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
+  - id: CVE-2026-83605
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-83607
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-83608
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-83613
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-83614
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-83615
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-83616
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-83619
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
+  - id: CVE-2026-9496
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pacote 12 (yeoman-environment 3 via @npmcli/arborist) and 15 (yeoman-generator 5) are required by @ant-design/pro-cli scaffolding; fix is pacote 21. Dev-only CLI."
+    expired_at: 2027-04-30
+  - id: GHSA-f88m-g3jw-g9cj
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): sharp 0.32.6 (@capacitor/assets) and 0.34.5 (Astro 7 image service, exact-pinned by front/web and front/docs-site) need 0.35; sharp 0.35 is held back until Astro supports it. Processes images we author at build time."
+    expired_at: 2027-04-30
+  - id: GHSA-rgj7-g3m4-5g8c
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): sharp 0.32.6 (@capacitor/assets) and 0.34.5 (Astro 7 image service, exact-pinned by front/web and front/docs-site) need 0.35; sharp 0.35 is held back until Astro supports it. Processes images we author at build time."
+    expired_at: 2027-04-30
+  - id: GHSA-wq5f-xc86-pv6w
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): sharp 0.32.6 (@capacitor/assets) and 0.34.5 (Astro 7 image service, exact-pinned by front/web and front/docs-site) need 0.35; sharp 0.35 is held back until Astro supports it. Processes images we author at build time."
+    expired_at: 2027-04-30
+  - id: CVE-2026-118664
+    statement: "Accepted until the owner dependency moves (reviewed 2026-11-02, yarn.lock, fix available): decode-uri-component 0.2.2 (CommonJS) is required by query-string 6.14 and 0.4.1 by query-string 9.2.1; the only fixed release is 0.5.1, which is ESM-only like 0.4.1, and no query-string release accepts it (latest 10.0.0 pulls other majors). Forcing 0.5.1 under the CommonJS query-string 6 would break require(). Used to parse URL query strings in admin and front tooling; the finding is a denial of service on malformed percent-encoded input."
+    expired_at: 2027-04-30

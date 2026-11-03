@@ -16,13 +16,13 @@ final class LessonMarkdown
     {
         $parts = [];
         $cited = [];
-        foreach ($lesson['blocks'] as $block) {
-            $markdown = self::sanitise(trim((string) $block['markdown']));
-            if ($block['kind'] === 'callout') {
-                $markdown = implode("\n", array_map(fn ($l) => '> ' . $l, explode("\n", $markdown)));
-            }
-            $parts[] = $markdown;
-            foreach ($block['citations'] as $id) {
+        if (($lesson['blocks'] ?? []) === []) {
+            return "*This lesson has no text yet.*\n";
+        }
+        $rendered = self::blocks($lesson);
+        foreach ($lesson['blocks'] as $i => $block) {
+            $parts[] = $rendered[$i];
+            foreach ($block['citations'] ?? [] as $id) {
                 $cited[$id] = true;
             }
         }
@@ -35,6 +35,20 @@ final class LessonMarkdown
         }
 
         return implode("\n\n", $parts) . "\n";
+    }
+
+    /**
+     * The Markdown of each block as the topic shows it (callouts quoted), without the sources list.
+     *
+     * @return string[]
+     */
+    public static function blocks(array $lesson): array
+    {
+        return array_map(function (array $block) {
+            $markdown = self::sanitise(trim((string) $block['markdown']));
+
+            return $block['kind'] === 'callout' ? implode("\n", array_map(fn ($l) => '> ' . $l, explode("\n", $markdown))) : $markdown;
+        }, array_values($lesson['blocks'] ?? []));
     }
 
     /** Strips HTML tags, script links and remote images outside code. */

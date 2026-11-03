@@ -104,6 +104,22 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(c.actions).toEqual([{ name: "answer", surfaceId: "s1", sourceComponentId: "root", context: { key: "assessments", value: ["quiz", "final"] } }]);
   });
 
+  it("the audiences question sends the chosen levels with the typed roles", () => {
+    const c = ctx();
+    const base = builderFixtures.ChoiceChips!;
+    const main = mount(
+      single("ChoiceChips", { ...base, questionKey: "audiences", label: "Who is this course for?", options: [{ value: "single", label: "One course for everyone" }, { value: "level:expert", label: "Expert version" }], multiple: true, allowCustom: true, defaultValue: ["single"] }),
+      c
+    );
+    (main.querySelector('[data-value="single"]') as HTMLButtonElement).click();
+    (main.querySelector('[data-value="level:expert"]') as HTMLButtonElement).click();
+    const typed = main.querySelector("input.cb-input") as HTMLInputElement;
+    expect(typed.placeholder).toContain("roles");
+    typed.value = "developer, support";
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions[0]!.context).toEqual({ key: "audiences", value: ["level:expert", "developer", "support"] });
+  });
+
   it("Decide for me sends the question key", () => {
     const c = ctx();
     const main = mount(single("SingleChoice"), c);
@@ -128,6 +144,105 @@ describe("interactions round-trip as A2UI actions", () => {
     [...main.querySelectorAll("button")].find((b) => b.textContent === "Save")!.click();
     [...main.querySelectorAll("button")].find((b) => b.textContent?.includes("Approve outline"))!.click();
     expect(c.actions[0]).toMatchObject({ name: "approve_outline", context: { versionId: "01v", edits: [{ objectiveId: "o1", text: "Explain extraction in one sentence" }] } });
+  });
+
+  it("the outline sends the lesson formats the author chose", () => {
+    const c = ctx();
+    const main = mount(single("OutlineDiff"), c);
+    const select = main.querySelector("select") as HTMLSelectElement;
+    expect(select.value).toBe("richtext");
+    select.value = "liascript";
+    select.dispatchEvent(new Event("change"));
+    expect(main.textContent).toContain("1 lesson format changed");
+    [...main.querySelectorAll("button")].find((b) => b.textContent?.includes("Approve outline"))!.click();
+    expect(c.actions[0]!.context.formats).toEqual([{ lessonId: "l1", contentType: "liascript" }]);
+  });
+
+  it("the lesson preview shows the format and lets the author select a self-check", () => {
+    const onSelect = vi.fn();
+    const main = mount(single("LessonPreviewCard"), ctx({ onSelect }));
+    expect(main.textContent).toContain("LiaScript · 1 self-check");
+    ([...main.querySelectorAll(".cb-extra button")].find((b) => b.textContent === "Edit in chat") as HTMLButtonElement).click();
+    expect(onSelect).toHaveBeenCalledWith("q9", "Self-check 1");
+  });
+
+  it("variant comparison shows the options and chooses one", () => {
+    const c = ctx();
+    const main = mount(single("VariantComparison"), c);
+    expect(main.querySelectorAll("[data-variant]")).toHaveLength(2);
+    expect(main.textContent).toContain("Option A");
+    [...main.querySelectorAll("button")].find((b) => b.textContent?.startsWith("Use Option B"))!.click();
+    expect(c.actions[0]).toMatchObject({ name: "choose_variant", context: { versionId: "01v2" } });
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Keep the current text")!.click();
+    expect(c.actions[1]).toMatchObject({ name: "reject_variants", context: { group: "01aaaaaaaaaaaaaaaaaaaaaaaa" } });
+    const decided = mount(single("VariantComparison", { ...builderFixtures.VariantComparison!, status: "chosen" }), ctx());
+    expect(decided.querySelector("button.cb-btn-primary")).toBeNull();
+  });
+
+  it("variant review shows what differs from the base course and decides", () => {
+    const c = ctx();
+    const main = mount(single("VariantReview"), c);
+    expect(main.querySelector("section")!.getAttribute("aria-labelledby")).toBeTruthy();
+    expect(main.textContent).toContain("Variant for Expert");
+    expect(main.textContent).toContain("1 kept");
+    expect(main.textContent).toContain("1 skipped");
+    expect(main.textContent).toContain("added: Going further");
+    expect(main.textContent).toContain("removed: What coffee is");
+    [...main.querySelectorAll("button")].find((b) => b.textContent?.includes("Create the Expert course"))!.click();
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Reject this variant")!.click();
+    expect(c.actions.map((a) => [a.name, a.context])).toEqual([
+      ["approve_variant", { versionId: "01var1" }],
+      ["reject_variant", { versionId: "01var1" }],
+    ]);
+    const decided = mount(single("VariantReview", { ...builderFixtures.VariantReview!, status: "approved" }), ctx());
+    expect(decided.querySelector("button")).toBeNull();
+    expect(decided.textContent).toContain("Created as its own course");
+  });
+
+  describe("outline editor", () => {
+    const click = (main: HTMLElement, label: string) => (main.querySelector(`button[aria-label="${label}"]`) as HTMLButtonElement).click();
+
+    it("moves with buttons, across modules, and announces the last change", () => {
+      const c = ctx();
+      const main = mount(single("OutlineEditor"), c);
+      expect(main.querySelector('[role="status"]')!.textContent).toContain("Moved lesson");
+      click(main, "Move lesson Strength up");
+      expect(c.actions[0]).toMatchObject({ name: "outline_edit", context: { action: "move", id: "l2", index: 0 } });
+      click(main, "Move lesson Strength to the start of Brewing");
+      expect(c.actions[1]).toMatchObject({ context: { action: "move", id: "l2", moduleId: "m2", index: 0 } });
+      click(main, "Move module Extraction down");
+      expect(c.actions[2]).toMatchObject({ context: { action: "move", id: "m1", index: 1 } });
+      expect((main.querySelector('button[aria-label="Move lesson What extraction means up"]') as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it("renames, asks before removing and adds a lesson with its source section", () => {
+      const c = ctx();
+      const main = mount(single("OutlineEditor"), c);
+      click(main, "Rename lesson Strength");
+      (main.querySelector('input[aria-label="New title for Strength"]') as HTMLInputElement).value = "Coffee strength";
+      [...main.querySelectorAll("button")].find((b) => b.textContent === "Save")!.click();
+      expect(c.actions[0]).toMatchObject({ context: { action: "rename", id: "l2", title: "Coffee strength" } });
+      click(main, "Remove lesson Ratios");
+      expect(c.actions).toHaveLength(1);
+      expect(main.textContent).toContain("Remove this lesson?");
+      ([...main.querySelectorAll('[role="group"] button')].find((b) => b.textContent === "Remove") as HTMLButtonElement).click();
+      expect(c.actions[1]).toMatchObject({ context: { action: "remove", id: "l3" } });
+      const form = main.querySelector('form[aria-label="Add a lesson"]') as HTMLFormElement;
+      (form.querySelector("input[id$='-t']") as HTMLInputElement).value = "New lesson";
+      (form.querySelector("input[id$='-o']") as HTMLInputElement).value = "Name the parts";
+      form.dispatchEvent(new Event("submit", { cancelable: true }));
+      expect(c.actions[2]).toMatchObject({ context: { action: "add", kind: "lesson", moduleId: "m1", title: "New lesson", objective: "Name the parts", citations: ["frg_aaaaaaaaaaa1"] } });
+    });
+
+    it("drops a lesson on another lesson to move it there", () => {
+      const c = ctx();
+      const main = mount(single("OutlineEditor"), c);
+      const source = main.querySelector('[data-lesson="l3"]') as HTMLElement;
+      const target = main.querySelector('[data-lesson="l1"]') as HTMLElement;
+      source.dispatchEvent(new Event("dragstart", { bubbles: true }));
+      target.dispatchEvent(new Event("drop", { bubbles: true, cancelable: true }));
+      expect(c.actions[0]).toMatchObject({ context: { action: "move", id: "l3", moduleId: "m1", index: 0 } });
+    });
   });
 
   it("request changes sends the comment", () => {
@@ -167,6 +282,25 @@ describe("interactions round-trip as A2UI actions", () => {
     main = mount(single("VersionList"), ctx({ onRestore }));
     [...main.querySelectorAll("button")].find((b) => b.textContent === "Restore v2")!.click();
     expect(onRestore).toHaveBeenCalledWith("v2");
+  });
+
+  it("sources panel marks uncovered and selected sections and jumps to the citing elements", () => {
+    const onSelect = vi.fn();
+    const onCitation = vi.fn();
+    const main = mount(single("SourcesPanel"), ctx({ onSelect, onCitation }));
+    expect(main.textContent).toContain("2 of 3 sections are cited; 1 are not.");
+    expect(main.querySelector('[data-fragment="frg_aaaaaaaaaaa1"]')!.getAttribute("aria-current")).toBe("true");
+    expect(main.querySelector('[data-fragment="frg_aaaaaaaaaaa3"]')!.textContent).toContain("Not cited yet");
+    const rows = () => [...main.querySelectorAll("[data-fragment]")].map((li) => li.getAttribute("data-fragment"));
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Show only uncovered sections")!.click();
+    expect(rows()).toEqual(["frg_aaaaaaaaaaa3"]);
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Show all sections")!.click();
+    expect(rows()).toHaveLength(3);
+    // an objective jumps to its lesson
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Lesson 1.1 › objective 1")!.click();
+    expect(onSelect).toHaveBeenCalledWith("01dddddddddddddddddddddddd", "Lesson 1.1 › objective 1");
+    (main.querySelector('[data-fragment="frg_aaaaaaaaaaa2"] .cb-section-label') as HTMLButtonElement).click();
+    expect(onCitation).toHaveBeenCalledWith("frg_aaaaaaaaaaa2", "§1.1 Grind size", expect.anything());
   });
 
   it("version list names a source update and keeps its revision range", () => {
@@ -230,6 +364,24 @@ describe("interactions round-trip as A2UI actions", () => {
     const item = (over: Record<string, unknown> = {}) => single("UpdateItem", { ...builderFixtures.UpdateItem!, ...over });
     const find = (root: ParentNode, text: string) => [...root.querySelectorAll("button")].find((b) => b.textContent?.includes(text))!;
 
+    it("offers Suggest a lesson on an uncovered section and reports it to the host", () => {
+      const c = ctx();
+      const main = mount(item({ kind: "uncovered", elementType: "section", fields: undefined, flags: undefined, answerCheck: false, answerChanged: false, canSuggest: true }), c);
+      expect(main.textContent).toContain("Ask for a suggested lesson");
+      find(main, "Suggest a lesson").click();
+      expect(c.actions[0]).toMatchObject({ name: "suggest_lesson", context: { itemId: "01item1" } });
+      expect(find(main, "Suggest a lesson").disabled).toBe(true);
+      expect(mount(item({ kind: "uncovered", elementType: "section", fields: undefined, canSuggest: false })).textContent).not.toContain("Suggest a lesson");
+    });
+
+    it("shows a suggested lesson with its added text, a decision and the option to ask again", () => {
+      const main = mount(item({ kind: "new_lesson", elementType: "lesson", answerCheck: false, answerChanged: false, flags: undefined, fields: [{ path: "lesson.title", label: "Lesson title", after: "Storing beans" }] }));
+      expect(main.textContent).toContain("Suggested lesson");
+      expect(main.textContent).toContain("Storing beans");
+      expect(find(main, "Add this lesson")).toBeTruthy();
+      expect(find(main, "Ask for changes")).toBeTruthy();
+    });
+
     it("shows the word diff, reason, warnings, citations and counts without relying on colour", () => {
       const main = mount(item());
       expect(main.querySelector("article")?.getAttribute("aria-labelledby")).toBeTruthy();
@@ -268,6 +420,31 @@ describe("interactions round-trip as A2UI actions", () => {
       expect(c.actions[0]!.name).toBe("decide_item");
       expect(c.actions[0]!.context.itemId).toBe("01item1");
       expect(main.querySelector("[data-update-item]")?.getAttribute("data-status")).toBe("pending");
+    });
+
+    it("offers Accept in all versions only when the page passes its label, and dispatches accept_in_group", () => {
+      expect(find(mount(item()), "Accept")).toBeTruthy();
+      expect(mount(item()).querySelector("[data-accept-in-group]")).toBeNull();
+      expect(mount(item()).querySelector("[data-reused-note]")).toBeNull();
+      const c = ctx();
+      const main = mount(item({ acceptInGroupLabel: "Accept in all versions", reusedNote: "Same change as in the base course; no extra analysis was needed." }), c);
+      const group = main.querySelector<HTMLButtonElement>("[data-accept-in-group]")!;
+      expect(group.textContent).toContain("Accept in all versions");
+      expect(group.hidden).toBe(false);
+      expect(main.querySelector("[data-reused-note]")?.textContent).toBe("Same change as in the base course; no extra analysis was needed.");
+      group.click();
+      expect(c.actions).toHaveLength(1);
+      expect(c.actions[0]!.name).toBe("accept_in_group");
+      expect(c.actions[0]!.context.itemId).toBe("01item1");
+      expect(group.disabled).toBe(true);
+      expect(main.querySelector("[data-update-item]")?.getAttribute("aria-busy")).toBe("true");
+    });
+
+    it("hides Accept in all versions once the item is accepted or in conflict", () => {
+      for (const status of ["accepted", "conflict", "stale"]) {
+        expect(mount(item({ status, acceptInGroupLabel: "Accept in all versions" })).querySelector<HTMLElement>("[data-accept-in-group]")!.hidden, status).toBe(true);
+      }
+      expect(mount(item({ status: "rejected", acceptInGroupLabel: "Accept in all versions" })).querySelector<HTMLElement>("[data-accept-in-group]")!.hidden).toBe(false);
     });
 
     it("announces the decision politely and moves focus to the next undecided item", () => {

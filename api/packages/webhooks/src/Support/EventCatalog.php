@@ -1,0 +1,407 @@
+<?php
+
+namespace Ulams\Webhooks\Support;
+
+use Throwable;
+
+/**
+ * The event types a tenant can subscribe to, and how each domain event becomes a payload. Only events
+ * that already exist as domain events are wired; the rest are listed as `planned` so the docs and the
+ * API tell the same story. The classes are named as strings so the package loads without the packages
+ * it listens to, and a listener never throws into the domain code that fired the event.
+ *
+ * Payloads are versioned (`api_version` of the endpoint). A version only ever gains fields; a breaking
+ * change gets a new version, and an endpoint keeps receiving the version it was created with.
+ */
+final class EventCatalog
+{
+    public const WILDCARD = '*';
+
+    public const TEST_EVENT = 'webhook.test';
+
+    private const DOMAIN = [
+        'course.completed' => [
+            'class' => 'Ulams\Courses\Events\CourseFinished',
+            'description' => 'A learner finished a course.',
+        ],
+        'enrolment.created' => [
+            'class' => 'Ulams\Courses\Events\CourseAssigned',
+            'description' => 'A learner was given access to a course (assigned by an admin or a group, or granted by an order).',
+        ],
+        'course.version_applied' => [
+            'class' => 'Ulams\CourseBuilder\Events\CourseVersionApplied',
+            'description' => 'A new version of a course made with the builder reached learners (generation, chat change, Living Course update, course-as-code import, restore); sent once per release. A Git repository follows the course with it.',
+        ],
+        'update_proposal.ready' => [
+            'class' => 'Ulams\LivingCourse\Events\UpdateProposalReady',
+            'description' => 'A Living Course update proposal is ready for review (sent once per proposal).',
+        ],
+        'update_proposal.applied' => [
+            'class' => 'Ulams\LivingCourse\Events\ProposalApplied',
+            'description' => 'An update proposal was reviewed and applied to the course.',
+        ],
+        'certificate.issued' => [
+            'class' => 'Ulams\TemplatesPdf\Events\PdfCreated',
+            'description' => 'A certificate PDF was generated for a learner.',
+        ],
+        'knowledge.exported' => [
+            'class' => 'Ulams\KnowledgeExport\Events\KnowledgeExported',
+            'description' => 'A knowledge pack (cited chunks for RAG) was written for a course or the whole tenant; an automatic re-export that finds nothing new sends nothing.',
+        ],
+        'training.assigned' => [
+            'class' => 'Ulams\Compliance\Events\TrainingAssigned',
+            'description' => 'A learner was given a required course (by an admin, a rule, a learning path step or recertification); sent once per assignment.',
+        ],
+        'training.completed' => [
+            'class' => 'Ulams\Compliance\Events\TrainingCompleted',
+            'description' => 'A learner finished a required course; sent once per assignment.',
+        ],
+        'training.overdue' => [
+            'class' => 'Ulams\Compliance\Events\TrainingOverdue',
+            'description' => 'A required course passed its due date unfinished; sent once per assignment.',
+        ],
+        'path.completed' => [
+            'class' => 'Ulams\Compliance\Events\PathCompleted',
+            'description' => 'A learner finished every course of a learning path; sent once per enrolment.',
+        ],
+        'certificate.revoked' => [
+            'class' => 'Ulams\TemplatesPdf\Events\CertificateRevoked',
+            'description' => 'A course certificate was revoked.',
+        ],
+        'policy.change.approved' => [
+            'class' => 'Ulams\PolicyLifecycle\Events\PolicyChangeApproved',
+            'description' => 'A new policy version was approved and rolled out to its departments; sent once per version.',
+        ],
+        'policy.retraining.assigned' => [
+            'class' => 'Ulams\PolicyLifecycle\Events\PolicyRetrainingAssigned',
+            'description' => 'A learner whose certificate an approved policy change superseded was given the exam (minor change) or the course (major change); sent once per person and version.',
+        ],
+    ];
+
+    private const PLANNED = [
+        'course.published' => 'A course was published.',
+        'course.started' => 'A learner opened a course for the first time.',
+        'order.paid' => 'An order was paid and its access granted (Phase 6).',
+        'order.refunded' => 'An order was refunded and its access revoked (Phase 6).',
+        'learner.registered' => 'A learner account was created.',
+    ];
+
+    /** @return array<string,array{type:string,description:string,status:string}> */
+    public static function all(): array
+    {
+        $all = [];
+        foreach (self::DOMAIN as $type => $info) {
+            $all[$type] = ['type' => $type, 'description' => $info['description'], 'status' => 'available'];
+        }
+        foreach (self::PLANNED as $type => $description) {
+            $all[$type] = ['type' => $type, 'description' => $description, 'status' => 'planned'];
+        }
+        $all[self::TEST_EVENT] = ['type' => self::TEST_EVENT, 'description' => 'Sent by the test button; never delivered to subscribers.', 'status' => 'test'];
+        ksort($all);
+
+        return $all;
+    }
+
+    /** @return list<string> the types an endpoint may subscribe to (the wildcard included) */
+    public static function subscribable(): array
+    {
+        return [self::WILDCARD, ...array_keys(self::DOMAIN)];
+    }
+
+    /** @return array<string,string> domain event class => event type */
+    public static function listened(): array
+    {
+        $map = [];
+        foreach (self::DOMAIN as $type => $info) {
+            $map[$info['class']] = $type;
+        }
+
+        return $map;
+    }
+
+    /**
+     * The payload object of a domain event, or null to skip it (not a certificate, already sent).
+     *
+     * @return array{object:array<string,mixed>,key:?string}|null
+     */
+    public static function payloadFor(string $type, object $event): ?array
+    {
+        try {
+            return match ($type) {
+                'course.completed' => ['object' => self::enrolment($event, ['completed_at' => now()->toIso8601String()]), 'key' => null],
+                'enrolment.created' => ['object' => self::enrolment($event, ['created_at' => now()->toIso8601String()]), 'key' => null],
+                'course.version_applied' => self::versionApplied($event),
+                'update_proposal.ready' => self::proposalReady($event),
+                'update_proposal.applied' => self::proposalApplied($event),
+                'certificate.issued' => self::certificate($event),
+                'knowledge.exported' => self::knowledgeExported($event),
+                'training.assigned' => self::training($event, 'training.assigned', ['assigned_at' => $event->assignment->assigned_at?->toIso8601String()]),
+                'training.completed' => self::training($event, 'training.completed', [
+                    'completed_at' => $event->assignment->completed_at?->toIso8601String() ?? now()->toIso8601String(),
+                    'certificate_id' => $event->assignment->certificate_id,
+                ]),
+                'training.overdue' => self::training($event, 'training.overdue', []),
+                'path.completed' => self::pathCompleted($event),
+                'certificate.revoked' => self::certificateRevoked($event),
+                'policy.change.approved' => self::policyChangeApproved($event),
+                'policy.retraining.assigned' => self::policyRetraining($event),
+                default => null,
+            };
+        } catch (Throwable $e) {
+            report($e);
+
+            return null;
+        }
+    }
+
+    /** A made-up but well-formed sample for the test button, per type. */
+    public static function sample(string $type): array
+    {
+        $user = ['id' => 1, 'email' => 'learner@example.com', 'name' => 'Sample Learner'];
+        $course = ['id' => 1, 'title' => 'Sample course'];
+
+        return match ($type) {
+            'course.completed' => ['user' => $user, 'course' => $course, 'completed_at' => now()->toIso8601String()],
+            'enrolment.created' => ['user' => $user, 'course' => $course, 'created_at' => now()->toIso8601String()],
+            'course.version_applied' => ['course_id' => 1, 'session_id' => '01SAMPLE0SESSION00000000000', 'version_id' => '01SAMPLE0VERSION000000000000', 'number' => 3, 'release_number' => 2, 'kind' => 'update', 'origin' => 'ai', 'reason' => 'Source update r1 → r2: 3 changes', 'trigger' => 'update', 'released_at' => now()->toIso8601String()],
+            'update_proposal.ready' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'course_title' => 'Sample course', 'elements' => 3, 'answer_checks' => 1, 'status' => 'ready'],
+            'update_proposal.applied' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'number' => 2, 'status' => 'applied', 'counts' => ['applied' => 3]],
+            'certificate.issued' => ['user' => $user, 'certificate_id' => 1, 'course_id' => 1, 'issued_at' => now()->toIso8601String()],
+            'training.assigned' => ['user' => $user, 'course' => $course, 'assignment_id' => 1, 'source' => 'manual', 'assigned_at' => now()->toIso8601String(), 'due_at' => now()->addDays(30)->toIso8601String(), 'path' => ['id' => 1, 'title' => 'Onboarding', 'step' => 2, 'steps' => 4]],
+            'training.completed' => ['user' => $user, 'course' => $course, 'assignment_id' => 1, 'source' => 'manual', 'due_at' => null, 'path' => null, 'completed_at' => now()->toIso8601String(), 'certificate_id' => 1],
+            'training.overdue' => ['user' => $user, 'course' => $course, 'assignment_id' => 1, 'source' => 'rule', 'due_at' => now()->subDay()->toIso8601String(), 'path' => null],
+            'path.completed' => ['user' => $user, 'path' => ['id' => 1, 'title' => 'Onboarding', 'steps' => 4], 'enrollment_id' => 1, 'completed_at' => now()->toIso8601String()],
+            'certificate.revoked' => ['user' => $user, 'certificate_id' => 1, 'course_id' => 1, 'revoked_at' => now()->toIso8601String(), 'reason' => 'Superseded by policy version 2'],
+            'policy.change.approved' => ['policy' => ['id' => '01SAMPLE0POLICY00000000000', 'title' => 'Remote work and data handling'], 'version' => 2, 'change_class' => 'minor', 'summary' => 'Sections 1 changed: §1.1 Approval and working hours.', 'departments' => [['department' => 'Engineering', 'revoked' => 12, 'reassigned' => 12]], 'approved_at' => now()->toIso8601String()],
+            'policy.retraining.assigned' => ['user' => $user, 'course' => $course, 'assignment_id' => 1, 'kind' => 'exam', 'policy' => ['id' => '01SAMPLE0POLICY00000000000', 'title' => 'Remote work and data handling'], 'version' => 2, 'summary' => 'Sections 1 changed: §1.1 Approval and working hours.', 'due_at' => now()->addDays(14)->toIso8601String()],
+            'knowledge.exported' => ['export_id' => '01SAMPLE0EXPORT00000000000', 'scope' => 'course', 'course_id' => 1, 'trigger' => 'auto', 'pack_hash' => str_repeat('a', 64), 'courses' => 1, 'chunks' => 12, 'uncited_chunks' => 2, 'finished_at' => now()->toIso8601String()],
+            default => ['message' => 'This is a test event from ulams.'],
+        };
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function policyChangeApproved(object $event): array
+    {
+        $policy = $event->policy;
+        $version = $event->version;
+
+        return [
+            'object' => [
+                'policy' => ['id' => (string) $policy->id, 'title' => (string) $policy->title],
+                'version' => (int) $version->number,
+                'change_class' => (string) $version->change_class,
+                'summary' => (string) $version->summary,
+                'departments' => array_map(fn (array $d) => ['department' => (string) $d['department'], 'revoked' => (int) $d['revoked'], 'reassigned' => (int) $d['reassigned']], $event->departments),
+                'approved_at' => $version->approved_at?->toIso8601String() ?? now()->toIso8601String(),
+            ],
+            'key' => 'policy.change.approved:' . $version->id,
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function policyRetraining(object $event): array
+    {
+        $assignment = $event->assignment;
+        $course = $event->getCourse();
+
+        return [
+            'object' => [
+                'user' => self::person($event->getUser()),
+                'course' => ['id' => $course->getKey(), 'title' => (string) $course->title],
+                'assignment_id' => $assignment->getKey(),
+                'kind' => (string) $event->kind,
+                'policy' => ['id' => (string) $event->policy->id, 'title' => (string) $event->policy->title],
+                'version' => (int) $event->version->number,
+                'summary' => (string) $event->summary,
+                'due_at' => $assignment->due_at?->toIso8601String(),
+            ],
+            'key' => 'policy.retraining.assigned:' . $assignment->getKey(),
+        ];
+    }
+
+    /** @return array{id:int|string,email:?string,name:string} */
+    private static function person(object $user): array
+    {
+        $name = trim(((string) ($user->first_name ?? '')) . ' ' . ((string) ($user->last_name ?? '')));
+
+        return ['id' => $user->getKey(), 'email' => $user->email ?? null, 'name' => $name !== '' ? $name : (string) ($user->name ?? '')];
+    }
+
+    /** @param array<string,mixed> $extra */
+    private static function enrolment(object $event, array $extra): array
+    {
+        $course = $event->getCourse();
+
+        return ['user' => self::person($event->getUser()), 'course' => ['id' => $course->getKey(), 'title' => (string) $course->title]] + $extra;
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function versionApplied(object $event): array
+    {
+        $version = $event->version;
+        $release = $event->release;
+
+        return [
+            'object' => [
+                'course_id' => $release->course_id,
+                'session_id' => (string) $event->session->id,
+                'version_id' => (string) $version->id,
+                'number' => (int) $version->number,
+                'release_number' => (int) $release->number,
+                'kind' => (string) $version->kind,
+                'origin' => (string) $version->origin,
+                'reason' => $version->reason !== null ? mb_substr((string) $version->reason, 0, 300) : null,
+                'trigger' => (string) $release->trigger,
+                'released_at' => $release->released_at?->toIso8601String() ?? now()->toIso8601String(),
+            ],
+            'key' => 'course.version_applied:' . $release->id,
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function proposalReady(object $event): array
+    {
+        $data = $event->toArray();
+        $proposalId = (string) ($data['proposalId'] ?? '');
+
+        return [
+            'object' => [
+                'proposal_id' => $proposalId,
+                'session_id' => (string) ($data['sessionId'] ?? ''),
+                'course_title' => (string) ($data['courseTitle'] ?? ''),
+                'elements' => (int) ($data['elements'] ?? 0),
+                'answer_checks' => (int) ($data['answerChecks'] ?? 0),
+                'status' => (string) ($data['status'] ?? ''),
+            ],
+            // the event is dispatched once per reviewer; the receiver gets one webhook per proposal
+            'key' => $proposalId !== '' ? 'update_proposal.ready:' . $proposalId : null,
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function proposalApplied(object $event): array
+    {
+        $proposal = $event->proposal;
+        $counts = [];
+        foreach ((array) $proposal->counts as $name => $value) {
+            if (is_int($value)) {
+                $counts[(string) $name] = $value;
+            }
+        }
+
+        return [
+            'object' => [
+                'proposal_id' => (string) $proposal->id,
+                'session_id' => (string) $proposal->session_id,
+                'number' => (int) $proposal->number,
+                'status' => (string) $proposal->status,
+                'counts' => $counts,
+            ],
+            'key' => 'update_proposal.applied:' . $proposal->id,
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string}|null */
+    private static function certificate(object $event): ?array
+    {
+        $pdf = $event->getPdf();
+        // PdfCreated also fires for other generated documents; only course certificates are events here
+        if (!str_ends_with((string) $pdf->assignable_type, 'Course')) {
+            return null;
+        }
+
+        return [
+            'object' => [
+                'user' => self::person($event->getUser()),
+                'certificate_id' => $pdf->getKey(),
+                'course_id' => $pdf->assignable_id,
+                'issued_at' => now()->toIso8601String(),
+            ],
+            'key' => null,
+        ];
+    }
+
+    /**
+     * The required-training events share one shape: who, which course, which assignment, and the learning path
+     * step when the course belongs to one. The key makes a repeated domain event one delivery per assignment.
+     *
+     * @param array<string,mixed> $extra
+     * @return array{object:array<string,mixed>,key:?string}
+     */
+    private static function training(object $event, string $type, array $extra): array
+    {
+        $assignment = $event->assignment;
+        $course = $event->getCourse();
+        $context = app('Ulams\Compliance\Services\PathContext')->forAssignment($assignment);
+
+        return [
+            'object' => [
+                'user' => self::person($event->getUser()),
+                'course' => ['id' => $course->getKey(), 'title' => (string) $course->title],
+                'assignment_id' => $assignment->getKey(),
+                'source' => (string) $assignment->source,
+                'due_at' => $assignment->due_at?->toIso8601String(),
+                'path' => $context ? ['id' => $context['path_id'], 'title' => $context['path_title'], 'step' => $context['step'], 'steps' => $context['steps']] : null,
+            ] + $extra,
+            'key' => $type . ':' . $assignment->getKey(),
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function pathCompleted(object $event): array
+    {
+        $enrollment = $event->enrollment;
+
+        return [
+            'object' => [
+                'user' => self::person($event->getUser()),
+                'path' => ['id' => $enrollment->path_id, 'title' => (string) $enrollment->path?->title, 'steps' => $enrollment->path?->steps()->count() ?? 0],
+                'enrollment_id' => $enrollment->getKey(),
+                'completed_at' => $enrollment->completed_at?->toIso8601String() ?? now()->toIso8601String(),
+            ],
+            'key' => 'path.completed:' . $enrollment->getKey(),
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string}|null */
+    private static function certificateRevoked(object $event): ?array
+    {
+        $pdf = $event->pdf;
+        // only course certificates are events here, as for certificate.issued
+        if (!str_ends_with((string) $pdf->assignable_type, 'Course') || !$pdf->user) {
+            return null;
+        }
+
+        return [
+            'object' => [
+                'user' => self::person($pdf->user),
+                'certificate_id' => $pdf->getKey(),
+                'course_id' => $pdf->assignable_id,
+                'revoked_at' => $pdf->revoked_at?->toIso8601String() ?? now()->toIso8601String(),
+                'reason' => $pdf->revoked_reason,
+            ],
+            'key' => 'certificate.revoked:' . $pdf->getKey(),
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function knowledgeExported(object $event): array
+    {
+        $export = $event->export;
+
+        return [
+            'object' => [
+                'export_id' => (string) $export->id,
+                'scope' => (string) $export->scope,
+                'course_id' => $export->course_id,
+                'trigger' => (string) $export->trigger,
+                'pack_hash' => (string) $export->pack_hash,
+                'courses' => (int) $export->courses,
+                'chunks' => (int) $export->chunks,
+                'uncited_chunks' => (int) $export->uncited,
+                'finished_at' => $export->finished_at?->toIso8601String() ?? now()->toIso8601String(),
+            ],
+            'key' => 'knowledge.exported:' . $export->id,
+        ];
+    }
+}

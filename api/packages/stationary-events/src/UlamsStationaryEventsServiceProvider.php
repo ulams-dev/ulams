@@ -2,6 +2,7 @@
 
 namespace Ulams\StationaryEvents;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Categories\UlamsCategoriesServiceProvider;
 use Ulams\StationaryEvents\Providers\AuthServiceProvider;
 use Ulams\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryContract;
@@ -15,6 +16,11 @@ use Illuminate\Support\ServiceProvider;
  */
 class UlamsStationaryEventsServiceProvider extends ServiceProvider
 {
+    /** Morph aliases of the models of this package (see Ulams\Core\Support\MorphMap); tests of packages that only use the models register them too. */
+    public const MORPH_ALIASES = [
+        'stationary_event' => \Ulams\StationaryEvents\Models\StationaryEvent::class,
+    ];
+
     public const SERVICES = [
       StationaryEventServiceContract::class => StationaryEventService::class,
     ];
@@ -35,6 +41,8 @@ class UlamsStationaryEventsServiceProvider extends ServiceProvider
 
     public function register()
     {
+        MorphMap::register(self::MORPH_ALIASES);
+
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(UlamsCategoriesServiceProvider::class);
     }

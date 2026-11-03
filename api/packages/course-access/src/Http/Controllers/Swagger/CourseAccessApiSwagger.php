@@ -9,7 +9,7 @@ interface CourseAccessApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/courses/my",
+     *      path="/api/courses/my", operationId="courses.my.get",
      *      summary="Get my course list IDs",
      *      tags={"Courses"},
      *      description="Get my course list IDs",
@@ -27,9 +27,7 @@ interface CourseAccessApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

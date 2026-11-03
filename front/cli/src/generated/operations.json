@@ -55,6 +55,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/authoring-metrics/courses",
+  "summary": "Authoring metric of courses",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/authoring-metrics/courses/{course}",
+  "summary": "Authoring metric of one course",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/bookmarks",
   "summary": "Get a listing of the bookmarks",
   "tag": "Admin Bookmarks"
@@ -151,6 +163,222 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/code-exercises/topics/{topic}/attempts",
+  "summary": "Attempts at a code exercise (teacher report)",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/code-exercises/topics/{topic}/preview",
+  "summary": "Preview a code exercise as its author",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/assignments",
+  "summary": "List required-training assignments",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/assignments",
+  "summary": "Assign a required course to users",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/assignments/{id}",
+  "summary": "Cancel an open assignment",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/competencies",
+  "summary": "The competency framework as a tree",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/competencies",
+  "summary": "Add a competency",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/competencies/{id}",
+  "summary": "Delete a competency (its sub-competencies move up, course tags go)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/competencies/{id}",
+  "summary": "Rename or move a competency",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/courses/{course}/competencies",
+  "summary": "Competency tags of a course (confirmed and suggested)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/courses/{course}/competencies/{competency}",
+  "summary": "Remove a tag or reject a suggestion",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/courses/{course}/competencies/{competency}",
+  "summary": "Tag a course with a competency (confirmed by the author), or confirm a suggestion",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/courses/{course}/competencies/suggest",
+  "summary": "Ask the AI which competencies the course teaches",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/courses/{course}/settings",
+  "summary": "Compliance settings of a course (defaults when none are saved)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/courses/{course}/settings",
+  "summary": "Save the compliance settings of a course",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/dashboard",
+  "summary": "Compliance dashboard",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/managers",
+  "summary": "List manager links",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/managers/{user}",
+  "summary": "Set or clear the manager of a user",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/paths",
+  "summary": "List learning paths with their steps",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/paths",
+  "summary": "Create a learning path",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/paths/{id}",
+  "summary": "Delete a learning path (its assignments stay)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/paths/{id}",
+  "summary": "Show a learning path",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/paths/{id}",
+  "summary": "Update a learning path (steps are replaced when sent)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/paths/{id}/enrollments",
+  "summary": "Enrol users in a learning path",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/report",
+  "summary": "Compliance report",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/report/export",
+  "summary": "Audit export of a compliance dataset",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/rules",
+  "summary": "List enrolment rules",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/rules",
+  "summary": "Create an enrolment rule",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/rules/{id}",
+  "summary": "Delete an enrolment rule (existing enrolments stay)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/rules/{id}",
+  "summary": "Update an enrolment rule",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/rules/{id}/evaluate",
+  "summary": "Preview or run a rule now",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/schedules",
+  "summary": "List scheduled reports",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/schedules",
+  "summary": "Schedule a report",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/schedules/{id}",
+  "summary": "Delete a scheduled report",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/schedules/{id}",
+  "summary": "Update a scheduled report",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/users/{user}/skills",
+  "summary": "The skill profile of a user",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/config",
   "summary": "Get admin config",
   "tag": "Admin Settings"
@@ -241,6 +469,54 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-as-code/courses/{course}/blueprint",
+  "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/apply",
+  "summary": "Apply the current version to the course (no AI needed)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/drift",
+  "summary": "Read admin edits made after the last apply back into a proposed author version",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/imports",
+  "summary": "Import a Blueprint v3 document as a proposed version of kind import",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/publish",
+  "summary": "Publish the applied course (no AI needed)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-as-code/versions/{version}",
+  "summary": "One version with its Blueprint v3 document (what a three-way merge needs as the base)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/versions/{version}/approve",
+  "summary": "Approve a proposed import (people and CLI tokens; never agents or MCP clients)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-as-code/versions/{version}/diff",
+  "summary": "Element-aware diff of a version against its parent or ?against=",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-builder/fragments/{fragment}",
   "summary": "One source fragment (citation popover)",
   "tag": "Admin Course Builder"
@@ -307,6 +583,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/citations",
+  "summary": "Sources panel: sections with the elements that cite them",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/elements/{element}/variants",
+  "summary": "Give me options: 2 or 3 proposals for one element, compared side by side",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-builder/sessions/{session}/events",
   "summary": "AG-UI event stream (SSE)",
   "tag": "Admin Course Builder"
@@ -315,6 +603,12 @@
   "method": "POST",
   "path": "/api/admin/course-builder/sessions/{session}/new-site",
   "summary": "Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/outline",
+  "summary": "Edit the course structure: rename, move, add, remove, set the lesson format",
   "tag": "Admin Course Builder"
  },
  {
@@ -367,8 +661,32 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/variants",
+  "summary": "Course variants by level and role: status, own course, drift from the base, estimate and cap",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/variants",
+  "summary": "Create variants from the interview answer (or add some later); start=true drafts their outlines in one run",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-builder/sessions/{session}/versions",
   "summary": "Blueprint version history",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/course-builder/variants/{variant}",
+  "summary": "Retire a variant (its course, if it has one, is kept)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/course-builder/variants/{variant}",
+  "summary": "Rename, reorder or retire a variant",
   "tag": "Admin Course Builder"
  },
  {
@@ -400,6 +718,102 @@
   "path": "/api/admin/course-builder/versions/{version}/restore",
   "summary": "Restore an old version as a new one",
   "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups",
+  "summary": "List the families of course variants, optionally the one a course belongs to",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}",
+  "summary": "One family: settings, variant courses, where learners are and the placement check",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-variant-groups/{group}",
+  "summary": "Change the settings of a family",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}/assignments",
+  "summary": "Who is in which variant (current assignments, with the source of each)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-variant-groups/{group}/assignments",
+  "summary": "Assign learners or user groups to a variant; the learner sees it as assigned by their organisation",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}/placement",
+  "summary": "The placement questions with their answer key and citations",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-variant-groups/{group}/placement/rebuild",
+  "summary": "Choose the placement questions again from the family's cited quiz questions (no model call)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}/rules",
+  "summary": "List the assignment rules of a family",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-variant-groups/{group}/rules",
+  "summary": "Create an assignment rule",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/course-variant-groups/{group}/rules/{rule}",
+  "summary": "Delete an assignment rule (learners already assigned stay)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-variant-groups/{group}/rules/{rule}",
+  "summary": "Update an assignment rule",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-variant-groups/{group}/rules/{rule}/evaluate",
+  "summary": "Preview or run a rule now",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-versions/courses/{course}/compare",
+  "summary": "Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary",
+  "tag": "Admin Course Versions"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-versions/courses/{course}/releases",
+  "summary": "Releases of a course (what learners got), newest first, with a summary of what changed",
+  "tag": "Admin Course Versions"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-versions/courses/{course}/versions",
+  "summary": "All versions of a course's branch (proposals, rejected and undone ones too), newest first, with the session's variants",
+  "tag": "Admin Course Versions"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-versions/releases/{release}",
+  "summary": "One release with the blueprint document of its version",
+  "tag": "Admin Course Versions"
  },
  {
   "method": "GET",
@@ -594,6 +1008,12 @@
   "tag": "Templates"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/example-plugin/greetings",
+  "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
+  "tag": "Admin Example plugin"
+ },
+ {
   "method": "DELETE",
   "path": "/api/admin/file/delete",
   "summary": "Delete given file",
@@ -691,6 +1111,60 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/identity/audit",
+  "summary": "Identity audit trail, newest first",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/identity/audit/verify",
+  "summary": "Recompute the hash chain of the audit trail",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/identity/providers",
+  "summary": "Identity providers of this academy",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/identity/providers",
+  "summary": "Add an OpenID Connect or SAML identity provider",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/identity/providers/{provider}",
+  "summary": "Delete an identity provider and its account links (accounts stay)",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/identity/providers/{provider}",
+  "summary": "One identity provider",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/identity/providers/{provider}",
+  "summary": "Change an identity provider (leave client_secret out to keep the stored one)",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/identity/providers/{provider}/metadata/refresh",
+  "summary": "Fetch the SAML identity provider metadata again",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/identity/providers/{provider}/sp-keys/rotate",
+  "summary": "Prepare or activate the next SAML service provider key pair",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/interactive",
   "summary": "List interactive packages",
   "tag": "Admin Interactive"
@@ -736,6 +1210,90 @@
   "path": "/api/admin/interactive/{id}/versions",
   "summary": "Upload a new version (the manifest id must match)",
   "tag": "Admin Interactive"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/knowledge/courses/{course}/latest",
+  "summary": "The latest ready export of a course",
+  "tag": "Admin Knowledge"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/knowledge/exports",
+  "summary": "Knowledge exports, newest first",
+  "tag": "Admin Knowledge"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/knowledge/exports",
+  "summary": "Start a knowledge export of one course or of the whole tenant",
+  "tag": "Admin Knowledge"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/knowledge/exports/{export}",
+  "summary": "One knowledge export",
+  "tag": "Admin Knowledge"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/knowledge/exports/{export}/download",
+  "summary": "Download a file of a ready export (manifest.json, chunks.jsonl or index.json)",
+  "tag": "Admin Knowledge"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/learner-insights/backfill",
+  "summary": "Build signals from existing data for a course or the whole tenant (queued)",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/courses/{course}/elements",
+  "summary": "The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/learner-insights/courses/{course}/elements/{elementKey}/improve",
+  "summary": "Propose an improvement for an element learners struggle with: the estimate and the aggregated evidence first, then (confirmEstimate) a Living Course proposal of kind insights",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/courses/{course}/learners",
+  "summary": "Learners who are struggling or at risk, with the reasons (individual data)",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/courses/{course}/settings",
+  "summary": "Thresholds of one course: the overrides and the effective values",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/learner-insights/courses/{course}/settings",
+  "summary": "Replace the threshold overrides of one course",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/courses/{course}/summary",
+  "summary": "Per-course analytics: progress, completion, quiz performance, status distribution and interventions",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/learners/{user}/courses/{course}/timeline",
+  "summary": "One learner's signals in a course with element labels (support)",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/settings",
+  "summary": "The effective rule thresholds of the tenant (defaults and tenant settings)",
+  "tag": "Learner insights admin"
  },
  {
   "method": "GET",
@@ -876,6 +1434,12 @@
   "tag": "Admin Living Course"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/living-course/oauth/{provider}/start",
+  "summary": "The vendor sign-in address for Connect your account (provider google or notion); the session must be one the caller may change",
+  "tag": "Admin Living Course"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/living-course/proposals/{proposal}",
   "summary": "A proposal with its items grouped by lesson, citations and source changes",
@@ -907,6 +1471,12 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group",
+  "summary": "Accept one item and the same patch in the other proposals of its group (the course's variants)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
   "summary": "Ask for another version of one element ({comment}); one call, at most three per item",
   "tag": "Admin Living Course"
@@ -921,6 +1491,12 @@
   "method": "POST",
   "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/reset",
   "summary": "Back to undecided",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/suggest-lesson",
+  "summary": "Suggest a new lesson for a new source section no lesson covers (one AI call; the item becomes `new_lesson` for review as a diff)",
   "tag": "Admin Living Course"
  },
  {
@@ -1195,9 +1771,105 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/pdfs/{id}/revoke",
+  "summary": "Revoke a certificate",
+  "tag": "Template PDFs"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/pdfs/preview",
   "summary": "Preview a pdfme template with sample data",
   "tag": "Template PDFs"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies",
+  "summary": "List policies",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies",
+  "summary": "Create a policy from an uploaded document",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}",
+  "summary": "Show a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/dashboard",
+  "summary": "Policy owner dashboard",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/dashboard/export",
+  "summary": "Export the people of the policy dashboard as CSV",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/variants",
+  "summary": "List the department variants of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/policies/{policy}/variants/{variant}/academy",
+  "summary": "Remove the academy of a department",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/variants/{variant}/academy",
+  "summary": "The academy of a department",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/variants/{variant}/academy",
+  "summary": "Create an academy of its own for a department",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/variants/generate",
+  "summary": "Generate the department courses of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/versions",
+  "summary": "List the versions of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/versions",
+  "summary": "Upload a new version of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/versions/{number}",
+  "summary": "Review a policy version",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/versions/{number}/approve",
+  "summary": "Approve a policy version",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/versions/{number}/reject",
+  "summary": "Reject a policy version in review",
+  "tag": "Policies"
  },
  {
   "method": "GET",
@@ -1402,6 +2074,54 @@
   "path": "/api/admin/quiz-attempts/export",
   "summary": "Export course quiz results to an XLSX or XLS file",
   "tag": "Admin Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/datasets",
+  "summary": "Datasets a report can be built on",
+  "tag": "Reporting"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/reporting/query",
+  "summary": "Preview a report definition",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/saved",
+  "summary": "Saved reports the caller can see",
+  "tag": "Reporting"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/reporting/saved",
+  "summary": "Save a report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/reporting/saved/{id}",
+  "summary": "Delete a saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/saved/{id}",
+  "summary": "One saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/reporting/saved/{id}",
+  "summary": "Change a saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/saved/{id}/run",
+  "summary": "Run a saved report",
+  "tag": "Reporting"
  },
  {
   "method": "GET",
@@ -1734,10 +2454,40 @@
   "tag": "Templates"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/templates/email/images",
+  "summary": "Upload an image for an e-mail template",
+  "tag": "Templates"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/templates/email/render",
+  "summary": "Render an unsaved e-mail template draft with sample data",
+  "tag": "Templates"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/templates/email/test-send",
+  "summary": "Send an unsaved e-mail template draft to the signed-in admin",
+  "tag": "Templates"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/templates/variables",
   "summary": "Dictionary list of available template variables",
   "tag": "Templates"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/theme/logo",
+  "summary": "Remove the tenant logo",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/theme/logo",
+  "summary": "Upload the tenant logo",
+  "tag": "Admin Settings"
  },
  {
   "method": "GET",
@@ -1752,9 +2502,21 @@
   "tag": "Admin Tokens"
  },
  {
+  "method": "PATCH",
+  "path": "/api/admin/tokens/{id}",
+  "summary": "Change the per-minute rate limit of any scoped token",
+  "tag": "Admin Tokens"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/tokens/{id}/audit",
   "summary": "Audit log of one token",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tokens/{id}/usage",
+  "summary": "Request counts of one token per day, and its rate limit window",
   "tag": "Admin Tokens"
  },
  {
@@ -1888,6 +2650,12 @@
   "path": "/api/admin/translations/retrieve",
   "summary": "Retrieve translation",
   "tag": "Admin Translations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tutor/courses/{course}/analytics",
+  "summary": "Anonymous tutor analytics for a course: questions, out-of-scope share and refusals during attempts",
+  "tag": "Tutor"
  },
  {
   "method": "GET",
@@ -2095,6 +2863,72 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/webhooks/deliveries",
+  "summary": "Delivery log (newest first)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webhooks/deliveries/{delivery}",
+  "summary": "One delivery with its payload and every attempt",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/webhooks/deliveries/{delivery}/replay",
+  "summary": "Send a delivery again as a new delivery with the same event id",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webhooks/endpoints",
+  "summary": "List webhook endpoints",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/webhooks/endpoints",
+  "summary": "Create a webhook endpoint (the signing secret is returned once)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}",
+  "summary": "Delete a webhook endpoint and its delivery log",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}",
+  "summary": "One webhook endpoint",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}",
+  "summary": "Change a webhook endpoint (URL, events, enabled)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}/rotate-secret",
+  "summary": "Replace the signing secret (returned once; the old one stops working at once)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}/test",
+  "summary": "Send a sample event once and return the result",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webhooks/events",
+  "summary": "Webhook event types (available and planned)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/webinars",
   "summary": "",
   "tag": "Admin Webinars"
@@ -2234,13 +3068,19 @@
  {
   "method": "GET",
   "path": "/api/auth/social/{provider}/callback",
-  "summary": "Redirect after sucessfull login",
+  "summary": "Redirect after successful login",
   "tag": "Auth"
  },
  {
   "method": "POST",
   "path": "/api/auth/social/complete/{token}",
   "summary": "Complete the missing data from socials",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/social/exchange",
+  "summary": "Exchange a one-time social login code for a token",
   "tag": "Auth"
  },
  {
@@ -2259,6 +3099,18 @@
   "method": "DELETE",
   "path": "/api/auth/tokens/{id}",
   "summary": "Revoke one of my scoped tokens",
+  "tag": "Auth"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/auth/tokens/{id}",
+  "summary": "Change the per-minute rate limit of one of my tokens",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/tokens/{id}/usage",
+  "summary": "Request counts of one of my tokens per day, and its rate limit window",
   "tag": "Auth"
  },
  {
@@ -2353,6 +3205,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/certificates/verify/{certificateId}",
+  "summary": "Verify a certificate",
+  "tag": "Template PDFs"
+ },
+ {
+  "method": "GET",
   "path": "/api/cmi5/courses/{id}",
   "summary": "Get Course cmi5 launch params",
   "tag": "cmi5"
@@ -2368,6 +3226,54 @@
   "path": "/api/cmi5/player/{cmi5AuId}",
   "summary": "Launch a cmi5 AU",
   "tag": "cmi5"
+ },
+ {
+  "method": "POST",
+  "path": "/api/code-exercises/launches/{topic}",
+  "summary": "Open a code exercise",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "GET",
+  "path": "/api/code-exercises/topics/{topic}/attempts",
+  "summary": "My attempts at a code exercise",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "POST",
+  "path": "/api/code-exercises/topics/{topic}/attempts",
+  "summary": "Report the result of a run",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "POST",
+  "path": "/api/commerce/webhooks/{provider}",
+  "summary": "Receive a signed order event of the commerce provider",
+  "tag": "Commerce webhooks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/compliance/my-assignments",
+  "summary": "My required training",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/compliance/my-paths",
+  "summary": "My learning paths",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/compliance/my-skills",
+  "summary": "My skill profile",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/compliance/team/assignments",
+  "summary": "Required training of my direct reports",
+  "tag": "Compliance"
  },
  {
   "method": "GET",
@@ -2478,6 +3384,12 @@
   "tag": "Consultations"
  },
  {
+  "method": "POST",
+  "path": "/api/contact",
+  "summary": "Send a message to the ULAMS team",
+  "tag": "Contact"
+ },
+ {
   "method": "GET",
   "path": "/api/core/packages",
   "summary": "List installed ulams packages",
@@ -2506,6 +3418,42 @@
   "path": "/api/courses",
   "summary": "Get a listing of the Courses.",
   "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{course}/placement",
+  "summary": "The placement questions of a course's family (no answer key); 404 when the check is off or not ready",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/courses/{course}/placement/attempts",
+  "summary": "Score a placement attempt by code and get the suggested variant with the reason (advisory)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{course}/variant",
+  "summary": "The signed-in learner's variant of this course's family, whether they may change it, the placement check and a hint to switch",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/courses/{course}/variant",
+  "summary": "Choose or switch variant: enrols the learner in the variant's course through the family entitlement and carries over identical completed topics",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/courses/{course}/variant/hints/{hint}/dismiss",
+  "summary": "Dismiss a hint to switch variant; hints stop for this course",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{course}/variants",
+  "summary": "The variants of a course's family for the picker (public data), or null when it has none",
+  "tag": "Course Variants"
  },
  {
   "method": "GET",
@@ -2629,9 +3577,81 @@
  },
  {
   "method": "GET",
+  "path": "/api/example-plugin/hello",
+  "summary": "The tenant's greeting",
+  "tag": "Example plugin"
+ },
+ {
+  "method": "GET",
   "path": "/api/health-check",
   "summary": "Check health of the application",
   "tag": "Api"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/oidc/{slug}/callback",
+  "summary": "Where the provider sends the browser back; redirects to the return URL with a one-time code or an error",
+  "tag": "Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/providers",
+  "summary": "Identity providers a learner can sign in with",
+  "tag": "Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/identity/saml/{slug}/acs",
+  "summary": "Assertion consumer service: the identity provider's browser POST (SAMLResponse and RelayState)",
+  "tag": "Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/identity/saml/{slug}/logout",
+  "summary": "Sign out of this academy and, when the identity provider supports it, start single logout there",
+  "tag": "Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/saml/{slug}/metadata",
+  "summary": "SAML service provider metadata of an identity provider",
+  "tag": "Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/saml/{slug}/slo",
+  "summary": "Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours",
+  "tag": "Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/identity/saml/{slug}/slo",
+  "summary": "Single logout service (POST binding with an enveloped XML signature)",
+  "tag": "Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/sso/{slug}/start",
+  "summary": "Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider",
+  "tag": "Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/identity/sso/exchange",
+  "summary": "Redeem the one-time code with the verifier for an access token",
+  "tag": "Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/images/img",
+  "summary": "Resize an image on the fly and redirect to the cached copy",
+  "tag": "Images"
+ },
+ {
+  "method": "POST",
+  "path": "/api/images/img",
+  "summary": "Resize many images at once",
+  "tag": "Images"
  },
  {
   "method": "POST",
@@ -2650,6 +3670,78 @@
   "path": "/api/interactive/topics/{topic}/events",
   "summary": "Progress events from the lesson page",
   "tag": "Interactive"
+ },
+ {
+  "method": "POST",
+  "path": "/api/learner-insights/assignments/{assignment}/feedback",
+  "summary": "Say whether a piece of extra help was useful",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "POST",
+  "path": "/api/learner-insights/assignments/{assignment}/hide",
+  "summary": "Hide a piece of extra help",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "POST",
+  "path": "/api/learner-insights/assignments/{assignment}/reflection",
+  "summary": "Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored)",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "GET",
+  "path": "/api/learner-insights/courses/{course}/presentation",
+  "summary": "How the course is presented to the learner (density, steps, navigation, hints) and why",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/learner-insights/courses/{course}/presentation",
+  "summary": "Override how the course is presented (for example show the whole lesson); null removes an override",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "GET",
+  "path": "/api/learner-insights/courses/{course}/topics/{topic}/support",
+  "summary": "Extra help for the learner in a topic, with the reasons it was offered",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/learner-insights/me",
+  "summary": "Erase the learner's personalisation data (the opt-out and consent settings stay)",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "GET",
+  "path": "/api/learner-insights/me",
+  "summary": "The learner's own statuses with reasons, their privacy settings and the retention periods",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "GET",
+  "path": "/api/learner-insights/me/export",
+  "summary": "Download everything stored about the learner (signals, statuses, transitions) as JSON",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/learner-insights/me/settings",
+  "summary": "Opt out of personalisation, switch personal help or nudges, give or withdraw consent",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "POST",
+  "path": "/api/learner-insights/nudges/opened",
+  "summary": "The learner followed the link of a nudge (the frontend sends the signed `n` of the link)",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "POST",
+  "path": "/api/learner-insights/signals",
+  "summary": "Record a media signal (replay, seek back) from the player",
+  "tag": "Learner insights"
  },
  {
   "method": "POST",
@@ -2680,6 +3772,12 @@
   "path": "/api/living-course/notices/{notice}/dismiss",
   "summary": "Mark a notice as reviewed",
   "tag": "Living Course learner"
+ },
+ {
+  "method": "GET",
+  "path": "/api/living-course/oauth/{provider}/callback",
+  "summary": "The vendor's redirect after the sign-in: redirects to the studio with a one-time grant, or answers with it",
+  "tag": "Living Course"
  },
  {
   "method": "POST",
@@ -2916,6 +4014,12 @@
   "tag": "Template PDFs"
  },
  {
+  "method": "POST",
+  "path": "/api/pencil-spaces/login",
+  "summary": "Generate a direct login link",
+  "tag": "Pencil Spaces"
+ },
+ {
   "method": "GET",
   "path": "/api/platform/operations",
   "summary": "The latest tenant operations",
@@ -2925,6 +4029,30 @@
   "method": "GET",
   "path": "/api/platform/operations/{id}",
   "summary": "Status and steps of a tenant operation (poll it)",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/templates",
+  "summary": "List the tenant templates",
+  "tag": "Platform"
+ },
+ {
+  "method": "POST",
+  "path": "/api/platform/templates",
+  "summary": "Create a tenant template, or change the given fields of an existing one",
+  "tag": "Platform"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/platform/templates/{slug}",
+  "summary": "Remove a tenant template (tenants made from it are untouched)",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/templates/{slug}",
+  "summary": "One tenant template",
   "tag": "Platform"
  },
  {
@@ -2952,10 +4080,22 @@
   "tag": "Platform"
  },
  {
+  "method": "GET",
+  "path": "/api/platform/tenants/{slug}/derived",
+  "summary": "The tenants created from this one for a purpose",
+  "tag": "Platform"
+ },
+ {
   "method": "PATCH",
   "path": "/api/platform/tenants/{slug}/env",
   "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
   "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/policies/my-changes",
+  "summary": "Why I was given this training again",
+  "tag": "Policies"
  },
  {
   "method": "POST",
@@ -3136,6 +4276,24 @@
   "path": "/api/quiz-attempts/{id}/end",
   "summary": "Finish quiz attempt",
   "tag": "Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/reporting/odata",
+  "summary": "OData service document",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/reporting/odata/{entity}",
+  "summary": "Rows of a saved report as an OData entity set",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/reporting/odata/$metadata",
+  "summary": "OData metadata document",
+  "tag": "Reporting"
  },
  {
   "method": "GET",
@@ -3322,6 +4480,42 @@
   "path": "/api/translations",
   "summary": "Get a list of public translations",
   "tag": "Translations"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/tutor/conversations/{conversation}",
+  "summary": "Delete one of the learner's conversations",
+  "tag": "Tutor"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tutor/conversations/{conversation}",
+  "summary": "One of the learner's conversations with its messages",
+  "tag": "Tutor"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tutor/courses/{course}/conversations",
+  "summary": "The learner's own conversations in a course",
+  "tag": "Tutor"
+ },
+ {
+  "method": "POST",
+  "path": "/api/tutor/courses/{course}/messages",
+  "summary": "Ask the course tutor a question; it answers only from the course, with citations",
+  "tag": "Tutor"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tutor/courses/{course}/status",
+  "summary": "Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open",
+  "tag": "Tutor"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tutor/runs/{run}/events",
+  "summary": "AG-UI event stream (SSE) of one streamed tutor answer",
+  "tag": "Tutor"
  },
  {
   "method": "GET",

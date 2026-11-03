@@ -2,6 +2,7 @@
 
 use Ulams\Settings\Http\Controllers\Admin\ConfigController as AdminConfigController;
 use Ulams\Settings\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use Ulams\Settings\Http\Controllers\Admin\ThemeLogoController;
 use Ulams\Settings\Http\Controllers\ConfigController;
 use Ulams\Settings\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,9 @@ Route::group(['prefix' => 'api/config'], function () {
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
     Route::get('settings/groups', [AdminSettingsController::class, 'groups']);
     Route::resource('settings', AdminSettingsController::class);
+
+    Route::post('theme/logo', [ThemeLogoController::class, 'store'])->middleware('throttle:20,1,theme-logo');
+    Route::delete('theme/logo', [ThemeLogoController::class, 'destroy']);
 
     Route::get('config', [AdminConfigController::class, 'list']);
     Route::post('config', [AdminConfigController::class, 'update']);

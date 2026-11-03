@@ -13,6 +13,7 @@ modules:
   - categories
   - cmi5
   - commerce
+  - compliance
   - consultation-access
   - consultations
   - core
@@ -22,6 +23,8 @@ modules:
   - csv-users
   - demo
   - dictionaries
+  - entitlements
+  - identity
   - files
   - h5p
   - images
@@ -193,6 +196,14 @@ attempts and answers (`/api/quiz-attempts`, `/api/quiz-answers`), admin routes f
 attempts. Admin screen `/courses/quiz-reports`; questions are edited in the course editor (the admin
 parses GIFT with `@ulams/gift-pegjs`).
 
+### [code-exercises](/reference/packages/code-exercises/)
+
+The **code exercise** topic type ([ADR 0170](/decisions/0170-code-exercise-runners/)): starter files and visible
+tests for JavaScript and TypeScript, run by the learner in the browser sandbox of the content origin
+(`front/code-runner`), with practice attempts, progress and the `code.attempt_finished` learner signal. Topics go
+through the topic API; learner routes under `/api/code-exercises`, preview and teacher report under
+`/api/admin/code-exercises`. Guide: [Code exercises](/creators/code-exercises/).
+
 ### [topic-type-layout](/reference/packages/topic-type-layout/)
 
 The Layout topic (`LayoutTopic`, ADR 0052): a document of approved learner components plus a Markdown
@@ -258,6 +269,17 @@ Off by default: `ADAPT_SOURCE_ENABLED=true` turns on `/api/admin/adapt` (permiss
 404 otherwise). The worker itself is not built yet, so builds cannot run outside tests. No admin
 screen.
 
+### [compliance](/reference/packages/compliance/)
+
+Certificate validity, required training and escalation (Phase 6.1; plan `docs/plans/phase-6-compliance.md`).
+Per-course settings (`CourseSetting`), required-training assignments (`Assignment`, which grant access through
+`course-access` and write the course deadline), manager links and an append-only notification log. A daily
+`compliance:process` run sends certificate and due-date reminders, starts recertification before expiry and escalates
+overdue training to the manager; six e-mail templates are registered with `templates-email`. Learning paths with prerequisites and attribute rules that enrol users in a path (Phase 6.2). Dashboard numbers and scheduled e-mail reports (Phase 6.5), a competency framework with author-confirmed AI tag suggestions and learner skill profiles (Phase 6.6). Report and audit export
+(assignments, certificates, Living Course audit entries; CSV or JSON lines) at `/api/admin/compliance/report`
+(permission `compliance_report`). API under `/api/admin/compliance` (permission `compliance_manage`) and `/api/compliance`. No admin screen yet. See
+[Compliance and required training](/admin/compliance/).
+
 ### [lti](/reference/packages/lti/)
 
 LTI 1.3 in both directions ([ADR 0012](/decisions/0012-lti-package-and-libraries/)), written for
@@ -275,6 +297,14 @@ Registration, login, password reset, e-mail verification, social login (Socialit
 groups (`Group`, `GroupUser`), user settings and impersonation. Issues Passport personal access
 tokens; see [Authentication](/developers/authentication/). Admin screens `/users/list` and
 `/users/groups`.
+
+### [identity](/reference/packages/identity/)
+
+Single sign-on per tenant: OpenID Connect and SAML 2.0 providers (`IdentityProvider`, client secret and SP keys encrypted),
+links between provider subjects and users (`IdentityLink`), IdP sessions for single logout (`IdentitySession`), assertion replay
+records, account creation on first sign-in, and a hash-chained audit trail (`identity_audit`). Public sign-in routes under
+`/api/identity`, admin routes under `/api/admin/identity`. See [Single sign-on](/operators/single-sign-on/) and
+[SAML 2.0](/operators/single-sign-on-saml/); SCIM and HR import follow.
 
 ### [permissions](/reference/packages/permissions/)
 
@@ -321,8 +351,20 @@ admin routes under `/api/admin`. Depends on `payments` and registers `shopping-c
 
 The `CommerceProvider` interface (`syncProduct`, `createCheckout`, `handleOrderEvent`) and the
 `WellmsCartProvider` adapter that creates cart products for courses through the cart services,
-with the mapping in `commerce_product_links`. Used by the Course Builder to price a course; no
-routes. A Sylius adapter is planned (Phase 6.4).
+with the mapping in `commerce_product_links`. Used by the Course Builder to price a course. It
+also receives signed order events from a provider that reports orders by webhook
+(`POST /api/commerce/webhooks/{provider}`, public), applies them and repairs missed ones with
+`ulams:commerce:reconcile`; see [Entitlements and order events](/developers/entitlements-and-order-events/).
+A Sylius adapter is planned (Phase 6.4).
+
+### [entitlements](/reference/packages/entitlements/)
+
+What granted a user access to a course (`entitlements`: subject, validity, unique source key) and
+`EntitlementService`, the only writer of purchased access: it grants and revokes through
+`CourseAccessService`, so `course_user` stays the projection every policy reads. It also decorates
+`CourseAccessService` (every access written by an admin, LTI or compliance gets an entitlement), expires
+entitlements hourly and checks `course_user` against them nightly (`ulams:entitlements:parity`). The access
+backfill (`ulams:entitlements:backfill`) and the Wellms shadow listener live in `commerce`. No routes.
 
 ### [shopping-cart](/reference/packages/shopping-cart/)
 
@@ -487,8 +529,11 @@ screen `/analytics/reports`.
 
 ### [images](/reference/packages/images/)
 
-Resizes images on request (`GET /api/images/img` with the source path and size parameters), caches the result (`ImageCache`) and
-optimises it with `spatie/image-optimizer`. Used by every frontend for thumbnails.
+Optional legacy resize API: resizes images on request (`GET /api/images/img` with the source path and size parameters), caches the
+result (`ImageCache`) and optimises it with `spatie/image-optimizer`. Kept for self-hosted admins and third-party clients; the
+reference front and the hosted demos use the [image service](/operators/image-service/) instead. `images.content_urls`
+(`IMAGES_CONTENT_URLS`, `api` or `original`) decides whether course import and the markdown helper store `/api/images/img` URLs or plain
+storage URLs.
 
 ### [files](/reference/packages/files/)
 

@@ -27,6 +27,18 @@ const READ = ["builder:read"];
 const WRITE = ["builder:write"];
 const STABLE = ["interviewing", "outline_review", "apply_review", "applied"];
 
+const outlineBody = (i: { action: string; id?: string; title?: string; index?: number; module?: string; kind?: string; objective?: string; citation?: string; "content-type"?: string }) => ({
+  action: i.action.replace("-", "_"),
+  ...(i.id ? { id: i.id } : {}),
+  ...(i.title ? { title: i.title } : {}),
+  ...(i.index !== undefined ? { index: i.index } : {}),
+  ...(i.module ? { moduleId: i.module } : {}),
+  ...(i.kind ? { kind: i.kind } : {}),
+  ...(i.objective ? { objective: i.objective } : {}),
+  ...(i.citation ? { citations: [i.citation] } : {}),
+  ...(i["content-type"] ? { contentType: i["content-type"] } : {}),
+});
+
 const session = z.string().describe("Builder session id (from `ulams builder sessions list`).");
 
 function planOf(method: string, path: string, body?: unknown): Plan {
@@ -185,7 +197,7 @@ async function answerInterview(ctx: Ctx, sessionId: string, answers: Record<stri
 
 async function startFlow(
   ctx: Ctx,
-  i: { session?: string; title?: string; from?: string[]; fromUrl?: string[]; answers?: Record<string, unknown>; defaults?: boolean; approveOutline?: boolean; apply?: boolean; publish?: boolean; overwrite?: boolean }
+  i: { session?: string; title?: string; from?: string[]; fromUrl?: string[]; answers?: Record<string, unknown>; defaults?: boolean; approveOutline?: boolean; apply?: boolean; publish?: boolean; acknowledgeWarnings?: boolean; overwrite?: boolean }
 ): Promise<Result> {
   const steps: Array<Record<string, unknown>> = [];
   const files = i.from ?? [];
@@ -249,7 +261,7 @@ async function startFlow(
     }
     if (status === "applied") {
       if (i.publish && !published) {
-        const res = await builderCall<{ courseId: number; published: boolean }>(ctx, "POST", "/sessions/{session}/publish", { params: { session: sessionId } });
+        const res = await builderCall<{ courseId: number; published: boolean }>(ctx, "POST", "/sessions/{session}/publish", { params: { session: sessionId }, body: { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) } });
         steps.push({ step: "publish", ...res });
         published = true;
         state = await getSession(ctx, sessionId);
@@ -298,6 +310,7 @@ export const builderCommands: AnyCommand[] = [
       approveOutline: z.boolean().optional().describe("Approve the proposed outline and generate the lessons."),
       apply: z.boolean().optional().describe("Apply the generated course to the academy (as an unpublished draft)."),
       publish: z.boolean().optional().describe("Publish the applied course."),
+      acknowledgeWarnings: z.boolean().optional().describe("Explicitly acknowledge reviewed publication warnings; blocking errors still prevent publishing."),
       overwrite: z.boolean().optional().describe("With --apply on an already applied course: overwrite admin edits."),
     }),
     output: z.unknown(),
@@ -700,12 +713,12 @@ export const builderCommands: AnyCommand[] = [
     scopes: WRITE,
     endpoints: ["POST /api/admin/course-builder/sessions/{session}/publish"],
     positionals: ["session"],
-    input: z.object({ session }),
+    input: z.object({ session, acknowledgeWarnings: z.boolean().optional().describe("Acknowledge the warnings returned by publish-check after reviewing them.") }),
     output: z.unknown(),
     examples: [{ title: "Publish", argv: "builder publish <session> --json" }],
-    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/publish`),
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/publish`, { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) }),
     async run(ctx, i) {
-      return { data: await builderCall(ctx, "POST", "/sessions/{session}/publish", { params: { session: i.session } }) };
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/publish", { params: { session: i.session }, body: { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) } }) };
     },
   }),
   defineCommand({
@@ -726,6 +739,22 @@ export const builderCommands: AnyCommand[] = [
   }),
   defineCommand({
     ...common,
+    id: "builder.citations",
+    summary: "Show which elements cite each section of the sources, and which sections nothing cites",
+    description: "The sources panel as data: per source its sections in reading order with the elements of the current version that cite them (data.sources[].sections[].citedBy), the number of uncovered sections (data.sources[].uncovered) and, per element, the fragments it cites (data.elements).",
+    kind: "read",
+    scopes: READ,
+    endpoints: ["GET /api/admin/course-builder/sessions/{session}/citations"],
+    positionals: ["session"],
+    input: z.object({ session }),
+    output: z.unknown(),
+    examples: [{ title: "What is not covered yet", argv: "builder citations <session> --json" }],
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "GET", "/sessions/{session}/citations", { params: { session: i.session } }) };
+    },
+  }),
+  defineCommand({
+    ...common,
     id: "builder.new-site",
     summary: "Create a new site (tenant) for the course in this session",
     description: "Starts creating a new site and returns its status (the request is queued). Only available to users allowed to create sites (a 403 otherwise). The slug defaults to the one in the Course Brief.",
@@ -740,6 +769,136 @@ export const builderCommands: AnyCommand[] = [
     plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/new-site`, { ...(i.slug ? { slug: i.slug } : {}), ...(i.name ? { name: i.name } : {}) }),
     async run(ctx, i) {
       return { data: await builderCall(ctx, "POST", "/sessions/{session}/new-site", { params: { session: i.session }, body: { ...(i.slug ? { slug: i.slug } : {}), ...(i.name ? { name: i.name } : {}) } }) };
+    },
+  }),
+
+  defineCommand({
+    ...common,
+    id: "builder.outline-edit",
+    summary: "Edit the course structure: rename, move, add or remove modules and lessons",
+    description:
+      "Saves the change as an approved author version (no approval step) and re-applies the course when it is applied. `--action rename --id <id> --title <t>`; `move --id <id> --index <n> [--module <id>]` (0-based position in the target list); `add --kind lesson|module --title <t> --objective <o> --citation <frg_id> [--module <id>]`; `remove --id <id>`; `set-format --id <lesson> --content-type richtext|liascript|h5p|interactive`. Ids come from `builder versions get <version> --document`.",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: ["POST /api/admin/course-builder/sessions/{session}/outline"],
+    positionals: ["session"],
+    input: z.object({
+      session,
+      action: z.enum(["rename", "move", "add", "remove", "set-format"]),
+      id: z.string().optional().describe("Module or lesson id."),
+      title: z.string().optional(),
+      index: z.number().int().min(0).optional().describe("Target position (0-based, after the element is taken out)."),
+      module: z.string().optional().describe("Target module id (move a lesson to it, or add a lesson to it)."),
+      kind: z.enum(["lesson", "module"]).optional(),
+      objective: z.string().optional().describe("Learning objective of an added lesson."),
+      citation: z.string().optional().describe("Fragment id an added lesson rests on."),
+      "content-type": z.enum(["richtext", "liascript", "h5p", "interactive"]).optional(),
+    }),
+    output: z.unknown(),
+    examples: [{ title: "Move a lesson up", argv: "builder outline-edit <session> --action move --id <lesson> --index 0 --json" }],
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/outline`, outlineBody(i)),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/outline", { params: { session: i.session }, body: outlineBody(i) }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "builder.variants",
+    summary: "Ask for 2 or 3 options for one element and compare them",
+    description:
+      "Starts a variant run: one model call per option (the cost is count times a chat edit). The options are proposed versions that share a group; choose one with `builder patches approve <version>` (the other options stay proposed until you reject them) or `builder patches reject <version>`. Read them with `builder versions list <session>`.",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: ["POST /api/admin/course-builder/sessions/{session}/elements/{element}/variants"],
+    positionals: ["session", "element"],
+    input: z.object({ session, element: z.string().describe("Element id (from `builder elements list`)."), instruction: z.string().describe("What to change, in plain words."), count: z.number().int().min(2).max(3).default(2) }),
+    output: z.unknown(),
+    examples: [{ title: "Two options", argv: 'builder variants <session> <element> --instruction "Harder distractors" --json' }],
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/elements/${i.element}/variants`, { count: i.count, instruction: i.instruction }),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/elements/{element}/variants", { params: { session: i.session, element: i.element }, body: { count: i.count, instruction: i.instruction } }) };
+    },
+  }),
+
+  /* ---- course variants by level and role (ADR 0192) */
+  defineCommand({
+    ...common,
+    id: "course.variants.list",
+    summary: "Variants of a course by level and role: status, own course, drift from the base, the cap and the cost estimate",
+    description:
+      "A variant is a branch of one builder session: it shares the sources and citations, is drafted from the approved base course and, once approved, becomes its own course grouped with the base. `data.cap` is COURSE_BUILDER_MAX_VARIANTS, `data.estimate` the cost of drafting the variants that are still waiting, in micro-USD (1,000,000 = 1 USD). `data.base.ready` is false until the base course is applied.",
+    kind: "read",
+    scopes: READ,
+    endpoints: ["GET /api/admin/course-builder/sessions/{session}/variants"],
+    positionals: ["session"],
+    input: z.object({ session }),
+    output: z.unknown(),
+    examples: [{ title: "List the variants", argv: "course variants list <session> --json" }],
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "GET", "/sessions/{session}/variants", { params: { session: i.session } }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "course.variants.add",
+    summary: "Add a variant for a level, a role or both; --start drafts the outlines of the waiting variants",
+    description:
+      "The base course must be applied first (409 otherwise). Without --start the variant is only created; with --start the builder drafts one outline per waiting variant from the same sources (one cheap model call each, logged against the variant) and you review each as a diff against the base in the studio or with `builder outline show`. More variants than COURSE_BUILDER_MAX_VARIANTS are refused (422).",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: ["POST /api/admin/course-builder/sessions/{session}/variants"],
+    positionals: ["session"],
+    input: z.object({
+      session,
+      level: z.enum(["beginner", "intermediate", "expert"]).optional().describe("Level of the audience."),
+      role: z.string().max(64).optional().describe("Role of the audience, e.g. developer."),
+      label: z.string().max(120).optional().describe("Name learners see (default: the level and the role)."),
+      notes: z.string().max(600).optional().describe("What this audience already knows or needs, as plain text."),
+      start: z.boolean().default(false).describe("Draft the outlines of the waiting variants now."),
+    }),
+    output: z.unknown(),
+    examples: [{ title: "An expert version for developers", argv: "course variants add <session> --level expert --role developer --start --json" }],
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/variants`, variantBody(i)),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/variants", { params: { session: i.session }, body: variantBody(i) }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "course.variants.update",
+    summary: "Rename or reorder a variant",
+    kind: "write",
+    idempotent: true,
+    scopes: WRITE,
+    endpoints: ["PATCH /api/admin/course-builder/variants/{variant}"],
+    positionals: ["variant"],
+    input: z.object({ variant: z.string().describe("Variant id (from `course variants list`)."), label: z.string().min(1).max(120).optional(), position: z.number().int().min(0).max(1000).optional(), notes: z.string().max(600).optional() }),
+    output: z.unknown(),
+    examples: [{ title: "Rename", argv: 'course variants update <variant> --label "Expert, developer" --json' }],
+    plan: async (_ctx, i) => planOf("PATCH", `/api/admin/course-builder/variants/${i.variant}`, variantChanges(i)),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "PATCH", "/variants/{variant}", { params: { variant: i.variant }, body: variantChanges(i) }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "course.variants.retire",
+    summary: "Retire a variant (its course, if it has one, is kept)",
+    description: "A retired variant no longer counts against the cap and is not offered; learners already in its course keep their progress.",
+    kind: "destructive",
+    idempotent: true,
+    scopes: WRITE,
+    endpoints: ["DELETE /api/admin/course-builder/variants/{variant}"],
+    positionals: ["variant"],
+    input: z.object({ variant: z.string().describe("Variant id (from `course variants list`).") }),
+    output: z.unknown(),
+    examples: [{ title: "Retire", argv: "course variants retire <variant> --yes --json" }],
+    plan: async (_ctx, i) => planOf("DELETE", `/api/admin/course-builder/variants/${i.variant}`),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "DELETE", "/variants/{variant}", { params: { variant: i.variant } }) };
     },
   }),
 
@@ -777,13 +936,13 @@ export const builderCommands: AnyCommand[] = [
     ...common,
     ...wait,
     id: "builder.patches.approve",
-    summary: "Approve a proposed patch; an applied course is updated",
+    summary: "Approve a proposed version: a patch (an applied course is updated), or a variant's outline or generated course (see `course variants list`)",
     kind: "write",
     idempotent: false,
     scopes: WRITE,
     endpoints: ["POST /api/admin/course-builder/versions/{version}/approve"],
     positionals: ["version"],
-    input: z.object({ version: z.string().describe("Patch version id (from `builder chat`).") }),
+    input: z.object({ version: z.string().describe("Version id: a patch (from `builder chat`) or a variant version (`currentVersionId` of `course variants list`).") }),
     output: z.unknown(),
     examples: [{ title: "Approve", argv: "builder patches approve <version> --json" }],
     plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/versions/${i.version}/approve`, { edits: [] }),
@@ -1079,6 +1238,19 @@ export const builderCommands: AnyCommand[] = [
 ];
 
 /* ------------------------------------------------------------------ small helpers */
+
+function variantBody(i: { level?: string; role?: string; label?: string; notes?: string; start?: boolean }): Record<string, unknown> {
+  const audience: Record<string, unknown> = {};
+  for (const key of ["level", "role", "label", "notes"] as const) if (i[key] !== undefined) audience[key] = i[key];
+  return { audiences: [audience], ...(i.start ? { start: true } : {}) };
+}
+
+function variantChanges(i: { label?: string; position?: number; notes?: string }): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of ["label", "position", "notes"] as const) if (i[key] !== undefined) out[key] = i[key];
+  return out;
+}
+
 
 function briefBody(i: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = { ...((i.brief as Record<string, unknown> | undefined) ?? {}) };

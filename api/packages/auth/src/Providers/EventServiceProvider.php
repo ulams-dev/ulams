@@ -2,12 +2,14 @@
 
 namespace Ulams\Auth\Providers;
 
+use Ulams\Auth\Events\AccountBlocked;
 use Ulams\Auth\Events\AccountDeleted;
 use Ulams\Auth\Events\AccountRegistered;
 use Ulams\Auth\Events\ForgotPassword;
 use Ulams\Auth\Listeners\CreatePasswordResetToken;
 use Ulams\Auth\Listeners\EmailAnonymisation;
 use Ulams\Auth\Listeners\RemoveUserSocialAccounts;
+use Ulams\Auth\Listeners\RevokeUserTokens;
 use Ulams\Auth\Listeners\SendEmailVerificationNotification;
 use Ulams\Auth\Listeners\MaskUserData;
 
@@ -20,7 +22,11 @@ class EventServiceProvider extends \Illuminate\Foundation\Support\Providers\Even
         ForgotPassword::class => [
             CreatePasswordResetToken::class,
         ],
+        AccountBlocked::class => [
+            RevokeUserTokens::class,
+        ],
         AccountDeleted::class => [
+            RevokeUserTokens::class,
             EmailAnonymisation::class,
             RemoveUserSocialAccounts::class,
             MaskUserData::class,

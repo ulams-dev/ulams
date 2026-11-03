@@ -1,0 +1,37 @@
+{
+  "slug": "existing-training-material",
+  "date": "2026-10-17",
+  "series": true,
+  "en": {
+    "title": "Nobody starts from scratch: SCORM, H5P and cmi5",
+    "description": "Old training packages go into the same course as new lessons: SCORM 1.2 and 2004, H5P and cmi5, next to text and interactive activities.",
+    "tags": [
+      "SCORM",
+      "H5P",
+      "cmi5"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "In the clip: the H5P branching scenario “Who does what?” in a lesson of the On-Call course, opened as a learner and marked complete (the Completed button). The player canvas stayed white in this recording."
+    }
+  },
+  "pl": {
+    "title": "Nikt nie zaczyna od zera: SCORM, H5P i cmi5",
+    "description": "Stare paczki szkoleniowe trafiają do tego samego kursu co nowe lekcje: SCORM 1.2 i 2004, H5P i cmi5, obok tekstu i aktywności interaktywnych.",
+    "tags": [
+      "SCORM",
+      "H5P",
+      "cmi5"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "W filmie: scenariusz rozgałęziony H5P „Who does what?” w lekcji kursu On-Call, otwarty jako uczeń i oznaczony jako ukończony (przycisk Completed). Kanwa odtwarzacza pozostała biała w tym nagraniu."
+    }
+  }
+}

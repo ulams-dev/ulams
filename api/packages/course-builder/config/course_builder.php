@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'learner_path' => env('COURSE_BUILDER_LEARNER_PATH', '/courses/{id}'),
     // Private disk for uploaded sources (never served). Default: a local private root.
     'disk' => env('COURSE_BUILDER_DISK', 'course_builder_private'),
     'private_root' => env('COURSE_BUILDER_PRIVATE_ROOT', storage_path('app/private')),
@@ -25,6 +26,14 @@ return [
         'eval_monthly_usd' => (float) env('COURSE_BUILDER_EVAL_MONTHLY_USD', 20),
     ],
 
+    // Course variants by level and role (ADR 0192): one base course plus up to `max` variants for other audiences,
+    // drafted from the same sources. `lesson_estimate_usd` is the per-lesson cost used for the estimate shown in
+    // the interview when the session has no lessons yet.
+    'variants' => [
+        'max' => (int) env('COURSE_BUILDER_MAX_VARIANTS', 6),
+        'lesson_estimate_usd' => (float) env('COURSE_BUILDER_VARIANT_LESSON_USD', 0.06),
+    ],
+
     'fragments' => ['min_tokens' => 150, 'max_tokens' => 600],
 
     // Pruning of the AG-UI event log
@@ -35,6 +44,20 @@ return [
         'max_seconds' => (int) env('COURSE_BUILDER_SSE_SECONDS', 25),
         'poll_ms' => (int) env('COURSE_BUILDER_SSE_POLL_MS', 500),
     ],
+
+    // Lesson formats beyond rich text (ADR 0050). Each can be switched off for the installation; the
+    // builder also checks at runtime that the package is present, the H5P libraries are installed and
+    // the library holds an interactive package.
+    'content_types' => [
+        'liascript' => filter_var(env('COURSE_BUILDER_LIASCRIPT', true), FILTER_VALIDATE_BOOLEAN),
+        'h5p' => filter_var(env('COURSE_BUILDER_H5P', true), FILTER_VALIDATE_BOOLEAN),
+        'interactive' => filter_var(env('COURSE_BUILDER_INTERACTIVE', true), FILTER_VALIDATE_BOOLEAN),
+    ],
+    // H5P libraries the builder may create (a subset of the supported three, checked against the installed ones)
+    'h5p_libraries' => ['H5P.Blanks', 'H5P.DragText', 'H5P.Dialogcards'],
+    // Let the outline pick a format by rule (a LiaScript lesson for every lesson with two or more
+    // objectives, when LiaScript is available). Off: lessons are rich text until the author changes them.
+    'auto_formats' => filter_var(env('COURSE_BUILDER_AUTO_FORMATS', false), FILTER_VALIDATE_BOOLEAN),
 
     // Quiz answers must share words with the cited fragments (deterministic support check)
     'quiz_support_min_overlap' => 2,

@@ -1,5 +1,7 @@
 ---
 import Icon from "./Icon.astro";
+import { pageLocale } from "../lib/i18n.ts";
+import { playerStrings } from "../lib/player-strings.ts";
 
 interface Props {
   price?: string;
@@ -10,9 +12,10 @@ interface Props {
   note?: string;
 }
 const { price, priceNote, title, items = [], cta, note } = Astro.props;
+const t = playerStrings(pageLocale(Astro));
 ---
 
-<aside class="u-buy u-card" aria-label={title ?? "Enrol"}>
+<aside class="u-buy u-card" aria-label={title ?? t.enrol}>
   {title && <p class="u-buy__title">{title}</p>}
   {
     price && (

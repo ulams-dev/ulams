@@ -8,6 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Peopleaps\Scorm\Exception\StorageNotFoundException;
+use Ulams\Core\Storage\LocalCopy;
 use Ulams\Uploads\Zip\SafeExtractor;
 use Ulams\Uploads\Zip\ZipLimits;
 
@@ -42,27 +43,12 @@ class ScormDisk
     public function readScormArchive($file, callable $fn)
     {
         try {
-            if (Storage::exists($file)) {
-                Storage::delete($file);
-            }
-            Storage::writeStream($file, $this->getArchiveDisk()->readStream($file));
-            $path = Storage::path($file);
-            call_user_func($fn, $path);
-            // Clean local resources
-            $this->clean($file);
+            // a local path for the archive library: the file itself on a local disk, else a temporary copy
+            // that is deleted afterwards (Storage::path() on S3 is only the object key)
+            LocalCopy::with($this->getArchiveDisk(), $file, fn (string $path) => call_user_func($fn, $path), 'zip');
         } catch (Exception $ex) {
             Log::error($ex->getMessage());
             throw new StorageNotFoundException('scorm_archive_not_found');
-        }
-    }
-
-    private function clean($file)
-    {
-        try {
-            Storage::delete($file);
-            Storage::deleteDirectory(dirname($file)); // delete temp dir
-        } catch (Exception $ex) {
-            Log::error($ex->getMessage());
         }
     }
 

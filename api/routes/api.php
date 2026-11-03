@@ -5,6 +5,7 @@ use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
 use Ulams\Consultations\Models\ConsultationUserPivot;
 use Illuminate\Support\Facades\Route;
 use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+use App\Http\Controllers\ContactSubmissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +26,5 @@ Route::get('events', [EventAPIController::class, 'index']);
 
 Route::get('health', [\Spatie\Health\Http\Controllers\SimpleHealthCheckController::class, "__invoke"]);
 Route::get('healthcheck',  [\Spatie\Health\Http\Controllers\HealthCheckJsonResultsController::class, "__invoke"]);
+
+Route::post('contact', ContactSubmissionController::class)->middleware('throttle:5,1');

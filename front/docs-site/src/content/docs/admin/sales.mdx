@@ -242,5 +242,8 @@ The spec moves commerce to a separate **Sylius 2.x** headless service (roadmap P
 will own catalogue, cart, checkout, taxes and invoices, while the LMS keeps an entitlements model
 and stays the only system that decides who has access. Access will be granted only from signed,
 idempotent Sylius order events plus a reconciliation job, behind a `CommerceProvider` interface.
-None of this is implemented yet; see the [Roadmap](/roadmap/) and the
+The LMS half exists: the `entitlements` package grants and revokes purchased access idempotently, and the
+signed order webhook with its reconciliation command is tested against a test-only provider. The Sylius
+service, its adapter, catalogue sync and checkout are not built (plan `docs/plans/phase-6-commerce.md`,
+milestones CM-3 onwards); see the [Roadmap](/roadmap/) and the
 [Phase 0 commerce audit](https://github.com/ulams-dev/ulams/blob/main/docs/reports/phase-0-audit.md).

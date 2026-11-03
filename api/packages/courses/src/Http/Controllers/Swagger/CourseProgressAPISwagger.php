@@ -12,7 +12,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Get(
      *      tags={"Courses"},
-     *      path="/api/courses/progress",
+     *      path="/api/courses/progress", operationId="courses.progress.get",
      *      description="Get Progresses",
      *      security={
      *          {"passport": {}},
@@ -20,9 +20,7 @@ interface CourseProgressAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -38,7 +36,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Get(
      *      tags={"Courses"},
-     *      path="/api/courses/progress/paginated",
+     *      path="/api/courses/progress/paginated", operationId="courses.progress.paginated.get",
      *      description="Get Paginated Progresses",
      *      security={
      *          {"passport": {}},
@@ -72,9 +70,7 @@ interface CourseProgressAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -90,7 +86,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Get(
      *      tags={"Courses"},
-     *      path="/api/courses/progress/{course_id}",
+     *      path="/api/courses/progress/{course_id}", operationId="courses.progress.by-course-id.get",
      *      description="Show user course progress",
      *      security={
      *          {"passport": {}},
@@ -106,9 +102,7 @@ interface CourseProgressAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -124,7 +118,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Patch(
      *      tags={"Courses"},
-     *      path="/api/courses/progress/{course_id}",
+     *      path="/api/courses/progress/{course_id}", operationId="courses.progress.by-course-id.patch",
      *      description="Show user course progress",
      *      security={
      *          {"passport": {}},
@@ -159,9 +153,7 @@ interface CourseProgressAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -177,7 +169,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Put(
      *      tags={"Courses"},
-     *      path="/api/courses/progress/{topic_id}/ping",
+     *      path="/api/courses/progress/{topic_id}/ping", operationId="courses.progress.by-topic-id.ping.put",
      *      description="Update time in course by ping.",
      *      security={
      *          {"passport": {}},
@@ -193,9 +185,7 @@ interface CourseProgressAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -211,7 +201,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Post(
      *      tags={"Courses"},
-     *      path="/api/courses/progress/{topic_id}/h5p",
+     *      path="/api/courses/progress/{topic_id}/h5p", operationId="courses.progress.by-topic-id.h5p.post",
      *      description="Update h5p progress in course quiz.",
      *      security={
      *          {"passport": {}},
@@ -243,9 +233,7 @@ interface CourseProgressAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,

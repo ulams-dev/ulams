@@ -8,6 +8,7 @@ import { FormattedMessage, history, useIntl, useModel, useParams } from 'umi';
 import { configs as fetchConfigs } from '@/services/ulams/settings';
 import GlobalSettings from './global';
 import PackageForm from './package';
+import ThemeSettings from './theme';
 import UserSettings from './user';
 
 function transformPackageName(rawPackageName: string): string {
@@ -19,7 +20,7 @@ function transformPackageName(rawPackageName: string): string {
 }
 
 function getTabNameForBreadcrumbs(tab: string, intl: IntlShape): string {
-  const NON_PACKAGE_TABS = ['global_settings', 'user_settings'];
+  const NON_PACKAGE_TABS = ['global_settings', 'user_settings', 'theme_settings'];
 
   return NON_PACKAGE_TABS.includes(tab)
     ? intl.formatMessage({ id: String(tab) })
@@ -108,6 +109,10 @@ export default () => {
 
         <ProCard.TabPane key="global_settings" tab={<FormattedMessage id="global_settings" />}>
           <GlobalSettings />
+        </ProCard.TabPane>
+
+        <ProCard.TabPane key="theme_settings" tab={<FormattedMessage id="theme_settings" />}>
+          <ThemeSettings />
         </ProCard.TabPane>
 
         {Object.keys(configs).map((pkg) => (

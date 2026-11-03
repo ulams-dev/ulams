@@ -1,0 +1,478 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/course-folder/1/lesson-front-matter.schema.json",
+  "title": "Lesson front matter",
+  "description": "The YAML block at the top of a lesson Markdown file.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-z]{26}$",
+      "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Optional stable slug, unique among siblings."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 200
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 600
+    },
+    "minutes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 600
+    },
+    "objectives": {
+      "minItems": 1,
+      "maxItems": 8,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-z]{26}$",
+            "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+          },
+          "text": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 400
+          },
+          "citations": {
+            "default": [],
+            "description": "Source fragments this element cites. Only elements with origin: author may leave it empty.",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$"
+            }
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "description": "What the lesson teaches. Blocks and questions refer to these ids."
+    },
+    "contentType": {
+      "default": "richtext",
+      "type": "string",
+      "enum": [
+        "richtext",
+        "liascript",
+        "h5p",
+        "interactive",
+        "scorm",
+        "cmi5",
+        "video",
+        "file",
+        "embed"
+      ]
+    },
+    "citations": {
+      "default": [],
+      "description": "Source fragments this element cites. Only elements with origin: author may leave it empty.",
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^frg_[a-z2-7]{12}$"
+      }
+    },
+    "status": {
+      "default": "generated",
+      "type": "string",
+      "enum": [
+        "planned",
+        "generated",
+        "failed"
+      ]
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "ai",
+        "author"
+      ],
+      "description": "Who wrote it. Absent means ai; only author elements may have no citations."
+    },
+    "flags": {
+      "default": [],
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 500
+      }
+    },
+    "asset": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "description": "Path relative to assets/; `ulams course fmt` expands it with sha256, bytes and mediaType."
+        },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "mediaType": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "assetRef": {
+      "description": "Set by the server after an upload or an adoption.",
+      "type": "object",
+      "properties": {
+        "entityType": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "entityId": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "entityType",
+        "entityId"
+      ],
+      "additionalProperties": false
+    },
+    "video": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": [
+            "upload",
+            "youtube",
+            "vimeo"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "provider"
+      ],
+      "additionalProperties": false
+    },
+    "embed": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "url",
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "exercises": {
+      "description": "Reserved for code exercises.",
+      "maxItems": 0,
+      "type": "array",
+      "items": {
+        "not": {}
+      }
+    },
+    "selfChecks": {
+      "description": "LiaScript lessons: questions shown after the text.",
+      "maxItems": 6,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-z]{26}$",
+            "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "single",
+              "multiple",
+              "truefalse",
+              "short"
+            ]
+          },
+          "stem": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 1000
+          },
+          "options": {
+            "minItems": 1,
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-z]{26}$",
+                  "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "correct": {
+                  "default": false,
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 2000
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "ai",
+              "author"
+            ],
+            "description": "Who wrote it. Absent means ai; only author elements may have no citations."
+          },
+          "citations": {
+            "default": [],
+            "description": "Source fragments this element cites. Only elements with origin: author may leave it empty.",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$"
+            }
+          },
+          "objectiveIds": {
+            "default": [],
+            "description": "Ids of objectives of the lesson this question checks.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9a-z]{26}$",
+              "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+            }
+          }
+        },
+        "required": [
+          "type",
+          "stem",
+          "options",
+          "explanation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "interaction": {
+      "description": "h5p and interactive lessons: the interaction that follows the text.",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-z]{26}$",
+              "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+            },
+            "kind": {
+              "type": "string",
+              "const": "h5p"
+            },
+            "library": {
+              "type": "string",
+              "enum": [
+                "H5P.Blanks",
+                "H5P.DragText",
+                "H5P.Dialogcards"
+              ]
+            },
+            "title": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 200
+            },
+            "data": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            },
+            "origin": {
+              "type": "string",
+              "enum": [
+                "ai",
+                "author"
+              ],
+              "description": "Who wrote it. Absent means ai; only author elements may have no citations."
+            },
+            "citations": {
+              "default": [],
+              "description": "Source fragments this element cites. Only elements with origin: author may leave it empty.",
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^frg_[a-z2-7]{12}$"
+              }
+            },
+            "objectiveIds": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[0-9a-z]{26}$",
+                "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "library",
+            "title",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-z]{26}$",
+              "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+            },
+            "kind": {
+              "type": "string",
+              "const": "interactive"
+            },
+            "packageId": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "title": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 200
+            },
+            "startStep": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "endStep": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "caption": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4000
+            },
+            "origin": {
+              "type": "string",
+              "enum": [
+                "ai",
+                "author"
+              ],
+              "description": "Who wrote it. Absent means ai; only author elements may have no citations."
+            },
+            "citations": {
+              "default": [],
+              "description": "Source fragments this element cites. Only elements with origin: author may leave it empty.",
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^frg_[a-z2-7]{12}$"
+              }
+            },
+            "objectiveIds": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[0-9a-z]{26}$",
+                "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "packageId",
+            "title",
+            "caption"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "title",
+    "minutes",
+    "objectives"
+  ],
+  "additionalProperties": false
+}

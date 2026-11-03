@@ -11,7 +11,7 @@ interface AttemptAnswerApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/quiz-answers",
+     *      path="/api/quiz-answers", operationId="quiz-answers.post",
      *      summary="Save your answer",
      *      tags={"Gift Quiz Attempt"},
      *      description="Save your answer",
@@ -49,7 +49,7 @@ interface AttemptAnswerApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/quiz-answers/all",
+     *      path="/api/quiz-answers/all", operationId="quiz-answers.all.post",
      *      summary="Save your all answers",
      *      tags={"Gift Quiz Attempt"},
      *      description="Save your all answers",

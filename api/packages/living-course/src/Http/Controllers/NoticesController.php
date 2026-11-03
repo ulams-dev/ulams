@@ -18,12 +18,12 @@ use Ulams\LivingCourse\Models\Proposal;
  * Learner side (ADR 0033): the caller's own notices about updated courses, and the opt-in "an
  * update is under review" marker. Notices never change progress.
  *
- * @OA\Get(path="/api/living-course/courses/{course}/notices", summary="The caller's open update notices for a course", tags={"Living Course learner"}, security={{"passport": {}}},
- *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="notices"), @OA\Response(response=401, description="not signed in"))
- * @OA\Post(path="/api/living-course/notices/{notice}/dismiss", summary="Mark a notice as reviewed", tags={"Living Course learner"}, security={{"passport": {}}},
- *     @OA\Parameter(name="notice", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="dismissed"), @OA\Response(response=404, description="not the caller's notice"))
- * @OA\Get(path="/api/living-course/courses/{course}/freshness", summary="Topics with an update under review (only when the course shows it)", tags={"Living Course learner"}, security={{"passport": {}}},
- *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="topics"), @OA\Response(response=404, description="unknown course"))
+ * @OA\Get(path="/api/living-course/courses/{course}/notices", operationId="living-course.courses.by-course.notices.get", summary="The caller's open update notices for a course", tags={"Living Course learner"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="notices", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=401, description="not signed in"))
+ * @OA\Post(path="/api/living-course/notices/{notice}/dismiss", operationId="living-course.notices.by-notice.dismiss.post", summary="Mark a notice as reviewed", tags={"Living Course learner"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="notice", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="dismissed", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="not the caller's notice"))
+ * @OA\Get(path="/api/living-course/courses/{course}/freshness", operationId="living-course.courses.by-course.freshness.get", summary="Topics with an update under review (only when the course shows it)", tags={"Living Course learner"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="topics", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="unknown course"))
  */
 class NoticesController extends Controller
 {
@@ -68,19 +68,20 @@ class NoticesController extends Controller
         if ($c === null || !$c->users()->where('users.id', $request->user()->getKey())->exists()) {
             throw new NotFoundHttpException('Course not found.');
         }
-        $session = Session::withTrashed()->where('course_id', $c->getKey())->first();
+        $branch = \Ulams\LivingCourse\Support\ProposalBranch::ofCourse((int) $c->getKey());
+        $session = $branch?->session;
         $connections = $session ? Connection::query()->where('session_id', $session->id)->get() : collect();
         if ($session === null || !$connections->contains(fn (Connection $x) => (bool) $x->setting('show_pending_to_learners', false))) {
             return self::ok(['topics' => []]);
         }
         $after = (int) config('living_course.learner_notice_after_days', 3);
         $pending = ElementStatus::query()->where('session_id', $session->id)->whereIn('status', ['pending', 'source_removed'])->where('since', '<=', now()->subDays($after))->get();
-        $proposal = Proposal::query()->where('session_id', $session->id)->whereIn('status', Proposal::OPEN)->latest('created_at')->first();
+        $proposal = Proposal::query()->where('session_id', $session->id)->where('kind', Proposal::KIND_SOURCE)->whereIn('status', Proposal::OPEN)->latest('created_at')->first();
         if ($pending->isEmpty() || $proposal === null) {
             return self::ok(['topics' => []]);
         }
-        $map = \Ulams\CourseBuilder\Models\EntityMapEntry::query()->where('session_id', $session->id)->where('entity_type', 'topic')->pluck('entity_id', 'element_id');
-        $doc = $session->currentVersion?->document ?? [];
+        $map = $branch->entries()->where('entity_type', 'topic')->pluck('entity_id', 'element_id');
+        $doc = $branch->liveVersion()?->document ?? [];
         $topics = [];
         foreach ($pending as $element) {
             $found = \Ulams\CourseBuilder\Blueprint\Blueprint::find($doc, $element->element_id);

@@ -1,0 +1,70 @@
+name: PHP freshness
+
+# Daily: compare the latest PHP 8.4 release on php.net with the official php:8.4-fpm-alpine image (our base) and
+# with our published ghcr.io/ulams-dev/php:8.4. When either is behind, ONE issue labelled `security` is opened or
+# updated; when both are current it is closed. Being behind never fails the run (the issue is the report), so the
+# owner gets an issue, not a failure e-mail. Logic and tests: .github/scripts/php-freshness.sh and
+# test-php-freshness.sh. Background: docs/plans/security-php-rce-2026-10.md.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: php-freshness
+  cancel-in-progress: false
+
+jobs:
+  freshness:
+    name: Compare PHP versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Script tests
+        run: sh .github/scripts/test-php-freshness.sh
+      # No mirror here on purpose: mirror.gcr.io can lag the official image, and this job exists to see exactly
+      # that lag. A Docker Hub login (when the secrets exist) only lifts the anonymous rate limit.
+      - name: Docker Hub login
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin || true
+          fi
+      - name: Read the versions
+        id: versions
+        run: |
+          # Every lookup may fail (php.net, Docker Hub, ghcr.io not published or not public): that means
+          # "unknown", which is skipped, never a failed run.
+          latest="$(curl -fsS --retry 3 --max-time 30 'https://www.php.net/releases/index.php?json&version=8.4' | jq -r '.version // empty' || true)"
+          official="$(docker run --pull always --rm php:8.4-fpm-alpine php -v 2>/dev/null | sh .github/scripts/php-freshness.sh version-of || true)"
+          ours="$(docker run --pull always --rm ghcr.io/ulams-dev/php:8.4 php -v 2>/dev/null | sh .github/scripts/php-freshness.sh version-of || true)"
+          echo "latest=$latest official=$official ours=${ours:-unavailable}"
+          {
+            echo "latest=$latest"
+            echo "official=${official:-unavailable}"
+            echo "ours=${ours:-unavailable}"
+          } >> "$GITHUB_OUTPUT"
+      - name: Compare
+        id: compare
+        run: |
+          sh .github/scripts/php-freshness.sh compare \
+            "${{ steps.versions.outputs.latest }}" "${{ steps.versions.outputs.official }}" "${{ steps.versions.outputs.ours }}" \
+            "$RUNNER_TEMP/report.md" | tee -a "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/report.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Open, update or close the issue
+        if: steps.versions.outputs.latest != ''
+        run: |
+          state=current
+          [ "${{ steps.compare.outputs.behind }}" = true ] && state=behind
+          sh .github/scripts/php-freshness.sh sync-issue "$state" "$RUNNER_TEMP/report.md"

@@ -12,6 +12,14 @@ use Ulams\Pages\Models\Page;
 
 class PublishCheckTest extends TestCase
 {
+    public function testLearnerPathUsesTheConfiguredFrontendRoute(): void
+    {
+        config(['course_builder.learner_path' => '/learn/{id}']);
+        $this->assertSame('/learn/42', \Ulams\CourseBuilder\Services\SessionState::learnerPath(42));
+        config(['course_builder.learner_path' => '//external.example/{id}']);
+        $this->assertSame('/courses/42', \Ulams\CourseBuilder\Services\SessionState::learnerPath(42));
+    }
+
     private function url(Session $s, string $path): string
     {
         return "/api/admin/course-builder/sessions/{$s->id}/{$path}";

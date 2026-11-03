@@ -57,6 +57,10 @@ export interface Warning {
 
 export interface Result<T = unknown> {
   data: T;
+  /** The command printed its own output (`ctx.io.stdout`); the envelope is skipped. */
+  handled?: boolean;
+  /** Process exit code to return after a successful run (13 for `fmt --check` differences, 7 for validation findings). */
+  exitCode?: number;
   meta?: PageMeta | Record<string, unknown>;
   warnings?: Warning[];
 }
@@ -72,7 +76,7 @@ export interface Ctx {
   client: HttpClient;
   profile: ResolvedProfile;
   fs: FsPort;
-  io: { stderr(line: string): void; isTTY: boolean; interactive: boolean };
+  io: { stderr(line: string): void; /** Raw stdout for commands whose output is not an envelope (SARIF, diagnostics). */ stdout?(text: string): void; isTTY: boolean; interactive: boolean };
   signal: AbortSignal;
   /** Stream commands: one NDJSON line `{type:"event", id?, data}` (CLI) or one progress notification (MCP). */
   emit(event: unknown, meta?: { id?: string | null }): void;

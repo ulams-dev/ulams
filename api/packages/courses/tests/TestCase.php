@@ -2,6 +2,7 @@
 
 namespace Ulams\Courses\Tests;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Auth\Tests\Models\Client;
 use Ulams\Categories\UlamsCategoriesServiceProvider;
@@ -31,6 +32,10 @@ class TestCase extends \Ulams\Core\Tests\TestCase
     {
         parent::setUp();
         Passport::useClientModel(Client::class);
+        MorphMap::register([
+            'topic.example' => ExampleTopicType::class,
+            'topic.example_second' => SecondExampleTopicType::class,
+        ]);
         Topic::registerContentClasses([ExampleTopicType::class]);
         Topic::registerContentClasses([SecondExampleTopicType::class]);
         Topic::registerResourceClasses(ExampleTopicType::class, [

@@ -12,7 +12,7 @@ interface CoursesAccessAPISwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/courses/{id}/access",
+     *      path="/api/admin/courses/{id}/access", operationId="admin.courses.by-id.access.get",
      *      summary="Get list of users and groups with access to the course",
      *      tags={"Admin Courses"},
      *      description="Get list of users and groups with access to the course",
@@ -31,9 +31,7 @@ interface CoursesAccessAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -68,7 +66,7 @@ interface CoursesAccessAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/courses/{id}/access/add",
+     *      path="/api/admin/courses/{id}/access/add", operationId="admin.courses.by-id.access.add.post",
      *      summary="Add users and groups with access to the course",
      *      tags={"Admin Courses"},
      *      description="Add users and groups with access to the course",
@@ -106,9 +104,7 @@ interface CoursesAccessAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -143,7 +139,7 @@ interface CoursesAccessAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/courses/{id}/access/remove",
+     *      path="/api/admin/courses/{id}/access/remove", operationId="admin.courses.by-id.access.remove.post",
      *      summary="Remove users and groups with access to the course",
      *      tags={"Admin Courses"},
      *      description="Remove users and groups with access to the course",
@@ -181,9 +177,7 @@ interface CoursesAccessAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -218,7 +212,7 @@ interface CoursesAccessAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/courses/{id}/access/set",
+     *      path="/api/admin/courses/{id}/access/set", operationId="admin.courses.by-id.access.set.post",
      *      summary="Set users and groups with access to the course",
      *      tags={"Admin Courses"},
      *      description="Set users and groups with access to the course",
@@ -256,9 +250,7 @@ interface CoursesAccessAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

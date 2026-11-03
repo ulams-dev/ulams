@@ -2,6 +2,7 @@
 
 namespace Ulams\Consultations\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Categories\Models\Category;
 use Ulams\Consultations\Database\Factories\ConsultationFactory;
 use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
@@ -170,6 +171,7 @@ use Ulams\Core\Models\User as CoreUser;
  */
 class Consultation extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
     use ModelFields;
 

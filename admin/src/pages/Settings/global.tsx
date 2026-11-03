@@ -167,6 +167,17 @@ const booleanSettings = (
       type: 'boolean',
       data: false,
     })),
+    {
+      // Visual mode of the e-mail template editor; turn it off to keep Code view only.
+      key: 'templates.email.visual_editor',
+      group: 'global',
+      value: 'true',
+      public: true,
+      enumerable: true,
+      sort: 1,
+      type: 'boolean',
+      data: true,
+    },
     ...templateTabsKeys.map((key) => ({
       key: `hideTemplateTab-${key}`,
       group: 'global',
@@ -352,6 +363,18 @@ const preInitialData: InitialDataRecords = {
     sort: 0,
     type: 'boolean',
     data: 'Ulams',
+  },
+  // the learner app understands these codes only (en, pl, zh); the API refuses any other
+  language: {
+    id: -18,
+    key: 'language',
+    group: 'global',
+    value: 'en',
+    public: true,
+    enumerable: true,
+    sort: 0,
+    type: 'text',
+    data: 'en',
   },
   technicalMaintenanceText: {
     id: -17,

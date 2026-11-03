@@ -2,6 +2,7 @@
 
 namespace Ulams\Payments\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Ulams\Payments\Enums\Currency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -58,6 +59,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Payment extends Model implements PaymentSchema
 {
     use HasFactory;
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['payable_type', 'billable_type'];
 
     protected $guarded = [
         'id'

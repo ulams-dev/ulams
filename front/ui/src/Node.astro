@@ -15,9 +15,14 @@ import FormatGrid from "./components/FormatGrid.astro";
 import Quotes from "./components/Quotes.astro";
 import Events from "./components/Events.astro";
 import Pricing from "./components/Pricing.astro";
+import HeritageStory from "./components/HeritageStory.astro";
+import FeatureIndex from "./components/FeatureIndex.astro";
+import BlogIndex from "./components/BlogIndex.astro";
+import BlogPost from "./components/BlogPost.astro";
 import FeatureList from "./components/FeatureList.astro";
 import Badges from "./components/Badges.astro";
 import Faq from "./components/Faq.astro";
+import ContactForm from "./components/ContactForm.astro";
 import CtaBand from "./components/CtaBand.astro";
 import SiteFooter from "./components/SiteFooter.astro";
 import Steps from "./components/Steps.astro";
@@ -31,8 +36,10 @@ import ComparisonTable from "./components/ComparisonTable.astro";
 import CourseHeader from "./components/CourseHeader.astro";
 import PurchaseCard from "./components/PurchaseCard.astro";
 import Prose from "./components/Prose.astro";
+import ProseSteps from "./components/ProseSteps.astro";
 import Callout from "./components/Callout.astro";
 import Figure from "./components/Figure.astro";
+import FrameSlider from "./components/FrameSlider.astro";
 import VideoPlayer from "./components/VideoPlayer.astro";
 import AudioPlayer from "./components/AudioPlayer.astro";
 import PdfViewer from "./components/PdfViewer.astro";
@@ -41,6 +48,7 @@ import H5PFrame from "./components/H5PFrame.astro";
 import PackageFrame from "./components/PackageFrame.astro";
 import LiaScriptLesson from "./components/LiaScriptLesson.astro";
 import InteractiveLesson from "./components/InteractiveLesson.astro";
+import CodeExerciseLesson from "./components/CodeExerciseLesson.astro";
 import ActivityCard from "./components/ActivityCard.astro";
 import QuizRunner from "./components/QuizRunner.astro";
 import UpdateNotice from "./components/UpdateNotice.astro";
@@ -51,6 +59,14 @@ import Timeline from "./components/Timeline.astro";
 import FlipCards from "./components/FlipCards.astro";
 import CodeBlock from "./components/CodeBlock.astro";
 import PracticeActivity from "./components/PracticeActivity.astro";
+import WorkedExample from "./components/WorkedExample.astro";
+import PracticeQuestion from "./components/PracticeQuestion.astro";
+import ElaborativeQuestion from "./components/ElaborativeQuestion.astro";
+import CitationList from "./components/CitationList.astro";
+import AiLabel from "./components/AiLabel.astro";
+import WhyThis from "./components/WhyThis.astro";
+import SupportCard from "./components/SupportCard.astro";
+import FeynmanReflection from "./components/FeynmanReflection.astro";
 
 // Every registry entry must have an implementation (checked by the type below).
 const COMPONENTS: Record<ComponentName, (props: any) => any> = {
@@ -68,8 +84,13 @@ const COMPONENTS: Record<ComponentName, (props: any) => any> = {
   Events,
   Pricing,
   FeatureList,
+  FeatureIndex,
+  BlogIndex,
+  BlogPost,
+  HeritageStory,
   Badges,
   Faq,
+  ContactForm,
   CtaBand,
   SiteFooter,
   Steps,
@@ -83,8 +104,10 @@ const COMPONENTS: Record<ComponentName, (props: any) => any> = {
   CourseHeader,
   PurchaseCard,
   Prose,
+  ProseSteps,
   Callout,
   Figure,
+  FrameSlider,
   VideoPlayer,
   AudioPlayer,
   PdfViewer,
@@ -93,6 +116,7 @@ const COMPONENTS: Record<ComponentName, (props: any) => any> = {
   PackageFrame,
   LiaScriptLesson,
   InteractiveLesson,
+  CodeExerciseLesson,
   ActivityCard,
   QuizRunner,
   UpdateNotice,
@@ -103,6 +127,14 @@ const COMPONENTS: Record<ComponentName, (props: any) => any> = {
   FlipCards,
   CodeBlock,
   PracticeActivity,
+  WorkedExample,
+  PracticeQuestion,
+  ElaborativeQuestion,
+  CitationList,
+  AiLabel,
+  WhyThis,
+  SupportCard,
+  FeynmanReflection,
 };
 
 interface Props {

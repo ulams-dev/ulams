@@ -1,0 +1,74 @@
+---
+title: Default language
+description: Choosing the interface language of an academy - the tenant default language setting, which learner pages follow the course and which follow the default, and what is translated into Polish and Chinese.
+sidebar:
+  order: 14
+modules:
+  - settings
+  - tenancy
+  - web
+  - ui
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Each academy (tenant) has a **default language**: `en` (English), `pl` (Polish) or `zh` (Simplified
+Chinese). It is the public setting `global.language`, and the learner web app reads it from
+`GET /api/settings` on every request.
+
+## What it decides
+
+The words around your content (buttons, the program, the quiz, the progress line, the account page,
+sign-in) are the interface. The words inside it (course and lesson titles, text, quiz questions) are
+content and are never translated by the app.
+
+| Page | Interface language |
+|---|---|
+| Course page, lesson player, quiz, finish page | The language of the **course**. A course without a language uses the default language. |
+| Account, "My learning", sign-in, training and skills pages | The default language |
+| Anything in another language | Content in a language the app has no interface for (for example a German course) is shown with English around it and marked with its own `lang`, so screen readers pronounce it correctly |
+
+The course language is the `language` field of the course (`pl`, `pl-PL`, `Polish`, `zh`, `Chinese`).
+The page's `<html lang>` always matches the interface language, and a course title or text in another
+language is marked with its own `lang` attribute (WCAG 3.1.2).
+
+<Aside>
+The landing page of a tenant is a document of its own and is written in the language you write it in.
+The default language does not translate it, and the navigation links of the site header come from that
+document.
+</Aside>
+
+## Set it
+
+In the admin panel open **Settings → global** and edit `language`; the form offers a **Default
+language** select (English, Polish, Chinese) and the help text "Account pages and courses without a
+language use this language." Or use the CLI:
+
+```bash
+ulams settings set global.language pl
+```
+
+The API accepts only `en`, `pl` and `zh` and answers `422` for anything else (`de`, `pl-PL`, `PL`),
+because the learner app would silently fall back to English. Only administrators can write the
+setting; it lives in the tenant's own database like every other setting, so one academy's language
+never reaches another.
+
+A new tenant gets `en`. To seed another language, pass it to the demo seeder:
+
+```bash
+php artisan ulams:tenant:seed-demo --domain=<tenant host> --language=pl
+```
+
+Without `--language` the seeder keeps an existing value, so re-running it never undoes a choice made
+in the admin panel.
+
+## What is translated
+
+Polish and Chinese interface strings exist for the lesson player (program, progress, previous and next,
+mark as complete, downloads), the course page (header, facts, program, purchase card), the quiz (every
+question type, timer, result and review), the finish page, "Living Course" notices, the account page
+(including "My tokens"), and sign-in. Strings of other pages stay English until they are translated;
+see [Translating the interface](/contributing/translating/) for the list and how to help.
+
+The first translations were written without a native review. Treat them as a draft until the review
+is done.

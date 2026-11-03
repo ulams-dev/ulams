@@ -2,6 +2,7 @@
 
 namespace Ulams\Templates\Helpers;
 
+use Illuminate\Database\ClassMorphViolationException;
 use Illuminate\Database\Eloquent\Model;
 
 class Models
@@ -13,6 +14,10 @@ class Models
         }
         $model = new $class();
         assert($model instanceof Model);
-        return $model->getMorphClass();
+        try {
+            return $model->getMorphClass();
+        } catch (ClassMorphViolationException) {
+            return null; // a model without a morph alias cannot be assigned templates
+        }
     }
 }

@@ -5,7 +5,9 @@ namespace Database\Seeders;
 use Database\Seeders\Demo\CoffeeAtlasExperience;
 use Database\Seeders\Demo\DemoExperience;
 use Database\Seeders\Demo\GravityExperience;
+use Database\Seeders\Demo\MicrodosingReportExperience;
 use Database\Seeders\Demo\NightSkyExperience;
+use Database\Seeders\Demo\StablecoinReportExperience;
 use Database\Seeders\Demo\OnCallExperience;
 use Database\Seeders\Demo\PolandExperience;
 use Database\Seeders\Demo\UlamExperience;
@@ -45,6 +47,8 @@ class DemoCoursesSeeder extends Seeder
         'gravity' => GravityExperience::class,
         'poland' => PolandExperience::class,
         'ulam' => UlamExperience::class,
+        'microdosing' => MicrodosingReportExperience::class,
+        'stablecoins' => StablecoinReportExperience::class,
     ];
 
     public function run(): void
@@ -91,7 +95,7 @@ class DemoCoursesSeeder extends Seeder
         }
         $unknown = array_diff($keys, array_keys(self::EXPERIENCES));
         if ($unknown) {
-            throw new RuntimeException('Unknown DEMO_EXPERIENCE: ' . implode(', ', $unknown) . ' (use coffee, oncall, nightsky, gravity, poland, ulam or all)');
+            throw new RuntimeException('Unknown DEMO_EXPERIENCE: ' . implode(', ', $unknown) . ' (use ' . implode(', ', array_keys(self::EXPERIENCES)) . ' or all)');
         }
 
         return array_values($keys);

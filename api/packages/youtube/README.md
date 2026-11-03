@@ -2,7 +2,6 @@
 
 Package Youtube integration 
 
-
 ## What does it do
 
 This package is used for creating Youtube livestream for Webinar in Ulams.
@@ -28,6 +27,7 @@ Go to Login Data and create Api key and OAuth 2.0 client IDs and enter data for 
 After entered data, you must generate refresh token. 
 If you generated refresh token with api from endpoints: 
   - `api/admin/g-token/generate POST {"email": "email"} AUTHORIZE` and opened generated url and follow the instructions
+  - The caller needs the `settings_config_update` permission. The returned url carries a signed `state` (bound to the tenant host, single use, valid for 10 minutes); `GET api/refresh-token` refuses any request without a valid state with 400 and stores nothing
   - After action upper yt generated refresh token for variable `services.youtube.refresh_token`
 Or you can generated refresh token manual and enter for variable `services.youtube.refresh_token`
   
@@ -35,4 +35,3 @@ Or you can generated refresh token manual and enter for variable `services.youtu
 
 Run `./vendor/bin/phpunit --filter=Youtube` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
-Test details [![codecov](https://codecov.io/gh/Ulams/Youtube/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Youtube) [![phpunit](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml)

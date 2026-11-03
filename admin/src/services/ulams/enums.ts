@@ -12,6 +12,7 @@ export enum TopicType {
   GiftQuiz = 'Ulams\\TopicTypeGift\\Models\\GiftQuiz',
   LiaScript = 'Ulams\\LiaScript\\Models\\LiaScriptTopic',
   Interactive = 'Ulams\\Interactive\\Models\\InteractiveTopic',
+  CodeExercise = 'Ulams\\CodeExercises\\Models\\CodeExerciseTopic',
   Layout = 'Ulams\\TopicTypeLayout\\Models\\LayoutTopic',
   Lti = 'Ulams\\Lti\\Models\\LtiLink',
 }

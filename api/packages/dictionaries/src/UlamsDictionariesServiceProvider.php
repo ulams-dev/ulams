@@ -2,6 +2,7 @@
 
 namespace Ulams\Dictionaries;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Categories\UlamsCategoriesServiceProvider;
 use Ulams\Dictionaries\Providers\AuthServiceProvider;
@@ -27,6 +28,11 @@ use Maatwebsite\Excel\ExcelServiceProvider;
  */
 class UlamsDictionariesServiceProvider extends ServiceProvider
 {
+    /** Morph aliases of the models of this package (see Ulams\Core\Support\MorphMap); tests of packages that only use the models register them too. */
+    public const MORPH_ALIASES = [
+        'dictionary' => \Ulams\Dictionaries\Models\Dictionary::class,
+    ];
+
     public const SERVICES = [
         DictionaryServiceContract::class => DictionaryService::class,
         DictionaryWordServiceContract::class => DictionaryWordService::class,
@@ -44,6 +50,8 @@ class UlamsDictionariesServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        MorphMap::register(self::MORPH_ALIASES);
+
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(UlamsAuthServiceProvider::class);
         $this->app->register(UlamsCategoriesServiceProvider::class);

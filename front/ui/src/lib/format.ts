@@ -1,4 +1,5 @@
 /** Formatting helpers shared by catalogue components (pure, server and browser). */
+import { minutesLabel, playerLocale, playerStrings } from "./player-strings.ts";
 
 export const FORMAT_LABELS: Record<string, string> = {
   video: "Video",
@@ -14,14 +15,12 @@ export const FORMAT_LABELS: Record<string, string> = {
   project: "Project",
 };
 
-export const formatLabel = (format: string): string => FORMAT_LABELS[format] ?? format;
+/** The label of a topic format, in the language when it has one (`pl`, `zh`); English otherwise. */
+export const formatLabel = (format: string, locale?: string | null): string =>
+  (playerStrings(locale).formats as Record<string, string>)[format] ?? FORMAT_LABELS[format] ?? format;
 
-export function formatMinutes(minutes: number): string {
-  if (!minutes || minutes < 0) return "";
-  if (minutes < 60) return `${minutes} min`;
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return m ? `${h} h ${m} min` : `${h} h`;
+export function formatMinutes(minutes: number, locale?: string | null): string {
+  return minutesLabel(playerLocale(locale), minutes);
 }
 
 const ROMAN: Array<[number, string]> = [

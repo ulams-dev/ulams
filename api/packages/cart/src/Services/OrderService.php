@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Services;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Cart\Dtos\ClientDetailsDto;
 use Ulams\Cart\Dtos\OrdersSearchDto;
 use Ulams\Cart\Enums\OrderStatus;
@@ -235,7 +236,7 @@ class OrderService implements OrderServiceContract
         }
 
         if (!is_null($searchDto->getProductableType())) {
-            $class = $searchDto->getProductableType();
+            $class = MorphMap::classOf($searchDto->getProductableType());
             /** @var Model $model */
             $model = new $class();
             if (!is_null($searchDto->getProductableId())) {

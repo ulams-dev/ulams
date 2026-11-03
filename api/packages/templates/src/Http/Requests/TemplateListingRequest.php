@@ -31,8 +31,9 @@ class TemplateListingRequest extends FormRequest
             'event' => ['sometimes', 'string', Rule::in($events)],
             'channel' => ['sometimes', 'string', Rule::in($channels)],
             'name' => ['sometimes', 'string'],
+            'locale' => ['sometimes', 'string', 'regex:/^[a-z]{2,3}$/'],
             'per_page' => ['sometimes', 'nullable', 'integer'],
-            'order_by' => ['sometimes', 'nullable', 'string', 'in:id,created_at,name,event,default,channel'],
+            'order_by' => ['sometimes', 'nullable', 'string', 'in:id,created_at,name,event,default,channel,locale'],
         ];
     }
 

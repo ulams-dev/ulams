@@ -1,5 +1,5 @@
 {
- "summary": "514/560 covered, 46 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "668/760 covered, 92 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -53,6 +53,18 @@
    "key": "GET /api/admin/agent-audit",
    "summary": "Agent audit log",
    "command": "tokens.agent-audit",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/authoring-metrics/courses",
+   "summary": "Authoring metric of courses",
+   "command": "authoring-metrics.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/authoring-metrics/courses/{course}",
+   "summary": "Authoring metric of one course",
+   "command": "authoring-metrics.get",
    "status": "covered"
   },
   {
@@ -152,6 +164,222 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/code-exercises/topics/{topic}/attempts",
+   "summary": "Attempts at a code exercise (teacher report)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/code-exercises/topics/{topic}/preview",
+   "summary": "Preview a code exercise as its author",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/compliance/assignments",
+   "summary": "List required-training assignments",
+   "command": "compliance.assignments-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/assignments",
+   "summary": "Assign a required course to users",
+   "command": "compliance.assignments-add",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/assignments/{id}",
+   "summary": "Cancel an open assignment",
+   "command": "compliance.assignments-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/competencies",
+   "summary": "The competency framework as a tree",
+   "command": "compliance.competencies-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/competencies",
+   "summary": "Add a competency",
+   "command": "compliance.competencies-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/competencies/{id}",
+   "summary": "Rename or move a competency",
+   "command": "compliance.competencies-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/competencies/{id}",
+   "summary": "Delete a competency (its sub-competencies move up, course tags go)",
+   "command": "compliance.competencies-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/courses/{course}/competencies",
+   "summary": "Competency tags of a course (confirmed and suggested)",
+   "command": "compliance.courses-competencies",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/courses/{course}/competencies/suggest",
+   "summary": "Ask the AI which competencies the course teaches",
+   "command": "compliance.courses-competencies-suggest",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/courses/{course}/competencies/{competency}",
+   "summary": "Tag a course with a competency (confirmed by the author), or confirm a suggestion",
+   "command": "compliance.courses-competencies-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/courses/{course}/competencies/{competency}",
+   "summary": "Remove a tag or reject a suggestion",
+   "command": "compliance.courses-competencies-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/courses/{course}/settings",
+   "summary": "Compliance settings of a course (defaults when none are saved)",
+   "command": "compliance.courses-settings-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/courses/{course}/settings",
+   "summary": "Save the compliance settings of a course",
+   "command": "compliance.courses-settings-set",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/dashboard",
+   "summary": "Compliance dashboard",
+   "command": "compliance.dashboard",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/managers",
+   "summary": "List manager links",
+   "command": "compliance.managers-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/managers/{user}",
+   "summary": "Set or clear the manager of a user",
+   "command": "compliance.managers-set",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/paths",
+   "summary": "List learning paths with their steps",
+   "command": "compliance.paths-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/paths",
+   "summary": "Create a learning path",
+   "command": "compliance.paths-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/paths/{id}",
+   "summary": "Show a learning path",
+   "command": "compliance.paths-get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/paths/{id}",
+   "summary": "Update a learning path (steps are replaced when sent)",
+   "command": "compliance.paths-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/paths/{id}",
+   "summary": "Delete a learning path (its assignments stay)",
+   "command": "compliance.paths-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/paths/{id}/enrollments",
+   "summary": "Enrol users in a learning path",
+   "command": "compliance.paths-enroll",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/report",
+   "summary": "Compliance report",
+   "command": "compliance.report",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/report/export",
+   "summary": "Audit export of a compliance dataset",
+   "command": "compliance.report-export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/rules",
+   "summary": "List enrolment rules",
+   "command": "compliance.rules-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/rules",
+   "summary": "Create an enrolment rule",
+   "command": "compliance.rules-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/rules/{id}",
+   "summary": "Update an enrolment rule",
+   "command": "compliance.rules-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/rules/{id}",
+   "summary": "Delete an enrolment rule (existing enrolments stay)",
+   "command": "compliance.rules-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/rules/{id}/evaluate",
+   "summary": "Preview or run a rule now",
+   "command": "compliance.rules-evaluate",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/schedules",
+   "summary": "List scheduled reports",
+   "command": "compliance.schedules-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/schedules",
+   "summary": "Schedule a report",
+   "command": "compliance.schedules-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/schedules/{id}",
+   "summary": "Update a scheduled report",
+   "command": "compliance.schedules-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/schedules/{id}",
+   "summary": "Delete a scheduled report",
+   "command": "compliance.schedules-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/users/{user}/skills",
+   "summary": "The skill profile of a user",
+   "command": "compliance.users-skills",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/config",
    "summary": "Get admin config",
    "command": "config.list",
@@ -242,6 +470,54 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/course-as-code/courses/{course}/blueprint",
+   "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+   "command": "course.export",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/sessions/{session}/apply",
+   "summary": "Apply the current version to the course (no AI needed)",
+   "command": "course.apply",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/sessions/{session}/drift",
+   "summary": "Read admin edits made after the last apply back into a proposed author version",
+   "command": "course.absorb-drift",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/sessions/{session}/imports",
+   "summary": "Import a Blueprint v3 document as a proposed version of kind import",
+   "command": "course.import",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/sessions/{session}/publish",
+   "summary": "Publish the applied course (no AI needed)",
+   "command": "course.publish",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-as-code/versions/{version}",
+   "summary": "One version with its Blueprint v3 document (what a three-way merge needs as the base)",
+   "command": "course.resolve",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/versions/{version}/approve",
+   "summary": "Approve a proposed import (people and CLI tokens; never agents or MCP clients)",
+   "command": "course.approve",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-as-code/versions/{version}/diff",
+   "summary": "Element-aware diff of a version against its parent or ?against=",
+   "command": "course.diff",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/course-builder/fragments/{fragment}",
    "summary": "One source fragment (citation popover)",
    "command": "builder.fragments.get",
@@ -308,6 +584,18 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/course-builder/sessions/{session}/citations",
+   "summary": "Sources panel: sections with the elements that cite them",
+   "command": "builder.citations",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/elements/{element}/variants",
+   "summary": "Give me options: 2 or 3 proposals for one element, compared side by side",
+   "command": "builder.variants",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/course-builder/sessions/{session}/events",
    "summary": "AG-UI event stream (SSE)",
    "command": "builder.events",
@@ -317,6 +605,12 @@
    "key": "POST /api/admin/course-builder/sessions/{session}/new-site",
    "summary": "Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)",
    "command": "builder.new-site",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/outline",
+   "summary": "Edit the course structure: rename, move, add, remove, set the lesson format",
+   "command": "builder.outline-edit",
    "status": "covered"
   },
   {
@@ -368,9 +662,33 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/course-builder/sessions/{session}/variants",
+   "summary": "Course variants by level and role: status, own course, drift from the base, estimate and cap",
+   "command": "course.variants.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/variants",
+   "summary": "Create variants from the interview answer (or add some later); start=true drafts their outlines in one run",
+   "command": "course.variants.add",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/course-builder/sessions/{session}/versions",
    "summary": "Blueprint version history",
    "command": "builder.chat",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/course-builder/variants/{variant}",
+   "summary": "Rename, reorder or retire a variant",
+   "command": "course.variants.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/course-builder/variants/{variant}",
+   "summary": "Retire a variant (its course, if it has one, is kept)",
+   "command": "course.variants.retire",
    "status": "covered"
   },
   {
@@ -401,6 +719,102 @@
    "key": "POST /api/admin/course-builder/versions/{version}/restore",
    "summary": "Restore an old version as a new one",
    "command": "builder.versions.restore",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-variant-groups",
+   "summary": "List the families of course variants, optionally the one a course belongs to",
+   "command": "course-variant-groups.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-variant-groups/{group}",
+   "summary": "One family: settings, variant courses, where learners are and the placement check",
+   "command": "course-variant-groups.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/course-variant-groups/{group}",
+   "summary": "Change the settings of a family",
+   "command": "course-variant-groups.update",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-variant-groups/{group}/assignments",
+   "summary": "Who is in which variant (current assignments, with the source of each)",
+   "command": "course-variant-groups.assignments-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/course-variant-groups/{group}/assignments",
+   "summary": "Assign learners or user groups to a variant; the learner sees it as assigned by their organisation",
+   "command": "course-variant-groups.assignments-set",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-variant-groups/{group}/placement",
+   "summary": "The placement questions with their answer key and citations",
+   "command": "course-variant-groups.placement",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-variant-groups/{group}/placement/rebuild",
+   "summary": "Choose the placement questions again from the family's cited quiz questions (no model call)",
+   "command": "course-variant-groups.placement-rebuild",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-variant-groups/{group}/rules",
+   "summary": "List the assignment rules of a family",
+   "command": "course-variant-groups.rules-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-variant-groups/{group}/rules",
+   "summary": "Create an assignment rule",
+   "command": "course-variant-groups.rules-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/course-variant-groups/{group}/rules/{rule}",
+   "summary": "Update an assignment rule",
+   "command": "course-variant-groups.rules-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/course-variant-groups/{group}/rules/{rule}",
+   "summary": "Delete an assignment rule (learners already assigned stay)",
+   "command": "course-variant-groups.rules-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-variant-groups/{group}/rules/{rule}/evaluate",
+   "summary": "Preview or run a rule now",
+   "command": "course-variant-groups.rules-evaluate",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-versions/courses/{course}/compare",
+   "summary": "Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary",
+   "command": "course-versions.courses-compare",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-versions/courses/{course}/releases",
+   "summary": "Releases of a course (what learners got), newest first, with a summary of what changed",
+   "command": "course-versions.courses-releases",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-versions/courses/{course}/versions",
+   "summary": "All versions of a course's branch (proposals, rejected and undone ones too), newest first, with the session's variants",
+   "command": "course-versions.courses-versions",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-versions/releases/{release}",
+   "summary": "One release with the blueprint document of its version",
+   "command": "course-versions.releases",
    "status": "covered"
   },
   {
@@ -596,6 +1010,12 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/example-plugin/greetings",
+   "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
    "key": "DELETE /api/admin/file/delete",
    "summary": "Delete given file",
    "command": "file.delete",
@@ -692,6 +1112,60 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/identity/audit",
+   "summary": "Identity audit trail, newest first",
+   "command": "identity.audit-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/identity/audit/verify",
+   "summary": "Recompute the hash chain of the audit trail",
+   "command": "identity.audit-verify",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/identity/providers",
+   "summary": "Identity providers of this academy",
+   "command": "identity.providers-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/identity/providers",
+   "summary": "Add an OpenID Connect or SAML identity provider",
+   "command": "identity.providers-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/identity/providers/{provider}",
+   "summary": "One identity provider",
+   "command": "identity.providers-get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/identity/providers/{provider}",
+   "summary": "Change an identity provider (leave client_secret out to keep the stored one)",
+   "command": "identity.providers-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/identity/providers/{provider}",
+   "summary": "Delete an identity provider and its account links (accounts stay)",
+   "command": "identity.providers-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/identity/providers/{provider}/metadata/refresh",
+   "summary": "Fetch the SAML identity provider metadata again",
+   "command": "identity.providers-refresh-metadata",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/identity/providers/{provider}/sp-keys/rotate",
+   "summary": "Prepare or activate the next SAML service provider key pair",
+   "command": "identity.providers-rotate-sp-keys",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/interactive",
    "summary": "List interactive packages",
    "command": "interactive.list",
@@ -738,6 +1212,90 @@
    "summary": "Upload a new version (the manifest id must match)",
    "command": "interactive.add-version",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/knowledge/courses/{course}/latest",
+   "summary": "The latest ready export of a course",
+   "command": "knowledge.latest",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/knowledge/exports",
+   "summary": "Knowledge exports, newest first",
+   "command": "knowledge.exports-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/knowledge/exports",
+   "summary": "Start a knowledge export of one course or of the whole tenant",
+   "command": "knowledge.exports-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/knowledge/exports/{export}",
+   "summary": "One knowledge export",
+   "command": "knowledge.exports-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/knowledge/exports/{export}/download",
+   "summary": "Download a file of a ready export (manifest.json, chunks.jsonl or index.json)",
+   "command": "knowledge.exports-download",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/learner-insights/backfill",
+   "summary": "Build signals from existing data for a course or the whole tenant (queued)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/courses/{course}/elements",
+   "summary": "The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/admin/learner-insights/courses/{course}/elements/{elementKey}/improve",
+   "summary": "Propose an improvement for an element learners struggle with: the estimate and the aggregated evidence first, then (confirmEstimate) a Living Course proposal of kind insights",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/courses/{course}/learners",
+   "summary": "Learners who are struggling or at risk, with the reasons (individual data)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/courses/{course}/settings",
+   "summary": "Thresholds of one course: the overrides and the effective values",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PUT /api/admin/learner-insights/courses/{course}/settings",
+   "summary": "Replace the threshold overrides of one course",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/courses/{course}/summary",
+   "summary": "Per-course analytics: progress, completion, quiz performance, status distribution and interventions",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/learners/{user}/courses/{course}/timeline",
+   "summary": "One learner's signals in a course with element labels (support)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/settings",
+   "summary": "The effective rule thresholds of the tenant (defaults and tenant settings)",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/admin/lessons",
@@ -878,6 +1436,12 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/living-course/oauth/{provider}/start",
+   "summary": "The vendor sign-in address for Connect your account (provider google or notion); the session must be one the caller may change",
+   "command": "living.oauth.start",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/living-course/proposals/{proposal}",
    "summary": "A proposal with its items grouped by lesson, citations and source changes",
    "command": "living.proposals.get",
@@ -908,6 +1472,12 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group",
+   "summary": "Accept one item and the same patch in the other proposals of its group (the course's variants)",
+   "command": "living.proposals.accept-in-group",
+   "status": "covered"
+  },
+  {
    "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
    "summary": "Ask for another version of one element ({comment}); one call, at most three per item",
    "command": "living.proposals.regenerate",
@@ -923,6 +1493,12 @@
    "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reset",
    "summary": "Back to undecided",
    "command": "living.proposals.reset",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/suggest-lesson",
+   "summary": "Suggest a new lesson for a new source section no lesson covers (one AI call; the item becomes `new_lesson` for review as a diff)",
+   "command": "living.proposals.suggest-lesson",
    "status": "covered"
   },
   {
@@ -988,7 +1564,7 @@
   {
    "key": "POST /api/admin/living-course/sessions/{session}/sources/connect",
    "summary": "Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1",
-   "command": "living.sources.connect",
+   "command": "course.sources-connect",
    "status": "covered"
   },
   {
@@ -1202,6 +1778,102 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/pdfs/{id}/revoke",
+   "summary": "Revoke a certificate",
+   "command": "pdfs.revoke",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies",
+   "summary": "List policies",
+   "command": "policies.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies",
+   "summary": "Create a policy from an uploaded document",
+   "command": "policies.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}",
+   "summary": "Show a policy",
+   "command": "policies.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/dashboard",
+   "summary": "Policy owner dashboard",
+   "command": "policies.dashboard",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/dashboard/export",
+   "summary": "Export the people of the policy dashboard as CSV",
+   "command": "policies.dashboard-export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/variants",
+   "summary": "List the department variants of a policy",
+   "command": "policies.variants",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/variants/generate",
+   "summary": "Generate the department courses of a policy",
+   "command": "policies.variants-generate",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/variants/{variant}/academy",
+   "summary": "The academy of a department",
+   "command": "policies.variants-academy-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/variants/{variant}/academy",
+   "summary": "Create an academy of its own for a department",
+   "command": "policies.variants-academy-add",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/policies/{policy}/variants/{variant}/academy",
+   "summary": "Remove the academy of a department",
+   "command": "policies.variants-academy-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/versions",
+   "summary": "List the versions of a policy",
+   "command": "policies.versions-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/versions",
+   "summary": "Upload a new version of a policy",
+   "command": "policies.versions-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/versions/{number}",
+   "summary": "Review a policy version",
+   "command": "policies.versions",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/versions/{number}/approve",
+   "summary": "Approve a policy version",
+   "command": "policies.versions-approve",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/versions/{number}/reject",
+   "summary": "Reject a policy version in review",
+   "command": "policies.versions-reject",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/productables/",
    "summary": "",
    "command": "productables.list",
@@ -1403,6 +2075,54 @@
    "key": "PATCH /api/admin/quiz-attempts/{id}/feedback",
    "summary": "Add, edit or remove tutor feedback for a quiz attempt",
    "command": "quiz-attempts.feedback",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/datasets",
+   "summary": "Datasets a report can be built on",
+   "command": "reporting.datasets",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/reporting/query",
+   "summary": "Preview a report definition",
+   "command": "reporting.query",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/saved",
+   "summary": "Saved reports the caller can see",
+   "command": "reporting.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/reporting/saved",
+   "summary": "Save a report",
+   "command": "reporting.save",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/saved/{id}",
+   "summary": "One saved report",
+   "command": "reporting.show",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/reporting/saved/{id}",
+   "summary": "Change a saved report",
+   "command": "reporting.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/reporting/saved/{id}",
+   "summary": "Delete a saved report",
+   "command": "reporting.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/saved/{id}/run",
+   "summary": "Run a saved report",
+   "command": "reporting.run",
    "status": "covered"
   },
   {
@@ -1700,6 +2420,24 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/templates/email/images",
+   "summary": "Upload an image for an e-mail template",
+   "command": "templates.email-images",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/templates/email/render",
+   "summary": "Render an unsaved e-mail template draft with sample data",
+   "command": "templates.email-render",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/templates/email/test-send",
+   "summary": "Send an unsaved e-mail template draft to the signed-in admin",
+   "command": "templates.email-test-send",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/templates/variables",
    "summary": "Dictionary list of available template variables",
    "command": "templates.variables",
@@ -1742,9 +2480,27 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/theme/logo",
+   "summary": "Upload the tenant logo",
+   "command": "theme.logo-add",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/theme/logo",
+   "summary": "Remove the tenant logo",
+   "command": "theme.logo-delete",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/tokens",
    "summary": "Every user's scoped API tokens",
    "command": "tokens.list-all",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/tokens/{id}",
+   "summary": "Change the per-minute rate limit of any scoped token",
+   "command": "tokens.set-limit-any",
    "status": "covered"
   },
   {
@@ -1757,6 +2513,12 @@
    "key": "GET /api/admin/tokens/{id}/audit",
    "summary": "Audit log of one token",
    "command": "tokens.audit",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tokens/{id}/usage",
+   "summary": "Request counts of one token per day, and its rate limit window",
+   "command": "tokens.usage-any",
    "status": "covered"
   },
   {
@@ -1889,6 +2651,12 @@
    "key": "DELETE /api/admin/translations/{id}",
    "summary": "Remove the specified translation",
    "command": "translations.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tutor/courses/{course}/analytics",
+   "summary": "Anonymous tutor analytics for a course: questions, out-of-scope share and refusals during attempts",
+   "command": "tutor.courses-analytics",
    "status": "covered"
   },
   {
@@ -2096,6 +2864,72 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/webhooks/deliveries",
+   "summary": "Delivery log (newest first)",
+   "command": "webhooks.deliveries-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webhooks/deliveries/{delivery}",
+   "summary": "One delivery with its payload and every attempt",
+   "command": "webhooks.deliveries-get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/webhooks/deliveries/{delivery}/replay",
+   "summary": "Send a delivery again as a new delivery with the same event id",
+   "command": "webhooks.deliveries-replay",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webhooks/endpoints",
+   "summary": "List webhook endpoints",
+   "command": "webhooks.endpoints-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/webhooks/endpoints",
+   "summary": "Create a webhook endpoint (the signing secret is returned once)",
+   "command": "webhooks.endpoints-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webhooks/endpoints/{endpoint}",
+   "summary": "One webhook endpoint",
+   "command": "webhooks.endpoints-get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/webhooks/endpoints/{endpoint}",
+   "summary": "Change a webhook endpoint (URL, events, enabled)",
+   "command": "webhooks.endpoints-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/webhooks/endpoints/{endpoint}",
+   "summary": "Delete a webhook endpoint and its delivery log",
+   "command": "webhooks.endpoints-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/webhooks/endpoints/{endpoint}/rotate-secret",
+   "summary": "Replace the signing secret (returned once; the old one stops working at once)",
+   "command": "webhooks.endpoints-rotate-secret",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/webhooks/endpoints/{endpoint}/test",
+   "summary": "Send a sample event once and return the result",
+   "command": "webhooks.endpoints-test",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webhooks/events",
+   "summary": "Webhook event types (available and planned)",
+   "command": "webhooks.events",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/webinars",
    "summary": "",
    "command": "webinars.list",
@@ -2234,6 +3068,12 @@
    "status": "excluded: browser-only"
   },
   {
+   "key": "POST /api/auth/social/exchange",
+   "summary": "Exchange a one-time social login code for a token",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
    "key": "GET /api/auth/social/{provider}",
    "summary": "Redirect to social login",
    "command": "",
@@ -2241,7 +3081,7 @@
   },
   {
    "key": "GET /api/auth/social/{provider}/callback",
-   "summary": "Redirect after sucessfull login",
+   "summary": "Redirect after successful login",
    "command": "",
    "status": "excluded: browser-only"
   },
@@ -2264,9 +3104,21 @@
    "status": "covered"
   },
   {
+   "key": "PATCH /api/auth/tokens/{id}",
+   "summary": "Change the per-minute rate limit of one of my tokens",
+   "command": "tokens.set-limit",
+   "status": "covered"
+  },
+  {
    "key": "DELETE /api/auth/tokens/{id}",
    "summary": "Revoke one of my scoped tokens",
    "command": "logout",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/auth/tokens/{id}/usage",
+   "summary": "Request counts of one of my tokens per day, and its rate limit window",
+   "command": "tokens.usage",
    "status": "covered"
   },
   {
@@ -2354,6 +3206,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/certificates/verify/{certificateId}",
+   "summary": "Verify a certificate",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
    "key": "GET /api/cmi5/courses/{id}",
    "summary": "Get Course cmi5 launch params",
    "command": "",
@@ -2370,6 +3228,54 @@
    "summary": "Launch a cmi5 AU",
    "command": "",
    "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/code-exercises/launches/{topic}",
+   "summary": "Open a code exercise",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/code-exercises/topics/{topic}/attempts",
+   "summary": "My attempts at a code exercise",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/code-exercises/topics/{topic}/attempts",
+   "summary": "Report the result of a run",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/commerce/webhooks/{provider}",
+   "summary": "Receive a signed order event of the commerce provider",
+   "command": "public.commerce-webhooks",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/compliance/my-assignments",
+   "summary": "My required training",
+   "command": "my.compliance-my-assignments",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/compliance/my-paths",
+   "summary": "My learning paths",
+   "command": "my.compliance-my-paths",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/compliance/my-skills",
+   "summary": "My skill profile",
+   "command": "my.compliance-my-skills",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/compliance/team/assignments",
+   "summary": "Required training of my direct reports",
+   "command": "my.compliance-team-assignments",
+   "status": "covered"
   },
   {
    "key": "GET /api/config",
@@ -2480,6 +3386,12 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/contact",
+   "summary": "Send a message to the ULAMS team",
+   "command": "public.contact-create",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/core/packages",
    "summary": "List installed ulams packages",
    "command": "my.core-packages",
@@ -2558,6 +3470,42 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/courses/{course}/placement",
+   "summary": "The placement questions of a course's family (no answer key); 404 when the check is off or not ready",
+   "command": "my.courses-placement",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/courses/{course}/placement/attempts",
+   "summary": "Score a placement attempt by code and get the suggested variant with the reason (advisory)",
+   "command": "my.courses-placement-attempts",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/{course}/variant",
+   "summary": "The signed-in learner's variant of this course's family, whether they may change it, the placement check and a hint to switch",
+   "command": "my.courses-variant-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/courses/{course}/variant",
+   "summary": "Choose or switch variant: enrols the learner in the variant's course through the family entitlement and carries over identical completed topics",
+   "command": "my.courses-variant-set",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/courses/{course}/variant/hints/{hint}/dismiss",
+   "summary": "Dismiss a hint to switch variant; hints stop for this course",
+   "command": "my.courses-variant-hints-dismiss",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/{course}/variants",
+   "summary": "The variants of a course's family for the picker (public data), or null when it has none",
+   "command": "public.courses-variants",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/courses/{id}",
    "summary": "Display the specified Course",
    "command": "public.courses-get",
@@ -2630,10 +3578,82 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/example-plugin/hello",
+   "summary": "The tenant's greeting",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
    "key": "GET /api/health-check",
    "summary": "Check health of the application",
    "command": "",
    "status": "excluded: internal"
+  },
+  {
+   "key": "GET /api/identity/oidc/{slug}/callback",
+   "summary": "Where the provider sends the browser back; redirects to the return URL with a one-time code or an error",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/identity/providers",
+   "summary": "Identity providers a learner can sign in with",
+   "command": "identity.providers-public",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/identity/saml/{slug}/acs",
+   "summary": "Assertion consumer service: the identity provider's browser POST (SAMLResponse and RelayState)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/identity/saml/{slug}/logout",
+   "summary": "Sign out of this academy and, when the identity provider supports it, start single logout there",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/identity/saml/{slug}/metadata",
+   "summary": "SAML service provider metadata of an identity provider",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/identity/saml/{slug}/slo",
+   "summary": "Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/identity/saml/{slug}/slo",
+   "summary": "Single logout service (POST binding with an enveloped XML signature)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/identity/sso/exchange",
+   "summary": "Redeem the one-time code with the verifier for an access token",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/identity/sso/{slug}/start",
+   "summary": "Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/images/img",
+   "summary": "Resize an image on the fly and redirect to the cached copy",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/images/img",
+   "summary": "Resize many images at once",
+   "command": "",
+   "status": "excluded: browser-only"
   },
   {
    "key": "POST /api/interactive/launches/{topic}",
@@ -2642,10 +3662,88 @@
    "status": "excluded: content-runtime"
   },
   {
+   "key": "GET /api/interactive/showcase",
+   "summary": "The interactive shown on a landing page",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
    "key": "POST /api/interactive/topics/{topic}/events",
    "summary": "Progress events from the lesson page",
    "command": "",
    "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/learner-insights/assignments/{assignment}/feedback",
+   "summary": "Say whether a piece of extra help was useful",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/assignments/{assignment}/hide",
+   "summary": "Hide a piece of extra help",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/assignments/{assignment}/reflection",
+   "summary": "Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/learner-insights/courses/{course}/presentation",
+   "summary": "How the course is presented to the learner (density, steps, navigation, hints) and why",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PUT /api/learner-insights/courses/{course}/presentation",
+   "summary": "Override how the course is presented (for example show the whole lesson); null removes an override",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/learner-insights/courses/{course}/topics/{topic}/support",
+   "summary": "Extra help for the learner in a topic, with the reasons it was offered",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/learner-insights/me",
+   "summary": "The learner's own statuses with reasons, their privacy settings and the retention periods",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "DELETE /api/learner-insights/me",
+   "summary": "Erase the learner's personalisation data (the opt-out and consent settings stay)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/learner-insights/me/export",
+   "summary": "Download everything stored about the learner (signals, statuses, transitions) as JSON",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PUT /api/learner-insights/me/settings",
+   "summary": "Opt out of personalisation, switch personal help or nudges, give or withdraw consent",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/nudges/opened",
+   "summary": "The learner followed the link of a nudge (the frontend sends the signed `n` of the link)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/signals",
+   "summary": "Record a media signal (replay, seek back) from the player",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "POST /api/liascript/launches/{topic}",
@@ -2675,6 +3773,12 @@
    "key": "POST /api/living-course/notices/{notice}/dismiss",
    "summary": "Mark a notice as reviewed",
    "command": "my.living-course-notices-dismiss",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/living-course/oauth/{provider}/callback",
+   "summary": "The vendor's redirect after the sign-in: redirects to the studio with a one-time grant, or answers with it",
+   "command": "public.living-course-oauth-callback",
    "status": "covered"
   },
   {
@@ -2912,6 +4016,12 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/pencil-spaces/login",
+   "summary": "Generate a direct login link",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
    "key": "GET /api/platform/operations",
    "summary": "The latest tenant operations",
    "command": "tenants.operations.list",
@@ -2921,6 +4031,30 @@
    "key": "GET /api/platform/operations/{id}",
    "summary": "Status and steps of a tenant operation (poll it)",
    "command": "tenants.operations.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/templates",
+   "summary": "List the tenant templates",
+   "command": "tenants.templates.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/platform/templates",
+   "summary": "Create a tenant template, or change the given fields of an existing one",
+   "command": "tenants.templates.save",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/templates/{slug}",
+   "summary": "One tenant template",
+   "command": "tenants.templates.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/platform/templates/{slug}",
+   "summary": "Remove a tenant template (tenants made from it are untouched)",
+   "command": "tenants.templates.delete",
    "status": "covered"
   },
   {
@@ -2948,9 +4082,21 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/platform/tenants/{slug}/derived",
+   "summary": "The tenants created from this one for a purpose",
+   "command": "tenants.derived",
+   "status": "covered"
+  },
+  {
    "key": "PATCH /api/platform/tenants/{slug}/env",
    "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
    "command": "tenants.set-env",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/policies/my-changes",
+   "summary": "Why I was given this training again",
+   "command": "my.policies-my-changes",
    "status": "covered"
   },
   {
@@ -3132,6 +4278,24 @@
    "summary": "Finish quiz attempt",
    "command": "my.quiz-attempts-end",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/reporting/odata",
+   "summary": "OData service document",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/reporting/odata/$metadata",
+   "summary": "OData metadata document",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/reporting/odata/{entity}",
+   "summary": "Rows of a saved report as an OData entity set",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/scorm/assets/scorm-again.min.js",
@@ -3318,6 +4482,42 @@
    "summary": "Get a list of public translations",
    "command": "public.translations-list",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/tutor/conversations/{conversation}",
+   "summary": "One of the learner's conversations with its messages",
+   "command": "my.tutor-conversations-list",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/tutor/conversations/{conversation}",
+   "summary": "Delete one of the learner's conversations",
+   "command": "my.tutor-conversations-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tutor/courses/{course}/conversations",
+   "summary": "The learner's own conversations in a course",
+   "command": "my.tutor-courses-conversations",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/tutor/courses/{course}/messages",
+   "summary": "Ask the course tutor a question; it answers only from the course, with citations",
+   "command": "my.tutor-courses-messages",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tutor/courses/{course}/status",
+   "summary": "Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open",
+   "command": "my.tutor-courses-status",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tutor/runs/{run}/events",
+   "summary": "AG-UI event stream (SSE) of one streamed tutor answer",
+   "command": "",
+   "status": "excluded: browser-only"
   },
   {
    "key": "GET /api/tutors",

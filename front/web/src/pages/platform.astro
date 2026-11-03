@@ -1,18 +1,14 @@
 ---
-/** Platform product landing (app.localhost / localhost): ulams sold as a product, with the live demos. */
-import Render from "@ulams/ui/Render.astro";
+/** Platform product landing (app.localhost / localhost): ulams sold as a product, with the live demos. English at `/`; see pl/ and zh/. */
+import HomeBody from "../components/diagrams/HomeBody.astro";
 import Base from "../layouts/Base.astro";
-import { landingDocs, pageMeta } from "../lib/docs.ts";
-import { platformModel } from "../lib/platform.ts";
-import { applyLandingStatus } from "../lib/landing-status.ts";
-import { config } from "../lib/config.ts";
+import { platformPage } from "../lib/platform-page.ts";
 
 if (!Astro.locals.platform) return Astro.rewrite("/404");
-const doc = applyLandingStatus(landingDocs.platform!, config.landingStatus);
-const data = await platformModel(Astro.url);
-const meta = pageMeta(doc, data);
+const page = await platformPage("en", Astro.request, Astro.url);
+if (!page) return Astro.rewrite("/404");
 ---
 
-<Base theme="platform" title={meta.title} description={meta.description} lang={meta.lang}>
-  <Render doc={doc} data={data} />
+<Base theme="platform" title={page.meta.title} description={page.meta.description} lang={page.meta.lang} canonical={page.canonical} alternates={page.alternates} ogLocale={page.ogLocale} jsonLd={page.jsonLd}>
+  <HomeBody doc={page.doc} data={page.data} locale="en" />
 </Base>

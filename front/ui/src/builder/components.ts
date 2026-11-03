@@ -133,7 +133,9 @@ function answerLabel(p: Props): string {
 const ChoiceChips: Renderer = (p, ctx, id) => {
   const selected = new Set<string>((p.value ?? p.defaultValue ?? []).map(String));
   const group = h("div", { class: "cb-chips", role: "group", "aria-label": String(p.label) });
-  const custom = p.allowCustom ? h("input", { type: "text", class: "cb-input", "aria-label": "Or type your own answer", placeholder: "Or type your own answer", maxlength: 120 }) : null;
+  const roles = p.questionKey === "audiences";
+  const hint = roles ? "Or type roles, separated by commas (for example developer, support)" : "Or type your own answer";
+  const custom = p.allowCustom ? h("input", { type: "text", class: "cb-input", "aria-label": hint, placeholder: hint, maxlength: 120 }) : null;
   for (const option of p.options as Props[]) {
     const button = h("button", { type: "button", class: "cb-chip", "aria-pressed": selected.has(option.value) ? "true" : "false", "data-value": option.value }, String(option.label));
     button.addEventListener("click", () => {
@@ -149,6 +151,8 @@ const ChoiceChips: Renderer = (p, ctx, id) => {
   }
   return questionShell(p, id, [group, ...(custom ? [custom] : [])], ctx, () => {
     const typed = custom?.value.trim();
+    // roles typed next to the chosen levels give a version for every combination
+    if (typed && roles) return [...selected, ...typed.split(",").map((t) => t.trim()).filter(Boolean)];
     if (typed) return p.multiple ? [typed] : typed;
     const values = [...selected];
     return p.multiple ? values : values[0];
@@ -334,6 +338,23 @@ const CitationChip: Renderer = (p, ctx) => citationChip(p, ctx);
 const OutlineDiff: Renderer = (p, ctx, id) => {
   const proposed = p.status === "proposed";
   const edits = new Map<string, string>();
+  const formats = new Map<string, string>();
+  const formatChoices: Props[] = p.formats ?? [];
+  const formatName = (key: unknown): string => String(formatChoices.find((f) => f.value === key)?.label ?? "");
+  const formatPicker = (l: Props): HTMLElement | null => {
+    if (!proposed || !p.editable || formatChoices.length < 2) return l.format && l.format !== "richtext" ? h("span", { class: "cb-tag" }, formatName(l.format) || String(l.format)) : null;
+    const selectId = uid("format");
+    const select = h("select", { id: selectId, class: "cb-input" }, formatChoices.map((f) => h("option", { value: String(f.value), selected: f.value === (l.format ?? "richtext") ? "" : null }, String(f.label)))) as HTMLSelectElement;
+    select.value = String(l.format ?? "richtext");
+    select.addEventListener("change", () => {
+      if (select.value === (l.format ?? "richtext")) formats.delete(String(l.id));
+      else formats.set(String(l.id), select.value);
+      editedNote.textContent = [edits.size ? `${edits.size} objective${edits.size === 1 ? "" : "s"} edited` : "", formats.size ? `${formats.size} lesson format${formats.size === 1 ? "" : "s"} changed` : ""].filter(Boolean).join(" · ");
+    });
+    const description = h("span", { class: "cb-muted cb-small" }, String(formatChoices.find((f) => f.value === select.value)?.description ?? ""));
+    select.addEventListener("change", () => (description.textContent = String(formatChoices.find((f) => f.value === select.value)?.description ?? "")));
+    return h("p", { class: "cb-lesson-format" }, h("label", { for: selectId, class: "cb-label" }, "Lesson format "), select, " ", description);
+  };
   const objective = (o: Props): HTMLElement => {
     const li = h("li", { class: `cb-objective cb-change-${o.change ?? "unchanged"}` });
     const text = h("span", { class: "cb-objective-text" }, String(o.text));
@@ -387,6 +408,7 @@ const OutlineDiff: Renderer = (p, ctx, id) => {
             h("h5", { class: "cb-serif" }, `${mi + 1}.${li + 1} `, l.before ? wordDiff(String(l.before), String(l.title)) : String(l.title)),
             h("span", { class: "cb-mono cb-muted" }, `${l.minutes} min`), changeBadge(l.change)),
           l.summary ? h("p", { class: "cb-muted" }, String(l.summary)) : null,
+          formatPicker(l),
           h("ul", { class: "cb-objectives", "aria-label": "Learning objectives" }, (l.objectives as Props[]).map(objective)),
           citations(l.citations, ctx)))))));
   const removed = p.removed?.length
@@ -399,7 +421,7 @@ const OutlineDiff: Renderer = (p, ctx, id) => {
     const comment = h("textarea", { id: commentId, class: "cb-textarea", rows: 3, maxlength: 2000, placeholder: "e.g. Fewer modules, more on grind size" });
     const approve = h("button", { type: "button", class: "cb-btn cb-btn-primary" }, icon("spark"), "Approve outline & generate");
     const reject = h("button", { type: "button", class: "cb-btn" }, "Request changes");
-    approve.addEventListener("click", () => act(ctx, id, "approve_outline", { versionId: p.versionId, edits: [...edits].map(([objectiveId, text]) => ({ objectiveId, text })) }));
+    approve.addEventListener("click", () => act(ctx, id, "approve_outline", { versionId: p.versionId, edits: [...edits].map(([objectiveId, text]) => ({ objectiveId, text })), formats: [...formats].map(([lessonId, contentType]) => ({ lessonId, contentType })) }));
     reject.addEventListener("click", () => act(ctx, id, "reject_outline", { versionId: p.versionId, comment: comment.value.trim() }));
     footer.append(
       h("label", { for: commentId, class: "cb-label" }, "Comment for a revision (optional)"), comment, editedNote,
@@ -474,10 +496,23 @@ const LessonPreviewCard: Renderer = (p, ctx) => {
     return block;
   });
   body.append(...blocks);
+  const extras = (p.extras as Props[] | undefined) ?? [];
+  if (extras.length > 0) {
+    body.append(h("ul", { class: "cb-extras", "aria-label": "Interactive parts of the lesson" }, extras.map((x) => {
+      const item = h("li", { class: `cb-extra cb-extra-${x.kind}`, "data-extra": x.id },
+        h("p", { class: "cb-eyebrow" }, String(x.label)), h("p", {}, String(x.text)), citations(x.citations, ctx) ?? "");
+      if (x.editable) {
+        const editExtra = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Edit in chat");
+        editExtra.addEventListener("click", () => ctx.onSelect?.(String(x.id), String(x.label)));
+        item.append(editExtra);
+      }
+      return item;
+    })));
+  }
   const edit = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Edit in chat");
   edit.addEventListener("click", () => ctx.onSelect?.(String(p.lessonId), String(p.title)));
   return h("article", { class: "cb-card cb-lesson-preview", "aria-label": `Lesson ${p.title}` },
-    h("header", {}, h("h3", { class: "cb-serif cb-h2" }, String(p.title)), p.minutes ? h("p", { class: "cb-mono cb-muted" }, `${p.minutes} min`) : null, edit),
+    h("header", {}, h("h3", { class: "cb-serif cb-h2" }, String(p.title)), p.minutes ? h("p", { class: "cb-mono cb-muted" }, `${p.minutes} min`) : null, p.format ? h("p", { class: "cb-tag" }, String(p.format)) : null, edit),
     p.flags?.length ? h("ul", { class: "cb-flags", "aria-label": "Grounding flags" }, (p.flags as string[]).map((f) => h("li", {}, icon("alert"), f))) : null,
     body);
 };
@@ -520,6 +555,173 @@ const DiffView: Renderer = (p, ctx, id) => {
     citations(p.citations, ctx), actions);
 };
 
+const VariantComparison: Renderer = (p, ctx, id) => {
+  const decided = p.status !== "proposed";
+  const cards = (p.variants as Props[]).map((v) => {
+    const rows = h("ul", { class: "cb-changes" }, (v.changes as Props[]).map((c) =>
+      h("li", { class: `cb-change cb-change-${c.kind}` },
+        h("p", { class: "cb-change-label" }, changeBadge(c.kind), String(c.label)),
+        c.kind === "changed"
+          ? h("p", { class: "cb-change-text" }, wordDiff(String(c.before ?? ""), String(c.after ?? "")))
+          : h("p", { class: "cb-change-text" }, c.kind === "added" ? h("ins", {}, sr("added: "), String(c.after ?? "")) : h("del", {}, sr("removed: "), String(c.before ?? ""))))));
+    const headId = uid("variant");
+    const card = h("article", { class: `cb-card cb-variant cb-variant-${v.status}`, "aria-labelledby": headId, "data-variant": v.versionId },
+      h("h4", { id: headId, class: "cb-h3" }, String(v.label)),
+      v.reply ? h("p", { class: "cb-muted" }, String(v.reply)) : null,
+      v.changes.length ? rows : h("p", { class: "cb-muted" }, "No changes."),
+      citations(v.citations, ctx));
+    if (!decided) {
+      const choose = h("button", { type: "button", class: "cb-btn cb-btn-primary" }, icon("check"), `Use ${v.label}`, sr(` for ${p.elementLabel}`));
+      choose.addEventListener("click", () => act(ctx, id, "choose_variant", { versionId: v.versionId }));
+      card.append(h("div", { class: "cb-actions" }, choose));
+    } else {
+      card.append(h("p", { class: `cb-decision cb-decision-${v.status}` }, icon(v.status === "approved" ? "check" : "minus"), v.status === "approved" ? "Chosen" : "Not chosen"));
+    }
+    return card;
+  });
+  const footer = h("div", { class: "cb-actions" });
+  if (!decided) {
+    const none = h("button", { type: "button", class: "cb-btn" }, "Keep the current text");
+    none.addEventListener("click", () => act(ctx, id, "reject_variants", { group: p.group }));
+    footer.append(none, h("p", { class: "cb-muted cb-small" }, "Choosing one rejects the others. Nothing changes before you choose."));
+  }
+  return h("section", { class: "cb-card cb-variants", "aria-label": `Options for ${p.elementLabel}` },
+    h("header", {}, h("h3", { class: "cb-h3" }, `Options for ${p.elementLabel}`), p.instruction ? h("p", { class: "cb-muted" }, `You asked: “${p.instruction}”`) : null),
+    h("div", { class: "cb-variant-grid" }, cards), footer);
+};
+
+const OutlineEditor: Renderer = (p, ctx, id) => {
+  const modules = p.modules as Props[];
+  const sections = (p.sections as Props[] | undefined) ?? [];
+  const edit = (context: Record<string, unknown>) => act(ctx, id, "outline_edit", context);
+  const status = h("p", { class: "cb-muted cb-small", role: "status", "aria-live": "polite" }, p.message ? String(p.message) : "");
+  const btn = (label: string, aria: string, onClick: () => void, disabled = false): HTMLButtonElement => {
+    const b = h("button", { type: "button", class: "cb-btn cb-btn-small", "aria-label": aria, disabled: disabled || p.busy ? "" : null }, label) as HTMLButtonElement;
+    b.addEventListener("click", onClick);
+    return b;
+  };
+  let dragged: { kind: "module" | "lesson"; id: string } | null = null;
+
+  const renameRow = (kind: string, item: Props, host: HTMLElement): HTMLButtonElement =>
+    btn("Rename", `Rename ${kind} ${item.title}`, () => {
+      const input = h("input", { type: "text", class: "cb-input", value: String(item.title), maxlength: 200, "aria-label": `New title for ${item.title}` }) as HTMLInputElement;
+      const save = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Save");
+      const cancel = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Cancel");
+      const form = h("span", { class: "cb-inline-edit" }, input, save, cancel);
+      save.addEventListener("click", () => edit({ action: "rename", id: item.id, title: input.value.trim(), focus: item.id }));
+      cancel.addEventListener("click", () => form.replaceWith(host));
+      host.replaceWith(form);
+      input.focus();
+    });
+
+  const removeRow = (kind: string, item: Props): HTMLButtonElement => {
+    const b = btn("Remove", `Remove ${kind} ${item.title}`, () => {
+      const confirm = h("span", { class: "cb-inline-edit", role: "group", "aria-label": `Confirm removing ${item.title}` },
+        h("span", {}, `Remove ${kind === "module" ? "this module and its lessons" : "this lesson"}?`));
+      const yes = h("button", { type: "button", class: "cb-btn cb-btn-small cb-btn-danger" }, "Remove");
+      const no = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Keep");
+      yes.addEventListener("click", () => edit({ action: "remove", id: item.id }));
+      no.addEventListener("click", () => {
+        confirm.replaceWith(b);
+        b.focus();
+      });
+      confirm.append(yes, no);
+      b.replaceWith(confirm);
+      yes.focus();
+    });
+    return b;
+  };
+
+  const addForm = (kind: "lesson" | "module", moduleId?: string): HTMLElement => {
+    const fid = uid("add");
+    const title = h("input", { id: `${fid}-t`, type: "text", class: "cb-input", maxlength: 200 }) as HTMLInputElement;
+    const objective = h("input", { id: `${fid}-o`, type: "text", class: "cb-input", maxlength: 400 }) as HTMLInputElement;
+    const section = h("select", { id: `${fid}-s`, class: "cb-input" }, sections.map((s) => h("option", { value: String(s.fragmentId) }, String(s.label)))) as HTMLSelectElement;
+    const submit = h("button", { type: "submit", class: "cb-btn cb-btn-small" }, kind === "module" ? "Add module" : "Add lesson") as HTMLButtonElement;
+    const form = h("form", { class: "cb-add-form", "aria-label": kind === "module" ? "Add a module" : "Add a lesson" },
+      h("label", { for: `${fid}-t`, class: "cb-label" }, kind === "module" ? "Title of the first lesson" : "Lesson title"), title,
+      h("label", { for: `${fid}-o`, class: "cb-label" }, "Learning objective"), objective,
+      h("label", { for: `${fid}-s`, class: "cb-label" }, "Based on the source section"), section, submit);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      edit({ action: "add", kind, moduleId, title: title.value.trim(), objective: objective.value.trim(), citations: section.value ? [section.value] : [] });
+    });
+    if (sections.length === 0) submit.disabled = true;
+
+    return h("details", { class: "cb-add" }, h("summary", {}, kind === "module" ? "Add a module" : "Add a lesson"), form);
+  };
+
+  const lessonItem = (module: Props, mi: number, lesson: Props, li: number): HTMLElement => {
+    const lessons = module.lessons as Props[];
+    const prev = modules[mi - 1];
+    const next = modules[mi + 1];
+    const row = h("div", { class: "cb-outline-row" });
+    const title = h("span", { class: "cb-outline-title", tabindex: "-1", "data-focus": lesson.id }, `${mi + 1}.${li + 1} ${lesson.title}`);
+    const rename = renameRow("lesson", lesson, title);
+    row.append(h("span", { class: "cb-drag-handle", "aria-hidden": "true", title: "Drag to move" }, "⠿"), title,
+      ...(lesson.written === false ? [h("span", { class: "cb-tag" }, "No text yet")] : []),
+      btn("Move up", `Move lesson ${lesson.title} up`, () => edit({ action: "move", id: lesson.id, index: li - 1, focus: lesson.id }), li === 0),
+      btn("Move down", `Move lesson ${lesson.title} down`, () => edit({ action: "move", id: lesson.id, index: li + 1, focus: lesson.id }), li === lessons.length - 1),
+      btn("Move to previous module", `Move lesson ${lesson.title} to the end of ${prev?.title ?? "the previous module"}`, () => edit({ action: "move", id: lesson.id, moduleId: prev!.id, index: (prev!.lessons as Props[]).length, focus: lesson.id }), !prev || lessons.length === 1),
+      btn("Move to next module", `Move lesson ${lesson.title} to the start of ${next?.title ?? "the next module"}`, () => edit({ action: "move", id: lesson.id, moduleId: next!.id, index: 0, focus: lesson.id }), !next || lessons.length === 1),
+      rename, removeRow("lesson", lesson));
+    const item = h("li", { class: "cb-outline-lesson", draggable: "true", "data-lesson": lesson.id }, row);
+    item.addEventListener("dragstart", (e) => {
+      dragged = { kind: "lesson", id: String(lesson.id) };
+      (e as DragEvent).dataTransfer?.setData("text/plain", String(lesson.id));
+      e.stopPropagation();
+    });
+    item.addEventListener("dragover", (e) => {
+      if (dragged) e.preventDefault();
+    });
+    item.addEventListener("drop", (e) => {
+      if (!dragged || dragged.kind !== "lesson" || dragged.id === lesson.id) return;
+      e.preventDefault();
+      e.stopPropagation();
+      edit({ action: "move", id: dragged.id, moduleId: module.id, index: li, focus: dragged.id });
+      dragged = null;
+    });
+    return item;
+  };
+
+  const tree = h("ol", { class: "cb-outline-modules", "aria-label": "Course structure" }, modules.map((module, mi) => {
+    const lessons = module.lessons as Props[];
+    const title = h("h4", { class: "cb-serif cb-outline-title", tabindex: "-1", "data-focus": module.id }, `Module ${mi + 1} · ${module.title}`);
+    const head = h("div", { class: "cb-outline-row" },
+      h("span", { class: "cb-drag-handle", "aria-hidden": "true", title: "Drag to move" }, "⠿"), title,
+      btn("Move up", `Move module ${module.title} up`, () => edit({ action: "move", id: module.id, index: mi - 1, focus: module.id }), mi === 0),
+      btn("Move down", `Move module ${module.title} down`, () => edit({ action: "move", id: module.id, index: mi + 1, focus: module.id }), mi === modules.length - 1),
+      renameRow("module", module, title), removeRow("module", module));
+    const item = h("li", { class: "cb-outline-module", draggable: "true", "data-module": module.id }, head,
+      h("ol", { class: "cb-outline-lessons", "aria-label": `Lessons of ${module.title}` }, lessons.map((lesson, li) => lessonItem(module, mi, lesson, li))),
+      addForm("lesson", String(module.id)));
+    item.addEventListener("dragstart", (e) => {
+      if (dragged) return;
+      dragged = { kind: "module", id: String(module.id) };
+      (e as DragEvent).dataTransfer?.setData("text/plain", String(module.id));
+    });
+    item.addEventListener("dragend", () => (dragged = null));
+    item.addEventListener("dragover", (e) => {
+      if (dragged) e.preventDefault();
+    });
+    item.addEventListener("drop", (e) => {
+      if (!dragged || dragged.id === module.id) return;
+      e.preventDefault();
+      if (dragged.kind === "module") edit({ action: "move", id: dragged.id, index: mi, focus: dragged.id });
+      else edit({ action: "move", id: dragged.id, moduleId: module.id, index: lessons.length, focus: dragged.id });
+      dragged = null;
+    });
+    return item;
+  }));
+
+  const root = h("section", { class: "cb-card cb-outline-editor", "aria-label": "Edit the course structure", "aria-busy": p.busy ? "true" : null },
+    h("p", { class: "cb-muted cb-small" }, "Drag a lesson or module, or use the buttons. Every change is saved as a new version; you can undo it."),
+    status, tree, addForm("module"));
+  if (p.focusId) queueMicrotask(() => root.querySelector<HTMLElement>(`[data-focus="${p.focusId}"]`)?.focus());
+
+  return root;
+};
+
 const ApplySummary: Renderer = (p, ctx, id) => {
   const kinds: Array<[string, string]> = [["courses", "Courses"], ["lessons", "Lessons"], ["topics", "Topics"], ["questions", "Quiz questions"], ["pages", "Pages"]];
   const table = h("table", { class: "cb-table" },
@@ -541,6 +743,38 @@ const ApplySummary: Renderer = (p, ctx, id) => {
     h("h3", { class: "cb-serif cb-h2" }, p.firstApply ? "Create the course in your academy" : "Apply the changes"),
     table,
     p.warnings?.length ? h("div", { class: "cb-warnings" }, h("p", { class: "cb-eyebrow" }, `${p.warnings.length} warnings`), h("ul", {}, (p.warnings as string[]).map((w) => h("li", {}, icon("alert"), w)))) : null,
+    actions);
+};
+
+const VariantReview: Renderer = (p, ctx, id) => {
+  const sum = p.summary as Props;
+  const headId = uid("variant-review");
+  const counts: Array<[string, number]> = [["kept", sum.kept], ["rewritten", sum.changed], ["added", sum.added], ["skipped", sum.removed]];
+  const rows = h("ul", { class: "cb-changes" }, (p.changes as Props[]).map((c) =>
+    h("li", { class: `cb-change cb-change-${c.kind}` },
+      h("p", { class: "cb-change-label" }, changeBadge(c.kind), String(c.label)),
+      c.kind === "changed"
+        ? h("p", { class: "cb-change-text" }, wordDiff(String(c.before ?? ""), String(c.after ?? "")))
+        : h("p", { class: "cb-change-text" }, c.kind === "added" ? h("ins", {}, sr("added: "), String(c.after ?? "")) : h("del", {}, sr("removed: "), String(c.before ?? ""))))));
+  const actions = h("div", { class: "cb-actions" });
+  if (p.status === "proposed") {
+    const approve = h("button", { type: "button", class: "cb-btn cb-btn-primary" }, icon("check"), `Create the ${p.label} course`);
+    const reject = h("button", { type: "button", class: "cb-btn" }, "Reject this variant");
+    approve.addEventListener("click", () => act(ctx, id, "approve_variant", { versionId: p.versionId }));
+    reject.addEventListener("click", () => act(ctx, id, "reject_variant", { versionId: p.versionId }));
+    actions.append(approve, reject, h("p", { class: "cb-muted cb-small" }, "It becomes its own unpublished course, grouped with the base course. Publishing the base course publishes the family."));
+  } else {
+    actions.append(h("p", { class: `cb-decision cb-decision-${p.status}`, role: "status" },
+      icon(p.status === "rejected" ? "minus" : p.status === "applying" ? "clock" : "check"),
+      { applying: "Creating the course…", approved: "Created as its own course, grouped with the base course", rejected: "Rejected; nothing was created" }[String(p.status)] ?? String(p.status)));
+  }
+  return h("section", { class: "cb-card cb-variant-review", "aria-labelledby": headId, "data-variant-key": p.variantKey },
+    h("header", {},
+      h("h3", { id: headId, class: "cb-serif cb-h2" }, `Variant for ${p.label}`),
+      h("p", { class: "cb-muted" }, `Compared with the base course${p.baseNumber ? ` (version ${p.baseNumber})` : ""}. ${sum.lessons} lessons, ${sum.citations} source passages cited${p.costMicroUsd ? `, ${usd(p.costMicroUsd)} to generate` : ""}.`)),
+    h("ul", { class: "cb-tags", "aria-label": "Lessons compared with the base course" }, counts.map(([label, n]) => h("li", { class: "cb-tag" }, `${n} ${label}`))),
+    p.changes.length ? rows : h("p", { class: "cb-muted" }, "No differences from the base course."),
+    p.truncated ? h("p", { class: "cb-muted cb-small" }, `${p.truncated} more changes are not listed here.`) : null,
     actions);
 };
 
@@ -571,6 +805,53 @@ const SYNC_STATE: Record<string, { label: string; icon: "check" | "plus" | "cloc
   processing: { label: "Processing", icon: "clock" },
   failed: { label: "Check failed", icon: "alert" },
   paused: { label: "Paused", icon: "minus" },
+};
+
+const SourcesPanel: Renderer = (p, ctx) => {
+  const highlighted = new Set<string>(p.highlighted ?? []);
+  const sources = (p.sources as Props[]).map((source) => {
+    const headId = uid("src");
+    let onlyUncovered = false;
+    const list = h("ul", { class: "cb-section-list", "aria-labelledby": headId });
+    const toggle = h("button", { type: "button", class: "cb-btn cb-btn-small", "aria-pressed": "false" }, "Show only uncovered sections");
+    const draw = () => {
+      list.replaceChildren(...(source.sections as Props[])
+        .filter((s) => !onlyUncovered || s.citedByCount === 0)
+        .map((s) => {
+          const marked = highlighted.has(String(s.fragmentId));
+          const open = h("button", { type: "button", class: "cb-link cb-section-label", style: `--cb-level:${Math.min(Number(s.level), 4)}` }, String(s.label));
+          open.addEventListener("click", () => ctx.onCitation?.(String(s.fragmentId), String(s.label), open));
+          const status = s.citedByCount === 0 ? "Not cited yet" : `Cited by ${s.citedByCount} element${s.citedByCount === 1 ? "" : "s"}`;
+          return h("li", { class: `cb-section${s.citedByCount === 0 ? " cb-section-uncovered" : ""}${marked ? " cb-section-marked" : ""}`, "data-fragment": String(s.fragmentId), "aria-current": marked ? "true" : null },
+            open,
+            h("span", { class: "cb-tag" }, s.citedByCount === 0 ? icon("minus") : icon("check"), status),
+            marked ? h("span", { class: "cb-tag" }, "Used by the selected element") : null,
+            (s.citedBy as Props[]).length > 0
+              ? h("details", { class: "cb-section-elements" }, h("summary", {}, "Show elements"),
+                  h("ul", {}, (s.citedBy as Props[]).map((e) => {
+                    const jump = h("button", { type: "button", class: "cb-link" }, String(e.label));
+                    jump.addEventListener("click", () => ctx.onSelect?.(String(e.target), String(e.label)));
+                    return h("li", {}, jump);
+                  })))
+              : null);
+        }));
+      if (list.childElementCount === 0) list.append(h("li", { class: "cb-muted" }, "Every section of this source is cited."));
+    };
+    toggle.addEventListener("click", () => {
+      onlyUncovered = !onlyUncovered;
+      toggle.setAttribute("aria-pressed", String(onlyUncovered));
+      toggle.textContent = onlyUncovered ? "Show all sections" : "Show only uncovered sections";
+      draw();
+    });
+    draw();
+    const covered = Number(source.total) - Number(source.uncovered);
+    return h("section", { class: "cb-card cb-source", "aria-label": String(source.name) },
+      h("h3", { id: headId, class: "cb-h3" }, String(source.name)),
+      h("p", { class: "cb-muted cb-small", role: "status" }, `${covered} of ${source.total} sections are cited${source.uncovered > 0 ? `; ${source.uncovered} are not` : ""}.`),
+      source.uncovered > 0 ? toggle : null,
+      list);
+  });
+  return h("div", { class: "cb-sources" }, sources.length ? sources : h("p", { class: "cb-muted" }, "No sources yet."));
 };
 
 const PublishSummary: Renderer = (p, ctx, id) => {
@@ -752,6 +1033,7 @@ const ITEM_KIND: Record<string, { label: string; icon: "tilde" | "check" | "minu
   no_change: { label: "No change needed", icon: "check" },
   manual: { label: "Update by hand", icon: "alert" },
   uncovered: { label: "New in the source", icon: "plus" },
+  new_lesson: { label: "Suggested lesson", icon: "plus" },
 };
 const ITEM_STATUS: Record<string, { label: string; icon: "check" | "minus" | "clock" | "alert" }> = {
   pending: { label: "Not decided yet", icon: "clock" },
@@ -761,14 +1043,15 @@ const ITEM_STATUS: Record<string, { label: string; icon: "check" | "minus" | "cl
   stale: { label: "Edited after the analysis", icon: "alert" },
 };
 /** Button words per kind: what "accept" means differs when nothing is written to the course. */
-const ACCEPT_LABEL: Record<string, string> = { no_change: "Agree, no change", manual: "Mark as handled", uncovered: "Acknowledge" };
-const REJECT_LABEL: Record<string, string> = { no_change: "Disagree", manual: "Keep as it is", uncovered: "Skip", remove: "Keep the element", update: "Reject" };
+const ACCEPT_LABEL: Record<string, string> = { no_change: "Agree, no change", manual: "Mark as handled", uncovered: "Acknowledge", new_lesson: "Add this lesson" };
+const REJECT_LABEL: Record<string, string> = { no_change: "Disagree", manual: "Keep as it is", uncovered: "Skip", remove: "Keep the element", update: "Reject", new_lesson: "Do not add" };
 const KIND_NOTE: Record<string, string> = {
   citation_remap: "Only the citations change: the source text this element relies on moved or was renumbered. The wording stays the same.",
   remove: "The source no longer covers this. Accepting removes the element from the course.",
   no_change: "AI found no change needed. Nothing is written to the course unless you ask for changes.",
   manual: "This needs an update by hand: it has not been analysed. Open it in the workspace and edit it there.",
-  uncovered: "A new section in the source that no lesson covers yet. Add a lesson for it in the workspace.",
+  uncovered: "A new section in the source that no lesson covers yet. Ask for a suggested lesson, or add one yourself in the workspace.",
+  new_lesson: "AI suggested this lesson from the new section, and every part of it cites that section. Accepting adds it to the course when you apply the update; nothing changes before.",
 };
 
 function fieldDiff(f: Props): HTMLElement {
@@ -799,7 +1082,7 @@ const UpdateItem: Renderer = (p, ctx, id) => {
   const max = Number(p.maxRegenerations ?? 3);
   const used = Number(p.regenerations ?? 0);
   const canDecide = p.canDecide !== false;
-  const canRegenerate = p.canRegenerate !== false && ["update", "no_change", "remove", "manual"].includes(kind);
+  const canRegenerate = p.canRegenerate !== false && ["update", "no_change", "remove", "manual", "new_lesson"].includes(kind);
   let status = String(p.status);
 
   const live = h("p", { class: "cb-sr", role: "status", "aria-live": "polite" });
@@ -807,6 +1090,8 @@ const UpdateItem: Renderer = (p, ctx, id) => {
   const accept = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-decision": "accepted", "data-focus-target": "" }, icon("check"), ACCEPT_LABEL[kind] ?? "Accept");
   const reject = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-decision": "rejected" }, REJECT_LABEL[kind] ?? "Reject");
   const reset = h("button", { type: "button", class: "cb-link", "data-decision": "pending" }, "Undo my decision");
+  // variants of the course (ADR 0192): the same patch can be taken for every version in one step; the label comes localised from the page
+  const acceptGroup = p.acceptInGroupLabel ? h("button", { type: "button", class: "cb-btn cb-btn-small", "data-accept-in-group": "" }, icon("check"), String(p.acceptInGroupLabel)) : null;
   const note = h("p", { class: "cb-item-note", role: "alert" });
 
   function paint(): void {
@@ -815,6 +1100,7 @@ const UpdateItem: Renderer = (p, ctx, id) => {
     statusEl.className = `cb-item-status cb-item-status-${status}`;
     accept.setAttribute("aria-pressed", String(status === "accepted"));
     reject.setAttribute("aria-pressed", String(status === "rejected"));
+    if (acceptGroup) acceptGroup.hidden = status !== "pending" && status !== "rejected";
     accept.disabled = status === "conflict" || status === "stale";
     reset.hidden = status !== "accepted" && status !== "rejected";
     root.dataset.status = status;
@@ -851,8 +1137,14 @@ const UpdateItem: Renderer = (p, ctx, id) => {
     accept.focus();
   });
 
+  acceptGroup?.addEventListener("click", () => {
+    for (const button of [accept, acceptGroup, reject, reset]) button.disabled = true;
+    root.setAttribute("aria-busy", "true");
+    act(ctx, id, "accept_in_group", { itemId: p.itemId });
+  });
+
   const controls = h("div", { class: "cb-item-controls" });
-  if (canDecide) controls.append(h("div", { role: "group", "aria-label": `Decision for ${String(p.label)}`, class: "cb-item-decision" }, accept, reject, reset));
+  if (canDecide) controls.append(h("div", { role: "group", "aria-label": `Decision for ${String(p.label)}`, class: "cb-item-decision" }, accept, acceptGroup, reject, reset));
   else controls.append(h("p", { class: "cb-muted cb-small" }, status === "pending" ? "Decisions open when the analysis is finished." : "This proposal is settled."));
 
   if (canDecide && canRegenerate) {
@@ -893,9 +1185,22 @@ const UpdateItem: Renderer = (p, ctx, id) => {
     );
   }
 
+  if (kind === "uncovered" && p.canSuggest) {
+    const suggest = h("button", { type: "button", class: "cb-btn cb-btn-small cb-btn-primary", "data-suggest-lesson": "" }, icon("plus"), "Suggest a lesson");
+    suggest.addEventListener("click", () => {
+      suggest.disabled = true;
+      root.setAttribute("aria-busy", "true");
+      live.textContent = "";
+      window.setTimeout(() => (live.textContent = `Writing a lesson for ${String(p.label)}…`), 30);
+      act(ctx, id, "suggest_lesson", { itemId: p.itemId });
+    });
+    controls.append(suggest);
+  }
+
   const fields = (p.fields as Props[] | undefined) ?? [];
   const body: Array<HTMLElement | null> = [];
   if (KIND_NOTE[kind]) body.push(h("p", { class: "cb-item-kind-note" }, KIND_NOTE[kind]!));
+  if (p.reusedNote) body.push(h("p", { class: "cb-item-kind-note", "data-reused-note": "" }, String(p.reusedNote)));
   if (p.answerChanged) body.push(h("p", { class: "cb-item-warn cb-item-warn-answer", role: "note" }, icon("alert"), h("strong", {}, "Answer changed. "), "The correct answer is different now. Learners' earlier scores stay on record."));
   else if (p.answerCheck) body.push(h("p", { class: "cb-item-warn cb-item-warn-answer", role: "note" }, icon("alert"), h("strong", {}, "Answer may be wrong. "), "The source changed where this answer comes from. Check the marked answer."));
   for (const flag of (p.flags as string[] | undefined) ?? []) {
@@ -1046,8 +1351,12 @@ export const builderComponents: Record<string, Renderer> = {
   LessonPreviewCard,
   QuizQuestionCard,
   DiffView,
+  VariantComparison,
+  OutlineEditor,
   ApplySummary,
+  VariantReview,
   VersionList,
+  SourcesPanel,
   PublishSummary,
   SourceConnectionCard,
   RevisionTimeline,

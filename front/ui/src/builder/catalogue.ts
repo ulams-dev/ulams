@@ -43,8 +43,8 @@ const QUESTION_BASE = {
   why: str("One sentence on why the question matters for this source", 300),
   status: QUESTION_STATUS,
   decidedBy: DECIDED_BY,
-  step: int("Position in the interview, from 1", { minimum: 1, maximum: 10 }),
-  total: int("Number of questions", { minimum: 1, maximum: 10 }),
+  step: int("Position in the interview, from 1", { minimum: 1, maximum: 16 }),
+  total: int("Number of questions", { minimum: 1, maximum: 16 }),
 };
 const OBJECTIVE = obj(
   {
@@ -304,6 +304,7 @@ export const builderCatalogue = {
                     change: CHANGE,
                     objectives: list(OBJECTIVE, "Lesson objectives", 8),
                     citations: list(CITATION, "Fragments the lesson draws on", 20),
+                    format: str("Lesson format key: richtext, liascript, h5p or interactive", 20),
                   },
                   ["id", "title", "minutes", "objectives", "citations"]
                 ),
@@ -317,6 +318,7 @@ export const builderCatalogue = {
           20
         ),
         removed: list(obj({ title: str("Title", 200), kind: oneOf(["module", "lesson"], "Kind") }, ["title", "kind"]), "Removed since the previous version", 40),
+        formats: list(obj({ value: str("Format key", 20), label: str("Name", 80), description: str("What learners get", 300) }, ["value", "label"]), "Lesson formats the author may choose from while the outline is proposed", 8),
         comment: str("Author comment the version answers", 1000),
       },
       ["versionId", "status", "summary", "course", "modules"]
@@ -377,6 +379,22 @@ export const builderCatalogue = {
         minutes: int("Minutes"),
         blocks: list(BLOCK, "Content blocks", 60),
         flags: list(str("Unsupported claim or warning", 500), "Grounding flags", 20),
+        format: str("Lesson format, e.g. LiaScript · 3 self-checks or H5P · Fill in the blanks · 4 blanks", 200),
+        extras: list(
+          obj(
+            {
+              id: str("Element id", 32),
+              kind: oneOf(["check", "activity"], "A self-check question, or the H5P activity or interactive after the text"),
+              label: str("Where it is, e.g. Self-check 1", 120),
+              text: str("The question or a description of the activity", 1000),
+              editable: bool("The assistant can edit it in chat"),
+              citations: list(CITATION, "Cited fragments", 10),
+            },
+            ["id", "kind", "label", "text", "citations"]
+          ),
+          "Self-checks and the activity of a LiaScript, H5P or interactive lesson",
+          12
+        ),
       },
       ["lessonId", "title", "blocks"]
     ),
@@ -430,6 +448,83 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `Proposed change to ${s(p.elementLabel)}: ${arr(p.changes).length} edits.`,
   },
+  VariantComparison: {
+    description:
+      "Two or three proposals for one element, side by side, each as a word-level diff against the current text with its citations. Choose one to approve it (the others are rejected) or reject all; nothing changes until the author chooses.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        group: str("Variant group id", 32),
+        elementId: str("Element the options are for", 32),
+        elementLabel: str("Element shown to the author, e.g. Lesson 2.1 › Q2", 200),
+        instruction: str("The author's request", 1000),
+        status: oneOf(["proposed", "chosen", "rejected"], "Whether the author has decided"),
+        variants: list(
+          obj(
+            {
+              versionId: str("Proposed version", 32),
+              label: str("Option A, Option B, …", 40),
+              reply: str("What the assistant says about this option", 1000),
+              status: oneOf(["proposed", "approved", "rejected", "superseded"], "Decision state of this option"),
+              changes: list(
+                obj(
+                  {
+                    path: str("Field path", 200),
+                    label: str("Readable field name", 200),
+                    kind: oneOf(["added", "removed", "changed"], "Change"),
+                    before: str("Old text", 20000),
+                    after: str("New text", 20000),
+                  },
+                  ["path", "label", "kind"]
+                ),
+                "Changes against the current element",
+                40
+              ),
+              citations: list(CITATION, "Fragments the option cites", 10),
+            },
+            ["versionId", "label", "status", "changes"]
+          ),
+          "The options",
+          3
+        ),
+      },
+      ["group", "elementId", "elementLabel", "status", "variants"]
+    ),
+    fallback: (p) => `${arr(p.variants).length} options for ${s(p.elementLabel)}.`,
+  },
+  OutlineEditor: {
+    description:
+      "The course structure as an editable tree: move modules and lessons with drag and drop or with buttons (up, down, into the previous or next module), rename, add and remove. Every change is saved as a new version of the course without needing approval; objectives, citations and content move with their lesson.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        modules: list(
+          obj(
+            {
+              id: str("Module id", 32),
+              title: str("Module title", 200),
+              lessons: list(
+                obj({ id: str("Lesson id", 32), title: str("Lesson title", 200), minutes: int("Minutes"), written: bool("The lesson has its text") }, ["id", "title"]),
+                "Lessons",
+                30
+              ),
+            },
+            ["id", "title", "lessons"]
+          ),
+          "Modules",
+          20
+        ),
+        sections: list(obj({ fragmentId: str("Fragment id (frg_…)", 16), label: str("Section label", 200) }, ["fragmentId", "label"]), "Source sections a new lesson can rest on", 400),
+        focusId: str("Element that keeps the keyboard focus after a change", 32),
+        message: str("What the last change did, announced to screen readers", 500),
+        busy: bool("A change is being saved"),
+      },
+      ["modules"]
+    ),
+    fallback: (p) => `Course structure: ${arr(p.modules).map((m) => `${s(m.title)} (${arr(m.lessons).length} lessons)`).join("; ")}.`,
+  },
   ApplySummary: {
     description: "What applying the blueprint will create, update and delete in the LMS, with warnings; approve to apply.",
     modelSelectable: false,
@@ -448,6 +543,53 @@ export const builderCatalogue = {
       ["versionId", "status", "create", "update", "delete", "warnings"]
     ),
     fallback: (p) => `Apply version: ${s((p.create as Record<string, unknown> | undefined)?.topics)} topics to create.`,
+  },
+  VariantReview: {
+    description:
+      "A variant of the course for one audience (a level, a role or both), reviewed as a diff against the base course: how many lessons are kept, changed, added and removed, and the changed text with word-level marks. Approve to create its own course in the academy, or reject; nothing is created before the author approves.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        versionId: str("Proposed variant version", 32),
+        variantKey: str("Variant key", 64),
+        label: str("Audience shown to learners, e.g. Expert, developer", 120),
+        level: oneOf(["beginner", "intermediate", "expert"], "Level of the audience"),
+        role: str("Role of the audience", 64),
+        status: oneOf(["proposed", "applying", "approved", "rejected"], "Decision state"),
+        baseNumber: int("Number of the base version it is compared with"),
+        summary: obj(
+          {
+            lessons: int("Lessons in the variant"),
+            kept: int("Lessons kept as in the base"),
+            changed: int("Lessons rewritten for this audience"),
+            added: int("Lessons only this variant has"),
+            removed: int("Base lessons this variant skips"),
+            citations: int("Source passages the variant cites"),
+          },
+          ["lessons", "kept", "changed", "added", "removed", "citations"]
+        ),
+        changes: list(
+          obj(
+            {
+              path: str("Field path", 200),
+              label: str("Readable field name", 200),
+              kind: oneOf(["added", "removed", "changed"], "Change"),
+              before: str("Text in the base course", 20000),
+              after: str("Text in the variant", 20000),
+            },
+            ["path", "label", "kind"]
+          ),
+          "Changes against the base course",
+          150
+        ),
+        truncated: int("Further changes not listed"),
+        costMicroUsd: int("What generating the variant cost, in micro-dollars"),
+        courseId: int("Course id once applied"),
+      },
+      ["versionId", "variantKey", "label", "status", "summary", "changes"]
+    ),
+    fallback: (p) => `Variant ${s(p.label)}: ${arr(p.changes).length} changes against the base course.`,
   },
   VersionList: {
     description: "Blueprint version history with origin and status; restore any version.",
@@ -476,6 +618,58 @@ export const builderCatalogue = {
       ["versions"]
     ),
     fallback: (p) => `${arr(p.versions).length} versions.`,
+  },
+  SourcesPanel: {
+    description:
+      "The sources of the course with their sections: how many elements of the course cite each section, which sections nothing cites yet, and the elements behind each section. Selecting an element in the course tree highlights the sections it rests on.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        sources: list(
+          obj(
+            {
+              id: str("Source id", 32),
+              name: str("Source name", 300),
+              total: int("Sections in the source"),
+              uncovered: int("Sections no element cites"),
+              sections: list(
+                obj(
+                  {
+                    fragmentId: str("Fragment id (frg_…)", 16),
+                    label: str("Section label, e.g. §2.3 Brewing ratios", 200),
+                    level: int("Heading level, from 1", { minimum: 1, maximum: 6 }),
+                    citedByCount: int("Number of elements citing the section"),
+                    citedBy: list(
+                      obj(
+                        {
+                          id: str("Element id", 32),
+                          target: str("Element the workspace selects for it (an objective points to its lesson)", 32),
+                          type: oneOf(["course", "objective", "lesson", "block", "question"], "Element kind"),
+                          label: str("Where it is, e.g. Lesson 1.2 › block 3", 200),
+                        },
+                        ["id", "target", "type", "label"]
+                      ),
+                      "Elements citing the section (the first 50)",
+                      50
+                    ),
+                  },
+                  ["fragmentId", "label", "level", "citedByCount", "citedBy"]
+                ),
+                "Sections in reading order",
+                2000
+              ),
+            },
+            ["id", "name", "total", "uncovered", "sections"]
+          ),
+          "Sources",
+          20
+        ),
+        highlighted: list(str("Fragment id", 16), "Sections the selected element cites", 200),
+      },
+      ["sources"]
+    ),
+    fallback: (p) => `${arr(p.sources).length} source(s) with their sections.`,
   },
   PublishSummary: {
     description:
@@ -579,7 +773,7 @@ export const builderCatalogue = {
   },
   UpdateItem: {
     description:
-      "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
+      "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source, suggested new lesson), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Accept in all versions (courses with variants), Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
     modelSelectable: false,
     children: false,
     props: obj(
@@ -588,7 +782,7 @@ export const builderCatalogue = {
         elementId: str("Element in the course", 32),
         elementType: oneOf(["block", "question", "objective", "lesson", "course", "section"], "What the element is"),
         label: str("Element shown to the author, e.g. Lesson 2.1 › Q2", 200),
-        kind: oneOf(["update", "citation_remap", "remove", "no_change", "manual", "uncovered"], "Kind of proposal"),
+        kind: oneOf(["update", "citation_remap", "remove", "no_change", "manual", "uncovered", "new_lesson"], "Kind of proposal"),
         status: oneOf(["pending", "accepted", "rejected", "conflict", "stale"], "Decision state"),
         reason: str("Why the element changes, plain text", 500),
         severity: oneOf(["minor", "major"], "How much the meaning changes"),
@@ -615,6 +809,9 @@ export const builderCatalogue = {
         maxRegenerations: int("Most times the author may ask for changes", { minimum: 1, maximum: 10 }),
         canDecide: bool("Decisions are open (the analysis is finished and the proposal is not settled)"),
         canRegenerate: bool("Ask for changes is available (AI is enabled)"),
+        canSuggest: bool("Suggest a lesson is available for a new source section (AI is enabled)"),
+        acceptInGroupLabel: str("Words of the action that accepts the same change in every version (variant) of the course; the action is offered only when this is set", 80),
+        reusedNote: str("Note that the change is the same as in the base course, so no extra analysis was needed", 200),
         href: str("Link to the element in the workspace", 400),
       },
       ["itemId", "elementId", "elementType", "label", "kind", "status"]

@@ -2,6 +2,7 @@
 
 namespace Ulams\TopicTypes;
 
+use Ulams\Core\Support\MorphMap;
 use Illuminate\Support\Facades\Event;
 use Ulams\Cmi5\UlamsCmi5ServiceProvider;
 use Ulams\Lrs\Events\AuCompletionReported;
@@ -67,6 +68,18 @@ class UlamsTopicTypesServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        MorphMap::register([
+            'topic.audio' => \Ulams\TopicTypes\Models\TopicContent\Audio::class,
+            'topic.video' => \Ulams\TopicTypes\Models\TopicContent\Video::class,
+            'topic.image' => \Ulams\TopicTypes\Models\TopicContent\Image::class,
+            'topic.rich_text' => \Ulams\TopicTypes\Models\TopicContent\RichText::class,
+            'topic.h5p' => \Ulams\TopicTypes\Models\TopicContent\H5P::class,
+            'topic.oembed' => \Ulams\TopicTypes\Models\TopicContent\OEmbed::class,
+            'topic.pdf' => \Ulams\TopicTypes\Models\TopicContent\PDF::class,
+            'topic.scorm' => \Ulams\TopicTypes\Models\TopicContent\ScormSco::class,
+            'topic.cmi5' => \Ulams\TopicTypes\Models\TopicContent\Cmi5Au::class,
+        ]);
+
         Event::listen(ScormScoCompleted::class, CompleteScormTopics::class);
         Event::listen(AuCompletionReported::class, CompleteCmi5Topics::class);
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');

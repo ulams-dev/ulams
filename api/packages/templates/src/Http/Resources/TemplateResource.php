@@ -20,6 +20,7 @@ class TemplateResource extends JsonResource
             'name' => $this->name,
             'event' => $this->event,
             'channel' => $this->channel,
+            'locale' => $this->locale,
             'default' => $this->default,
             'sections' => $this->sections,
             'variable_class' => $this->variable_class,

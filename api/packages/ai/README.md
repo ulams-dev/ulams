@@ -28,6 +28,7 @@ $result->costMicroUsd;  // integer micro-USD
 | Driver selection: `anthropic`, `fake`, `disabled` (no key ⇒ disabled) | `UlamsAiServiceProvider::driverName()` |
 | Anthropic driver: official `anthropic-ai/sdk`, streamed, structured outputs (`output_config.format`), effort, no tools, cache breakpoints, server-side refusal fallback | `src/Drivers/AnthropicDriver.php` |
 | Validation: JSON Schema (opis, draft 2020-12) + semantic validator, one repair attempt, then a failed step | `src/Services/AiClient.php` |
+| `stream($request, $onDelta, 'answer')`: the same call and the same single `ai_calls` row, plus the text of one string field of the output as it is written (first attempt only, a draft; the returned result is the authoritative one) | `AiClient::stream()`, `Services/JsonStringStream.php`, `LlmDriver::stream()` |
 | `refusal` and `max_tokens` stop reasons are failures, never partial content | same |
 | Usage log `ai_calls` (tenant database): tokens, cache tokens, cost (micro-USD), latency, prompt id and version, model requested and served, subject | `src/Models/AiCall.php`, `php artisan ai:usage` |
 | Budgets per subject (tokens, USD) and per tenant per month, checked before every call | `src/Services/BudgetGuard.php` |

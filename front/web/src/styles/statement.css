@@ -1,0 +1,14 @@
+/* The accessibility statement: a plain reading page. */
+.u-stmt { display: grid; gap: 28px; padding-block: 40px 24px; max-width: 76ch; }
+.u-stmt:focus { outline: none; }
+.u-stmt__crumb { font-size: 0.875rem; }
+.u-stmt__crumb a { display: inline-flex; align-items: center; min-height: 24px; }
+.u-stmt__block { display: grid; gap: 12px; margin: 0; }
+.u-stmt__block h2 { font-size: 1.25rem; }
+.u-stmt__block p, .u-stmt__block ul { margin: 0; }
+.u-stmt__block ul { padding-left: 1.2em; display: grid; gap: 8px; }
+.u-stmt__lead { color: var(--ulams-color-muted); font-size: 1.1rem; }
+.u-stmt__meta { color: var(--ulams-color-muted); font-size: 0.9rem; }
+.u-stmt a { text-underline-offset: 3px; }
+.u-stmt a { display: inline-block; min-height: 24px; }
+.u-stmt :is(a, summary) { scroll-margin-block-end: 88px; }

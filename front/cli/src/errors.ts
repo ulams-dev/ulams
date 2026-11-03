@@ -130,6 +130,8 @@ export function toErrorObject(error: CliError): ErrorObject {
 
 interface ApiBody {
   message?: string;
+  /** Stable machine code some endpoints add (BASE_OUTDATED, APPROVAL_REQUIRES_HUMAN, INVALID_BLUEPRINT). */
+  code?: string;
   error?: string;
   required?: string[];
   errors?: Record<string, string[]>;
@@ -162,7 +164,7 @@ export function fromApiError(error: unknown, requestId: string | null = null, re
           details: { required: body.required ?? [] },
         });
       }
-      return new CliError("FORBIDDEN", apiMessage ?? "Forbidden.", base);
+      return new CliError("FORBIDDEN", apiMessage ?? "Forbidden.", { ...base, ...(typeof body.code === "string" ? { details: { code: body.code } } : {}) });
     }
     if (status === 404) return new CliError("NOT_FOUND", apiMessage ?? `Not found: ${error.path}`, base);
     if (status === 409) {
@@ -174,7 +176,7 @@ export function fromApiError(error: unknown, requestId: string | null = null, re
       }
       return new CliError("VALIDATION_FAILED", apiMessage ?? "Validation failed.", {
         ...base,
-        details: { fields: body.errors ?? fieldErrors(body.data) ?? {} },
+        details: { fields: body.errors ?? fieldErrors(body.data) ?? {}, ...(typeof body.code === "string" ? { code: body.code, data: body.data ?? null } : {}) },
       });
     }
     if (status === 429) {

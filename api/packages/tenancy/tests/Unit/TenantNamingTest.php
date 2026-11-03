@@ -10,6 +10,26 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class TenantNamingTest extends TestCase
 {
+    public function testNonstandardGatewayPortIsIncludedWithoutChangingTenantHosts(): void
+    {
+        config(['ulams_tenancy.port' => 18480]);
+        $tenant = new Tenant(TenantNaming::newTenantAttributes('academy'));
+        $this->assertSame('academy.localhost', $tenant->api_host);
+        $this->assertSame('http://academy.localhost:18480', $tenant->apiUrl());
+        $this->assertSame('http://academy.app.localhost:18480', $tenant->frontUrl());
+        $this->assertSame('http://academy.admin.localhost:18480', $tenant->adminUrl());
+        $this->assertSame('http://academy.content.localhost:18480', TenantNaming::envValues($tenant)['CONTENT_ORIGIN']);
+    }
+
+    public function testDefaultPortsRemainCanonicalAndInvalidPortsAreRejected(): void
+    {
+        config(['ulams_tenancy.scheme' => 'https', 'ulams_tenancy.port' => 443]);
+        $this->assertSame('https://api.example.org', TenantNaming::origin('api.example.org'));
+        config(['ulams_tenancy.port' => 0]);
+        $this->expectException(InvalidArgumentException::class);
+        TenantNaming::origin('api.example.org');
+    }
+
     public function testDerivesResourceNamesFromTheSlug(): void
     {
         $attributes = TenantNaming::newTenantAttributes('nightsky');

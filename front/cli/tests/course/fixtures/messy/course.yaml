@@ -1,0 +1,11 @@
+# Course-level fields
+language: en
+title: Messy course
+objectives:
+  - text: Explain the basics
+    citations: []
+  - text: Run a thing
+    id: 01jb00000000000000000000o2
+description: >-
+  A course whose files are not formatted:
+  keys in odd order, ids missing, folders not numbered.

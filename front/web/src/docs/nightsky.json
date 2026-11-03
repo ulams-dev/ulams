@@ -288,6 +288,10 @@
           {
             "label": "Events",
             "href": "#events"
+          },
+          {
+            "label": "Accessibility",
+            "href": "/accessibility"
           }
         ]
       }

@@ -1,6 +1,8 @@
 ---
 import Icon from "./Icon.astro";
 import { updateNoticeText } from "../lib/notices.ts";
+import { pageLocale } from "../lib/i18n.ts";
+import { playerStrings } from "../lib/player-strings.ts";
 
 interface Props {
   noticeId?: number;
@@ -10,7 +12,9 @@ interface Props {
   id?: string;
 }
 const { noticeId, started = false, date, message, id } = Astro.props;
-const text = updateNoticeText({ started, date, message });
+const loc = pageLocale(Astro) ?? "en";
+const t = playerStrings(loc);
+const text = updateNoticeText({ started, date, message }, loc);
 const titleId = `u-notice-${id ?? noticeId ?? "update"}-title`;
 ---
 
@@ -21,9 +25,9 @@ const titleId = `u-notice-${id ?? noticeId ?? "update"}-title`;
     {text.change && <p class="u-notice__text">{text.change}</p>}
     {
       noticeId !== undefined && (
-        <ulams-notice notice-id={noticeId}>
+        <ulams-notice notice-id={noticeId} data-done-text={t.noticeReviewedDone} data-failed-text={t.noticeReviewedFailed}>
           <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-dismiss hidden>
-            Mark as reviewed
+            {t.noticeReviewed}
           </button>
           <p class="u-notice__done" role="status" tabindex="-1" data-status></p>
         </ulams-notice>

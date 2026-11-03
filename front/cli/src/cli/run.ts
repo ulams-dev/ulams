@@ -14,7 +14,7 @@ import type { AnyCommand, Ctx, FsPort, GlobalFlags } from "../registry/types.ts"
 import { commandHelp, nounHelp, rootHelp, suggest } from "./help.ts";
 import { parseInvocation, resolveCommand } from "./parse.ts";
 
-export const VERSION = "0.1.0";
+export const VERSION = "0.2.0"; // x-release-please-version
 
 export interface Deps {
   argv: string[];
@@ -184,6 +184,8 @@ export async function main(deps: Deps): Promise<number> {
       userAgent: `ulams-cli/${VERSION} (${process.platform}; node ${process.versions.node})`,
       client: "cli",
       agent: env.ULAMS_AGENT,
+      commit: headerValue(env.ULAMS_COMMIT),
+      changeUrl: headerValue(env.ULAMS_CHANGE_URL),
       debug: flags.debug ? (line) => deps.stderr(`[debug] ${redactString(line, secrets)}`) : undefined,
     });
 
@@ -192,7 +194,7 @@ export async function main(deps: Deps): Promise<number> {
       client,
       profile: cmd.id === "login" ? loginProfile : profile,
       fs,
-      io: { stderr: (line) => !flags?.quiet && deps.stderr(redactString(line, secrets)), isTTY: deps.stderrIsTTY, interactive },
+      io: { stderr: (line) => !flags?.quiet && deps.stderr(redactString(line, secrets)), stdout: (text) => deps.stdout(text), isTTY: deps.stderrIsTTY, interactive },
       signal,
       emit: (event, meta) => deps.stdout(JSON.stringify({ type: "event", ...(meta?.id ? { id: meta.id } : {}), data: event })),
       flags,
@@ -216,7 +218,7 @@ export async function main(deps: Deps): Promise<number> {
       // apply --dry-run --exit-code: exit 13 when the plan contains changes (ADR 0073).
       const planned = (result.data as { dryRun?: boolean; changes?: unknown[] } | null)?.changes;
       if (parsed.input.exitCode && flags.dryRun && Array.isArray(planned) && planned.length > 0) return 13;
-      return 0;
+      return result.exitCode ?? 0;
     } finally {
       process.off("SIGINT", onSignal);
     }
@@ -226,3 +228,9 @@ export async function main(deps: Deps): Promise<number> {
 }
 
 export { validateInput };
+
+/** A CI value for a request header: one printable line, at most 500 characters (what the server keeps). */
+function headerValue(value: string | undefined): string | undefined {
+  const v = value?.replace(/[^\x20-\x7e]/g, "").trim().slice(0, 500);
+  return v ? v : undefined;
+}

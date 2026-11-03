@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 /**
  * Capability orbit for the landing hero: the Orbital Folio book in the middle, capability cards
  * travelling on up to three elliptical orbits, one highlighted at a time with a one-line caption.
@@ -24,12 +25,13 @@ interface Props {
   items: Capability[];
   label?: string;
 }
-const { items, label = "What ulams covers" } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
+const { items, label = t.orbitLabel } = Astro.props;
 
 const RINGS = [
-  { name: "Course engine", t: "84s", dir: "normal", rx: 24, offset: 300 },
-  { name: "Interfaces", t: "112s", dir: "reverse", rx: 31, offset: 0 },
-  { name: "Platform", t: "140s", dir: "normal", rx: 37, offset: 50 },
+  { name: t.ringEngine, t: "84s", dir: "normal", rx: 24, offset: 300 },
+  { name: t.ringInterfaces, t: "112s", dir: "reverse", rx: 31, offset: 0 },
+  { name: t.ringPlatform, t: "140s", dir: "normal", rx: 37, offset: 50 },
 ];
 const K = 0.86;
 const rings = RINGS.map((ring, r) => {
@@ -77,7 +79,7 @@ const roadmap = (s?: string) => s === "coming" || s === "preview";
                         <Icon name={item.icon ?? "sparkle"} />
                       </span>
                       <span class="u-orb__label">{item.label}</span>
-                      {roadmap(item.status) && <span class="u-orb__soon">Coming</span>}
+                      {roadmap(item.status) && <span class="u-orb__soon">{t.coming}</span>}
                     </span>
                   </a>
                 </li>
@@ -97,7 +99,7 @@ const roadmap = (s?: string) => s === "coming" || s === "preview";
         ))
       }
     </figcaption>
-    <button type="button" class="u-orb__pause" data-pause aria-pressed="false" aria-label="Pause the orbit animation">
+    <button type="button" class="u-orb__pause" data-pause aria-pressed="false" aria-label={t.orbitPause}>
       <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
         <path class="u-orb__ic-pause" d="M5 3.5v9m6-9v9" />
         <path class="u-orb__ic-play" d="M5 3.2v9.6l7.5-4.8z" />

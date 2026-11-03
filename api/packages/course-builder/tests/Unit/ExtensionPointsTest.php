@@ -34,6 +34,7 @@ class ExtensionPointsTest extends TestCase
         $versions->setCurrent($session, $v2);
 
         $this->assertContains('update', VersionService::CONTENT_KINDS);
+        $this->assertContains('import', VersionService::CONTENT_KINDS);
         $this->assertSame(['src1' => 'rev2'], $v2->refresh()->source_revisions);
         $this->assertNull($v1->refresh()->source_revisions);
         $this->assertSame($v1->id, $versions->undoTarget($session->refresh())->id);

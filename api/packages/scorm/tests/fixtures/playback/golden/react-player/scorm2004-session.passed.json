@@ -1,0 +1,520 @@
+{
+  "commitObject": {
+    "completionStatus": "completed",
+    "runtimeData": {
+      "cmi": {
+        "comments_from_learner": {},
+        "comments_from_lms": {},
+        "completion_status": "completed",
+        "completion_threshold": "",
+        "credit": "credit",
+        "entry": "",
+        "exit": "suspend",
+        "interactions": {
+          "0": {
+            "correct_responses": {
+              "0": {
+                "pattern": "b"
+              }
+            },
+            "description": "",
+            "id": "q1",
+            "latency": "",
+            "learner_response": "b",
+            "objectives": {},
+            "result": "correct",
+            "timestamp": "",
+            "type": "choice",
+            "weighting": ""
+          }
+        },
+        "launch_data": "",
+        "learner_id": "",
+        "learner_name": "",
+        "learner_preference": {
+          "audio_captioning": "0",
+          "audio_level": "1",
+          "delivery_speed": "1",
+          "language": ""
+        },
+        "location": "chapter-2/page-3",
+        "max_time_allowed": "",
+        "mode": "normal",
+        "objectives": {},
+        "progress_measure": "0.75",
+        "scaled_passing_score": "",
+        "score": {
+          "max": "100",
+          "min": "0",
+          "raw": "85",
+          "scaled": "0.85"
+        },
+        "session_time": "PT1M30S",
+        "success_status": "passed",
+        "suspend_data": "<8192 chars sha256:f49515564fb8>",
+        "time_limit_action": "continue,no message"
+      }
+    },
+    "score": {
+      "max": 100,
+      "min": 0,
+      "raw": 85,
+      "scaled": 0.85
+    },
+    "successStatus": "passed",
+    "totalTimeSeconds": 90
+  },
+  "finalCmi": {
+    "comments_from_learner": {},
+    "comments_from_lms": {},
+    "completion_status": "completed",
+    "completion_threshold": "",
+    "credit": "credit",
+    "entry": "",
+    "exit": "suspend",
+    "interactions": {
+      "0": {
+        "correct_responses": {
+          "0": {
+            "pattern": "b"
+          }
+        },
+        "description": "",
+        "id": "q1",
+        "latency": "",
+        "learner_response": "b",
+        "objectives": {},
+        "result": "correct",
+        "timestamp": "",
+        "type": "choice",
+        "weighting": ""
+      }
+    },
+    "launch_data": "",
+    "learner_id": "",
+    "learner_name": "",
+    "learner_preference": {
+      "audio_captioning": "0",
+      "audio_level": "1",
+      "delivery_speed": "1",
+      "language": ""
+    },
+    "location": "chapter-2/page-3",
+    "max_time_allowed": "",
+    "mode": "normal",
+    "objectives": {},
+    "progress_measure": "0.75",
+    "scaled_passing_score": "",
+    "score": {
+      "max": "100",
+      "min": "0",
+      "raw": "85",
+      "scaled": "0.85"
+    },
+    "session_time": "PT1M30S",
+    "success_status": "passed",
+    "suspend_data": "<8192 chars sha256:f49515564fb8>",
+    "time_limit_action": "continue,no message"
+  },
+  "fixture": "scorm2004-session",
+  "gets": [],
+  "mode": "default",
+  "posts": [],
+  "query": "outcome=passed",
+  "requests": [
+    "GET /api/scorm/show/scorm2004-session~outcome=passed"
+  ],
+  "sco": [
+    {
+      "args": [
+        ""
+      ],
+      "error": "0",
+      "fn": "Initialize",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.learner_id"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.entry"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.completion_status"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": "unknown"
+    },
+    {
+      "args": [
+        "cmi.success_status"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": "unknown"
+    },
+    {
+      "args": [
+        "cmi.location"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.total_time"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.suspend_data"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.location",
+        "chapter-2/page-3"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.score.min",
+        "0"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.score.max",
+        "100"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.score.raw",
+        "85"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.score.scaled",
+        "0.85"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.progress_measure",
+        "0.75"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.suspend_data",
+        "<8192 chars sha256:f49515564fb8>"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.interactions.0.id",
+        "q1"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.interactions.0.type",
+        "choice"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.interactions.0.learner_response",
+        "b"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.interactions.0.correct_responses.0.pattern",
+        "b"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.interactions.0.result",
+        "correct"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.session_time",
+        "PT1M30S"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.completion_status",
+        "incomplete"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        ""
+      ],
+      "error": "0",
+      "fn": "Commit",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.completion_status",
+        "completed"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.success_status",
+        "passed"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.exit",
+        "suspend"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        ""
+      ],
+      "error": "0",
+      "fn": "Commit",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.learner_id",
+        "someone-else"
+      ],
+      "error": "101",
+      "fn": "SetValue",
+      "result": "false"
+    },
+    {
+      "args": [
+        "cmi.score.scaled",
+        "2"
+      ],
+      "error": "101",
+      "fn": "SetValue",
+      "result": "false"
+    },
+    {
+      "args": [
+        "cmi.completion_status",
+        "done"
+      ],
+      "error": "101",
+      "fn": "SetValue",
+      "result": "false"
+    },
+    {
+      "args": [
+        "cmi.progress_measure",
+        "half"
+      ],
+      "error": "101",
+      "fn": "SetValue",
+      "result": "false"
+    },
+    {
+      "args": [
+        "cmi.completion_status"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": "completed"
+    },
+    {
+      "args": [
+        "cmi.success_status"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": "passed"
+    },
+    {
+      "args": [
+        "cmi.score.scaled"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": "0.85"
+    },
+    {
+      "args": [
+        "cmi.total_time"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        ""
+      ],
+      "error": "0",
+      "fn": "Terminate",
+      "result": "true"
+    }
+  ],
+  "settings": {
+    "alwaysSendTotalTime": false,
+    "asyncCommit": false,
+    "autoProgress": false,
+    "autocommit": false,
+    "autocommitSeconds": 10,
+    "commitRequestDataType": "application/json;charset=UTF-8",
+    "dataCommitFormat": "json",
+    "lmsCommitUrl": false,
+    "mastery_override": false,
+    "renderCommonCommitFields": false,
+    "selfReportSessionTime": false,
+    "sendFullCommit": true,
+    "strict_errors": true
+  },
+  "terminateCommitObject": {
+    "completionStatus": "completed",
+    "runtimeData": {
+      "cmi": {
+        "comments_from_learner": {},
+        "comments_from_lms": {},
+        "completion_status": "completed",
+        "completion_threshold": "",
+        "credit": "credit",
+        "entry": "",
+        "exit": "suspend",
+        "interactions": {
+          "0": {
+            "correct_responses": {
+              "0": {
+                "pattern": "b"
+              }
+            },
+            "description": "",
+            "id": "q1",
+            "latency": "",
+            "learner_response": "b",
+            "objectives": {},
+            "result": "correct",
+            "timestamp": "",
+            "type": "choice",
+            "weighting": ""
+          }
+        },
+        "launch_data": "",
+        "learner_id": "",
+        "learner_name": "",
+        "learner_preference": {
+          "audio_captioning": "0",
+          "audio_level": "1",
+          "delivery_speed": "1",
+          "language": ""
+        },
+        "location": "chapter-2/page-3",
+        "max_time_allowed": "",
+        "mode": "normal",
+        "objectives": {},
+        "progress_measure": "0.75",
+        "scaled_passing_score": "",
+        "score": {
+          "max": "100",
+          "min": "0",
+          "raw": "85",
+          "scaled": "0.85"
+        },
+        "session_time": "PT1M30S",
+        "success_status": "passed",
+        "suspend_data": "<8192 chars sha256:f49515564fb8>",
+        "time_limit_action": "continue,no message",
+        "total_time": "PT1M30S"
+      }
+    },
+    "score": {
+      "max": 100,
+      "min": 0,
+      "raw": 85,
+      "scaled": 0.85
+    },
+    "successStatus": "passed",
+    "totalTimeSeconds": 90
+  },
+  "version": "2004"
+}

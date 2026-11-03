@@ -1,0 +1,35 @@
+<mjml lang="pl">
+  <mj-head>
+    <mj-title>Welcome aboard</mj-title>
+    <mj-preview>Your academy account is ready</mj-preview>
+    <mj-font name="Inter" href="https://fonts.googleapis.com/css?family=Inter" />
+    <mj-attributes>
+      <mj-all font-family="Inter, Arial, sans-serif" />
+      <mj-text font-size="16px" color="#1f2937" line-height="24px" />
+      <mj-button background-color="#4f46e5" border-radius="6px" />
+      <mj-class name="muted" color="#6b7280" font-size="13px" />
+    </mj-attributes>
+    <mj-style>
+      .brand-link a { color: #4f46e5; text-decoration: underline; }
+      @media (max-width: 480px) { .hero-title { font-size: 22px !important; } }
+    </mj-style>
+    <mj-style inline="inline">h1 { margin: 0 0 8px 0; }</mj-style>
+  </mj-head>
+  <mj-body background-color="#f3f4f6">
+    <!-- header: brand bar -->
+    <mj-section background-color="#4f46e5" padding="12px 24px">
+      <mj-column>
+        <mj-image src="https://example.com/logo.png" alt="Academy logo" width="120px" align="left" />
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding="24px">
+      <mj-column>
+        <mj-text css-class="hero-title brand-link"><h1>Cześć ${VarUserName}!</h1><p>Twoje konto w <a href="@VarAcademyUrl">akademii</a> jest gotowe. 欢迎加入!</p></mj-text>
+        <mj-raw><table role="presentation" width="100%"><tr><td style="background:#eef2ff;padding:12px">Raw HTML promo block: <strong>-20%</strong></td></tr></table></mj-raw>
+        <mj-button href="@VarActionLink">Otwórz kurs</mj-button>
+        <mj-text mj-class="muted">Jeśli to nie Ty, zignoruj tę wiadomość.</mj-text>
+      </mj-column>
+    </mj-section>
+    @GlobalSettingsMailFooterMjml
+  </mj-body>
+</mjml>

@@ -1,3 +1,4 @@
+import { tenantFetch } from "./api-transport.ts";
 import type { Tenant } from "@ulams/sdk";
 
 /**
@@ -59,11 +60,12 @@ const AREA_LABELS: Record<string, string> = {
   "living-course": "Living Course",
   learner: "Your own learning: profile, progress, notes",
   tokens: "API tokens (create and revoke tokens)",
+  webhooks: "Webhook endpoints and their delivery log",
   platform: "Platform tenants",
 };
 
 /** Areas where "change" is sensitive enough to be flagged on the approval page. */
-const SENSITIVE_WRITE = new Set(["users", "settings", "commerce", "tokens", "platform", "enrolments"]);
+const SENSITIVE_WRITE = new Set(["users", "settings", "commerce", "tokens", "webhooks", "platform", "enrolments"]);
 
 export interface ScopeView {
   scope: string;
@@ -115,7 +117,7 @@ const reasonFor = (status: number): Failure =>
 
 export async function lookupRequest(tenant: Tenant, token: string, userCode: string): Promise<LookupResult> {
   try {
-    const response = await fetch(`${tenant.apiUrl}/api/auth/device/requests/${encodeURIComponent(userCode)}`, json(token));
+    const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/auth/device/requests/${encodeURIComponent(userCode)}`, json(token));
     if (!response.ok) return { ok: false, reason: reasonFor(response.status) };
     const body = (await response.json()) as { data: DeviceRequest };
     return { ok: true, request: body.data };
@@ -135,7 +137,7 @@ export async function answerRequest(
   days: number
 ): Promise<AnswerResult> {
   try {
-    const response = await fetch(
+    const response = await tenantFetch(tenant)(
       `${tenant.apiUrl}/api/auth/device/requests/${encodeURIComponent(userCode)}/${decision}`,
       json(token, { method: "POST", body: JSON.stringify(decision === "approve" ? { scopes, expires_in_days: days } : {}) })
     );

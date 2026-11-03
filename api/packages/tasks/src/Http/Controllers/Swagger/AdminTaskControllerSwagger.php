@@ -16,7 +16,7 @@ interface AdminTaskControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/tasks",
+     *      path="/api/admin/tasks", operationId="admin.tasks.post",
      *      summary="Store a newly created task",
      *      tags={"Admin Tasks"},
      *      description="Store Task",
@@ -58,7 +58,7 @@ interface AdminTaskControllerSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/admin/tasks/{id}",
+     *      path="/api/admin/tasks/{id}", operationId="admin.tasks.by-id.patch",
      *      summary="Update the specified task",
      *      tags={"Admin Tasks"},
      *      description="Update Task",
@@ -109,7 +109,7 @@ interface AdminTaskControllerSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/tasks/{id}",
+     *      path="/api/admin/tasks/{id}", operationId="admin.tasks.by-id.delete",
      *      summary="Remove the specified task",
      *      tags={"Admin Tasks"},
      *      description="Delete Task",
@@ -128,9 +128,7 @@ interface AdminTaskControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -153,7 +151,7 @@ interface AdminTaskControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/tasks/complete/{id}",
+     *      path="/api/admin/tasks/complete/{id}", operationId="admin.tasks.complete.by-id.post",
      *      summary="Complete task",
      *      tags={"Admin Tasks"},
      *      description="Complete Task",
@@ -197,7 +195,7 @@ interface AdminTaskControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/tasks/incomplete/{id}",
+     *      path="/api/admin/tasks/incomplete/{id}", operationId="admin.tasks.incomplete.by-id.post",
      *      summary="Incomplete task",
      *      tags={"Admin Tasks"},
      *      description="Incomplete Task",
@@ -241,7 +239,7 @@ interface AdminTaskControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/tasks",
+     *      path="/api/admin/tasks", operationId="admin.tasks.get",
      *      summary="Get a listing of the tasks",
      *      tags={"Admin Tasks"},
      *      description="Get all Tasks",
@@ -352,9 +350,7 @@ interface AdminTaskControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -378,7 +374,7 @@ interface AdminTaskControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/tasks/{id}",
+     *      path="/api/admin/tasks/{id}", operationId="admin.tasks.by-id.get",
      *      summary="Task details",
      *      tags={"Admin Tasks"},
      *      description="Get task details by ID",

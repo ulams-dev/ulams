@@ -2,12 +2,25 @@
 # `ulams api` can still call them; they do not count as coverage.
 inbound-webhook: []
 browser-only:
+  # the SSE event log of one streamed tutor answer (ADR 0105); the learner widget reads it, a command would have nothing to wait for
+  - "GET /api/tutor/runs/*"
+  - "GET /api/certificates/verify/*"
   - "GET /api/auth/social/*"
   - "POST /api/auth/social/complete/*"
+  # redeemed by the front end's server with the verifier of the browser that started a social login (ADR 0121)
+  - "POST /api/auth/social/exchange"
+  # single sign-on (identity package): the browser is sent to the provider and back, and the front end's server redeems the code
+  - "GET /api/identity/sso/*"
+  - "GET /api/identity/oidc/*"
+  # SAML 2.0 service provider: metadata for the IdP, the browser POST of the IdP to the ACS, single logout, and the logout call of the front end
+  - "GET /api/identity/saml/*"
+  - "POST /api/identity/saml/*"
+  - "POST /api/identity/sso/exchange"
   - "GET /api/auth/email/verify/*"
   - "GET /api/consultations/approve-term/*"
   - "GET /api/consultations/reject-term/*"
   - "GET /api/profile/delete/*"
+  - "* /api/images/img"
   - "GET /api/courses/{id}/scorm"
   - "* /api/lti/tool/*"
   - "* /api/lti/platform/*"
@@ -25,6 +38,10 @@ content-runtime:
   - "POST /api/interactive/launches/*"
   - "GET /api/interactive/showcase"
   - "POST /api/interactive/topics/{topic}/events"
+  # code exercises (ADR 0170): the lesson page opens an exercise and reports each run of its tests with the learner's own session
+  - "POST /api/code-exercises/launches/*"
+  - "POST /api/code-exercises/topics/{topic}/attempts"
+  - "GET /api/code-exercises/topics/{topic}/attempts"
   - "POST /api/courses/progress/{topic_id}/h5p"
   - "* /api/pdfs/fonts*"
 internal:
@@ -32,3 +49,16 @@ internal:
   - "GET /api/lti/jwks"
 deprecated:
   - "GET /api/tags/uniqueTags"
+not-for-cli:
+  # the read-only OData feed of a saved report is read by BI tools (Excel, Power BI, Tableau), not by the CLI, which runs a saved report with `reporting run`
+  - "GET /api/reporting/odata*"
+  # learner-owned data and player signals; the learner frontend calls them (Learner Insights, plan phase-4 §11.2)
+  - "* /api/learner-insights/*"
+  # thresholds are tenant and course settings; a CLI command comes with the studio insights page (M4.6)
+  - "* /api/admin/learner-insights/*"
+  # the author preview opens the exercise in the learner site; the teacher report of attempts gets a command with the verified grading of AX-4
+  - "GET /api/admin/code-exercises/topics/{topic}/preview"
+  - "GET /api/admin/code-exercises/topics/{topic}/attempts"
+  - "GET /api/example-plugin/hello"
+  - "POST /api/admin/example-plugin/greetings"
+  - "POST /api/pencil-spaces/login"

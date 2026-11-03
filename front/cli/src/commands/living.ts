@@ -233,6 +233,40 @@ export const livingCommands: AnyCommand[] = [
   }),
   defineCommand({
     ...common,
+    id: "living.oauth.start",
+    summary:
+      "The sign-in address to connect a Google Drive or Notion account to a course",
+    description:
+      'Open the address in a browser and sign in. The server keeps the tokens; the page you land on shows a one-time grant (valid ten minutes). Pass it to `living sources connect` as --secrets \'{"grant":"<grant>"}\' with --connector google-drive or notion. Needs the OAuth client of the installation (`living connectors list` shows whether it is set up).',
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: [`POST ${LC}/oauth/{provider}/start`],
+    positionals: ["provider"],
+    input: z.object({
+      provider: z.enum(["google", "notion"]).describe("google (Drive) or notion."),
+      session: z.string().describe("The course session the source will be added to."),
+    }),
+    output: z.unknown(),
+    examples: [
+      {
+        title: "Sign in to Google Drive",
+        argv: "living oauth start google --session <session> --json",
+      },
+    ],
+    plan: async (_ctx, i) =>
+      planOf("POST", `/oauth/${i.provider}/start`, { sessionId: i.session }),
+    async run(ctx, i) {
+      return {
+        data: await lc(ctx, "POST", "/oauth/{provider}/start", {
+          params: { provider: i.provider },
+          body: { sessionId: i.session },
+        }),
+      };
+    },
+  }),
+  defineCommand({
+    ...common,
     id: "living.connectors.list",
     summary: "List the source connectors this instance offers",
     kind: "read",
@@ -258,6 +292,13 @@ export const livingCommands: AnyCommand[] = [
       connection: z
         .string()
         .describe("Connection id (from `living sources list`)."),
+      commit: z
+        .string()
+        .regex(/^[0-9a-fA-F]{7,64}$/, "A commit id: 7 to 64 hex characters.")
+        .optional()
+        .describe(
+          "The commit this check is run for (a CI job on the merge commit passes $GITHUB_SHA); recorded on the new revision."
+        ),
     }),
     output: z.unknown(),
     examples: [
@@ -265,13 +306,22 @@ export const livingCommands: AnyCommand[] = [
         title: "Check now",
         argv: "living connections check <connection> --json",
       },
+      {
+        title: "From CI after a merge, for hosts that cannot reach the LMS with a webhook",
+        argv: "living connections check <connection> --commit 3f2a9c1d7e5b",
+      },
     ],
     plan: async (_ctx, i) =>
-      planOf("POST", `/connections/${i.connection}/check`),
+      planOf(
+        "POST",
+        `/connections/${i.connection}/check`,
+        i.commit ? { commit: i.commit } : undefined
+      ),
     async run(ctx, i) {
       return {
         data: await lc(ctx, "POST", "/connections/{connection}/check", {
           params: { connection: i.connection },
+          ...(i.commit ? { body: { commit: i.commit } } : {}),
         }),
       };
     },
@@ -677,13 +727,15 @@ export const livingCommands: AnyCommand[] = [
       };
     },
   }),
-  ...(["accept", "reject", "reset"] as const).map((verb) =>
+  ...(["accept", "accept-in-group", "reject", "reset"] as const).map((verb) =>
     defineCommand({
       ...common,
       id: `living.proposals.${verb}`,
       summary:
         verb === "accept"
           ? "Accept one item of a proposal"
+          : verb === "accept-in-group"
+          ? "Accept one item and the same patch in the other proposals of its group (the course's variants)"
           : verb === "reject"
           ? "Reject one item of a proposal"
           : "Reset a decision on one item",
@@ -756,6 +808,39 @@ export const livingCommands: AnyCommand[] = [
             params: { proposal: i.proposal, item: i.item },
             body: { comment: i.comment ?? "" },
           }
+        ),
+      };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "living.proposals.suggest-lesson",
+    summary:
+      "Suggest a new lesson for a new source section that no lesson covers",
+    description:
+      "One model call. The item becomes a `new_lesson` proposal the author reviews as a diff; nothing changes in the course until it is accepted and applied.",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: [`POST ${LC}/proposals/{proposal}/items/{item}/suggest-lesson`],
+    positionals: ["proposal"],
+    input: z.object({ proposal, item }),
+    output: z.unknown(),
+    examples: [
+      {
+        title: "Suggest a lesson for an uncovered section",
+        argv: "living proposals suggest-lesson <proposal> --item <item> --json",
+      },
+    ],
+    plan: async (_ctx, i) =>
+      planOf("POST", `/proposals/${i.proposal}/items/${i.item}/suggest-lesson`),
+    async run(ctx, i) {
+      return {
+        data: await lc(
+          ctx,
+          "POST",
+          "/proposals/{proposal}/items/{item}/suggest-lesson",
+          { params: { proposal: i.proposal, item: i.item } }
         ),
       };
     },

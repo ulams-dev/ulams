@@ -9,7 +9,7 @@ interface EventAPISwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/events",
+     *      path="/api/events", operationId="events.get",
      *      summary="Get a listing of the Stationary events and Webinars",
      *      tags={"Events"},
      *      description="Get all Stationary Events and Webinars",
@@ -45,9 +45,7 @@ interface EventAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

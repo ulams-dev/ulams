@@ -1,8 +1,14 @@
 # Notice for users of the upstream EscolaLMS packages
 
-Status: **draft, not sent.** The product owner sends it (GitHub issue "owner-action: send the upstream
-security notice"). Nothing here has been published; before sending, re-check each finding against the
-upstream default branch and confirm the upstream state of the linked issues.
+Status: **draft, not sent; re-checked against upstream on 2026-10-21.** The product owner sends it
+(GitHub issue #50, "owner-action: send the upstream security notice"). Nothing here has been published.
+
+Re-check of 2026-10-21: none of the twelve upstream repositories named below has a commit on its default
+branch after the findings were filed (the latest push to any of them is 2026-07-30, on
+`EscolaLMS/Topic-Type-GIFT`; the others were last pushed between 2024-02 and 2026-07). All ten linked upstream
+issues are still open, with no comment and no reply since they were filed on 2026-10-08, so every finding
+and every recommended action below still stands as written. Before sending, repeat the check if more than
+a few days pass: `gh api repos/EscolaLMS/<repo> --jq .pushed_at` and `gh api repos/EscolaLMS/<repo>/issues/<n> --jq .state`.
 
 Date of the findings: 2026-10-08 (see [upstream security reports](../reports/upstream-security-reports.md)
 for the filing record and [Phase 0.1 audit](../reports/phase-0-audit.md) for the context). Each finding

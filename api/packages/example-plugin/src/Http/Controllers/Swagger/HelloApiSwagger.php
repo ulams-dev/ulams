@@ -9,7 +9,7 @@ interface HelloApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/example-plugin/hello",
+     *      path="/api/example-plugin/hello", operationId="example-plugin.hello.get",
      *      summary="The tenant's greeting",
      *      tags={"Example plugin"},
      *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string", maxLength=80)),

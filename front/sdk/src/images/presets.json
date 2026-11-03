@@ -1,0 +1,7 @@
+{
+  "content": { "widths": [360, 640, 960, 1280, 1600], "quality": 78, "srcset": true },
+  "richText": { "widths": [960, 1280], "quality": 78, "srcset": false },
+  "card": { "widths": [240, 480], "quality": 78, "srcset": true },
+  "avatar": { "widths": [96, 192, 600], "quality": 80, "srcset": true },
+  "logo": { "widths": [160, 320], "quality": 85, "srcset": true }
+}

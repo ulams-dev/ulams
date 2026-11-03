@@ -1,0 +1,201 @@
+{
+  "catalogId": "https://ulams.dev/catalogue/remediation/v1",
+  "components": {
+    "Prose": {
+      "description": "Long-form Markdown (GFM tables, block quotes, $$ math $$). Raw HTML is escaped. Use for articles, briefs and descriptions.",
+      "interactive": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Optional heading shown above the text (as a third-level heading)",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown source",
+            "maxLength": 1800
+          },
+          "dropCap": {
+            "type": "boolean",
+            "description": "Editorial drop cap on the first paragraph",
+            "default": false
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "sm",
+              "md",
+              "lg"
+            ],
+            "description": "Text size",
+            "default": "md"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "markdown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "WorkedExample": {
+      "description": "A worked example inside extra help: a title and the steps as Markdown (at most 1 800 characters). Static; it is one of the blocks generated for a learner who struggled with a part of the course, and every block cites its source fragments.",
+      "interactive": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading of the block",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown, at most 1 800 characters; raw HTML is escaped",
+            "maxLength": 1800
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "markdown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "PracticeQuestion": {
+      "description": "One multiple-choice practice question with exactly one right option. The learner picks an option and presses Check; the result is stated in words and the explanation appears only after that first attempt. Nothing is recorded or sent. Used in extra help; the plain-text fallback leaves out the answer.",
+      "interactive": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading of the block",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown, at most 1 800 characters; raw HTML is escaped",
+            "maxLength": 1800
+          },
+          "practice": {
+            "type": "object",
+            "properties": {
+              "stem": {
+                "type": "string",
+                "description": "The question",
+                "maxLength": 400
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "Answer option",
+                      "maxLength": 200
+                    },
+                    "correct": {
+                      "type": "boolean",
+                      "description": "Whether this option is right",
+                      "default": false
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "correct"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "2 to 5 answer options; exactly one is correct",
+                "maxItems": 5,
+                "minItems": 2
+              },
+              "explanation": {
+                "type": "string",
+                "description": "Why the right option is right; shown only after the learner checks an answer",
+                "maxLength": 400
+              }
+            },
+            "required": [
+              "stem",
+              "options",
+              "explanation"
+            ],
+            "additionalProperties": false
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "markdown",
+          "practice"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ElaborativeQuestion": {
+      "description": "An open question that asks the learner to explain an idea in their own words, with an optional notes field. What the learner types stays on their device; nothing is sent. Used in extra help.",
+      "interactive": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading of the block",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown, at most 1 800 characters; raw HTML is escaped",
+            "maxLength": 1800
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "markdown"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -28,6 +28,8 @@ return [
      * Naming of tenant resources. `{slug}` is replaced with the tenant slug.
      */
     'scheme' => env('TENANCY_SCHEME', 'http'),
+    // Optional non-standard gateway port; host names stay free of ports for domain isolation.
+    'port' => env('TENANCY_PORT') ?: null,
     'api_host' => env('TENANCY_API_HOST', '{slug}.localhost'),
     'front_host' => env('TENANCY_FRONT_HOST', '{slug}.app.localhost'),
     'admin_host' => env('TENANCY_ADMIN_HOST', '{slug}.admin.localhost'),
@@ -66,6 +68,14 @@ return [
     ],
 
     /*
+     * Tenants created by another tenant for a purpose (a department academy of a policy, ADR 0141): at most this many active
+     * ones per parent tenant. Provisioning a database, a bucket and an object-store identity is an operator-sized action.
+     */
+    'derived' => [
+        'max_per_parent' => (int) env('TENANCY_MAX_DERIVED_PER_PARENT', 5),
+    ],
+
+    /*
      * Password of every demo user created by `ulams:tenant:create`. DEV ONLY.
      */
     'demo_password' => env('TENANT_DEMO_PASSWORD', 'secret'),
@@ -82,6 +92,19 @@ return [
         // Attach a public-read bucket policy to every tenant bucket. Turn off for Cloudflare R2 (no
         // PutBucketPolicy): make the buckets public through a custom domain instead (ADR 0091).
         'public_read_policy' => filter_var(env('TENANCY_S3_PUBLIC_READ_POLICY', true), FILTER_VALIDATE_BOOLEAN),
+    ],
+
+    /*
+     * Per-tenant object-store identities (ADR 0041). `seaweedfs`: every tenant gets its own key pair,
+     * limited to its bucket, through the store's embedded IAM API (the admin key of `s3` above signs the
+     * calls; the store must run with `-s3.iam.readOnly=false`). `none` (default): every tenant uses the
+     * platform keys, for AWS S3, Cloudflare R2 and other external stores where the operator manages IAM.
+     * The launcher, the development stack and the chart set `seaweedfs`.
+     */
+    'storage_identity' => [
+        'driver' => env('TENANCY_S3_IDENTITY_DRIVER', 'none'),
+        // where the IAM API listens; the S3 port of the bundled store
+        'endpoint' => env('TENANCY_S3_IAM_ENDPOINT') ?: null,
     ],
 
     /*

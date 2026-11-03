@@ -26,10 +26,10 @@ export default defineConfig({
       ULAMS_WARM_TENANTS: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_COOKIE_SECURE: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_COOKIE_FALLBACK_PREFIX: envField.string({ context: "server", access: "secret", optional: true }),
+      ULAMS_SOCIAL_LOGIN: envField.string({ context: "server", access: "secret", optional: true }),
       CSP_ENFORCE: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_CONTENT_ORIGIN: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_STORAGE_ORIGINS: envField.string({ context: "server", access: "secret", optional: true }),
-      ULAMS_LANDING_STATUS: envField.string({ context: "server", access: "secret", optional: true }),
       DEMO_STUDENT_EMAIL: envField.string({ context: "server", access: "secret", optional: true }),
       DEMO_STUDENT_PASSWORD: envField.string({ context: "server", access: "secret", optional: true }),
     },
@@ -39,6 +39,9 @@ export default defineConfig({
   // 0.7 and lacks parseCookie), so bundle it as well.
   vite: { ssr: { noExternal: ["marked", "katex", "cookie"] } },
   // Speculative loading: links are prefetched on hover / focus and prerendered in Chromium.
+  // The product landing in three languages: English at / (default, no prefix), Polish at /pl/, Simplified
+  // Chinese at /zh/ (ADR 0096). Tenant sites have no language prefix: the pages answer 404 off the platform host.
+  i18n: { defaultLocale: "en", locales: ["en", "pl", "zh"], routing: { prefixDefaultLocale: false } },
   prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   build: { inlineStylesheets: "always" },
   // Origin checks for form posts and the BFF are done in src/middleware.ts against the Host
@@ -46,14 +49,17 @@ export default defineConfig({
   security: { checkOrigin: false },
   image: {
     // Build-time switch for hosts where sharp has no binary (FreeBSD shared hosting, deploy/mydevil): the
-    // /_image endpoint then returns the original file unchanged instead of failing with a 500.
-    ...(process.env.ULAMS_IMAGE_SERVICE === "noop" ? { service: { entrypoint: "astro/assets/services/noop" } } : {}),
-    // Course images and avatars come from the tenant storage (MinIO behind Caddy).
+    // /_image endpoint then returns the original file unchanged instead of failing with a 500. The `cloudflare`
+    // and `noop` modes of the shared URL builder (ADR 0193) never call /_image, so they need no sharp either; the
+    // mode itself is read at runtime (ULAMS_IMAGE_SERVICE), per request.
+    ...(["noop", "cloudflare"].includes(process.env.ULAMS_IMAGE_SERVICE ?? "") ? { service: { entrypoint: "astro/assets/services/noop" } } : {}),
+    // Course images and avatars come from the tenant storage (SeaweedFS behind Caddy).
     remotePatterns: [{ protocol: "http", hostname: "**.localhost" }, { protocol: "https", hostname: "**.ulams.app" }],
   },
   // Self-hosted fonts (no Google request at runtime). Fallback faces with measured metrics live
   // in @ulams/ui/styles/fallbacks.css (Astro's generated ones were off for these fonts).
   fonts: [
+    { provider: google, name: "Libre Baskerville", cssVariable: "--font-baskerville", weights: [400, 700], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Libre Baskerville fallback", "serif"], optimizedFallbacks: false },
     { provider: google, name: "Playfair Display", cssVariable: "--font-playfair", weights: [400, 500, 600], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Playfair Display fallback", "serif"], optimizedFallbacks: false },
     { provider: google, name: "Plus Jakarta Sans", cssVariable: "--font-jakarta", weights: [400, 500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Plus Jakarta Sans fallback", "sans-serif"], optimizedFallbacks: false },
     { provider: google, name: "Inter Tight", cssVariable: "--font-inter-tight", weights: [500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Inter Tight fallback", "sans-serif"], optimizedFallbacks: false },

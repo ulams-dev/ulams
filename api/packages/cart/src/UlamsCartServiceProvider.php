@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Cart\Console\Commands\AbandonedCart;
 use Ulams\Cart\Providers\AuthServiceProvider;
 use Ulams\Cart\Providers\EventServiceProvider;
@@ -22,6 +23,13 @@ use Treestoneit\ShoppingCart\CartServiceProvider as TreestoneitCartServiceProvid
  */
 class UlamsCartServiceProvider extends ServiceProvider
 {
+    /** Morph aliases of the models of this package (see Ulams\Core\Support\MorphMap); tests of packages that only use the models register them too. */
+    public const MORPH_ALIASES = [
+        'product' => \Ulams\Cart\Models\Product::class,
+        'order' => \Ulams\Cart\Models\Order::class,
+        'order_item' => \Ulams\Cart\Models\OrderItem::class,
+    ];
+
     const CONFIG_KEY = 'ulams_cart';
 
     public $singletons = [
@@ -43,6 +51,8 @@ class UlamsCartServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        MorphMap::register(self::MORPH_ALIASES);
+
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'ulams_cart');
 
         $this->app->register(AuthServiceProvider::class);

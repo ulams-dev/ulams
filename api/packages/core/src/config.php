@@ -45,6 +45,10 @@ return [
             // referrer policy makes the browser send Origin: null
             'api/lti/tool/launch/verify',
             'api/lti/tool/deep-link',
+            // SAML: the identity provider's browser POST (response, logout request) comes from its own origin and is
+            // authenticated by the XML signature and the single-use state, not by the browser's ambient state
+            'api/identity/saml/*/acs',
+            'api/identity/saml/*/slo',
             'api/payments-gateways/callback/*',
             'api/payments-gateways/webhook/*',
         ],
@@ -56,5 +60,17 @@ return [
     'csp' => [
         // aggregated rows not seen for this many days are deleted by `csp-reports:prune` (daily)
         'retention_days' => (int) env('CSP_REPORT_RETENTION_DAYS', 30),
+    ],
+
+    /*
+     * Prometheus endpoint `GET /metrics` (platform host only, docs/operators/monitoring). Served to callers
+     * from `allowed_cidrs` (default: loopback and private ranges) or carrying `Authorization: Bearer <token>`;
+     * every other caller gets a 404. The gateway must not route the path on public hosts as well.
+     */
+    'metrics' => [
+        'allowed_cidrs' => $list(env('METRICS_ALLOWED_CIDRS', '127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,::1/128,fc00::/7')),
+        'token' => env('METRICS_TOKEN') ?: null,
+        // queues of the default connection whose depth and oldest job are reported
+        'queues' => $list(env('METRICS_QUEUES', 'default,broadcast,video,builder,queue-long-job')),
     ],
 ];

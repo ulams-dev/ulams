@@ -15,7 +15,7 @@ interface UserGroupsSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/user-groups/",
+     *     path="/api/admin/user-groups/", operationId="admin.user-groups.get",
      *     summary="List groups",
      *     description="",
      *     tags={"Admin User Groups"},
@@ -79,7 +79,7 @@ interface UserGroupsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/user-groups/tree/",
+     *     path="/api/admin/user-groups/tree/", operationId="admin.user-groups.tree.get",
      *     summary="List groups in a tree",
      *     description="",
      *     tags={"Admin User Groups"},
@@ -135,7 +135,7 @@ interface UserGroupsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/user-groups/users",
+     *     path="/api/admin/user-groups/users", operationId="admin.user-groups.users.get",
      *     summary="List of groups with users",
      *     description="",
      *     tags={"Admin User Groups"},
@@ -210,7 +210,7 @@ interface UserGroupsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/user-groups/{id}",
+     *     path="/api/admin/user-groups/{id}", operationId="admin.user-groups.by-id.get",
      *     summary="Get group details",
      *     description="",
      *     tags={"Admin User Groups"},
@@ -237,7 +237,7 @@ interface UserGroupsSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/admin/user-groups/",
+     *     path="/api/admin/user-groups/", operationId="admin.user-groups.post",
      *     summary="Create group",
      *     description="",
      *     tags={"Admin User Groups"},
@@ -258,7 +258,7 @@ interface UserGroupsSwagger
 
     /**
      * @OA\Put(
-     *     path="/api/admin/user-groups/{id}",
+     *     path="/api/admin/user-groups/{id}", operationId="admin.user-groups.by-id.put",
      *     summary="Update group",
      *     description="",
      *     tags={"Admin User Groups"},
@@ -292,7 +292,7 @@ interface UserGroupsSwagger
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/user-groups/{id}",
+     *     path="/api/admin/user-groups/{id}", operationId="groups.delete",
      *     summary="Delete group",
      *     description="",
      *     tags={"Admin User Groups"},
@@ -308,31 +308,29 @@ interface UserGroupsSwagger
      *              format="int64",
      *          ),
      *      ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="successful operation, Group deleted"
-     *     ),
+     *     @OA\Response(response=200, description="successful operation, Group deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      * )
      */
     public function deleteGroup(UserGroupDeleteRequest $request): JsonResponse;
 
     /**
      * @OA\Post(
-     *     path="/api/admin/user-groups/{id}/members",
+     *     path="/api/admin/user-groups/{id}/members", operationId="admin.user-groups.by-id.members.post",
      *     summary="Add user to group",
      *     description="",
      *     tags={"Admin User Groups"},
      *      security={
      *          {"passport": {}},
      *      },
-     *     @OA\RequestBody(
+     *     @OA\RequestBody(required=true, @OA\JsonContent(
      *              @OA\Property(
      *                  property="user_id",
      *                  type="integer",
      *                  format="int64",
      *                  description="Id of user to be added"
      *              )
-     *     ),
+     *     )),
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(
      *          response=200,
      *          description="successful operation, returns list of group members",
@@ -349,7 +347,7 @@ interface UserGroupsSwagger
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/user-groups/{id}/members/{user_id}",
+     *     path="/api/admin/user-groups/{id}/members/{user_id}", operationId="admin.user-groups.by-id.members.by-user-id.delete",
      *     summary="Add user to group",
      *     description="",
      *     tags={"Admin User Groups"},

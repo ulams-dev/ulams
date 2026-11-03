@@ -1,6 +1,9 @@
 /www_logs
 /mysql-data
 /postgres-data
+/postgres17-data
+/pg-upgrade-dumps
 /postgres-backups
 /pgadmin
 /minio_storage
+/seaweedfs_data

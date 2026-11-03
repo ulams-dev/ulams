@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Throwable;
 use Ulams\LiaScript\Models\LiaScriptDocument;
 use Ulams\LiaScript\Models\LiaScriptVersion;
+use Ulams\LiaScript\Services\Contracts\LiaScriptServiceContract;
 use Ulams\Uploads\Exceptions\UploadRejected;
 use Ulams\Uploads\UploadGuard;
 use Ulams\Uploads\Zip\SafeExtractor;
@@ -19,7 +20,7 @@ use Ulams\Uploads\Zip\SafeExtractor;
  * immutable version; assets live on the default disk under liascript/<document>/v<version>/ and
  * are carried over by later versions that only change the text.
  */
-class LiaScriptService
+class LiaScriptService implements LiaScriptServiceContract
 {
     public function __construct(
         private readonly UploadGuard $guard,

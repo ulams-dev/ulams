@@ -13,7 +13,7 @@ interface QuestionAdminApiContract
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/question",
+     *     path="/api/admin/question", operationId="admin.question.get",
      *     summary="Lists available questions",
      *     tags={"Question"},
      *     security={
@@ -51,7 +51,7 @@ interface QuestionAdminApiContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/question",
+     *     path="/api/admin/question", operationId="admin.question.post",
      *     summary="Create a new question identified by id",
      *     tags={"Question"},
      *     security={
@@ -101,6 +101,11 @@ interface QuestionAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Question created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Question")
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -124,7 +129,7 @@ interface QuestionAdminApiContract
 
     /**
      * @OA\Patch(
-     *     path="/api/admin/question/{id}",
+     *     path="/api/admin/question/{id}", operationId="admin.question.by-id.patch",
      *     summary="Update an existing question identified by id",
      *     tags={"Question"},
      *     security={
@@ -147,6 +152,11 @@ interface QuestionAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Question updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Question")
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -174,7 +184,7 @@ interface QuestionAdminApiContract
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/question/{id}",
+     *     path="/api/admin/question/{id}", operationId="admin.question.by-id.delete",
      *     summary="Delete a question identified by a id",
      *     tags={"Question"},
      *     security={
@@ -192,6 +202,11 @@ interface QuestionAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Question deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="boolean", example=true)
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -215,7 +230,7 @@ interface QuestionAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/question/{id}",
+     *     path="/api/admin/question/{id}", operationId="admin.question.by-id.get",
      *     summary="Read a question identified by a given id identifier",
      *     tags={"Question"},
      *     security={

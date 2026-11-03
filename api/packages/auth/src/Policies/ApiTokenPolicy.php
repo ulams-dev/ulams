@@ -37,6 +37,17 @@ class ApiTokenPolicy
         return $this->owns($user, $meta) || $this->manage($user);
     }
 
+    /** Change the per-minute rate limit of a token. */
+    public function update(User $user, ApiTokenMeta $meta): bool
+    {
+        return $this->owns($user, $meta) || $this->manage($user);
+    }
+
+    public function viewUsage(User $user, ApiTokenMeta $meta): bool
+    {
+        return $this->owns($user, $meta) || $this->manage($user);
+    }
+
     public function viewAudit(User $user, ApiTokenMeta $meta): bool
     {
         return $this->owns($user, $meta) || $this->manage($user);

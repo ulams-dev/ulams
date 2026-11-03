@@ -1,0 +1,9 @@
+{
+  "props": {
+    "title": "Say it in your own words",
+    "markdown": "Why does a finer grind make the coffee taste more bitter when the brew time stays the same?"
+  },
+  "invalid": {
+    "title": "Missing the question"
+  }
+}

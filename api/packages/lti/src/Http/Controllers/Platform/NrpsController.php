@@ -24,7 +24,7 @@ class NrpsController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/lti/platform/nrps/{course}",
+     *     path="/api/lti/platform/nrps/{course}", operationId="lti.platform.nrps.by-course.get",
      *     summary="NRPS: members of a course (membership container)",
      *     description="Bearer token from /api/lti/platform/token with scope https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly. Names and e-mails only when the tool registration shares them. Paged by `limit` (max 100) and `page`; a Link header with rel=next points to the next page. `role` filters by LTI role.",
      *     tags={"LTI"},
@@ -32,7 +32,7 @@ class NrpsController extends Controller
      *     @OA\Parameter(name="limit", in="query", required=false, @OA\Schema(type="integer", maximum=100)),
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer", minimum=1)),
      *     @OA\Parameter(name="role", in="query", required=false, @OA\Schema(type="string")),
-     *     @OA\Response(response=200, description="application/vnd.ims.lti-nrps.v2.membershipcontainer+json"),
+     *     @OA\Response(response=200, description="application/vnd.ims.lti-nrps.v2.membershipcontainer+json", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *     @OA\Response(response=401, description="invalid token"),
      *     @OA\Response(response=403, description="scope missing or NRPS not enabled for the tool"),
      *     @OA\Response(response=404, description="the course holds no link of this tool")

@@ -11,7 +11,7 @@ export const randomSuffix = (): string => randomBytes(4).toString('hex');
 
 /**
  * Integration tests run inside a container on the ulams network, so the
- * defaults in loadConfig() (postgres, redis, minio) apply. Each test file uses
+ * defaults in loadConfig() (postgres, redis, storage) apply. Each test file uses
  * its own schema `h5p_test_<random>` and S3 prefix `h5p-test-<random>`.
  */
 export function testConfig(overrides: Partial<{ schema: string; prefix: string }> = {}): AppConfig {

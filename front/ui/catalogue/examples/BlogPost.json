@@ -1,0 +1,19 @@
+{
+  "props": {
+    "id": "post",
+    "title": "Living Course: 10 minutes → 15 minutes",
+    "lead": "One number changes in a runbook.",
+    "date": "2026-10-16",
+    "author": "Mateusz Wojczal",
+    "tags": ["Living Course"],
+    "backHref": "/blog/",
+    "markdown": "10 minutes → 15 minutes. One number in a runbook.\n\n- compares the new source with the previous one\n- points to the lesson that relies on it",
+    "video": { "src": "/blog/living-course/clip.mp4", "poster": "/blog/living-course/poster.jpg", "width": 720, "height": 900, "caption": "In the clip: the diff and one accepted proposal." },
+    "imagesHeading": "In pictures",
+    "images": [{ "src": "/blog/living-course/review.webp", "alt": "Review of a source update.", "width": 1200, "height": 917, "caption": "Review of a source update." }]
+  },
+  "invalid": {
+    "date": "yesterday",
+    "title": "No body or back link"
+  }
+}

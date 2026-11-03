@@ -10,16 +10,14 @@ interface SettingsControllerContract
 
     /**
      * @OA\Get(
-     *      path="/api/settings",
+     *      path="/api/settings", operationId="settings.get",
      *      summary="Get a listing of the public and enuerable settings.",
      *      tags={"Settings"},
      *      description="Get settings",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -39,7 +37,7 @@ interface SettingsControllerContract
 
     /**
      * @OA\Get(
-     *      path="/api/settings/{group}/{key}",
+     *      path="/api/settings/{group}/{key}", operationId="settings.by-group.by-key.get",
      *      summary="Display the specified public setting",
      *      tags={"Settings"},
      *      description="Get Course",
@@ -67,9 +65,7 @@ interface SettingsControllerContract
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

@@ -2,6 +2,7 @@
 
 namespace Ulams\StationaryEvents\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Carbon\Carbon;
 use Ulams\Auth\Models\User;
 use Ulams\Categories\Models\Category;
@@ -90,6 +91,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class StationaryEvent extends Model
 {
+    use HasMorphAlias;
     const TABLE_NAME = 'stationary_events';
 
     use HasFactory;

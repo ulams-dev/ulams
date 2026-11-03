@@ -7,11 +7,16 @@ import { configGet, configSet, profilesDelete, profilesList, profilesUse } from 
 import { logout, whoami } from "./core/session.ts";
 import { applyCommands } from "./apply.ts";
 import { builderCommands } from "./builder.ts";
+import { courseCommands } from "./course.ts";
+import { courseFolderCommands } from "./course-folder.ts";
+import { courseSyncCommands } from "./course-sync.ts";
 import { livingCommands } from "./living.ts";
 import { curatedCommands } from "./curated.ts";
 import { mcp } from "./mcp.ts";
 import { operationCommands } from "./operations.ts";
+import { reportingCommands } from "./reporting.ts";
 import { tenantCommands } from "./tenants.ts";
+import { stackCommands } from "./stack.ts";
 import { topicCommands } from "./topics.ts";
 
 export const handWritten: AnyCommand[] = [
@@ -29,11 +34,16 @@ export const handWritten: AnyCommand[] = [
   version,
   completion,
   mcp,
+  ...stackCommands,
   ...operationCommands,
   ...topicCommands,
   ...curatedCommands,
   ...applyCommands,
   ...builderCommands,
+  ...courseCommands,
+  ...courseFolderCommands,
+  ...courseSyncCommands,
   ...livingCommands,
+  ...reportingCommands,
   ...tenantCommands,
 ];

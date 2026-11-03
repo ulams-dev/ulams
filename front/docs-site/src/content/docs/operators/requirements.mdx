@@ -81,7 +81,7 @@ and `ULAMS_CONTENT_DOMAIN=example-content.net`, point these records at the serve
 | `app.lms.example.com`, `*.app.lms.example.com` | Learner front |
 | `admin.lms.example.com`, `*.admin.lms.example.com` | Admin panel |
 | `platform.example-content.net`, `*.example-content.net` | Content origins |
-| `storage.example-content.net` | Bundled MinIO, only if you use it |
+| `storage.example-content.net` | Bundled SeaweedFS, only if you use it |
 
 Create the `*.api`, `*.app` and `*.admin` wildcards explicitly: a single `*.lms.example.com`
 record does not cover `coffee.api.lms.example.com` once `api.lms.example.com` has its own

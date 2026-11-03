@@ -3,7 +3,6 @@
 namespace Database\Seeders\Demo\Support;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use RuntimeException;
 use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
@@ -56,7 +55,6 @@ class TopicFactoryHelper
     private TopicRepositoryContract $topics;
     private TopicResourceRepositoryContract $resources;
     private GiftQuestionServiceContract $questions;
-    private ?bool $storageReachable = null;
 
     public function __construct(
         TopicRepositoryContract $topics,
@@ -100,53 +98,7 @@ class TopicFactoryHelper
         }
         $request->setValidator(Validator::make($request->all(), $request->rules()));
 
-        if ($type === 'image') {
-            // Image reads its dimensions back from Storage::url()
-            return $this->withReachableStorageUrl(fn () => $this->topics->createFromRequest($request));
-        }
-
         return $this->topics->createFromRequest($request);
-    }
-
-    /**
-     * The Image topic reads the uploaded file back over HTTP from the disk's
-     * public URL. Inside the dev containers that host (storage.localhost)
-     * resolves to the container itself, so while the topic is created the
-     * disk URL points at the S3 endpoint instead. Only the stored path is
-     * persisted, so nothing keeps the internal URL.
-     */
-    private function withReachableStorageUrl(callable $callback)
-    {
-        $disk = config('filesystems.default');
-        $url = config("filesystems.disks.$disk.url");
-        $endpoint = config("filesystems.disks.$disk.endpoint");
-        $bucket = config("filesystems.disks.$disk.bucket");
-        if (!$url || !$endpoint || !$bucket || $this->reachable($url)) {
-            return $callback();
-        }
-        config(["filesystems.disks.$disk.url" => rtrim($endpoint, '/') . '/' . $bucket]);
-        Storage::forgetDisk($disk);
-        try {
-            return $callback();
-        } finally {
-            config(["filesystems.disks.$disk.url" => $url]);
-            Storage::forgetDisk($disk);
-        }
-    }
-
-    private function reachable(string $url): bool
-    {
-        if ($this->storageReachable === null) {
-            $host = parse_url($url, PHP_URL_HOST);
-            $port = parse_url($url, PHP_URL_PORT) ?: (parse_url($url, PHP_URL_SCHEME) === 'https' ? 443 : 80);
-            $socket = @fsockopen((string) $host, (int) $port, $errno, $error, 2);
-            $this->storageReachable = $socket !== false;
-            if ($socket) {
-                fclose($socket);
-            }
-        }
-
-        return $this->storageReachable;
     }
 
     /**

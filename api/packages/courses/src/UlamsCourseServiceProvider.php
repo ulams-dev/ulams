@@ -2,6 +2,7 @@
 
 namespace Ulams\Courses;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Models\Topic;
 use Ulams\Courses\Observers\LessonObserver;
@@ -43,6 +44,13 @@ use Spatie\ResponseCache\ResponseCacheServiceProvider;
 
 class UlamsCourseServiceProvider extends ServiceProvider
 {
+    /** Morph aliases of the models of this package (see Ulams\Core\Support\MorphMap); tests of packages that only use the models register them too. */
+    public const MORPH_ALIASES = [
+        'course' => \Ulams\Courses\Models\Course::class,
+        'lesson' => \Ulams\Courses\Models\Lesson::class,
+        'topic' => \Ulams\Courses\Models\Topic::class,
+    ];
+
     public $singletons = [
         CourseH5PProgressRepositoryContract::class => CourseH5PProgressRepository::class,
         CourseProgressRepositoryContract::class => CourseProgressRepository::class,
@@ -84,6 +92,8 @@ class UlamsCourseServiceProvider extends ServiceProvider
 
     public function register()
     {
+        MorphMap::register(self::MORPH_ALIASES);
+
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'ulams_courses');
         $this->mergeConfigFrom(__DIR__ . '/../config/responsecache.php', 'responsecache');
 

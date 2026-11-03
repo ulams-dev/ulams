@@ -1,0 +1,9 @@
+{
+  "props": {
+    "assignmentId": "01JBCDEFGHJKMNPQRSTVWXYZ01",
+    "prompt": "Explain in your own words why a finer grind tastes more bitter."
+  },
+  "invalid": {
+    "prompt": "Missing the assignment"
+  }
+}

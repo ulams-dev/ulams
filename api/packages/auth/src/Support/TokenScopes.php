@@ -15,14 +15,14 @@ final class TokenScopes
 {
     public const AREAS = [
         'courses', 'users', 'enrolments', 'settings', 'events', 'certificates', 'commerce',
-        'reports', 'lti', 'builder', 'living-course', 'learner', 'tokens', 'platform',
+        'reports', 'lti', 'builder', 'living-course', 'learner', 'tokens', 'webhooks', 'platform', 'identity',
     ];
 
     /** @var array<string,list<string>> */
     public const PRESETS = [
         'read-only' => [
             'courses:read', 'users:read', 'enrolments:read', 'settings:read', 'events:read', 'certificates:read',
-            'commerce:read', 'reports:read', 'lti:read', 'builder:read', 'living-course:read', 'learner:read', 'tokens:read',
+            'commerce:read', 'reports:read', 'lti:read', 'builder:read', 'living-course:read', 'learner:read', 'tokens:read', 'webhooks:read',
         ],
         'author' => ['courses:write', 'builder:write', 'living-course:write', 'reports:read'],
         'admin' => ['*'],
@@ -151,7 +151,7 @@ final class TokenScopes
     }
 
     /**
-     * @return array{area:string,write:bool}|null null: the route is not in the map (deny)
+     * @return array{area:string,write:bool,resource:array{param:string,prefix?:string,optional?:bool}|null}|null null: the route is not in the map (deny)
      */
     public static function requirement(string $uri, string $method): ?array
     {
@@ -171,7 +171,7 @@ final class TokenScopes
                 default => !in_array($method, ['GET', 'HEAD', 'OPTIONS'], true),
             };
 
-            return ['area' => $area, 'write' => $write];
+            return ['area' => $area, 'write' => $write, 'resource' => $options['resource'] ?? null];
         }
 
         return null;

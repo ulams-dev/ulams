@@ -1,6 +1,5 @@
 # Topic Type GIFT
 
-
 ## What does it do
 
 This package is another [TopicType](https://github.com/EscolaLMS/topic-types). It is used to make knowledge tests.
@@ -112,7 +111,6 @@ H --> K[End]
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests.
-Test details [![codecov](https://codecov.io/gh/Ulams/Topic-Type-GIFT/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Topic-Type-GIFT)
 
 ## Events
 

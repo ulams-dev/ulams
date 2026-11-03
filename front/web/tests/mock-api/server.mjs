@@ -1,0 +1,1157 @@
+/**
+ * Mock tenant API for the CI accessibility suite (`yarn workspace @ulams/web test:a11y`).
+ *
+ * Serves the captured "coffee" demo fixtures plus a small quiz, so the reference frontend can be
+ * built and scanned with axe without PHP, Postgres or Docker. Anything it does not know answers
+ * 404 JSON; the pages treat optional data as missing. Not a model of the real API: only the
+ * shapes the learner pages read.
+ */
+import { createServer } from "node:http";
+import { Buffer } from "node:buffer";
+import { clearTimeout, setTimeout } from "node:timers";
+import { createHash, randomBytes } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { codeExerciseTopics, launchOf } from "./code-exercises.mjs";
+import { createVariantMock } from "./variants.mjs";
+
+const fixture = (name) => JSON.parse(readFileSync(fileURLToPath(new URL(`../fixtures/${name}.json`, import.meta.url)), "utf8"));
+const coffee = fixture("coffee");
+// Two tenants share the content: "coffee" has the light theme, "nightsky" the dark one. The web server reaches
+// the API through ULAMS_API_INTERNAL_ORIGIN and names the tenant in X-Ulams-Api-Host.
+// "polski" is the coffee academy with Polish as the tenant default language (account pages follow it, ADR 0106)
+const nightskySettings = fixture("nightsky").settings;
+const settingsByTenant = {
+  coffee: coffee.settings,
+  nightsky: fixture("nightsky").settings,
+  // "zhongwen" is the same academy with Chinese as the tenant default (P5R-1)
+  zhongwen: { ...coffee.settings, global: { ...coffee.settings.global, language: "zh" } },
+  // and the dark academy (nightsky theme) in Polish and Chinese
+  nocpl: { ...nightskySettings, global: { ...nightskySettings.global, language: "pl" } },
+  noczh: { ...nightskySettings, global: { ...nightskySettings.global, language: "zh" } },
+  polski: { ...coffee.settings, global: { ...coffee.settings.global, language: "pl", accessibilityEmail: "dostepnosc@coffee.test", accessibilityUpdated: "2026-10-01", accessibilityNotes: "Nagrania z kursu o kawie nie mają jeszcze napisów.\n\nPracujemy nad tym." } },
+};
+// P5R-2: two academies with a logo, served by this mock (a PNG with alt text on the light theme, an SVG without alt on the dark one)
+const MOCK_ORIGIN = `http://127.0.0.1:${process.env.MOCK_API_PORT ?? 4390}`;
+const LOGO_PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAHgAAAAoCAIAAAC6iKlyAAAAZklEQVR4nO3QAQkAIADAMCOYxP4RjGULhTt4gLOx59KFxvODTwINuhVo0K1Ag24FGnQr0KBbgQbdCjToVqBBtwINuhVo0K1Ag24FGnQr0KBbgQbdCjToVqBBtwINuhVo0K1Ag251ABJ5MZ6sHCDnAAAAAElFTkSuQmCC", "base64");
+const LOGO_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="120" height="40"><rect width="120" height="40" rx="6" fill="#ffd23f"/><text x="10" y="26" font-family="sans-serif" font-size="16" fill="#13153a">Night Sky</text></svg>';
+settingsByTenant.brandl = { ...coffee.settings, theme: { ...coffee.settings.theme, logo: `${MOCK_ORIGIN}/storage/theme/logo.png`, logoAlt: "The Coffee Atlas, home" } };
+settingsByTenant.brandd = { ...nightskySettings, theme: { ...nightskySettings.theme, logo: `${MOCK_ORIGIN}/storage/theme/logo.svg` } };
+const program = fixture("coffee-program");
+// On these tenants the course has no language of its own, so the learner pages follow the tenant default
+// language (ADR 0106); on the others the course says "en" and the pages stay English.
+const LANGUAGELESS = new Set(["polski", "zhongwen", "nocpl", "noczh"]);
+// "brandl" sells the course (price in minor units, as the real API returns it); every other mock academy gives it away
+const courseFor = (tenant, course) => {
+  const base = LANGUAGELESS.has(tenant) ? { ...course, language: null } : course;
+  return tenant === "brandl" ? { ...base, product: coffee.course.product } : base;
+};
+
+const QUIZ_TOPIC_ID = 900;
+const quizTopic = {
+  id: QUIZ_TOPIC_ID,
+  title: "Check your understanding",
+  lesson_id: program.lessons[0].id,
+  active: true,
+  preview: false,
+  order: 99,
+  topicable_id: 1,
+  topicable_type: "Ulams\\TopicTypes\\Models\\TopicContent\\GiftQuiz",
+  topicable: { id: 1, value: "", max_attempts: 3, max_execution_time: 10, min_pass_score: 1, score: 2 },
+};
+// A Layout topic with a practice activity: the lesson view's "hints shown at the start" applies to it
+const PRACTICE_TOPIC_ID = 901;
+const practiceTopic = {
+  id: PRACTICE_TOPIC_ID,
+  title: "Dial in a pour-over",
+  lesson_id: program.lessons[0].id,
+  active: true,
+  preview: false,
+  order: 100,
+  topicable_id: 1,
+  topicable_type: "Ulams\\TopicTypeLayout\\Models\\LayoutTopic",
+  topicable: {
+    document: [
+      {
+        component: "PracticeActivity",
+        id: "practice-1",
+        props: {
+          title: "Pour-over practice",
+          intro: "Dial in a pour-over by changing one thing at a time.",
+          toolbox: [{ label: "Brew ratio chart", text: "1:16 is a good start." }],
+          challenges: [
+            {
+              id: "c1",
+              level: 1,
+              prompt: "The cup tastes sour. What do you change first?",
+              hints: [
+                { tier: "nudge", text: "Sour usually means under-extracted." },
+                { tier: "pointer", text: "Look at the grind size." },
+                { tier: "near_solution", text: "Grind a little finer." },
+              ],
+              options: [
+                { label: "Grind finer", correct: true, feedback: "A finer grind extracts more." },
+                { label: "Use cooler water", correct: false, feedback: "Cooler water extracts less." },
+              ],
+              workedSolution: "Grind finer and brew again.",
+            },
+          ],
+        },
+      },
+    ],
+    markdown_fallback: "Practice: dial in a pour-over.",
+  },
+};
+program.lessons[0].topics = [...program.lessons[0].topics, quizTopic, practiceTopic, ...codeExerciseTopics];
+
+const questions = [
+  { id: 1, type: "multiple_choice", score: 1, order: 1, title: null, question: "Which species is called Robusta?", options: { answers: ["Coffea arabica", "Coffea canephora", "Coffea liberica"] } },
+  { id: 2, type: "true_false", score: 1, order: 2, title: null, question: "Arabica grows best at high altitude.", options: [] },
+];
+const attempt = (ended = false) => ({
+  id: 1,
+  topic_gift_quiz_id: 1,
+  started_at: new Date().toISOString(),
+  end_at: null,
+  max_score: 2,
+  min_pass_score: 1,
+  result_score: ended ? 2 : null,
+  is_ended: ended,
+  questions,
+  answers: [],
+});
+
+const topics = program.lessons.flatMap((l) => l.topics);
+// AI content labelling: the roast-curve lesson was applied from a builder session
+for (const t of topics) if (t.id === 8) t.ai_assisted = true;
+const progressRows = topics.map((t, i) => ({ id: i + 1, topic_id: t.id, status: i < 2 ? 1 : 0, seconds: i < 2 ? 120 : 0 }));
+const me = { id: 7, first_name: "Demo", last_name: "Student", email: "student@coffee.example", roles: ["student"] };
+
+// Learner Insights: the "Extra help for you" items of a lesson. State is kept per tenant (the web server names the
+// tenant in X-Ulams-Api-Host), so the desktop and phone projects can change their own copy at the same time.
+//   topic 3  ready: an explanation with a worked example, and a practice item with a question and an open question
+//   topic 6  ready, for the "This helped" journey      topic 11  ready, for the "Hide" journey
+//   topic 18 still generating                          every other topic: the module is on and nothing is offered
+const ulid = (n) => `01JBCDEFGHJKMNPQRSTVWXYZ${String(n).padStart(2, "0")}`;
+const FRAGMENTS = [
+  { fragmentId: "frg_aaaaaaaaaaaa", label: "Arabica vs Robusta: the two species" },
+  { fragmentId: "frg_bbbbbbbbbbbb", label: "Arabica vs Robusta: growing conditions" },
+];
+const AI_LABEL = "AI-generated, based on this course's sources";
+const PRACTICE = {
+  stem: "Which species is usually grown at higher altitude?",
+  options: [
+    { text: "Coffea arabica", correct: true },
+    { text: "Coffea canephora", correct: false },
+    { text: "Neither: altitude does not matter", correct: false },
+  ],
+  explanation: "Arabica prefers cool, high ground; Robusta tolerates heat and lower altitude.",
+};
+const block = (component, props, citations = ["frg_aaaaaaaaaaaa"]) => ({ component, props, citations });
+const item = (n, kind, summary, blocks, extra = {}) => ({
+  assignmentId: ulid(n),
+  kind,
+  status: "ready",
+  reasons: ["You answered this question wrongly 2 times", "This part of the course has been hard for other learners too"],
+  why: "You answered this question wrongly 2 times",
+  feedback: null,
+  document: { summary, blocks },
+  citations: FRAGMENTS,
+  aiLabel: AI_LABEL,
+  ...extra,
+});
+const supportSeed = () => ({
+  3: [
+    item(1, "explanation", "Two species, two sets of needs: a short explanation and a worked example.", [
+      block("Prose", { title: "Another way to see it", markdown: "**Arabica** is grown high, in cool air, and tastes sweeter. **Robusta** tolerates heat and carries more caffeine.\n\n- Arabica: altitude, mild climate\n- Robusta: lowlands, warm climate" }, ["frg_aaaaaaaaaaaa", "frg_bbbbbbbbbbbb"]),
+      block("WorkedExample", { title: "Choosing a species for a farm", markdown: "Step 1. The farm sits at 1 600 m with cool nights.\n\nStep 2. Cool, high ground suits Arabica.\n\nStep 3. Plant Arabica." }, ["frg_bbbbbbbbbbbb"]),
+    ]),
+    item(2, "practice", "One question to try, and one to answer in your own words.", [
+      block("PracticeQuestion", { title: "Try it yourself", markdown: "Use what the two species need.", practice: PRACTICE }),
+      block("ElaborativeQuestion", { title: "Say it in your own words", markdown: "Why does altitude change how a coffee tastes?" }, ["frg_bbbbbbbbbbbb"]),
+    ]),
+  ],
+  6: [item(3, "explanation", "A short explanation of how the cherry is processed.", [block("Prose", { title: "Another way to see it", markdown: "Processing removes the fruit around the seed before it is dried." })])],
+  11: [item(4, "explanation", "A short explanation of the brew ratio.", [block("Prose", { title: "Another way to see it", markdown: "A 1:16 ratio means 1 g of coffee for every 16 g of water." })])],
+  18: [{ ...item(5, "explanation", "", []), status: "generating", document: null, citations: [], aiLabel: undefined }],
+});
+const supportState = new Map();
+const supportOf = (tenant) => {
+  if (!supportState.has(tenant)) supportState.set(tenant, supportSeed());
+  return supportState.get(tenant);
+};
+// Feynman reflection: five answers a day per tenant, the sixth is refused (429); text containing "AI-OFF" gets 503
+const REFLECTIONS_PER_DAY = 5;
+const reflectionCount = new Map();
+const findAssignment = (tenant, id) => Object.values(supportOf(tenant)).flat().find((i) => i.assignmentId === id);
+
+// Learner Insights presentation profile (the lesson view). "nightsky" has adaptive presentation on and derives parts
+// with two hints shown at the start because lessons were hard; "coffee" has it off, so only the learner's own choices
+// apply. Choices are kept per tenant like the support items (reset with /__mock/reset).
+const PRESENTATION_DEFAULT = { density: "comfortable", chunking: "whole", navigation: "overview", hints: 0 };
+const PRESENTATION_OPTIONS = { density: ["comfortable", "compact"], chunking: ["whole", "steps"], navigation: ["overview", "linear"], hints: [0, 1, 2, 3] };
+const presentationDerived = (tenant) => (tenant === "nightsky" ? { ...PRESENTATION_DEFAULT, chunking: "steps", hints: 2 } : { ...PRESENTATION_DEFAULT });
+const presentationOverrides = new Map();
+const presentationOf = (tenant) => {
+  const overrides = presentationOverrides.get(tenant) ?? {};
+  const adaptive = tenant === "nightsky";
+  const derived = presentationDerived(tenant);
+  return {
+    adaptive,
+    profile: { ...PRESENTATION_DEFAULT, ...(adaptive ? derived : {}), ...overrides },
+    derived,
+    overrides,
+    why: adaptive ? ["Two lessons in this module were hard"] : [],
+  };
+};
+const changePresentation = (tenant, body) => {
+  const overrides = { ...(presentationOverrides.get(tenant) ?? {}) };
+  for (const [key, value] of Object.entries(body ?? {})) {
+    if (!(key in PRESENTATION_OPTIONS)) continue;
+    if (value === null) delete overrides[key];
+    else if (PRESENTATION_OPTIONS[key].includes(value)) overrides[key] = value;
+  }
+  presentationOverrides.set(tenant, overrides);
+  return presentationOf(tenant);
+};
+
+// Course tutor: on, 29 of 30 questions left, one earlier conversation; every question gets the same cited answer.
+// The `nightsky` tenant has streaming switched off (the operator switch), so its widget uses the plain request.
+const tutorStatus = { enabled: true, aiEnabled: true, remaining: 29, dailyLimit: 30, attemptActive: false };
+const tutorAnswer = {
+  conversationId: "01JMOCKCONVERSATION00000A",
+  messageId: "01JMOCKMESSAGE000000000A",
+  answer: "Robusta is *Coffea canephora*. It grows at lower altitudes than Arabica and has more caffeine.\n\n- Hardier plant\n- Stronger, more bitter cup",
+  citations: [{ chunkId: "c1", label: "Species and altitude", topicId: 3, fragmentIds: [] }],
+  refusal: "none",
+  inScope: true,
+  remaining: 28,
+  label: "AI tutor · answers only from this course",
+};
+const RUN_OK = "01jmockrun00000000000000ok";
+const RUN_ERROR = "01jmockrun0000000000000err";
+const RUN_GONE = "01jmockrun000000000000gone";
+const TUTOR_EVENTS = (runId) =>
+  runId === RUN_ERROR
+    ? [{ type: "RUN_STARTED", runId }, { type: "RUN_ERROR", code: "error", message: "The tutor could not answer. Please ask again.", runId }]
+    : [
+        { type: "RUN_STARTED", runId },
+        { type: "TEXT_MESSAGE_START", messageId: "m", role: "assistant" },
+        { type: "TEXT_MESSAGE_CONTENT", messageId: "m", delta: "Robusta is Coffea canephora. " },
+        { type: "TEXT_MESSAGE_CONTENT", messageId: "m", delta: "It grows at lower altitudes." },
+        { type: "TEXT_MESSAGE_END", messageId: "m" },
+        { type: "CUSTOM", name: "tutor.final", value: { ...tutorAnswer, questionId: "01JMOCKQUESTION00000000A" } },
+        { type: "RUN_FINISHED", runId },
+      ];
+const tutorEarlier = { id: "01JMOCKEARLIER0000000000A", lastMessageAt: "2026-10-20T09:30:00+00:00", expiresAt: "2027-01-18T09:30:00+00:00" };
+
+// A second course the learner has finished, with its issued certificate (finish page, certificates list).
+const doneProgram = { ...program, id: 2, title: "Espresso basics", summary: "Pull a balanced shot." };
+const doneRows = topics.map((t, i) => ({ id: 100 + i, topic_id: t.id, status: 1, seconds: 60 }));
+const CERT_ID = "b3f1c2d4-1111-4222-8333-444455556666";
+const isoDay = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString();
+
+// My training: one overdue (course 1), one due soon, one completed with a certificate; a path with a locked step; skills.
+const assignments = [
+  { id: 1, user: null, course: { id: 1, title: program.title }, source: "manual", status: "overdue", assigned_at: isoDay(-40), due_at: isoDay(-3), completed_at: null, escalation_level: 1, certificate: null },
+  { id: 2, user: null, course: { id: 3, title: "Food safety" }, source: "rule", status: "assigned", assigned_at: isoDay(-5), due_at: isoDay(6), completed_at: null, escalation_level: 0, certificate: null },
+  { id: 3, user: null, course: { id: 2, title: "Espresso basics" }, source: "manual", status: "completed", assigned_at: isoDay(-90), due_at: isoDay(-60), completed_at: isoDay(-70), escalation_level: 0, certificate: { id: 9, certificate_id: CERT_ID, status: "valid", expires_at: isoDay(300) } },
+];
+const myPaths = [
+  { path_id: 1, title: "Barista onboarding", source: "rule", enrolled_at: isoDay(-30), due_at: null, completed_at: null, steps: [
+    { course_id: 2, title: "Espresso basics", status: "done", waiting_for: [] },
+    { course_id: 1, title: program.title, status: "available", waiting_for: [] },
+    { course_id: 3, title: "Food safety", status: "locked", waiting_for: [1] },
+  ] },
+];
+const mySkills = [
+  { competency_id: 1, name: "Espresso extraction", code: "BAR-1", area: "Barista", courses: [{ course_id: 2, title: "Espresso basics" }], earned_at: isoDay(-70), expires_at: isoDay(300) },
+  { competency_id: 2, name: "Cupping", code: "BAR-2", area: "Barista", courses: [{ course_id: 1, title: program.title }], earned_at: isoDay(-20), expires_at: null },
+  { competency_id: 3, name: "Allergen handling", code: null, area: null, courses: [{ course_id: 2, title: "Espresso basics" }], earned_at: null, expires_at: null },
+];
+const teamRows = [
+  { ...assignments[1], id: 11, user: { id: 21, name: "Ada Lovelace", email: "ada@coffee.example" }, status: "assigned" },
+  { ...assignments[0], id: 12, user: { id: 22, name: "Grace Hopper", email: "grace@coffee.example" } },
+];
+const certificates = [
+  { id: 9, title: "Espresso basics", certificate_id: CERT_ID, assignable_type: "Ulams\\Courses\\Models\\Course", assignable_id: 2, status: "valid", expires_at: isoDay(300), revoked_at: null, course_version: 2, created_at: isoDay(-70) },
+  { id: 8, title: "Latte art", certificate_id: "c3f1c2d4-1111-4222-8333-444455556666", assignable_type: "Ulams\\Courses\\Models\\Course", assignable_id: 4, status: "revoked", expires_at: null, revoked_at: isoDay(-10), course_version: 1, created_at: isoDay(-120) },
+];
+const verifyRecord = { certificate_id: CERT_ID, status: "valid", title: "Espresso basics", course_title: "Espresso basics", holder_name: "Demo Student", issued_at: isoDay(-70), expires_at: isoDay(300), revoked_at: null, issuer: "Coffee Atlas" };
+// the smallest valid one-page PDF
+const PDF = Buffer.from("%PDF-1.1\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 100]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n");
+
+/**
+ * Learner Insights analytics for the studio Insights page (/studio/courses/:id/insights). The course id picks the
+ * state: 1 full data (a withheld section, a rate without enough cases), 2 a group below the minimum, 3 no activity
+ * in the period, 4 individual data not allowed, 5 fails once and then works, 6 not allowed at all, 999 unknown.
+ * The `polski` tenant has the module switched off.
+ */
+const INSIGHTS_MIN = 10;
+// element keys of "Propose an improvement" (Course Builder element ids): the first succeeds, the others are refused
+const IMPROVE_QUESTION = "01arz3ndektsv4rrffq69g5fav";
+const IMPROVE_LIMIT = "01arz3ndektsv4rrffq69g5fa2";
+const IMPROVE_OFF = "01arz3ndektsv4rrffq69g5fa3";
+const IMPROVE_SESSION = `01s${"0".repeat(22)}1`;
+const IMPROVE_PROPOSAL = `01p${"0".repeat(22)}1`;
+const insightsTitles = { 1: "Coffee brewing basics", 2: "Cupping for beginners", 3: "Roasting 101", 4: "Espresso machines", 5: "Latte art", 6: "Barista secrets", 7: "Water and temperature", 9: "Brewing for every level", 10: "Brewing for every level (expert)", 12: "Milk steaming" };
+const insightsFails = new Map();
+const insightsSummary = (id, days) =>
+  id === 2
+    ? { courseId: 2, periodDays: days, minGroupSize: INSIGHTS_MIN, enrolled: 6, smallGroup: true }
+    : {
+        courseId: id,
+        periodDays: days,
+        minGroupSize: INSIGHTS_MIN,
+        enrolled: 48,
+        smallGroup: false,
+        learners: { enrolled: 48, active: id === 3 ? 0 : 31, completed: id === 3 ? 0 : 12, completionRate: id === 3 ? 0 : 0.25 },
+        quiz: id === 3 ? { attempts: 0, averageScore: null, passRate: null } : { attempts: 57, averageScore: 0.68, passRate: 0.61 },
+        statuses: { on_track: 36, struggling: 8, at_risk: 4 },
+        nudges: { sent: 9, suppressed: 3, opened: 5, recoveryRate: null },
+        remediation: { shown: 22, helpful: 14, notHelpful: 3, recoveryRate: 0.64 },
+      };
+const insightsElements = (id, days) => ({
+  courseId: id,
+  periodDays: days,
+  minGroupSize: INSIGHTS_MIN,
+  elements:
+    id === 3
+      ? []
+      : [
+          { elementKey: "question:3", label: "2.3 Question 3: Which ratio suits a V60?", hidden: false, activeLearners: 29, struggleRate: 0.41, remediationRate: 0.34, recoveryRate: 0.58, topReasons: [{ rule: "failed_attempts", count: 12 }, { rule: "slow_element", count: 4 }] },
+          { elementKey: "topic:12", label: "3.1 Grinding for espresso", hidden: false, activeLearners: 18, struggleRate: 0.17, remediationRate: 0.06, recoveryRate: null, topReasons: [{ rule: "repetition", count: 3 }] },
+          { elementKey: "topic:14", label: "4.2 Milk texture", hidden: false, activeLearners: 12, struggleRate: 0, remediationRate: 0, recoveryRate: null, topReasons: [] },
+          { elementKey: "topic:15", label: "4.3 Pouring a rosetta", hidden: true, reason: "not_enough_learners" },
+          // Course Builder elements: "Propose an improvement" works for them (the last two end in a refusal, see improveRoutes)
+          { elementKey: IMPROVE_QUESTION, label: "2.1 Question 1: Which statement matches the source?", hidden: false, activeLearners: 42, struggleRate: 0.38, remediationRate: 0.2, recoveryRate: null, topReasons: [{ rule: "failed_attempts", count: 16 }], improvable: true },
+          { elementKey: IMPROVE_LIMIT, label: "2.2 Question 2: Why does grind size matter?", hidden: false, activeLearners: 24, struggleRate: 0.22, remediationRate: 0.1, recoveryRate: null, topReasons: [{ rule: "failed_attempts", count: 5 }], improvable: true },
+          { elementKey: IMPROVE_OFF, label: "2.4 Question 4: Which temperature?", hidden: false, activeLearners: 15, struggleRate: 0.2, remediationRate: 0, recoveryRate: null, topReasons: [], improvable: true },
+        ],
+});
+const insightsLearners = [
+  { userId: 21, name: "Ada Lovelace", status: "struggling", since: isoDay(-3), reasons: ["3 failed attempts on 2.3 Question 3"] },
+  { userId: 22, name: "Grace Hopper", status: "at_risk", since: isoDay(-9), reasons: ["9 days without activity in this course"] },
+];
+const insightsTimeline = [
+  { at: isoDay(-1), type: "quiz.answer", element: "2.3 Question 3", value: 0, data: { question_id: 3, correct: false }, source: "gift" },
+  { at: isoDay(-2), type: "topic.opened", element: "2.3 Water and ratio", value: null, data: { revisit: true }, source: "progress" },
+];
+const insightsId = (match) => Number(match[1]);
+const insightsGate = (id, tenant, what) => {
+  if (id === 6) return { __status: 403, message: "This action is unauthorized." };
+  if (id === 5 && what === "summary") {
+    const key = `${tenant}:5`;
+    if (!insightsFails.get(key)) {
+      insightsFails.set(key, true);
+      return { __status: 500, message: "Insights are temporarily unavailable." };
+    }
+  }
+  return null;
+};
+const insightsRoutes = [
+  // test control: course 5 fails its next summary request again (every tenant has its own state)
+  ["POST", /^\/__mock\/insights\/reset$/, ({ tenant }) => (insightsFails.delete(`${tenant}:5`), { reset: true })],
+  ["GET", /^\/api\/learner-insights\/me$/, ({ tenant }) => ({ enabled: tenant !== "polski", settings: { enabled: true, help: true, nudges: true, consent: null }, requiresConsent: false, courses: [], retention: { signalsDays: 180, historyDays: 365 } })],
+  ["GET", /^\/api\/admin\/courses\/(\d+)$/, ({ match }) => (insightsTitles[match[1]] ? { id: Number(match[1]), title: insightsTitles[match[1]] } : { __status: 404, message: "Not found" })],
+  ["GET", /^\/api\/admin\/learner-insights\/courses\/(\d+)\/summary$/, ({ match, query, tenant }) => insightsGate(insightsId(match), tenant, "summary") ?? insightsSummary(insightsId(match), Number(query.get("period") ?? 30))],
+  ["GET", /^\/api\/admin\/learner-insights\/courses\/(\d+)\/elements$/, ({ match, query, tenant }) => insightsGate(insightsId(match), tenant, "elements") ?? insightsElements(insightsId(match), Number(query.get("period") ?? 30))],
+  ["GET", /^\/api\/admin\/learner-insights\/courses\/(\d+)\/learners$/, ({ match }) => (insightsId(match) === 4 ? { __status: 403, message: "This action is unauthorized." } : insightsLearners)],
+  ["GET", /^\/api\/admin\/learner-insights\/learners\/(\d+)\/courses\/(\d+)\/timeline$/, ({ match }) => (Number(match[2]) === 4 ? { __status: 403, message: "This action is unauthorized." } : insightsTimeline)],
+];
+
+/**
+ * "Propose an improvement" (ADR 0181) and the review of the proposal it creates, per tenant: the estimate and the
+ * aggregated evidence first, then a proposal of kind `insights` (no source revision) that the studio review screen
+ * opens on the Course Builder session and the Living Course proposal routes below.
+ */
+const improveEvidence = { periodDays: 30, learners: 42, minGroupSize: 10, struggleRate: 0.38, remediationRate: 0.2, recoveryRate: null, helpfulShare: 0.75, topReasons: [{ rule: "failed_attempts", count: 16 }, { rule: "slow_element", count: 4 }], wrongOptions: [{ optionId: "opt-b", label: "Brew with boiling water.", share: 0.38 }, { optionId: "other", label: "", share: 0.12 }], tutorOutOfScope: 3 };
+const improveProposals = new Map();
+const improveItem = (status) => ({
+  id: `01i${"0".repeat(22)}1`, groupKey: "lesson:l1", elementId: IMPROVE_QUESTION, type: "question", label: "Lesson 2.1 › Q1", kind: "update", reason: "Adds what the source says right here, as many learners get stuck on this.", severity: "major",
+  before: { id: IMPROVE_QUESTION, type: "single", stem: "Which statement matches what the source says?", explanation: "Because.", options: [{ id: "opt-a", text: "Brewing coffee is extraction.", correct: true }, { id: "opt-b", text: "Brew with boiling water.", correct: false }] },
+  after: { id: IMPROVE_QUESTION, type: "single", stem: "Which statement matches what the source says about extraction?", explanation: "The source states: brewing coffee is extraction, hot water dissolving compounds from the ground coffee.", options: [{ id: "opt-a", text: "Brewing coffee is extraction.", correct: true }, { id: "opt-b", text: "Brew with boiling water.", correct: false }] },
+  changeClass: "minor", answerStatus: "unchanged", answerCheck: false, status, flags: {}, regenerations: 0, fragments: [{ fragmentId: "frg_aaaaaaaaaaa2", label: "§1.1 What extraction means" }], changeIds: [], decidedAt: null,
+});
+const improveDetail = (state) => {
+  const items = [improveItem(state.item)];
+  const decisions = {};
+  for (const i of items) decisions[i.status] = (decisions[i.status] ?? 0) + 1;
+  return {
+    id: IMPROVE_PROPOSAL, number: 3, sessionId: IMPROVE_SESSION, sourceId: null, kind: "insights", status: state.status, trigger: "insights",
+    counts: { items: 1, elements: 1, remaps: 0, uncovered: 0, major: 1, answerChecks: 0, groups: 1, targetElementId: IMPROVE_QUESTION, targetLabel: "Lesson 2.1 › Q1" }, evidence: improveEvidence,
+    fromRevision: null, toRevision: null, runId: null, baseVersionId: "v1", resultVersionId: state.status === "applied" ? "v2" : null, estimatedCostMicroUsd: 120000, costMicroUsd: 98000,
+    decisions, learnerNote: null, error: null, createdAt: isoDay(0), decidedAt: null, appliedAt: state.status === "applied" ? isoDay(0) : null,
+    learnerImpact: { learners: { topic_updated: 0, question_reattempt: 0, topic_retired: 0, course_extended: 0 }, note: "" }, steps: [],
+    groups: [{ key: "lesson:l1", label: "Lesson 2.1: What extraction means", items }], items,
+  };
+};
+const improveSummary = (state) => {
+  const { groups: _g, items: _i, steps: _s, learnerImpact: _l, ...rest } = improveDetail(state);
+  return rest;
+};
+const improveOf = (tenant) => improveProposals.get(tenant);
+const improveRoutes = [
+  ["POST", /^\/__mock\/improve\/reset$/, ({ tenant }) => (improveProposals.delete(tenant), { reset: true })],
+  ["POST", /^\/api\/admin\/learner-insights\/courses\/(\d+)\/elements\/([^/]+)\/improve$/, ({ match, body, tenant }) => {
+    const key = decodeURIComponent(match[2]);
+    if (key === IMPROVE_OFF) return { __status: 503, code: "ai_disabled", message: "AI is disabled on this installation." };
+    if (key === IMPROVE_LIMIT && body?.confirmEstimate) return { __status: 429, code: "daily_limit", message: "This course already has 3 improvement proposals from learner insights today." };
+    if (key !== IMPROVE_QUESTION && key !== IMPROVE_LIMIT) return { __status: 404, code: "not_builder_element", message: "This part of the course was not built with the Course Builder." };
+    const existing = improveOf(tenant);
+    if (existing && key === IMPROVE_QUESTION) return { state: "kept_existing", proposal: improveSummary(existing) };
+    if (!body?.confirmEstimate) return { state: "estimate", estimateMicroUsd: 120000, estimateUsd: 0.12, label: "Lesson 2.1 › Q1", elements: 1, evidence: improveEvidence };
+    const state = { status: "ready", item: "pending" };
+    improveProposals.set(tenant, state);
+    return { state: "started", runId: null, estimateMicroUsd: 120000, message: null, proposal: improveSummary(state) };
+  }],
+  ["GET", new RegExp(`^/api/admin/course-builder/sessions/${IMPROVE_SESSION}$`), () => ({
+    session: { id: IMPROVE_SESSION, title: "Coffee brewing basics", status: "applied", courseId: 1, currentVersionId: "v1", appliedVersionId: "v1" },
+    brief: null, briefRows: [], cost: { usedMicroUsd: 0, budgetMicroUsd: 5000000, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0, calls: 0 }, sources: [],
+    aiEnabled: true, profiles: { default: "default", light: "light" }, budgetReached: false, activeRunId: null, canUndo: false, canRedo: false, links: {},
+  })],
+  ["GET", new RegExp(`^/api/admin/living-course/sessions/${IMPROVE_SESSION}/proposals$`), ({ tenant }) => (improveOf(tenant) ? [improveSummary(improveOf(tenant))] : [])],
+  ["GET", new RegExp(`^/api/admin/living-course/sessions/${IMPROVE_SESSION}/sources$`), () => []],
+  ["GET", new RegExp(`^/api/admin/living-course/proposals/${IMPROVE_PROPOSAL}$`), ({ tenant }) => (improveOf(tenant) ? improveDetail(improveOf(tenant)) : { __status: 404, message: "Proposal not found." })],
+  ["POST", new RegExp(`^/api/admin/living-course/proposals/${IMPROVE_PROPOSAL}/items/[0-9a-z]{26}/(accept|reject|reset)$`), ({ tenant, match }) => {
+    const state = improveOf(tenant);
+    if (!state) return { __status: 404, message: "Proposal not found." };
+    state.item = { accept: "accepted", reject: "rejected", reset: "pending" }[match[1]];
+    return { item: improveItem(state.item), proposal: improveSummary(state) };
+  }],
+  ["POST", new RegExp(`^/api/admin/living-course/proposals/${IMPROVE_PROPOSAL}/apply$`), ({ tenant }) => {
+    const state = improveOf(tenant);
+    if (!state) return { __status: 404, message: "Proposal not found." };
+    state.status = "applied";
+    return { runId: "run1", proposal: improveSummary(state) };
+  }],
+  ["POST", new RegExp(`^/api/admin/living-course/proposals/${IMPROVE_PROPOSAL}/reject$`), ({ tenant }) => {
+    const state = improveOf(tenant);
+    if (!state) return { __status: 404, message: "Proposal not found." };
+    state.status = "rejected";
+    state.item = "rejected";
+    return improveSummary(state);
+  }],
+];
+
+/**
+ * Update proposals of a course with a variant (ADR 0192, CV-5): one proposal for the base course and one for the variant
+ * "Expert", in one proposal group, on the Course Builder session below. Per tenant. Paragraph 1 is the same patch in both
+ * (the variant's item is marked `reusedFrom`), paragraph 2 exists only in the base proposal, paragraph 3 only in the variant's.
+ * `accept-in-group` accepts the item and, when it is still undecided there, its twin in the other proposal.
+ */
+const GROUP_SESSION = `01s${"0".repeat(22)}2`;
+const GROUP_ID = `01g${"0".repeat(22)}1`;
+const GROUP_BASE = `01p${"0".repeat(22)}2`;
+const GROUP_VARIANT = `01p${"0".repeat(22)}3`;
+const groupState = new Map();
+const groupOf = (tenant) => {
+  if (!groupState.has(tenant)) groupState.set(tenant, { [GROUP_BASE]: { 1: "pending", 2: "pending" }, [GROUP_VARIANT]: { 1: "pending", 3: "pending" } });
+  return groupState.get(tenant);
+};
+const groupItemId = (proposal, n) => `01${proposal === GROUP_BASE ? "i" : "j"}${"0".repeat(22)}${n}`;
+const groupItem = (proposal, n, status) => {
+  const shared = n === 1;
+  const text = shared ? "Use 16 g of coffee for every 250 ml." : n === 2 ? "Rinse the filter with hot water." : "Grind finer for espresso.";
+  return {
+    id: groupItemId(proposal, n), groupKey: "lesson:l1", elementId: `blk-${n}`, type: "block", label: `Lesson 1.1 › Paragraph ${n}`, kind: "update",
+    reason: shared ? "Section 3.2 changed the ratio." : "Section 4.1 changed the rinse.", severity: "minor",
+    before: { id: `blk-${n}`, kind: "paragraph", markdown: shared ? "Use 15 g of coffee for every 250 ml." : "Rinse the filter.", citations: ["frg_aaaaaaaaaaa1"] },
+    after: { id: `blk-${n}`, kind: "paragraph", markdown: text, citations: ["frg_aaaaaaaaaaa2"] },
+    changeClass: "minor", answerStatus: null, answerCheck: false, status, flags: shared && proposal === GROUP_VARIANT ? { reusedFrom: groupItemId(GROUP_BASE, 1) } : {}, regenerations: 0,
+    fragments: [{ fragmentId: "frg_aaaaaaaaaaa2", label: "§3.2 Ratios" }], changeIds: [1], decidedAt: null,
+  };
+};
+const groupItemsOf = (tenant, proposal) => Object.entries(groupOf(tenant)[proposal]).map(([n, status]) => groupItem(proposal, Number(n), status));
+const groupSummary = (tenant, proposal) => {
+  const items = groupItemsOf(tenant, proposal);
+  const decisions = {};
+  for (const i of items) decisions[i.status] = (decisions[i.status] ?? 0) + 1;
+  return {
+    id: proposal, number: proposal === GROUP_BASE ? 1 : 2, sessionId: GROUP_SESSION, sourceId: "01s000000000000000000src01", kind: "source", status: "ready", trigger: "manual",
+    variant: proposal === GROUP_BASE ? null : { id: "01v000000000000000000exp01", key: "expert", label: "Expert" }, proposalGroup: GROUP_ID,
+    counts: { items: items.length, elements: items.length, remaps: 0, uncovered: 0, major: 0, answerChecks: 0, groups: 1, source: { changed: 1, moved: 0, removed: 0, added: 0, trivial: 0, minor: 1, substantive: 0, total: 1 } }, evidence: null,
+    fromRevision: { id: "r1", number: 1 }, toRevision: { id: "r2", number: 2, detectedAt: null }, runId: null, baseVersionId: "v1", resultVersionId: null, estimatedCostMicroUsd: 120000, costMicroUsd: 98000,
+    decisions, learnerNote: null, error: null, createdAt: isoDay(0), decidedAt: null, appliedAt: null,
+  };
+};
+const groupDetail = (tenant, proposal) => {
+  const items = groupItemsOf(tenant, proposal);
+  const o = groupSummary(tenant, proposal === GROUP_BASE ? GROUP_VARIANT : GROUP_BASE);
+  return {
+    ...groupSummary(tenant, proposal),
+    siblings: [{ id: o.id, number: o.number, status: o.status, variant: o.variant, decisions: o.decisions }],
+    learnerImpact: { learners: { topic_updated: 12, question_reattempt: 0, topic_retired: 0, course_extended: 0 }, note: "Section 3.2 changed the ratio." }, steps: [],
+    groups: [{ key: "lesson:l1", label: "Lesson 1.1: Ratios", items }], items,
+  };
+};
+const groupRev = (n) => ({ id: `r${n}`, sourceId: "01s000000000000000000src01", number: n, origin: "upload", originRef: null, trigger: "manual", triggeredBy: 1, status: "ingested", fragmentCount: 3, tokens: 9, title: null, name: "brewing.md", files: null, counts: null, error: null, detectedAt: null, synced: n === 1, latest: n === 2 });
+const groupFragment = (text) => ({ fragmentId: "frg_aaaaaaaaaaa1", label: "§3.2 Ratios", section: "3.2", headingPath: ["Ratios"], file: null, text, pages: null });
+const groupRoutes = [
+  ["POST", /^\/__mock\/groups\/reset$/, ({ tenant }) => (groupState.delete(tenant), { reset: true })],
+  ["GET", new RegExp(`^/api/admin/course-builder/sessions/${GROUP_SESSION}$`), () => ({
+    session: { id: GROUP_SESSION, title: "Brewing for every level", status: "applied", courseId: 9, currentVersionId: "v1", appliedVersionId: "v1" },
+    brief: null, briefRows: [], cost: { usedMicroUsd: 0, budgetMicroUsd: 5000000, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0, calls: 0 }, sources: [],
+    aiEnabled: true, profiles: { default: "default", light: "light" }, budgetReached: false, activeRunId: null, canUndo: false, canRedo: false, links: {},
+  })],
+  ["GET", new RegExp(`^/api/admin/living-course/sessions/${GROUP_SESSION}/proposals$`), ({ tenant }) => [groupSummary(tenant, GROUP_VARIANT), groupSummary(tenant, GROUP_BASE)]],
+  ["GET", new RegExp(`^/api/admin/living-course/sessions/${GROUP_SESSION}/sources$`), () => []],
+  ["GET", /^\/api\/admin\/living-course\/revisions\/r2\/changes$/, () => ({
+    from: groupRev(1), to: groupRev(2), counts: null,
+    changes: [{ id: 1, kind: "changed", magnitude: "minor", similarity: 0.9, signals: [], wordDiff: [["=", "Use "], ["-", "15"], ["+", "16"], ["=", " g"]], old: groupFragment("Use 15 g"), new: groupFragment("Use 16 g") }],
+  })],
+  ["GET", new RegExp(`^/api/admin/living-course/proposals/(${GROUP_BASE}|${GROUP_VARIANT})$`), ({ tenant, match }) => groupDetail(tenant, match[1])],
+  ["POST", new RegExp(`^/api/admin/living-course/proposals/(${GROUP_BASE}|${GROUP_VARIANT})/items/([0-9a-z]{26})/(accept|reject|reset|accept-in-group)$`), ({ tenant, match }) => {
+    const [, proposal, itemId, action] = match;
+    const n = Number(itemId.slice(-1));
+    const state = groupOf(tenant);
+    if (!(n in state[proposal])) return { __status: 404, message: "Item not found." };
+    state[proposal][n] = { accept: "accepted", "accept-in-group": "accepted", reject: "rejected", reset: "pending" }[action];
+    const item = groupItem(proposal, n, state[proposal][n]);
+    if (action !== "accept-in-group") return { item, proposal: groupSummary(tenant, proposal) };
+    const other = proposal === GROUP_BASE ? GROUP_VARIANT : GROUP_BASE;
+    const twin = n === 1 && state[other][1] === "pending";
+    if (twin) state[other][1] = "accepted";
+    return { item, proposal: groupSummary(tenant, proposal), accepted: twin ? 1 : 0, proposals: twin ? [other] : [] };
+  }],
+];
+
+// Code exercises (ADR 0170): launches, and the attempts the lesson page reports, kept per tenant and topic
+const codeAttempts = new Map();
+const attemptsOf = (tenant, topic) => codeAttempts.get(`${tenant}:${topic}`) ?? [];
+const CODE_TOPICS = new Map(codeExerciseTopics.map((t) => [t.id, t]));
+const RUNNER_URL = `http://127.0.0.1:${process.env.MOCK_API_PORT ?? 4390}/runtime/code-runner/1/runner.html`;
+
+/**
+ * Course releases for the studio Versions page (/studio/courses/:id/versions, ADR 0192). The course id picks the state:
+ * 1 twenty-eight releases (two pages), 2 a course that was applied never (no release), 3 a course not made with the
+ * builder (404), 4 another author's course (403), 5 fails once and then works, 6 three releases.
+ */
+const versionsFails = new Map();
+const RELEASE_TRIGGERS = ["generate", "author", "chat", "update", "insights", "import", "restore"];
+const zero = { added: 0, changed: 0, removed: 0 };
+const releaseOf = (course, number) => ({
+  id: `01r${String(course).padStart(2, "0")}${String(number).padStart(21, "0")}`,
+  number,
+  trigger: RELEASE_TRIGGERS[(number - 1) % RELEASE_TRIGGERS.length],
+  versionId: `01v${String(course).padStart(2, "0")}${String(number).padStart(21, "0")}`,
+  versionNumber: number * 2,
+  reason: null,
+  previousReleaseId: number > 1 ? `01r${String(course).padStart(2, "0")}${String(number - 1).padStart(21, "0")}` : null,
+  courseId: course,
+  approvedBy: number % 5 === 0 ? null : { id: 7, name: "Demo Author" },
+  sourceRevisions: null,
+  summary: number === 1
+    ? { first: true, counts: { added: 24, changed: 0, removed: 0 }, lessons: { added: 6, changed: 0, removed: 0 }, questions: { added: 8, changed: 0, removed: 0 }, citationsChanged: 0, answerKeysChanged: 0 }
+    : { first: false, counts: { added: 0, changed: 2, removed: 0 }, lessons: { added: 0, changed: 1, removed: 0 }, questions: zero, citationsChanged: number % 3 === 0 ? 2 : 0, answerKeysChanged: number % 4 === 0 ? 1 : 0, moved: number % 6 === 0 ? 1 : 0, lessonsMoved: number % 6 === 0 ? 1 : 0 },
+  releasedAt: isoDay(-(40 - number)),
+});
+const versionsCount = { 1: 28, 2: 0, 5: 3, 6: 3, 7: 3, 9: 3, 10: 2, 12: 3 };
+const courseReleases = (id, query) => {
+  if (id === 3) return { __status: 404, message: "This course was not made with the Course Builder, so it has no releases. Adopt the course to track its versions." };
+  if (id === 4) return { __status: 403, message: "This builder session belongs to another author." };
+  const total = versionsCount[id];
+  if (total === undefined) return { __status: 404, message: "Not found" };
+  const perPage = Math.min(100, Math.max(1, Number(query.get("perPage") ?? 25)));
+  const page = Math.max(1, Number(query.get("page") ?? 1));
+  const numbers = Array.from({ length: total }, (_, i) => total - i).slice((page - 1) * perPage, page * perPage);
+  return { sessionId: `01s${"0".repeat(22)}${id}`, variantId: id === 10 ? VARIANT_ID : null, courseId: id, releases: numbers.map((n) => ({ ...releaseOf(id, n), variantId: id === 10 ? VARIANT_ID : null })), total, page, perPage };
+};
+
+/**
+ * Every version of a course's branch and the comparison of two of them (CV-3). Ids carry the course: a release is
+ * 01r<course><n>, its version 01v<course><n>, a rejected version 01x<course><n>, a proposal 01p<course><n>. Course 9 is a
+ * base with a variant whose own course is 10. Course 12 fails its first compare and then works; course 6 compares two
+ * releases without a change (1 and 2) or with one small one (1 and 3); every other course gets the rich payload.
+ */
+const VARIANT_ID = "01w00000000000000000000009";
+const idFor = (kind, course, n) => `01${kind}${String(course).padStart(2, "0")}${String(n).padStart(21, "0")}`;
+const parseId = (id) => {
+  const m = /^01([rvxp])(\d{2})(\d{21})$/.exec(id ?? "");
+  return m ? { kind: m[1], course: Number(m[2]), n: Number(m[3]) } : null;
+};
+const versionRowsOf = (course, variantId) => {
+  const count = versionsCount[course] ?? 0;
+  const rows = [];
+  for (let n = count; n >= 1; n--) {
+    rows.push({ id: idFor("v", course, n), number: 2 * n, kind: n === 1 ? "content" : "author", origin: n === 1 ? "ai" : "author", status: "approved", reason: null, variantId, releaseId: idFor("r", course, n), releaseNumber: n, createdAt: isoDay(-(40 - n)), decidedAt: isoDay(-(40 - n)) });
+    if (n % 3 === 0) rows.push({ id: idFor("x", course, n), number: 2 * n - 1, kind: "patch", origin: "ai", status: "rejected", reason: "Too long", variantId, releaseId: null, releaseNumber: null, createdAt: isoDay(-(40 - n) - 0.5), decidedAt: null });
+    if (n === count && count > 2) rows.push({ id: idFor("p", course, n), number: 2 * n + 1, kind: "patch", origin: "ai", status: "proposed", reason: "Shorter intro", variantId, releaseId: null, releaseNumber: null, createdAt: isoDay(-1), decidedAt: null });
+  }
+  return rows;
+};
+const courseVersionList = (id, query) => {
+  if (id === 3) return { __status: 404, message: "This course was not made with the Course Builder, so it has no versions. Adopt the course to track its versions." };
+  if (id === 4) return { __status: 403, message: "This builder session belongs to another author." };
+  if (versionsCount[id] === undefined) return { __status: 404, message: "Not found" };
+  const base = id === 10 ? 9 : id;
+  const hasVariants = base === 9;
+  const ownVariant = id === 10 ? VARIANT_ID : null;
+  const own = versionRowsOf(id, ownVariant);
+  const all = query.get("branch") === "all" && hasVariants ? [...versionRowsOf(9, null), ...versionRowsOf(10, VARIANT_ID)].sort((a, b) => b.number - a.number) : own;
+  const perPage = Math.min(200, Math.max(1, Number(query.get("perPage") ?? 100)));
+  const page = Math.max(1, Number(query.get("page") ?? 1));
+  return {
+    sessionId: `01s${"0".repeat(22)}${base}`, variantId: ownVariant, courseId: id, baseCourseId: base,
+    versions: all.slice((page - 1) * perPage, page * perPage),
+    variants: hasVariants ? [{ id: VARIANT_ID, key: "expert", label: "Expert", level: "expert", role: null, status: "approved", courseId: 10 }] : [],
+    total: all.length, page, perPage,
+  };
+};
+
+const NODE = {
+  m1: { id: "mod_1", type: "module", label: "Module 1", title: "Water and brewing" },
+  m2: { id: "mod_2", type: "module", label: "Module 2", title: "Grinding" },
+  l1: { id: "les_1", type: "lesson", label: "Lesson 1.1", title: "Brewing basics" },
+  l3: { id: "les_3", type: "lesson", label: "Lesson 1.3", title: "Choosing a kettle" },
+  qz: { id: "qz_1", type: "quiz", label: "Lesson 1.1 › quiz", title: null },
+  q1: { id: "q_1", type: "question", label: "Lesson 1.1 › Q1", title: null },
+};
+const field = (name, label, before, after, extra = {}) => ({ field: name, label, before, after, ...extra });
+const entry = (change) => ({ title: null, path: [], moved: null, reordered: null, citations: null, description: "", ...change, ancestors: (change.path ?? []).map((p) => p.id) });
+const sideOf = (ref, courseId) => {
+  const n = ref.n;
+  const released = ref.kind === "r" || ref.kind === "v";
+  return {
+    versionId: idFor("v", ref.course, n), versionNumber: released ? 2 * n : 2 * n - 1, kind: released ? "author" : "patch", status: ref.kind === "x" ? "rejected" : ref.kind === "p" ? "proposed" : "approved",
+    variantId: ref.course === 10 ? VARIANT_ID : null, releaseId: released ? idFor("r", ref.course, n) : null, releaseNumber: released ? n : null, releasedAt: released ? isoDay(-(40 - n)) : null, createdAt: isoDay(-(40 - n)), courseId,
+  };
+};
+const noCounts = { added: 0, changed: 0, removed: 0, moved: 0, reordered: 0 };
+const richCompare = () => {
+  const changes = [
+    entry({ id: "les_3", type: "lesson", label: "Lesson 1.3", title: "Choosing a kettle", kind: "added", path: [NODE.m1],
+      fields: [field("title", "Title", null, "Choosing a kettle"), field("summary", "Summary", null, "Why a gooseneck kettle gives control."), field("minutes", "Minutes", null, 6), field("citations", "Citations", null, "frg_added000001")],
+      citations: { added: ["frg_added000001"], removed: [], repointed: [] }, description: "Lesson 1.3 added." }),
+    entry({ id: "blk_old", type: "block", label: "Lesson 1.1 › block 2", kind: "removed", path: [NODE.m1, NODE.l1],
+      fields: [field("kind", "Block type", "text", null), field("markdown", "Content", "Use a cheap blade grinder for the best results.", null)], description: "Lesson 1.1 › block 2 removed." }),
+    entry({ id: "les_1", type: "lesson", label: "Lesson 1.1", title: "Brewing basics", kind: "changed", path: [NODE.m1],
+      fields: [field("title", "Title", "Brewing basic", "Brewing basics"), field("summary", "Summary", "Learn to brew coffee with water at ninety degrees.", "Learn to brew coffee with water at ninety-five degrees for four minutes."), field("minutes", "Minutes", 5, 6), field("citations", "Citations", "frg_removed00001, frg_old00000001", "frg_new000000001, frg_added000002")],
+      citations: { added: ["frg_added000002"], removed: ["frg_removed00001"], repointed: [{ from: "frg_old00000001", to: "frg_new000000001" }] }, description: "Lesson 1.1 changed title, summary, minutes; citations changed." }),
+    entry({ id: "blk_1", type: "block", label: "Lesson 1.1 › block 1", kind: "changed", path: [NODE.m1, NODE.l1],
+      fields: [field("markdown", "Content", "Heat the water to ninety degrees.\nPour slowly in circles.", "Warm the water to ninety-five degrees.\nPour slowly in circles and wait thirty seconds.")], description: "Lesson 1.1 › block 1 changed content." }),
+    entry({ id: "blk_big", type: "block", label: "Lesson 1.1 › block 3", kind: "changed", path: [NODE.m1, NODE.l1],
+      fields: [field("markdown", "Content", null, null, { truncated: true, lineDiff: { removed: ["A very long line that was removed."], added: ["A very long line that was added.", "Another added line."], omitted: 12 } })], description: "Lesson 1.1 › block 3 changed content." }),
+    entry({ id: "les_2", type: "lesson", label: "Lesson 2.1", title: "Grind size", kind: "moved", path: [NODE.m2], moved: { from: { id: "mod_1", label: "Module 1" }, to: { id: "mod_2", label: "Module 2" } }, fields: [], description: "Lesson 2.1 moved." }),
+    entry({ id: "les_5", type: "lesson", label: "Lesson 2.3", title: "Burr or blade", kind: "reordered", path: [NODE.m2], reordered: { parentId: "mod_2", from: 3, to: 1 }, fields: [], description: "Lesson 2.3 moved." }),
+    entry({ id: "o_a", type: "option", label: "Lesson 1.1 › Q1 › option A", kind: "changed", path: [NODE.m1, NODE.l1, NODE.qz, NODE.q1], fields: [field("correct", "Correct answer", true, false)], description: "option A changed." }),
+    entry({ id: "o_b", type: "option", label: "Lesson 1.1 › Q1 › option B", kind: "changed", path: [NODE.m1, NODE.l1, NODE.qz, NODE.q1], fields: [field("correct", "Correct answer", false, true)], description: "option B changed." }),
+    entry({ id: "q_2", type: "question", label: "Lesson 1.1 › Q2", kind: "changed", path: [NODE.m1, NODE.l1, NODE.qz], fields: [field("stem", "Question", "Which temperature is best?", "Which water temperature is best for a pour-over?"), field("origin", "Written by", "ai", "author")],
+      citations: null, description: "Lesson 1.1 › Q2 changed question." }),
+  ];
+  const passage = (label, text, revision) => ({ label, text, sourceRevision: revision ? { id: `01z${String(revision).padStart(23, "0")}`, number: revision } : null });
+  return {
+    summary: {
+      first: false, counts: { added: 1, changed: 5, removed: 1, moved: 1, reordered: 1 },
+      types: { lesson: { added: 1, changed: 1, removed: 0, moved: 1, reordered: 1 }, block: { ...noCounts, changed: 2, removed: 1 }, option: { ...noCounts, changed: 2 }, question: { ...noCounts, changed: 1 } },
+      citations: { added: 2, removed: 1, repointed: 1 }, quiz: { answerKeysChanged: 1, reworded: 1, questionsAdded: 0, questionsRemoved: 0 },
+      learnerImpact: { lessonsKeepingCompletion: 5, lessonsWithUpdatedNotice: 1, lessonsChangedSilently: 1, lessonsRemoved: 0, lessonsAdded: 1, reattemptNotices: 1 },
+      lines: [], text: "1 lesson added.",
+    },
+    changes,
+    quiz: [
+      { questionId: "q_1", label: "Lesson 1.1 › Q1", lessonId: "les_1", stem: null, type: null, explanation: false,
+        options: { added: [], removed: [], reworded: [], keyChanged: [{ id: "o_a", text: "Pressure", before: true, after: false }, { id: "o_b", text: "Temperature", before: false, after: true }] },
+        answerKeyChanged: true, wording: false, correctBefore: ["Pressure"], correctAfter: ["Temperature"], consequence: "Learners who already answered this question get a re-attempt notice." },
+      { questionId: "q_2", label: "Lesson 1.1 › Q2", lessonId: "les_1", stem: { before: "Which temperature is best?", after: "Which water temperature is best for a pour-over?" }, type: null, explanation: false,
+        options: { added: [], removed: [], reworded: [], keyChanged: [] }, answerKeyChanged: false, wording: true, correctBefore: ["Ninety"], correctAfter: ["Ninety"], consequence: null },
+    ],
+    fragments: {
+      frg_added000001: passage("Kettles.md › Gooseneck", "A gooseneck spout lets you pour slowly and steadily.", 3),
+      frg_added000002: passage("Water.md › Temperature", "Water between 92 and 96 degrees extracts sweetness without bitterness.", 3),
+      frg_removed00001: passage("Water.md › Old guidance", "Boiling water is fine for every roast.", 2),
+      frg_old00000001: passage("Water.md › Temperature (revision 2)", "Use water at 90 degrees.", 2),
+      frg_new000000001: passage("Water.md › Temperature (revision 3)", "Use water at 95 degrees.", 3),
+    },
+  };
+};
+const smallCompare = () => ({
+  ...richCompare(),
+  summary: { ...richCompare().summary, counts: { added: 0, changed: 1, removed: 0, moved: 0, reordered: 0 }, types: { lesson: { ...noCounts, changed: 1 } }, citations: { added: 0, removed: 0, repointed: 0 }, quiz: { answerKeysChanged: 0, reworded: 0, questionsAdded: 0, questionsRemoved: 0 }, learnerImpact: { lessonsKeepingCompletion: 6, lessonsWithUpdatedNotice: 0, lessonsChangedSilently: 1, lessonsRemoved: 0, lessonsAdded: 0, reattemptNotices: 0 } },
+  changes: [entry({ id: "les_1", type: "lesson", label: "Lesson 1.1", title: "Brewing basics", kind: "changed", path: [NODE.m1], fields: [field("title", "Title", "Brewing basic", "Brewing basics")], description: "Lesson 1.1 changed title." })],
+  quiz: [], fragments: {},
+});
+const emptyCompare = () => ({ ...richCompare(), summary: { ...richCompare().summary, counts: noCounts, types: {}, citations: { added: 0, removed: 0, repointed: 0 }, quiz: { answerKeysChanged: 0, reworded: 0, questionsAdded: 0, questionsRemoved: 0 }, learnerImpact: { lessonsKeepingCompletion: 6, lessonsWithUpdatedNotice: 0, lessonsChangedSilently: 0, lessonsRemoved: 0, lessonsAdded: 0, reattemptNotices: 0 } }, changes: [], quiz: [], fragments: {} });
+const compareFails = new Map();
+const courseCompare = (id, query, tenant) => {
+  if (id === 3) return { __status: 404, message: "This course was not made with the Course Builder, so it has no versions. Adopt the course to track its versions." };
+  if (id === 4) return { __status: 403, message: "This builder session belongs to another author." };
+  if (versionsCount[id] === undefined) return { __status: 404, message: "Not found" };
+  const [fromId, toId] = [query.get("from"), query.get("to")];
+  if (!fromId || !toId) return { __status: 422, message: "The given data was invalid.", errors: { from: ["The from field is required."] } };
+  const a = parseId(fromId);
+  const b = parseId(toId);
+  const family = id === 9 || id === 10 ? [9, 10] : [id];
+  if (!a || !b || !family.includes(a.course) || !family.includes(b.course)) return { __status: 404, message: "That version or release is not part of this course." };
+  if (id === 12 && !compareFails.get(`${tenant}:12`)) {
+    compareFails.set(`${tenant}:12`, true);
+    return { __status: 500, message: "The comparison is temporarily unavailable." };
+  }
+  const base = fromId === toId || (a.course === b.course && a.n === b.n) ? emptyCompare() : id === 6 ? (Math.min(a.n, b.n) === 1 && Math.max(a.n, b.n) === 2 ? emptyCompare() : smallCompare()) : richCompare();
+  return { diffVersion: 1, courseId: id, sessionId: `01s${"0".repeat(22)}${id === 10 ? 9 : id}`, from: sideOf(a, id), to: sideOf(b, id), ...base };
+};
+const courseVersionsRoutes = [
+  // test control: course 5 (releases) and course 12 (compare) fail their next request again (every tenant has its own state)
+  ["POST", /^\/__mock\/course-versions\/reset$/, ({ tenant }) => (versionsFails.delete(`${tenant}:5`), compareFails.delete(`${tenant}:12`), { reset: true })],
+  ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/releases$/, ({ match, query, tenant }) => {
+    const id = Number(match[1]);
+    if (id === 5 && !versionsFails.get(`${tenant}:5`)) {
+      versionsFails.set(`${tenant}:5`, true);
+      return { __status: 500, message: "Releases are temporarily unavailable." };
+    }
+    return courseReleases(id, query);
+  }],
+  ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/versions$/, ({ match, query }) => courseVersionList(Number(match[1]), query)],
+  ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/compare$/, ({ match, query, tenant }) => courseCompare(Number(match[1]), query, tenant)],
+];
+
+// ---- policy lifecycle (ADR 0140): the policies of the studio. Policies: A has an approved first version and a change in
+// review (28 people, two pages), B is a draft whose second department is not ready, C is unknown, D belongs to someone
+// else, E fails its first dashboard request. Every tenant has its own decisions.
+const POLICY_A = `01pola${"0".repeat(20)}`;
+const POLICY_B = `01polb${"0".repeat(20)}`;
+const POLICY_D = `01pold${"0".repeat(20)}`;
+const POLICY_E = `01pole${"0".repeat(20)}`;
+const policyState = new Map();
+const policyFails = new Map();
+const policyOf = (tenant) => {
+  if (!policyState.has(tenant)) policyState.set(tenant, { approved: false, rejected: false, academy: null });
+  return policyState.get(tenant);
+};
+const POLICY_THEMES = ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"];
+const polSession = (n) => `01s${String(n).padStart(23, "0")}`;
+const polVariants = (stages) => stages.map((stage, i) => ({ id: `01var${i}${"0".repeat(20)}`, department: ["Engineering", "Sales"][i], groupId: 10 + i, brief: { seniority: i ? "mixed" : "senior", priorExperience: i ? "none" : "expert" }, stage, sessionId: stage === "not_started" ? null : polSession(i + 1), courseId: stage === "applied" ? 40 + i : null, pathId: null, ruleId: null, examCourseId: null, position: i }));
+const polVersion = (number, status, changeClass, over = {}) => ({ id: `01ver${number}${"0".repeat(20)}`, number, status, changeClass, summary: changeClass === "initial" ? null : "Sections 2 changed: §1.1 Approval and working hours; §2.2 Sharing and retention.", fileName: "policy.md", fileSha256: "a".repeat(64), fileSize: 4200, submittedBy: 1, approvedBy: null, approvedAt: null, effectiveAt: null, suggestedClass: null, classReason: null, rejectedBy: null, rejectReason: null, rolledOutAt: null, createdAt: "2026-10-20T09:00:00+00:00", ...over });
+const polBrief = { totalMinutes: 30, lessonMinutes: 10, language: "en", tone: "professional" };
+const polSummary = (id, title, current, pending, departments = 2) => ({ id, title, ownerUserId: 1, status: "active", minorDueDays: 14, majorDueDays: 30, brief: polBrief, currentVersion: current, latestVersion: pending ?? current ?? 1, pendingReview: pending, departments, createdAt: "2026-10-20T09:00:00+00:00" });
+const polDetail = (id, tenant) => {
+  const state = policyOf(tenant);
+  if (id === POLICY_A) {
+    const v2 = state.approved ? polVersion(2, "approved", "minor", { suggestedClass: "major", classReason: "Wording only.", approvedAt: "2026-10-22T10:00:00+00:00" }) : state.rejected ? polVersion(2, "rejected", "minor", { rejectReason: "Sent by mistake." }) : polVersion(2, "in_review", "minor");
+    return { ...polSummary(id, "Remote work and data handling", state.approved ? 2 : 1, state.approved || state.rejected ? null : 2), versions: [polVersion(1, state.approved ? "superseded" : "approved", "initial", { approvedAt: "2026-10-21T10:00:00+00:00" }), v2], variants: polVariants(["applied", "applied"]).map((v, i) => ({ ...v, academy: i === 0 ? state.academy : null })), estimate: { perVariant: [], totalMicroUsd: 0 }, academyAvailable: true, academyThemes: POLICY_THEMES };
+  }
+  if (id === POLICY_B) return { ...polSummary(id, "Acceptable use of company laptops", null, null), versions: [polVersion(1, "draft", "initial")], variants: polVariants(["applied", "outline_review"]), estimate: { perVariant: [], totalMicroUsd: 0 } };
+  if (id === POLICY_E) return { ...polSummary(id, "Visitor access", 1, null, 1), versions: [polVersion(1, "approved", "initial")], variants: polVariants(["applied"]).slice(0, 1), estimate: { perVariant: [], totalMicroUsd: 0 } };
+  return null;
+};
+const polPeople = (page) => {
+  const names = ["Ada", "Linus", "Grace", "Alan", "Edsger", "Barbara", "Donald", "Margaret", "Ken", "Dennis", "Tim", "Radia", "Guido", "Bjarne", "Brian", "Anders", "Yukihiro", "Rob", "Larry", "James", "Brendan", "John", "Niklaus", "Leslie", "Fran", "Frances", "Vint", "Katherine"];
+  const all = names.map((first, i) => ({
+    assignmentId: 100 + i,
+    user: { id: 200 + i, name: `${first} Tester`, email: `${first.toLowerCase()}@example.test` },
+    department: i % 2 ? "Sales" : "Engineering", variantId: `01var${i % 2}${"0".repeat(20)}`, courseId: 40 + (i % 2), courseVersion: i % 3 === 0 ? 2 : 1, exam: i === 0,
+    status: i % 5 === 0 ? "completed" : i % 7 === 0 ? "overdue" : "assigned", source: i === 0 ? "policy_change" : "rule",
+    assignedAt: "2026-10-21T10:00:00+00:00", dueAt: "2026-11-20T10:00:00+00:00", completedAt: i % 5 === 0 ? "2026-10-25T10:00:00+00:00" : null,
+    policyVersion: i % 5 === 0 ? (i === 0 ? 2 : 1) : null,
+    certificate: i % 5 === 0 ? { id: 900 + i, certificateId: `aaaaaaaa-0000-4000-8000-0000000000${String(10 + i)}`, status: i === 5 ? "revoked" : "valid", expiresAt: null, verifyPath: `/api/certificates/verify/aaaaaaaa-0000-4000-8000-0000000000${String(10 + i)}` } : null,
+  }));
+  return all.slice((page - 1) * 25, page * 25);
+};
+const polDashboard = (id, tenant, query) => {
+  const detail = polDetail(id, tenant);
+  if (!detail) return { __status: 404, message: "No query results for model [Policy]." };
+  if (id === POLICY_E && !policyFails.get(`${tenant}:e`)) {
+    policyFails.set(`${tenant}:e`, true);
+    return { __status: 500, message: "The dashboard is temporarily unavailable." };
+  }
+  const page = Math.max(1, Number(query.get("page") ?? 1));
+  const big = id === POLICY_A;
+  const status = query.get("status");
+  const variant = query.get("variant");
+  let people = big ? polPeople(1).concat(polPeople(2)) : [];
+  if (variant) people = people.filter((p) => p.variantId === variant);
+  if (status) people = people.filter((p) => (status === "assigned" ? p.status === "assigned" : p.status === status));
+  const slice = people.slice((page - 1) * 25, page * 25);
+  return {
+    __raw: {
+      success: true,
+      message: "OK",
+      data: {
+        policy: { id, title: detail.title, currentVersion: detail.currentVersion },
+        departments: detail.variants.map((v, i) => ({ id: v.id, department: v.department, groupId: v.groupId, courseId: v.courseId, stage: v.stage, assigned: big ? 14 : 0, completed: big ? 3 - i : 0, pending: big ? 9 : 0, overdue: big ? 2 : 0, completionRate: big ? 0.2143 : null })),
+        people: slice,
+      },
+      meta: { total: people.length, per_page: 25, current_page: page, last_page: Math.max(1, Math.ceil(people.length / 25)) },
+    },
+  };
+};
+const polReview = (tenant, cls) => {
+  const state = policyOf(tenant);
+  const open = !state.approved && !state.rejected;
+  const chosen = cls ?? "major";
+  return {
+    ...polVersion(2, state.approved ? "approved" : state.rejected ? "rejected" : "in_review", state.approved ? "minor" : "minor", state.approved ? { suggestedClass: "major", classReason: "Wording only." } : {}),
+    suggestion: { class: "major", reasons: ["A substantial change: Lesson 1.1 › block 1", "The correct answer of a question changes: Lesson 1.1 › Q1"] },
+    rollouts: [
+      { id: `01rol0${"0".repeat(20)}`, variantId: `01var0${"0".repeat(20)}`, department: "Engineering", status: state.approved ? "applied" : "ready", error: null, proposal: { id: `01prp0${"0".repeat(20)}`, sessionId: polSession(1), status: state.approved ? "applied" : "ready", number: 1 }, undecided: 0, rolledOutAt: null },
+      { id: `01rol1${"0".repeat(20)}`, variantId: `01var1${"0".repeat(20)}`, department: "Sales", status: "no_change", error: null, proposal: null, undecided: 0, rolledOutAt: null },
+    ],
+    changes: { counts: { changed: 2, moved: 0, added: 0, removed: 0 }, sections: [{ kind: "changed", label: "§1.1 Approval and working hours", fragmentId: "frg_aaaaaaaaaaaa", magnitude: "substantive" }, { kind: "changed", label: "§2.2 Sharing and retention", fragmentId: "frg_bbbbbbbbbbbb", magnitude: "minor" }] },
+    blockers: [],
+    preflight: open ? { changeClass: chosen, departments: [{ id: `01var0${"0".repeat(20)}`, department: "Engineering", affected: true, certificatesToRevoke: chosen === "major" ? 3 : 2, peopleToReassign: chosen === "major" ? 3 : 2, assigns: chosen === "major" ? "course" : "exam" }, { id: `01var1${"0".repeat(20)}`, department: "Sales", affected: false, certificatesToRevoke: 0, peopleToReassign: 0, assigns: chosen === "major" ? "course" : "exam" }] } : null,
+  };
+};
+const policyRoutes = [
+  ["POST", /^\/__mock\/policies\/reset$/, ({ tenant }) => (policyState.delete(tenant), policyFails.delete(`${tenant}:e`), { reset: true })],
+  ["GET", /^\/api\/admin\/policies$/, () => [polSummary(POLICY_A, "Remote work and data handling", 1, 2), polSummary(POLICY_B, "Acceptable use of company laptops", null, null), polSummary(POLICY_E, "Visitor access", 1, null, 1)]],
+  ["POST", /^\/api\/admin\/policies$/, ({ tenant }) => polDetail(POLICY_B, tenant)],
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})$/, ({ match, tenant }) => (match[1] === POLICY_D ? { __status: 403, message: "This action is unauthorized." } : (polDetail(match[1], tenant) ?? { __status: 404, message: "No query results for model [Policy]." }))],
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})\/dashboard$/, ({ match, tenant, query }) => (match[1] === POLICY_D ? { __status: 403, message: "This action is unauthorized." } : polDashboard(match[1], tenant, query))],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/variants\/generate$/, () => polVariants(["ingesting"])],
+  // a department's own academy: asking queues it; the next read finds it done
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})\/variants\/([0-9a-z]{26})\/academy$/, ({ tenant }) => {
+    const state = policyOf(tenant);
+    if (state.academy?.status === "queued") state.academy = { ...state.academy, status: "done", invited: true, studioUrl: `http://${state.academy.slug}.app.localhost/studio/s/01s${"0".repeat(23)}`, adminUrl: `http://${state.academy.slug}.admin.localhost`, frontUrl: `http://${state.academy.slug}.app.localhost` };
+    return { academy: state.academy, available: true, themes: POLICY_THEMES };
+  }],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/variants\/([0-9a-z]{26})\/academy$/, ({ tenant, body }) => {
+    const state = policyOf(tenant);
+    if (state.academy?.status === "done") return { __status: 409, message: "This department already has an academy. Remove it first to create another." };
+    state.academy = { status: "queued", slug: "acmeengineerabcd", name: "Remote work and data handling / Engineering", theme: body?.theme ?? null, accent: body?.accent ?? null, template: null, error: null };
+    return { academy: state.academy, available: true, themes: POLICY_THEMES };
+  }],
+  ["DELETE", /^\/api\/admin\/policies\/([0-9a-z]{26})\/variants\/([0-9a-z]{26})\/academy$/, ({ tenant }) => ((policyOf(tenant).academy = null), { academy: null })],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions$/, ({ tenant }) => polReview(tenant, null)],
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions\/(\d+)$/, ({ match, tenant, query }) => (match[1] === POLICY_A && match[2] === "2" ? polReview(tenant, query.get("class")) : { __status: 404, message: "No query results for model [PolicyVersion]." })],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions\/(\d+)\/approve$/, ({ match, tenant, body }) => {
+    if (match[1] === POLICY_B) return { __status: 422, message: "The policy cannot be approved yet.\nSales: review and apply the course in the Studio first." };
+    if ((body?.change_class ?? "minor") === "minor" && !String(body?.reason ?? "").trim()) return { __status: 422, message: "The changes suggest a major change. To approve it as minor, say why." };
+    policyOf(tenant).approved = true;
+    return polVersion(Number(match[2]), "applying", "minor");
+  }],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions\/(\d+)\/reject$/, ({ tenant }) => ((policyOf(tenant).rejected = true), polVersion(2, "rejected", "minor"))],
+];
+// Course variants (CV-5): five families, one per case of the learner's picker (tests/mock-api/variants.mjs)
+const variantMock = createVariantMock({ program, progressRows, courseFor });
+
+const routes = [
+  ...variantMock.routes,
+  ...insightsRoutes,
+  ...courseVersionsRoutes,
+  ...policyRoutes,
+  ...improveRoutes,
+  ...groupRoutes,
+  ["POST", /^\/api\/code-exercises\/launches\/(\d+)$/, ({ tenant, match }) => {
+    const topic = CODE_TOPICS.get(Number(match[1]));
+    return topic ? launchOf(topic, RUNNER_URL, attemptsOf(tenant, topic.id)) : { __status: 404, message: "Not a code exercise" };
+  }],
+  ["POST", /^\/api\/code-exercises\/topics\/(\d+)\/attempts$/, ({ tenant, match, body }) => {
+    const topic = CODE_TOPICS.get(Number(match[1]));
+    if (!topic) return { __status: 404, message: "Not a code exercise" };
+    const results = body?.results;
+    const valid = Array.isArray(results) && results.length >= 1 && results.length <= 200 && results.every((r) => typeof r?.name === "string" && ["pass", "fail", "error"].includes(r?.status));
+    if (!valid) return { __status: 422, message: "Invalid results" };
+    const rows = attemptsOf(tenant, topic.id);
+    const passed = results.filter((r) => r.status === "pass").length;
+    const score = Math.round((passed / results.length) * 100);
+    const row = { id: rows.length + 1, attempt_no: rows.length + 1, mode: "practice", verified: false, passed, total: results.length, score, results, runner: body.runner ?? null, files_hash: body.files_hash ?? null };
+    codeAttempts.set(`${tenant}:${topic.id}`, [...rows, row]);
+    return { attempt: row, status: score >= topic.topicable.pass_score ? 1 : 2 };
+  }],
+  ["GET", /^\/api\/compliance\/my-assignments$/, () => assignments],
+  // an approved policy change gave "Food safety" again (assignment 2): what changed and which exam or course
+  ["GET", /^\/api\/policies\/my-changes$/, () => [{ assignmentId: 2, policy: { id: `01pola${"0".repeat(20)}`, title: "Food handling policy" }, version: 3, kind: "exam", summary: "Sections 1 changed: §2.1 Cold storage.", dueAt: isoDay(6), status: "assigned" }]],
+  ["GET", /^\/api\/compliance\/my-paths$/, () => myPaths],
+  ["GET", /^\/api\/compliance\/my-skills$/, () => mySkills],
+  ["GET", /^\/api\/compliance\/team\/assignments$/, () => teamRows],
+  ["GET", /^\/api\/pdfs$/, () => certificates],
+  ["GET", /^\/api\/certificates\/verify\/b3f1c2d4-1111-4222-8333-444455556666$/, () => verifyRecord],
+  ["GET", /^\/api\/courses\/2\/program$/, () => doneProgram],
+  ["GET", /^\/api\/courses\/progress\/2$/, () => doneRows],
+  ["GET", /^\/api\/learner-insights\/courses\/1\/topics\/(\d+)\/support$/, ({ tenant, match }) => ({ enabled: true, items: (supportOf(tenant)[match[1]] ?? []).filter((i) => !i.hidden) })],
+  [
+    "POST",
+    /^\/api\/learner-insights\/assignments\/([0-9A-Za-z]{26})\/feedback$/,
+    ({ tenant, match, body }) => {
+      const found = findAssignment(tenant, match[1]);
+      if (found) found.feedback = body?.helpful ? "helpful" : "not_helpful";
+      return { feedback: found?.feedback ?? null };
+    },
+  ],
+  [
+    "POST",
+    /^\/api\/learner-insights\/assignments\/([0-9A-Za-z]{26})\/reflection$/,
+    ({ tenant, body }) => {
+      if (String(body?.text ?? "").length < 10) return { __status: 422, message: "The text must be at least 10 characters." };
+      if (String(body?.text).includes("AI-OFF")) return { __status: 503, message: "AI is disabled" };
+      const used = reflectionCount.get(tenant) ?? 0;
+      if (used >= REFLECTIONS_PER_DAY) return { __status: 429, message: "Daily limit reached" };
+      reflectionCount.set(tenant, used + 1);
+      return {
+        correct: "You linked altitude to a slower, sweeter ripening of the cherry.",
+        missing: "You did not say why cooler air matters for the sugars.",
+        followUp: "How would a lower farm change the cup?",
+        citations: [{ fragmentId: "frg_bbbbbbbbbbbb", label: FRAGMENTS[1]?.label ?? "Species and altitude" }],
+        remaining: REFLECTIONS_PER_DAY - used - 1,
+      };
+    },
+  ],
+  [
+    "POST",
+    /^\/api\/learner-insights\/assignments\/([0-9A-Za-z]{26})\/hide$/,
+    ({ tenant, match }) => {
+      const found = findAssignment(tenant, match[1]);
+      if (found) found.hidden = true;
+      return { hidden: true };
+    },
+  ],
+  ["GET", /^\/api\/learner-insights\/courses\/1\/presentation$/, ({ tenant }) => presentationOf(tenant)],
+  ["PUT", /^\/api\/learner-insights\/courses\/1\/presentation$/, ({ tenant, body }) => changePresentation(tenant, body)],
+  ["GET", /^\/api\/tutor\/courses\/1\/status$/, ({ tenant }) => ({ ...tutorStatus, streaming: tenant !== "nightsky" })],
+  ["GET", /^\/api\/tutor\/courses\/1\/conversations$/, () => [tutorEarlier]],
+  [
+    "POST",
+    /^\/api\/tutor\/courses\/1\/messages$/,
+    ({ body, status }) => {
+      if (!body?.stream) return tutorAnswer;
+      status(202);
+      // a question containing "boom" gets a run that ends with RUN_ERROR, "gone" one whose events are missing
+      const runId = /boom/i.test(body.text) ? RUN_ERROR : /gone/i.test(body.text) ? RUN_GONE : RUN_OK;
+      return { conversationId: tutorAnswer.conversationId, runId, questionId: "01JMOCKQUESTION00000000A" };
+    },
+  ],
+  ["GET", /^\/api\/tutor\/conversations\/01JMOCKEARLIER0000000000A$/, () => ({ id: tutorEarlier.id, courseId: 1, expiresAt: tutorEarlier.expiresAt, messages: [
+    { id: "01JMOCKMSG1", role: "learner", text: "Which species is Robusta?", citations: [], refusal: null, at: tutorEarlier.lastMessageAt },
+    { id: "01JMOCKMSG2", role: "tutor", text: tutorAnswer.answer, citations: tutorAnswer.citations, refusal: "none", at: tutorEarlier.lastMessageAt },
+  ] })],
+  ["DELETE", /^\/api\/tutor\/conversations\/01JMOCKEARLIER0000000000A$/, () => ({ deleted: true })],
+  ["GET", /^\/api\/config$/, () => ({ ai: { label_generated_courses: true } })],
+  ["GET", /^\/api\/config$/, () => ({ ai: { label_generated_courses: true } })],
+  ["GET", /^\/api\/settings$/, () => coffee.settings],
+  ["GET", /^\/api\/courses$/, ({ tenant }) => [courseFor(tenant, coffee.course)]],
+  ["GET", /^\/api\/courses\/1$/, ({ tenant }) => courseFor(tenant, program)],
+  ["GET", /^\/api\/courses\/1\/program$/, ({ tenant }) => courseFor(tenant, program)],
+  ["GET", /^\/api\/courses\/my$/, () => ({ ids: [1] })],
+  ["GET", /^\/api\/courses\/progress$/, () => [{ course: { id: 1, title: program.title, summary: program.summary, image_url: null }, progress: progressRows }]],
+  ["GET", /^\/api\/courses\/progress\/1$/, () => progressRows],
+  ["PUT", /^\/api\/courses\/progress\/\d+\/ping$/, () => ({ status: true })],
+  ["PATCH", /^\/api\/courses\/progress\/1$/, () => progressRows],
+  ["GET", /^\/api\/tutors$/, () => coffee.tutors],
+  ["GET", /^\/api\/webinars$/, () => coffee.webinars],
+  ["GET", /^\/api\/stationary-events$/, () => coffee.events],
+  ["GET", /^\/api\/products$/, () => coffee.products],
+  ["GET", /^\/api\/profile\/me$/, () => me],
+  ["POST", /^\/api\/demo\/login$/, () => ({ token: "mock-token", expires_at: new Date(Date.now() + 86_400_000).toISOString() })],
+  ["POST", /^\/api\/auth\/login$/, () => ({ token: "mock-token", expires_at: new Date(Date.now() + 86_400_000).toISOString() })],
+  ["POST", /^\/api\/quiz-attempts$/, () => attempt()],
+  ["GET", /^\/api\/quiz-attempts\/1$/, () => attempt()],
+  ["GET", /^\/api\/quiz-attempts$/, () => []],
+  ["POST", /^\/api\/quiz-answers$/, () => attempt()],
+  ["POST", /^\/api\/quiz-attempts\/1\/end$/, () => attempt(true)],
+];
+
+/**
+ * Social login of the real API (ADR 0121), minus the provider: the start endpoint answers with the
+ * redirect back to `return_url` carrying a one-time code bound to the S256 challenge; the exchange
+ * checks verifier, single use and the 60 second lifetime. The tests never get a token in a URL.
+ */
+const socialCodes = new Map();
+const challengeFor = (verifier) => createHash("sha256").update(verifier).digest("base64url");
+
+function socialStart(url, res, returnParam = "return_url") {
+  const returnUrl = url.searchParams.get(returnParam) ?? "";
+  const challenge = url.searchParams.get("challenge") ?? "";
+  const allowed = /^http:\/\/[a-z]+\.app\.localhost:\d+\//.test(returnUrl);
+  if (!allowed || !/^[A-Za-z0-9_-]{43}$/.test(challenge)) {
+    res.statusCode = 422;
+    res.end(JSON.stringify({ message: "The return URL is not allowed for this site or the challenge is missing." }));
+    return;
+  }
+  const code = randomBytes(32).toString("base64url");
+  socialCodes.set(code, { challenge, expires: Date.now() + 60_000, used: false });
+  res.statusCode = 302;
+  res.setHeader("Location", `${returnUrl}?code=${code}&complete=true`);
+  res.end();
+}
+
+function socialExchange(body, res, tokenPrefix = "social-token") {
+  let input = {};
+  try {
+    input = JSON.parse(body || "{}");
+  } catch {
+    // answered below as an invalid code
+  }
+  const row = socialCodes.get(input.code);
+  const verifier = typeof input.verifier === "string" ? input.verifier : "";
+  const ok = row && !row.used && row.expires > Date.now() && challengeFor(verifier) === row.challenge;
+  if (row) row.used = true;
+  if (!ok) {
+    res.statusCode = 400;
+    res.end(JSON.stringify({ success: false, message: "The login code is invalid or has expired. Start again." }));
+    return;
+  }
+  res.end(JSON.stringify({ success: true, message: "Login successful", data: { complete: true, token: `${tokenPrefix}-${input.code.slice(0, 8)}`, expires_at: new Date(Date.now() + 86_400_000).toISOString() } }));
+}
+
+const server = createServer((req, res) => {
+  const url = new URL(req.url ?? "/", "http://mock");
+  const path = url.pathname;
+  res.setHeader("Content-Type", "application/json");
+  if (req.method === "GET" && (path === "/storage/theme/logo.png" || path === "/storage/theme/logo.svg")) {
+    res.setHeader("Content-Type", path.endsWith(".png") ? "image/png" : "image/svg+xml");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    res.end(path.endsWith(".png") ? LOGO_PNG : LOGO_SVG);
+    return;
+  }
+  // test control: forget what a tenant changed (the suite calls this before a journey that changes state)
+  if (req.method === "POST" && path === "/__mock/reset") {
+    req.resume();
+    supportState.delete(url.searchParams.get("tenant") ?? "");
+    reflectionCount.delete(url.searchParams.get("tenant") ?? "");
+    presentationOverrides.delete(url.searchParams.get("tenant") ?? "");
+    variantMock.reset(url.searchParams.get("tenant") ?? "");
+    res.end(JSON.stringify({ reset: true }));
+    return;
+  }
+  // forget the code exercise attempts of a tenant (its own reset: the other specs share the tenants, and the general reset is theirs)
+  if (req.method === "POST" && path === "/__mock/reset-code") {
+    req.resume();
+    for (const key of [...codeAttempts.keys()]) if (key.startsWith(`${url.searchParams.get("tenant") ?? ""}:`)) codeAttempts.delete(key);
+    res.end(JSON.stringify({ reset: true }));
+    return;
+  }
+  // the attempts a tenant has recorded for a code exercise (for the tests)
+  const recorded = /^\/__mock\/code-attempts\/(\d+)$/.exec(path);
+  if (req.method === "GET" && recorded) {
+    req.resume();
+    res.end(JSON.stringify(attemptsOf(url.searchParams.get("tenant") ?? "", Number(recorded[1]))));
+    return;
+  }
+  // the content origin of the runner (ADR 0170): the static files, with the headers the API sets
+  if ((req.method === "GET" || req.method === "HEAD") && path.startsWith("/runtime/code-runner/1/")) {
+    req.resume();
+    serveRunner(path.slice("/runtime/code-runner/1/".length), res);
+    return;
+  }
+  if (req.method === "GET" && /^\/api\/pdfs\/generate\/9$/.test(path)) {
+    req.resume();
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'attachment; filename="espresso-basics-9.pdf"');
+    res.end(PDF);
+    return;
+  }
+  if (req.method === "GET" && path === "/api/auth/social/google") {
+    req.resume();
+    socialStart(url, res);
+    return;
+  }
+  if (req.method === "POST" && path === "/api/auth/social/exchange") {
+    const body = [];
+    req.on("data", (chunk) => body.push(chunk));
+    req.on("end", () => socialExchange(Buffer.concat(body).toString("utf8"), res));
+    return;
+  }
+  // single sign-on (identity package): the tenant lists its enabled providers, `start` redirects back with a code
+  if (req.method === "GET" && path === "/api/identity/providers") {
+    req.resume();
+    res.end(JSON.stringify({ success: true, message: "", data: [{ slug: "acme-sso", name: "Acme staff", protocol: "oidc" }] }));
+    return;
+  }
+  if (req.method === "GET" && path === "/api/identity/sso/acme-sso/start") {
+    req.resume();
+    socialStart(url, res, "return_to");
+    return;
+  }
+  if (req.method === "POST" && path === "/api/identity/sso/exchange") {
+    const body = [];
+    req.on("data", (chunk) => body.push(chunk));
+    req.on("end", () => socialExchange(Buffer.concat(body).toString("utf8"), res, "sso-token"));
+    return;
+  }
+  const run = /^\/api\/tutor\/runs\/([0-9a-z]{26})\/events$/.exec(path);
+  if (req.method === "GET" && run) {
+    streamRun(req, res, run[1]);
+    return;
+  }
+  const route = routes.find(([method, pattern]) => method === req.method && pattern.test(path));
+  const chunks = [];
+  req.on("data", (chunk) => chunks.push(chunk));
+  req.on("end", () => respond(req, res, path, route, Buffer.concat(chunks).toString("utf8")));
+});
+
+/**
+ * The runner's files on a content origin, with what the API and the proxy set (ADR 0170): the policies come from
+ * api/packages/code-exercises/resources/runner-csp.json, the same file RunnerHeaders reads. The pages that may
+ * frame them are the apps of every tenant on this machine (*.app.localhost).
+ */
+const requireHere = createRequire(import.meta.url);
+const runnerDir = fileURLToPath(new URL("../../../../api/packages/code-exercises/resources/runtime/code-runner/1/", import.meta.url));
+const policies = JSON.parse(readFileSync(fileURLToPath(new URL("../../../../api/packages/code-exercises/resources/runner-csp.json", import.meta.url)), "utf8"));
+const policy = (name) => policies[name].map((d) => d.replace("{ancestors}", "http://*.app.localhost:*")).join("; ");
+const RUNNER_FILES = { "runner.html": "text/html; charset=UTF-8", "exec.html": "text/html; charset=UTF-8", "runner.js": "text/javascript; charset=UTF-8", "exec.js": "text/javascript; charset=UTF-8", "esbuild.js": "text/javascript; charset=UTF-8", "esbuild.wasm": "application/wasm" };
+
+function serveRunner(file, res) {
+  const type = RUNNER_FILES[file];
+  // the wasm file is not committed (14 MB): the one of the esbuild-wasm package is the same file
+  const path = file === "esbuild.wasm" && !existsSync(`${runnerDir}${file}`) ? `${fileURLToPath(new URL(".", pathToFileURL(requireHere.resolve("esbuild-wasm/package.json"))))}esbuild.wasm` : `${runnerDir}${file}`;
+  if (!type || !existsSync(path)) {
+    res.statusCode = 404;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("Not found");
+    return;
+  }
+  res.setHeader("Content-Type", type);
+  res.setHeader("Content-Security-Policy", file === "runner.html" ? policy("runner") : file === "exec.html" ? policy("exec") : policies.other);
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.end(readFileSync(path));
+}
+
+/** Server-sent events of a streamed tutor answer, a few hundred ms apart; honours Last-Event-ID. */
+function streamRun(req, res, runId) {
+  if (runId === RUN_GONE) {
+    res.statusCode = 404;
+    res.end(JSON.stringify({ message: "Not found (mock)" }));
+    return;
+  }
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  const after = Number(req.headers["last-event-id"] ?? 0);
+  const events = TUTOR_EVENTS(runId).map((event, i) => ({ id: i + 1, event }));
+  res.write("retry: 1000\n\n");
+  let i = events.findIndex((e) => e.id > after);
+  if (i < 0) return res.end();
+  // the draft stays on screen for about a second and a half before the final answer replaces it
+  const delays = runId === RUN_ERROR ? [50, 150] : [50, 100, 200, 300, 400, 1800, 1850];
+  const timers = events.slice(i).map((e) => setTimeout(() => {
+    res.write(`id: ${e.id}\ndata: ${JSON.stringify(e.event)}\n\n`);
+    if (e.id === events.length) res.end();
+  }, delays[e.id - 1]));
+  req.on("close", () => timers.forEach(clearTimeout));
+}
+
+function respond(req, res, path, route, rawBody) {
+  if (!route) {
+    res.statusCode = 404;
+    res.end(JSON.stringify({ message: "Not found (mock)" }));
+    return;
+  }
+  const tenant = String(req.headers["x-ulams-api-host"] ?? "").split(".")[0];
+  const body = (() => {
+    try {
+      return rawBody ? JSON.parse(rawBody) : null;
+    } catch {
+      return null;
+    }
+  })();
+  const match = route[1].exec(path);
+  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, headers: req.headers, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
+  if (data && typeof data === "object" && "__raw" in data) {
+    res.end(JSON.stringify(data.__raw));
+    return;
+  }
+  if (data && typeof data === "object" && "__status" in data) {
+    res.statusCode = data.__status;
+    res.end(JSON.stringify({ success: false, message: data.message, ...(data.code ? { code: data.code } : {}) }));
+    return;
+  }
+  res.end(JSON.stringify({ success: true, data, meta: { current_page: 1, last_page: 1, per_page: 24, total: 1 } }));
+}
+
+const port = Number(process.env.MOCK_API_PORT ?? 4390);
+server.listen(port, "127.0.0.1", () => console.log(`mock tenant API on :${port}`));

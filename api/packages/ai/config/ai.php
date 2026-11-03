@@ -14,6 +14,10 @@ return [
     'timeout' => (int) env('AI_TIMEOUT', 600),
     'max_retries' => (int) env('AI_MAX_RETRIES', 2),
 
+    // AI content labelling (Phase 4.3): lessons applied from a builder session say "Created with AI assistance".
+    // A public tenant setting (`ai.label_generated_courses`); the learner front reads it from GET /api/settings.
+    'label_generated_courses' => (bool) env('AI_LABEL_GENERATED_COURSES', true),
+
     'profiles' => [
         'default' => [
             'model' => env('AI_MODEL_DEFAULT', 'claude-sonnet-5-5'),
@@ -43,12 +47,25 @@ return [
         'lesson' => ['profile' => env('AI_TASK_LESSON_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 32000],
         'quiz' => ['profile' => env('AI_TASK_QUIZ_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
         'metadata' => ['profile' => env('AI_TASK_METADATA_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
+        // lesson formats (ADR 0050): inline questions of a LiaScript lesson, an H5P activity, an interactive from the library
+        'selfcheck' => ['profile' => env('AI_TASK_SELFCHECK_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 8000],
+        'interaction_h5p' => ['profile' => env('AI_TASK_INTERACTION_H5P_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 8000],
+        'interaction_interactive' => ['profile' => env('AI_TASK_INTERACTION_INTERACTIVE_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
         'patch' => ['profile' => env('AI_TASK_PATCH_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
         // a suggested price for a paid course; the author always confirms it
         'price' => ['profile' => env('AI_TASK_PRICE_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 1000],
         'grounding' => ['profile' => env('AI_TASK_GROUNDING_PROFILE', 'light'), 'effort' => 'medium', 'max_tokens' => 4000],
         // Living Course: patches for the elements affected by a source change (one call per lesson group)
         'update' => ['profile' => env('AI_TASK_UPDATE_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
+        // Living Course: a suggested lesson for new source sections that no lesson covers
+        // Compliance: which competencies of the framework a course teaches; the author confirms every tag
+        'competency_tags' => ['profile' => env('AI_TASK_COMPETENCY_TAGS_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
+        // Living Course: a grounded rewrite of an element learners struggle with, from aggregated evidence only (ADR 0181)
+        'insights_improve' => ['profile' => env('AI_TASK_INSIGHTS_IMPROVE_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
+        // Course variants (ADR 0192): the plan per lesson for one audience (light), and a lesson condensed, deepened or added for it
+        'variant_outline' => ['profile' => env('AI_TASK_VARIANT_OUTLINE_PROFILE', 'light'), 'effort' => 'medium', 'max_tokens' => 8000],
+        'variant_lesson' => ['profile' => env('AI_TASK_VARIANT_LESSON_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 32000],
+        'new_lesson' => ['profile' => env('AI_TASK_NEW_LESSON_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
     ],
     'task_defaults' => ['profile' => 'default', 'effort' => 'medium', 'max_tokens' => 8000],
 

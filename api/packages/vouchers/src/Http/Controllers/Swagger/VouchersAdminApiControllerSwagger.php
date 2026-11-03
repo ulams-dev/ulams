@@ -13,7 +13,7 @@ interface VouchersAdminApiControllerSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/vouchers",
+     *      path="/api/admin/vouchers", operationId="admin.vouchers.get",
      *      summary="Get a listing of the Vouchers.",
      *      tags={"Admin Vouchers"},
      *      description="Get all Vouchers",
@@ -43,9 +43,7 @@ interface VouchersAdminApiControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -69,7 +67,7 @@ interface VouchersAdminApiControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/vouchers",
+     *      path="/api/admin/vouchers", operationId="admin.vouchers.post",
      *      summary="Create Voucher",
      *      tags={"Admin Vouchers"},
      *      description="Create Voucher",
@@ -90,9 +88,7 @@ interface VouchersAdminApiControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -115,7 +111,7 @@ interface VouchersAdminApiControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/vouchers/{id}",
+     *      path="/api/admin/vouchers/{id}", operationId="admin.vouchers.by-id.get",
      *      summary="Read Voucher",
      *      tags={"Admin Vouchers"},
      *      description="Read Voucher",
@@ -134,9 +130,7 @@ interface VouchersAdminApiControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -159,7 +153,7 @@ interface VouchersAdminApiControllerSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/admin/vouchers/{id}",
+     *      path="/api/admin/vouchers/{id}", operationId="admin.vouchers.by-id.patch",
      *      summary="Update Voucher",
      *      tags={"Admin Vouchers"},
      *      description="Update Voucher",
@@ -189,9 +183,7 @@ interface VouchersAdminApiControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -214,7 +206,7 @@ interface VouchersAdminApiControllerSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/vouchers/{id}",
+     *      path="/api/admin/vouchers/{id}", operationId="admin.vouchers.by-id.delete",
      *      summary="Delete Voucher",
      *      tags={"Admin Vouchers"},
      *      description="Delete Voucher",
@@ -233,9 +225,7 @@ interface VouchersAdminApiControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

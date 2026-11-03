@@ -1,0 +1,51 @@
+{
+  "info": {
+    "tabbableByKind": {
+      "INPUT.": 27,
+      "SELECT.gjs-input-unit": 22,
+      "SELECT.": 7,
+      "INPUT.gjs-sm-radio": 13,
+      "BUTTON.gjs-sm-btn": 1
+    },
+    "panelButtons": 15,
+    "panelButtonTags": [
+      "SPAN"
+    ],
+    "panelButtonsTabbable": 0,
+    "panelButtonsWithAriaLabel": 0,
+    "panelButtonsWithTitle": 14,
+    "blocks": 15,
+    "blockTags": [
+      "DIV"
+    ],
+    "blocksTabbable": 0,
+    "blocksDraggable": 15,
+    "blocksWithRole": 0
+  },
+  "axe": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "nodes": 16,
+      "sample": ".gjs-sm-header"
+    },
+    {
+      "id": "scrollable-region-focusable",
+      "impact": "serious",
+      "nodes": 1,
+      "sample": ".gjs-pn-views-container"
+    }
+  ],
+  "tabReached80": {
+    "panelBtn": 0,
+    "block": 0,
+    "input": 0,
+    "iframe": 27,
+    "other": 53
+  },
+  "keyboardAddBlock": {
+    "before": 0,
+    "after": 0,
+    "focusedIsBlock": false
+  }
+}

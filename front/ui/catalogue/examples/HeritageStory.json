@@ -1,0 +1,30 @@
+{
+  "props": {
+    "id": "product",
+    "eyebrow": "The thinking behind the name",
+    "title": "Knowledge grows when we build it together.",
+    "caption": "Stanisław Ulam · illustrated portrait",
+    "paragraphs": [
+      "In the cafés of Lwów, Stanisław Ulam and fellow mathematicians discussed problems and recorded them in a shared notebook: the Scottish Book. Questions, solutions and new ideas grew through collaboration.",
+      "Ulam later translated the collection so it could reach more people, inviting readers to contribute corrections and further developments."
+    ],
+    "connection": "That spirit inspires ULAMS: turn your organisation’s documents into shared learning, work with people and agents, and keep improving the knowledge together. Open source, free to use and open to contribution.",
+    "source": {
+      "label": "The Scottish Book · Ulam’s preface, University of St Andrews",
+      "href": "https://mathshistory.st-andrews.ac.uk/HistTopics/Scottish_Book/"
+    },
+    "cta": {
+      "label": "Build with us on GitHub",
+      "href": "https://github.com/ulams-dev/ulams"
+    },
+    "image": {
+      "src": "/landing/ulam/stanislaw-ulam-stitch.png",
+      "alt": "Stanisław Ulam",
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  "invalid": {
+    "paragraphs": "text"
+  }
+}

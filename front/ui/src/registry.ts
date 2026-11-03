@@ -18,6 +18,7 @@
  * Run `yarn workspace @ulams/ui catalogue` to print this registry as JSON.
  */
 import type { JsonSchema } from "./schema.ts";
+import { TENANT_THEMES } from "./theme/presets.ts";
 import {
   COURSE_UPDATES_TITLE,
   extendedText,
@@ -44,7 +45,7 @@ export const FORMATS = [
 ] as const;
 export type Format = (typeof FORMATS)[number];
 
-export const THEMES = ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam", "platform"] as const;
+export const THEMES = [...TENANT_THEMES, "platform"] as const;
 export type ThemeName = (typeof THEMES)[number];
 export { THEME_PRESETS, TENANT_THEMES } from "./theme/presets.ts";
 
@@ -124,6 +125,16 @@ export const LINK: JsonSchema = obj(
   { label: text("Visible text", { maxLength: 80 }), href: href("Target URL") },
   ["label", "href"],
   "A link or call to action"
+);
+export const LANGUAGE: JsonSchema = obj(
+  {
+    code: text("Language code of the page it links to (BCP 47)", { maxLength: 10 }),
+    label: text("Name of the language in that language, e.g. PL or 中文", { maxLength: 20 }),
+    href: href("URL of the page in that language"),
+    current: bool("True for the language of this page", false),
+  },
+  ["code", "label", "href"],
+  "One language of the switcher"
 );
 export const IMAGE: JsonSchema = obj(
   {
@@ -225,6 +236,23 @@ const PENDING_ROW: JsonSchema = obj({ title: LESSON_TITLE, href: href("Lesson li
 const titles = (items: unknown, key = "title"): string[] =>
   Array.isArray(items) ? items.map((i) => (i && typeof i === "object" ? String((i as Record<string, unknown>)[key] ?? "") : "")) : [];
 
+const LOCALE = oneOf(["en", "pl", "zh"], "Interface language of the fixed strings; filled by the app, authors and models leave it out");
+const REMEDIATION_TITLE = text("Heading of the block", { maxLength: 120 });
+const REMEDIATION_MARKDOWN = text("Markdown, at most 1 800 characters; raw HTML is escaped", { maxLength: 1800 });
+const CITATION = obj({ label: text("Name of the cited source section", { maxLength: 200 }), href: href("Lesson the source belongs to; leave out when there is none") }, ["label"]);
+const PRACTICE = obj(
+  {
+    stem: text("The question", { maxLength: 400 }),
+    options: list(obj({ text: text("Answer option", { maxLength: 200 }), correct: bool("Whether this option is right", false) }, ["text", "correct"]), "2 to 5 answer options; exactly one is correct", {
+      minItems: 2,
+      maxItems: 5,
+      default: undefined,
+    }),
+    explanation: text("Why the right option is right; shown only after the learner checks an answer", { maxLength: 400 }),
+  },
+  ["stem", "options", "explanation"]
+);
+
 export const registry = {
   Page: {
     description:
@@ -272,6 +300,8 @@ export const registry = {
         links: list(LINK, "Navigation links", { maxItems: 6 }),
         cta: LINK,
         signIn: LINK,
+        homeHref: href("Where the brand links to; the language home on a translated landing"),
+        languages: list(LANGUAGE, "Language switcher: one entry per language, in display order; the current one is marked", { maxItems: 4 }),
       },
       ["brand"]
     ),
@@ -294,9 +324,9 @@ export const registry = {
   },
   Hero: {
     description:
-      "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
+      "First screen of a landing page. A product variant may show an animated, pausable six-step policy-to-certification lifecycle. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
     category: "section",
-    interactive: false,
+    interactive: true,
     children: false,
     props: obj(
       {
@@ -381,19 +411,49 @@ export const registry = {
         ),
         diff: obj(
           {
-            title: text("Card title, e.g. the lesson being updated", { maxLength: 80 }),
-            source: text("Source the change comes from, e.g. docs/slo.md", { maxLength: 80 }),
-            note: text("Small note under the card", { maxLength: 160 }),
-            lines: list(
-              obj({ op: oneOf(["add", "del", "ctx"], "Diff line kind", "ctx"), text: text("Line", { maxLength: 160 }) }, ["text"]),
-              "Diff lines",
-              { maxItems: 8 }
+            ariaLabel: text("Accessible description of the product example", { maxLength: 280 }),
+            badge: text("Short status label on the example card", { maxLength: 40 }),
+            title: text("Title of the illustrative journey, e.g. 'Privacy policy v1 → v2'", { maxLength: 80 }),
+            note: text("Small note under the card", { maxLength: 240 }),
+            visual: obj(
+              {
+                chapters: list(text("Short navigation label", { maxLength: 24 }), "Seven story chapters", { minItems: 7, maxItems: 7 }),
+                intake: obj(
+                  {
+                    ...Object.fromEntries(["uploader", "upload", "uploaded", "styleguide", "extract", "context", "llm", "sourceReady", "briefTitle", "ready"].map((key) => [key, text(`Localized policy intake copy: ${key}`, { maxLength: 120 })])),
+                    questions: list(obj({ question: text("Course brief question", { maxLength: 140 }), answer: text("Illustrative CEO answer", { maxLength: 140 }) }, ["question", "answer"]), "Four audience and duration questions", { minItems: 4, maxItems: 4 }),
+                  },
+                  ["uploader", "upload", "uploaded", "styleguide", "extract", "context", "llm", "sourceReady", "briefTitle", "ready", "questions"],
+                  "PDF extraction, cited source context and the course briefing interview"
+                ),
+                audiences: list(text("Department", { maxLength: 30 }), "Three example departments", { minItems: 3, maxItems: 3 }),
+                roleTopics: list(text("Role-specific learning focus", { maxLength: 80 }), "One learning focus per department", { minItems: 3, maxItems: 3 }),
+                learners: list(text("Illustrative learner label", { maxLength: 40 }), "Three anonymous learner rows in the owner view", { minItems: 3, maxItems: 3 }),
+                formats: list(text("Learning activity", { maxLength: 40 }), "Three activities ending with an exam", { minItems: 3, maxItems: 3 }),
+                ...Object.fromEntries([
+                  "policy", "section", "before", "after", "academy", "lesson", "exam", "certificate", "completed", "pending",
+                  "owner", "progress", "later", "proposal", "approval", "renewal", "expired", "minor", "major", "notification", "renewed",
+                ].map((key) => [key, text(`Localized illustration copy: ${key}`, { maxLength: 120 })])),
+              },
+              ["chapters", "intake", "audiences", "roleTopics", "learners", "formats", "policy", "section", "before", "after", "academy", "lesson", "exam", "certificate", "completed", "pending", "owner", "progress", "later", "proposal", "approval", "renewal", "expired", "minor", "major", "notification", "renewed"],
+              "Localized copy for the policy document, role-specific courses, learning site, certificates, completion view and reviewed source update"
             ),
-            citations: list(text("Citation chip, e.g. docs/slo.md §2", { maxLength: 40 }), "Citations", { maxItems: 4 }),
-            action: text("Label of the approve button", { maxLength: 30 }),
+            journey: list(
+              obj(
+                {
+                  title: text("Story step title", { maxLength: 60 }),
+                  text: text("What happens and why this step matters", { maxLength: 180 }),
+                  bullets: list(text("Concise action or outcome", { maxLength: 140 }), "Practical explanation of this step", { minItems: 2, maxItems: 4 }),
+                  status: oneOf(["available", "coming"], "Whether this capability is available or on the roadmap", "available"),
+                },
+                ["title", "text"]
+              ),
+              "Steps in the product story",
+              { minItems: 7, maxItems: 7 }
+            ),
           },
-          ["lines"],
-          "Update-proposal card for the product variant"
+          ["journey", "visual"],
+          "A single visual story at the top of the product page: policy v1, learning, oversight, reviewed policy v2 changes and planned recertification"
         ),
       },
       ["title"]
@@ -421,6 +481,14 @@ export const registry = {
       ["lessons"]
     ),
     fallback: (p) => join(p.title, ...titles(p.lessons)),
+  },
+  HeritageStory: {
+    description: "An editorial brand-origin story with an attributed portrait, sourced historical context, a separate product connection and a call to action. Never invent quotations or historical facts.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj({ eyebrow: EYEBROW, title: TITLE, image: IMAGE, caption: text("Illustration caption", { maxLength: 160 }), paragraphs: list(text("Sourced historical paragraph", { maxLength: 600 }), "Historical context", { minItems: 1, maxItems: 3 }), connection: text("How this history inspires the product", { maxLength: 600 }), source: LINK, cta: LINK }, ["title", "image", "paragraphs", "connection", "source", "cta"]),
+    fallback: (p) => join(p.title, ...(Array.isArray(p.paragraphs) ? p.paragraphs as string[] : []), p.connection),
   },
   Letter: {
     description: "Personal letter from the tutors with portraits, paragraphs and a pull quote (editorial).",
@@ -620,8 +688,31 @@ export const registry = {
     ),
     fallback: (p) => join(p.title, ...titles(p.items, "name")),
   },
+  ContactForm: {
+    description: "An accessible contact form that sends messages to the private ULAMS contact inbox through the platform API.",
+    category: "section",
+    interactive: true,
+    children: false,
+    props: obj({
+      id: text("Anchor id", { default: "contact", maxLength: 40 }),
+      eyebrow: EYEBROW,
+      title: text("Section title", { maxLength: 120 }),
+      intro: text("Short introduction", { maxLength: 400 }),
+      endpoint: text("Platform API base URL", { maxLength: 254 }),
+      nameLabel: text("Name field label", { maxLength: 80 }),
+      emailLabel: text("Reply-to field label", { maxLength: 80 }),
+      subjectLabel: text("Subject field label", { maxLength: 80 }),
+      messageLabel: text("Message field label", { maxLength: 80 }),
+      submitLabel: text("Submit button label", { maxLength: 80 }),
+      sendingLabel: text("Submitting state label", { maxLength: 80 }),
+      successMessage: text("Successful submission message", { maxLength: 200 }),
+      errorMessage: text("Submission failure message", { maxLength: 200 }),
+      note: text("Submission behavior note", { maxLength: 200 }),
+    }, ["title", "intro", "endpoint", "nameLabel", "emailLabel", "subjectLabel", "messageLabel", "submitLabel", "sendingLabel", "successMessage", "errorMessage", "note"]),
+    fallback: p => join(p.title, p.intro),
+  },
   Faq: {
-    description: "Questions and answers as an accessible disclosure list (no JavaScript).",
+    description: "Questions and answers as an accessible disclosure list, or as open question-and-answer cards (no JavaScript).",
     category: "section",
     interactive: false,
     children: false,
@@ -634,10 +725,145 @@ export const registry = {
           minItems: 1,
           maxItems: 12,
         }),
+        jsonLd: bool("Emit schema.org FAQPage JSON-LD; turn off when the page emits one FAQPage for several sections", true),
+        collapsible: bool("Render each question as a disclosure; turn off to show every answer, e.g. on a dedicated FAQ page", true),
+        more: { ...LINK, description: "Link under the list to the full FAQ page" },
       },
       ["items"]
     ),
     fallback: (p) => join(p.title, ...titles(p.items, "q")),
+  },
+  FeatureIndex: {
+    description:
+      "Everything the product does, grouped and collapsed by default: one native disclosure per group with short feature lines, status badges and links to the package docs (no JavaScript, content stays in the HTML for search engines). Emits ItemList JSON-LD. Use it for a long, honest capability list, not for the three-to-six headline benefits (FeatureList).",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "features", maxLength: 40 }),
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        docsBase: href("Docs site root; a package name links to <docsBase>/reference/packages/<name>/"),
+        jsonLd: bool("Emit schema.org ItemList JSON-LD of the groups and features", true),
+        navLabel: text("Accessible stakeholder-navigation label", { maxLength: 80 }),
+        audiences: list(obj({ id: text("Stakeholder id", { maxLength: 40 }), title: text("Stakeholder title", { maxLength: 100 }), summary: text("How these capabilities help this stakeholder", { maxLength: 300 }) }, ["id", "title", "summary"]), "Stakeholders; categories link to them with audience", { maxItems: 8 }),
+        groups: list(
+          obj(
+            {
+              id: text("Group anchor id", { maxLength: 40 }),
+              audience: text("Stakeholder id for this category", { maxLength: 40 }),
+              title: text("Group title", { maxLength: 80 }),
+              summary: text("One sentence under the title when the group is open", { maxLength: 300 }),
+              items: list(
+                obj(
+                  {
+                    title: text("Feature", { maxLength: 80 }),
+                    text: text("What it does, in one or two sentences", { maxLength: 320 }),
+                    packages: list(text("Package name under api/packages", { maxLength: 60 }), "Packages that implement it", { maxItems: 6 }),
+                    href: href("Docs page for the feature"),
+                    status: oneOf(["available", "coming", "preview"], "Shipped today, on the roadmap or off by default (say so honestly)", "available"),
+                  },
+                  ["title"]
+                ),
+                "Features",
+                { maxItems: 14 }
+              ),
+              tags: list(text("Name", { maxLength: 60 }), "Short names shown as a tag cloud (for example the content types of a standard)", { maxItems: 80 }),
+            },
+            ["id", "title"]
+          ),
+          "Groups",
+          { minItems: 1, maxItems: 16 }
+        ),
+      },
+      ["groups"]
+    ),
+    fallback: (p) => join(p.title, p.intro, titles(p.groups)),
+  },
+  BlogIndex: {
+    description:
+      "The list of blog posts as cards, newest first: date, title, description, topics and an optional thumbnail. The whole card links to the post. Renders the page heading (h1), so use it once, as the lead of a blog index page.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "posts", maxLength: 40 }),
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        posts: list(
+          obj(
+            {
+              title: text("Post title", { maxLength: 160 }),
+              description: text("One or two sentences about the post", { maxLength: 300 }),
+              href: href("Link to the post"),
+              date: text("Publication date, YYYY-MM-DD", { maxLength: 10 }),
+              tags: list(text("Topic", { maxLength: 40 }), "Topics", { maxItems: 6 }),
+              image: obj(
+                { src: href("Thumbnail URL (decorative, the title says what the post is)"), width: int("Intrinsic width in px", { minimum: 1 }), height: int("Intrinsic height in px", { minimum: 1 }) },
+                ["src", "width", "height"]
+              ),
+            },
+            ["title", "href", "date"]
+          ),
+          "Posts",
+          { minItems: 1, maxItems: 200 }
+        ),
+      },
+      ["title", "posts"]
+    ),
+    fallback: (p) => join(p.title, p.intro, titles(p.posts)),
+  },
+  BlogPost: {
+    description:
+      "One blog post: back link, date and byline, title (h1), lead, topics, an optional clip with a caption (native controls), the Markdown body, an optional gallery of captioned screenshots and an optional Markdown footer. Use it once, as the lead of a post page.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "post", maxLength: 40 }),
+        title: TITLE,
+        lead: text("Standfirst under the title", { maxLength: 400 }),
+        date: text("Publication date, YYYY-MM-DD", { maxLength: 10 }),
+        author: text("Author name for the byline", { maxLength: 80 }),
+        tags: list(text("Topic", { maxLength: 40 }), "Topics", { maxItems: 6 }),
+        backHref: href("Link back to the list of posts"),
+        markdown: text("Post body in Markdown", { maxLength: 60000 }),
+        video: obj(
+          {
+            src: href("MP4 URL"),
+            poster: href("Poster image URL"),
+            width: int("Width in px", { minimum: 1 }),
+            height: int("Height in px", { minimum: 1 }),
+            caption: text("Says what the clip shows (also its text alternative)", { maxLength: 600 }),
+          },
+          ["src", "width", "height"]
+        ),
+        imagesHeading: text("Heading of the screenshot gallery", { maxLength: 120 }),
+        imagesIntro: text("Sentence under the gallery heading", { maxLength: 300 }),
+        images: list(
+          obj(
+            {
+              src: href("Image URL"),
+              alt: text("Text alternative", { maxLength: 300 }),
+              width: int("Intrinsic width in px", { minimum: 1 }),
+              height: int("Intrinsic height in px", { minimum: 1 }),
+              caption: text("Caption", { maxLength: 300 }),
+            },
+            ["src", "alt", "width", "height"]
+          ),
+          "Screenshots",
+          { maxItems: 20 }
+        ),
+        footer: text("Markdown after the gallery (related posts)", { maxLength: 4000 }),
+      },
+      ["title", "date", "backHref", "markdown"]
+    ),
+    fallback: (p) => join(p.title, p.lead, p.markdown),
   },
   CtaBand: {
     description: "Closing call to action: a banner or a newsletter-style band.",
@@ -646,11 +872,31 @@ export const registry = {
     children: false,
     props: obj(
       {
-        variant: oneOf(["banner", "newsletter", "terminal"], "Style; terminal shows `code` lines in a terminal window", "banner"),
+        variant: oneOf(["banner", "newsletter", "terminal", "feature"], "Style; terminal shows `code` lines in a terminal window; feature shows big `stats`, outcome `bullets`, a schematic `panel` and `chips`", "banner"),
         eyebrow: EYEBROW,
         title: TITLE,
         text: INTRO,
+        bullets: list(obj({ title: text("Bullet heading", { maxLength: 80 }), text: text("Short explanation", { maxLength: 200 }), href: href("Guide or supporting resource") }, ["title", "text"]), "Concise call-to-action details", { maxItems: 6 }),
+        note: text("Short closing note", { maxLength: 200 }),
+        stats: list(
+          obj({ value: text("Big figure", { maxLength: 24 }), label: text("What it is", { maxLength: 80 }), note: text("Small note or source", { maxLength: 80 }), kind: oneOf(["own", "benchmark"], "Our own measurement or a third-party benchmark", "own"), href: href("Source of a benchmark") }, ["value", "label"]),
+          "Feature variant: big figures (a benchmark one is shown apart)",
+          { maxItems: 6 }
+        ),
+        statsLabel: text("Feature variant: label above the figures", { maxLength: 100 }),
+        chips: list(text("Capability", { maxLength: 60 }), "Feature variant: capability chips", { maxItems: 8 }),
+        panel: obj(
+          {
+            title: text("Panel title", { maxLength: 60 }),
+            label: text("Label that says the panel is an illustration", { maxLength: 40 }),
+            alt: text("Text alternative for the whole panel", { maxLength: 300 }),
+            rows: list(obj({ label: text("Row label", { maxLength: 60 }), level: { type: "number", minimum: 0, maximum: 100, description: "Bar length in percent (drawn without a number)" }, tone: oneOf(["ok", "warn", "muted"], "Bar colour", "ok") }, ["label", "level"]), "Bars", { maxItems: 6 }),
+          },
+          ["title", "label", "alt", "rows"],
+          "Feature variant: schematic illustration of the product"
+        ),
         code: list(text("Command or output line", { maxLength: 120 }), "Terminal lines (terminal variant); lines starting with $ are commands", { maxItems: 10 }),
+        id: text("Anchor id for in-page links (letters, digits, dashes)", { default: "join", maxLength: 40 }),
         cta: LINK,
         secondary: LINK,
       },
@@ -714,7 +960,7 @@ export const registry = {
   },
   WorkflowShowcase: {
     description:
-      "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers are typed line by line, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
+      "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers can type line by line or stay on a settled example, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
     category: "section",
     interactive: true,
     children: false,
@@ -727,13 +973,14 @@ export const registry = {
         description: text("Text alternative of the whole animation for screen readers", { maxLength: 600 }),
         footnote: text("Small print under the tabs, e.g. that some commands are the planned interface", { maxLength: 300 }),
         legal: text("Trademark line, e.g. that product names belong to their owners and are not endorsements", { maxLength: 300 }),
+        staticPreview: bool("Show a settled transcript without automatically typing it", false),
         tabs: list(
           obj(
             {
               key: text("Stable key (letters, digits, dashes)", { maxLength: 24 }),
               label: text("Tab label", { maxLength: 24 }),
               status: oneOf(["available", "preview", "coming"], "Status badge; omit when everything shown exists"),
-              window: oneOf(["terminal", "chat", "studio"], "Look of the window frame", "terminal"),
+              window: oneOf(["terminal", "chat", "studio", "admin"], "Look of the window frame", "terminal"),
               title: text("Window title", { maxLength: 60 }),
               caption: text("One line under the window", { maxLength: 200 }),
               note: text("Honest note under the caption, e.g. what the example depends on", { maxLength: 200 }),
@@ -1040,6 +1287,7 @@ export const registry = {
                   {
                     value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }),
                     note: text("Short neutral note", { maxLength: 120 }),
+                    kind: text("Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming", { maxLength: 16 }),
                   },
                   ["value"]
                 ),
@@ -1075,7 +1323,7 @@ export const registry = {
               label: text("Feature", { maxLength: 60 }),
               help: text("What the row means", { maxLength: 160 }),
               cells: list(
-                obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }) }, ["value"]),
+                obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }), kind: text("Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming", { maxLength: 16 }) }, ["value"]),
                 "One cell per column, same order",
                 { maxItems: 8 }
               ),
@@ -1095,7 +1343,7 @@ export const registry = {
                     label: text("Feature", { maxLength: 60 }),
                     help: text("What the row means", { maxLength: 160 }),
                     cells: list(
-                      obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }) }, ["value"]),
+                      obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }), kind: text("Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming", { maxLength: 16 }) }, ["value"]),
                       "One cell per column, same order",
                       { maxItems: 8 }
                     ),
@@ -1141,6 +1389,7 @@ export const registry = {
         eyebrow: EYEBROW,
         title: TITLE,
         intro: INTRO,
+        research: obj({ eyebrow: EYEBROW, title: TITLE, text: text("Sourced summary of the foundational paper", { maxLength: 600 }), author: text("Documented author", { maxLength: 100 }), date: text("PDF version date in ISO format", { maxLength: 10 }), dateLabel: text("Localized version-date label", { maxLength: 100 }), links: list(LINK, "Verified paper and source links", { minItems: 1, maxItems: 3 }) }, ["eyebrow", "title", "text", "author", "date", "dateLabel", "links"], "Optional scholarly context, separate from the standards and integration badges"),
         items: list(
           obj(
             {
@@ -1169,6 +1418,7 @@ export const registry = {
         text: text("Sentence under the brand", { maxLength: 300 }),
         links: list(LINK, "Links", { maxItems: 10 }),
         note: text("Small print", { maxLength: 200 }),
+        mail: bool("Show the contact address, assembled in the browser so it is not in the HTML", false),
       },
       ["brand"]
     ),
@@ -1192,6 +1442,7 @@ export const registry = {
         primaryCta: LINK,
         secondaryCta: LINK,
         progress: int("Learner completion 0–100; omit when unknown", { maximum: 100 }),
+        progressNote: text("Line under the progress bar: what is next and how much is left", { maxLength: 200 }),
       },
       ["title"]
     ),
@@ -1223,13 +1474,43 @@ export const registry = {
     children: false,
     props: obj(
       {
+        title: text("Optional heading shown above the text (as a third-level heading)", { maxLength: 120 }),
         markdown: text("Markdown source", { maxLength: 60000 }),
         dropCap: bool("Editorial drop cap on the first paragraph", false),
         size: oneOf(["sm", "md", "lg"], "Text size", "md"),
       },
       ["markdown"]
     ),
-    fallback: (p) => String(p.markdown ?? ""),
+    fallback: (p) => join(p.title, p.markdown),
+  },
+  ProseSteps: {
+    description:
+      "A long reading shown one part at a time: an optional introduction and 2-12 parts, each with a heading and Markdown text. Previous and next controls move between parts with JavaScript; without it every part is on the page. Used by the adaptive lesson view for a learner who prefers lessons in parts.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "parts", maxLength: 40 }),
+        intro: text("Markdown shown above the first part", { maxLength: 60000 }),
+        sections: list(
+          obj(
+            {
+              heading: text("Heading of the part", { maxLength: 160 }),
+              level: int("Heading level, 2 or 3", { minimum: 2, maximum: 3, default: 2 }),
+              markdown: text("Markdown of the part", { maxLength: 60000 }),
+            },
+            ["heading", "markdown"]
+          ),
+          "The parts, in reading order",
+          { minItems: 2, maxItems: 12 }
+        ),
+        size: oneOf(["sm", "md", "lg"], "Text size", "md"),
+        locale: LOCALE,
+      },
+      ["sections"]
+    ),
+    fallback: (p) => join(p.intro, ...(Array.isArray(p.sections) ? p.sections.map((s) => join((s as { heading?: string }).heading, (s as { markdown?: string }).markdown)) : [])),
   },
   Callout: {
     description: "Highlighted note inside a lesson: a tip, a warning or a key idea.",
@@ -1324,6 +1605,7 @@ export const registry = {
     props: obj(
       {
         id: text("Anchor id", { default: "practice", maxLength: 40 }),
+        initialHints: int("Hints already shown when the learner opens a challenge (0 to 3); set by the learner's lesson view, not by authors", { minimum: 0, maximum: 3, default: 0 }),
         title: TITLE,
         intro: text("What the learner will practise and why, in one or two sentences", { maxLength: 800 }),
         toolbox: list(
@@ -1386,6 +1668,29 @@ export const registry = {
     children: false,
     props: obj({ image: IMAGE, caption: text("Caption", { maxLength: 300 }) }, ["image"]),
     fallback: (p) => String(p.caption ?? (p.image as { alt?: string } | undefined)?.alt ?? ""),
+  },
+  FrameSlider: {
+    description: "A walk-through of captioned frames: previous and next controls, then the explanation, then the image at full width. One frame at a time with JavaScript; every frame stays in the HTML without it.",
+    category: "section",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "frames", maxLength: 40 }),
+        title: TITLE,
+        intro: INTRO,
+        previous: text("Previous-frame control", { maxLength: 40, default: "Previous" }),
+        next: text("Next-frame control", { maxLength: 40, default: "Next" }),
+        frames: list(
+          obj({ image: IMAGE, caption: text("Explanation under the image", { maxLength: 400 }) }, ["image", "caption"]),
+          "Frames in order",
+          { minItems: 1, maxItems: 24 }
+        ),
+      },
+      ["frames"]
+    ),
+    fallback: (p) =>
+      join(p.title, p.intro, ...(Array.isArray(p.frames) ? p.frames.map((frame) => String((frame as { caption?: string }).caption ?? "")) : [])),
   },
   VideoPlayer: {
     description: "Video with poster, chapters and transcript. HLS streams load a player only when played.",
@@ -1509,6 +1814,39 @@ export const registry = {
     ),
     fallback: (p) => String(p.title ?? ""),
   },
+  CodeExerciseLesson: {
+    description:
+      "A code exercise (JavaScript or TypeScript): the task, the learner's files in labelled text areas, the visible tests and their results. The code runs only in a sandboxed runner frame on the tenant content origin; results are practice grades reported through the learner session.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        src: href("The runner page on the content origin (from POST /api/code-exercises/launches/{topic})"),
+        title: text("Title", { maxLength: 160 }),
+        topicId: int("Topic id for the attempts call (omitted in a preview: nothing is tracked)"),
+        language: oneOf(["javascript", "typescript"], "Language of the exercise", "javascript"),
+        files: list(
+          obj({ path: text("Relative path of the file", { maxLength: 80 }), content: text("Starter content", { maxLength: 65536 }) }, ["path", "content"]),
+          "The learner's starter files",
+          { maxItems: 20 }
+        ),
+        tests: list(
+          obj({ path: text("Relative path of the test file", { maxLength: 80 }), content: text("Test source", { maxLength: 65536 }) }, ["path", "content"]),
+          "The visible test files",
+          { maxItems: 10 }
+        ),
+        timeoutMs: int("A run is stopped after this many milliseconds", { default: 5000, minimum: 500, maximum: 30000 }),
+        passScore: int("Percentage of passing tests that completes the topic", { minimum: 1, maximum: 100 }),
+        completionRule: oneOf(["on_pass", "on_attempt"], "When the topic completes", "on_pass"),
+        text: text("The task (Markdown)", { maxLength: 20000 }),
+        locale: text("Language of the interface texts", { maxLength: 16, default: "en" }),
+        attempts: obj({ count: int("Attempts so far"), best_score: int("Best score in percent") }, ["count"], "The learner's attempts so far"),
+      },
+      ["src", "title", "files", "tests"]
+    ),
+    fallback: (p) => String(p.title ?? ""),
+  },
   ActivityCard: {
     description: "Launch card for an activity that runs outside the page (cmi5 tracked activity, project hand-in).",
     category: "learning",
@@ -1609,6 +1947,118 @@ export const registry = {
       );
     },
   },
+  WorkedExample: {
+    description:
+      "A worked example inside extra help: a title and the steps as Markdown (at most 1 800 characters). Static; it is one of the blocks generated for a learner who struggled with a part of the course, and every block cites its source fragments.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj({ title: REMEDIATION_TITLE, markdown: REMEDIATION_MARKDOWN }, ["title", "markdown"]),
+    fallback: (p) => join(p.title, p.markdown),
+  },
+  PracticeQuestion: {
+    description:
+      "One multiple-choice practice question with exactly one right option. The learner picks an option and presses Check; the result is stated in words and the explanation appears only after that first attempt. Nothing is recorded or sent. Used in extra help; the plain-text fallback leaves out the answer.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj({ title: REMEDIATION_TITLE, markdown: REMEDIATION_MARKDOWN, practice: PRACTICE, locale: LOCALE }, ["title", "markdown", "practice"]),
+    // The fallback never includes the right option or the explanation: text channels cannot hold them back.
+    fallback: (p) => {
+      const practice = (p.practice ?? {}) as { stem?: unknown; options?: unknown };
+      const options = Array.isArray(practice.options) ? practice.options.map((o) => `- ${String((o as { text?: unknown }).text ?? "")}`) : [];
+      return join(p.title, p.markdown, practice.stem, options);
+    },
+  },
+  ElaborativeQuestion: {
+    description:
+      "An open question that asks the learner to explain an idea in their own words, with an optional notes field. What the learner types stays on their device; nothing is sent. Used in extra help.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj({ title: REMEDIATION_TITLE, markdown: REMEDIATION_MARKDOWN, locale: LOCALE }, ["title", "markdown"]),
+    fallback: (p) => join(p.title, p.markdown),
+  },
+  CitationList: {
+    description:
+      "The sources a block is based on: a visible heading and a list of source names, each a link only when the API gives a lesson to open. Filled by the app next to generated blocks; authors do not place it.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        items: list(CITATION, "1 to 12 sources", { minItems: 1, maxItems: 12, default: undefined }),
+        label: text("Heading of the list; the interface word for \"Sources\" when left out", { maxLength: 60 }),
+        locale: LOCALE,
+      },
+      ["items"]
+    ),
+    fallback: (p) => join(p.label ?? "Sources", Array.isArray(p.items) ? p.items.map((i) => `- ${String((i as { label?: unknown }).label ?? "")}`) : []),
+  },
+  AiLabel: {
+    description:
+      "A short label that says content was written or assisted by AI, with an icon and the words (never colour alone). Filled by the app next to generated content; authors do not place it.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj({ text: text("The label text", { maxLength: 120 }), tone: oneOf(["generated", "assisted"], "generated = written by AI; assisted = written by the author with AI help", "generated") }, ["text"]),
+    fallback: (p) => join(p.text),
+  },
+  WhyThis: {
+    description:
+      "A collapsed 'Why am I seeing this?' disclosure listing the plain-text reasons something was shown to the learner. Filled by the app; authors do not place it.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        summary: text("Text of the disclosure; the interface wording of 'Why am I seeing this?' when left out", { maxLength: 80 }),
+        reasons: list(text("One reason in plain text", { maxLength: 300 }), "1 to 6 reasons", { minItems: 1, maxItems: 6, default: undefined }),
+        locale: LOCALE,
+      },
+      ["reasons"]
+    ),
+    fallback: (p) => join(p.summary ?? "Why am I seeing this?", Array.isArray(p.reasons) ? p.reasons.map((r) => `- ${String(r)}`) : []),
+  },
+  SupportCard: {
+    description:
+      "The 'Extra help for you' card on a lesson page: a labelled region with a short summary, the generated blocks as children, the reasons it is shown, and 'This helped' / 'Not helpful' / 'Hide' controls. Status changes are announced politely. Filled by the app from the learner's own support items; authors and models do not place it.",
+    category: "learning",
+    interactive: true,
+    children: true,
+    props: obj(
+      {
+        assignmentId: text("Id of the learner's assignment (26-character ULID); without it the controls are not shown", { maxLength: 26 }),
+        status: oneOf(["generating", "ready", "failed"], "generating = still being prepared; ready = the blocks are the children; failed = nothing to show", "ready"),
+        summary: text("One or two sentences on what the help covers", { maxLength: 300 }),
+        reasons: list(text("One reason in plain text", { maxLength: 300 }), "Why this help is shown", { maxItems: 6 }),
+        aiLabel: text("The AI label shown in the heading row", { maxLength: 120 }),
+        feedback: oneOf(["helpful", "not_helpful"], "The learner's earlier answer, if any"),
+        position: int("Number of this card when the lesson has several (1, 2, …), so each region has its own name", { minimum: 1, maximum: 20 }),
+        total: int("How many cards the lesson has", { minimum: 1, maximum: 20 }),
+        locale: LOCALE,
+      },
+      []
+    ),
+    fallback: (p) => join(p.summary, Array.isArray(p.reasons) ? p.reasons.map((r) => `- ${String(r)}`) : []),
+  },
+  FeynmanReflection: {
+    description:
+      "A box where the learner writes an explanation in their own words and asks for AI feedback: what they got right, what is missing, a follow-up question and the course sources. The text is sent once to the AI provider and is not stored. Filled by the app inside the extra-help card; authors and models do not place it.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        assignmentId: text("Id of the learner's assignment (26-character ULID); without it the box is not shown", { maxLength: 26 }),
+        prompt: text("The prompt above the box; the interface wording of 'Explain it in your own words' when left out", { maxLength: 120 }),
+        maxLength: int("Longest explanation in characters", { minimum: 10, maximum: 2000, default: 2000 }),
+        locale: LOCALE,
+      },
+      ["assignmentId"]
+    ),
+    fallback: (p) => join(p.prompt ?? "Explain it in your own words"),
+  },
 } as const satisfies Record<string, ComponentSpec>;
 
 // Every section accepts an optional anchor id (for in-page links such as "#pricing").
@@ -1636,6 +2086,13 @@ export const LEARNER_LAYOUT_COMPONENTS = [
   "CodeBlock",
   "PracticeActivity",
 ] as const satisfies ReadonlyArray<ComponentName>;
+
+/**
+ * The blocks a stored remediation (Learner Insights) may contain. `RemediationGenerator` validates each
+ * block's props against `catalogue/remediation-manifest.json` before it stores them, so a block the
+ * learner page could not render never reaches a learner.
+ */
+export const REMEDIATION_COMPONENTS = ["Prose", "WorkedExample", "PracticeQuestion", "ElaborativeQuestion"] as const satisfies ReadonlyArray<ComponentName>;
 
 export const componentNames = Object.keys(registry) as ComponentName[];
 
@@ -1697,6 +2154,27 @@ export function pageManifest(): {
     catalogId: "https://ulams.dev/catalogue/page/v1",
     components: Object.fromEntries(
       Object.entries(registry).map(([name, spec]) => [name, { description: spec.description, children: spec.children, props: closed(spec.props) }])
+    ),
+  };
+}
+
+/**
+ * The remediation blocks as a manifest for the API (description + closed props JSON Schema), written to
+ * catalogue/remediation-manifest.json and its API copy by `yarn workspace @ulams/ui remediation-manifest`.
+ * A generated block is short, so `Prose.markdown` is limited to the 1 800 characters of the generation schema.
+ */
+export function remediationManifest(): {
+  catalogId: string;
+  components: Record<string, { description: string; interactive: boolean; props: JsonSchema }>;
+} {
+  return {
+    catalogId: "https://ulams.dev/catalogue/remediation/v1",
+    components: Object.fromEntries(
+      REMEDIATION_COMPONENTS.map((name) => {
+        const props = closed(registry[name].props);
+        if (name === "Prose" && props.properties?.markdown) props.properties = { ...props.properties, markdown: { ...props.properties.markdown, maxLength: 1800 } };
+        return [name, { description: registry[name].description, interactive: registry[name].interactive, props }];
+      })
     ),
   };
 }

@@ -10,10 +10,22 @@ use Ulams\CourseBuilder\Apply\BlueprintApplier;
 use Ulams\CourseBuilder\Apply\CourseCommerce;
 use Ulams\CourseBuilder\Apply\DeleteEverything;
 use Ulams\CourseBuilder\Apply\SiteTheme;
+use Ulams\CourseBuilder\Apply\TopicWriter;
+use Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry;
+use Ulams\CourseBuilder\ContentTypes\H5pLibraries;
+use Ulams\CourseBuilder\ContentTypes\H5pType;
+use Ulams\CourseBuilder\ContentTypes\InteractiveType;
+use Ulams\CourseBuilder\ContentTypes\LiaScriptType;
+use Ulams\CourseBuilder\ContentTypes\RichTextType;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
+use Ulams\CourseBuilder\Contracts\PendingChanges;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
+use Ulams\CourseBuilder\Contracts\SourceHistory;
 use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
+use Ulams\CourseBuilder\CourseAsCode\NoPendingChanges;
+use Ulams\CourseBuilder\Ingestion\NoSourceHistory;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
+use Ulams\CourseBuilder\Console\BackfillReleasesCommand;
 use Ulams\CourseBuilder\Console\EvalCommand;
 use Ulams\CourseBuilder\Console\PruneEventsCommand;
 use Ulams\CourseBuilder\Console\SessionExportCommand;
@@ -25,6 +37,7 @@ use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\CourseBuilder\Pipeline\GenerationService;
 use Ulams\CourseBuilder\Pipeline\InterviewService;
 use Ulams\CourseBuilder\Pipeline\Llm;
+use Ulams\CourseBuilder\Pipeline\OutlineEditor;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Pipeline\PriceService;
@@ -33,13 +46,24 @@ use Ulams\CourseBuilder\Publish\PublishCheck;
 use Ulams\CourseBuilder\Site\NewSite;
 use Ulams\CourseBuilder\Transfer\SessionArchive;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
+use Ulams\CourseBuilder\Pipeline\VariantOutlineService;
+use Ulams\CourseBuilder\Services\AiAssistedTopics;
+use Ulams\CourseBuilder\Services\ReleaseRecorder;
+use Ulams\CourseBuilder\Services\VersionComparer;
 use Ulams\CourseBuilder\Services\RunService;
+use Ulams\CourseBuilder\Services\VariantService;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\CourseBuilder\Ui\Surfaces;
 use Ulams\CourseBuilder\Ui\UiCatalogue;
 use Ulams\Commerce\UlamsCommerceServiceProvider;
+use Ulams\CourseVariants\UlamsCourseVariantsServiceProvider;
+use Ulams\Courses\Http\Resources\TopicResource;
 use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\H5P\UlamsH5PServiceProvider;
+use Ulams\Interactive\UlamsInteractiveServiceProvider;
+use Ulams\LiaScript\UlamsLiaScriptServiceProvider;
 use Ulams\Pages\UlamsPagesServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Ulams\Settings\UlamsSettingsServiceProvider;
 use Ulams\TopicTypeGift\UlamsTopicTypeGiftServiceProvider;
 use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
@@ -61,13 +85,22 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         BriefService::class => BriefService::class,
         Llm::class => Llm::class,
         VersionService::class => VersionService::class,
+        ReleaseRecorder::class => ReleaseRecorder::class,
         SourceIngestor::class => SourceIngestor::class,
         InterviewService::class => InterviewService::class,
         OutlineService::class => OutlineService::class,
+        OutlineEditor::class => OutlineEditor::class,
         GenerationService::class => GenerationService::class,
         PatchService::class => PatchService::class,
         BlueprintApplier::class => BlueprintApplier::class,
         SiteTheme::class => SiteTheme::class,
+        TopicWriter::class => TopicWriter::class,
+        ContentTypeRegistry::class => ContentTypeRegistry::class,
+        RichTextType::class => RichTextType::class,
+        LiaScriptType::class => LiaScriptType::class,
+        H5pType::class => H5pType::class,
+        H5pLibraries::class => H5pLibraries::class,
+        InteractiveType::class => InteractiveType::class,
         CourseCommerce::class => CourseCommerce::class,
         PriceService::class => PriceService::class,
         PublishCheck::class => PublishCheck::class,
@@ -75,14 +108,24 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SessionArchive::class => SessionArchive::class,
         LandingValidator::class => LandingValidator::class,
         RunService::class => RunService::class,
+        VariantService::class => VariantService::class,
+        VariantOutlineService::class => VariantOutlineService::class,
+        AiAssistedTopics::class => AiAssistedTopics::class,
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
+        SourceHistory::class => NoSourceHistory::class,
+        PendingChanges::class => NoPendingChanges::class,
     ];
 
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/course_builder.php', 'course_builder');
-        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class] as $provider) {
+        $this->mergeConfigFrom(__DIR__ . '/../config/course_as_code.php', 'course_as_code');
+        $this->app->register(UlamsCourseVariantsServiceProvider::class);
+        // what the course-variants package asks the builder for (bound after its provider registered, so ours wins)
+        $this->app->bind(\Ulams\CourseVariants\Contracts\TopicCorrespondence::class, \Ulams\CourseBuilder\Services\BuilderTopicCorrespondence::class);
+        $this->app->bind(\Ulams\CourseVariants\Contracts\PlacementSource::class, \Ulams\CourseBuilder\Services\BuilderPlacementSource::class);
+        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class, UlamsLiaScriptServiceProvider::class, UlamsH5PServiceProvider::class, UlamsInteractiveServiceProvider::class, UlamsCourseVariantsServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }
     }
@@ -101,11 +144,17 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
             config(['filesystems.disks.course_builder_private' => ['driver' => 'local', 'root' => config('course_builder.private_root'), 'visibility' => 'private', 'throw' => true]]);
         }
 
+        // AI content labelling (4.3): public tenant switch, and `ai_assisted` on every topic of a program response
+        AdministrableConfig::registerConfig('ai.label_generated_courses', ['boolean'], true, false);
+        // may a CI token approve an imported version (ADR 0160); private, off by default
+        AdministrableConfig::registerConfig('course_as_code.ci_may_approve', ['boolean'], false, false);
+        TopicResource::extend('course-builder.ai_assisted', fn ($topic) => ['ai_assisted' => app(AiAssistedTopics::class)->is($topic)]);
+
         $this->app->make(PromptRegistry::class)->addPath(Llm::PROMPTS, __DIR__ . '/../resources/prompts');
         SyntheticResponders::register($this->app->make(FakeResponders::class));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class]);
+            $this->commands([BackfillReleasesCommand::class, EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class]);
         }
     }
 }

@@ -1,0 +1,5 @@
+# wrangler deploy -c content.wrangler.toml (the custom domains are attached by production-hosts.py)
+name = "ulams-content"
+main = "content.worker.js"
+compatibility_date = "2024-11-01"
+workers_dev = false

@@ -10,7 +10,7 @@ interface QuestionAnswerAdminApiContract
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/question-answers/{id}",
+     *     path="/api/admin/question-answers/{id}", operationId="admin.question-answers.by-id.get",
      *     summary="Lists questions answers for questionaire",
      *     tags={"QuestionAnswersForQuestionaire"},
      *     security={
@@ -122,7 +122,7 @@ interface QuestionAnswerAdminApiContract
 
     /**
      * @OA\Post (
-     *     path="/api/admin/question-answers/{id}/change-visibility",
+     *     path="/api/admin/question-answers/{id}/change-visibility", operationId="admin.question-answers.by-id.change-visibility.post",
      *     summary="Change answer visibility on front",
      *     tags={"QuestionAnswersForQuestionaire"},
      *     security={
@@ -145,6 +145,11 @@ interface QuestionAnswerAdminApiContract
      *     @OA\Response(
      *         response=200,
      *         description="Question answers visibility changed successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/QuestionAnswer")
+     *         ),
      *         @OA\Schema(
      *            type="object",
      *            description="map of questions",

@@ -1,0 +1,12 @@
+{
+  "props": {
+    "assignmentId": "01JBCDEFGHJKMNPQRSTVWXYZ01",
+    "status": "ready",
+    "summary": "A short explanation of the brew ratio and one question to try.",
+    "reasons": ["You answered this question wrongly 2 times"],
+    "aiLabel": "AI-generated, based on this course's sources"
+  },
+  "invalid": {
+    "status": "done"
+  }
+}

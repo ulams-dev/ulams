@@ -1,6 +1,5 @@
 # Topic Type Project
 
-
 ## What does it do
 
 This package is another [TopicType](https://github.com/EscolaLMS/topic-types). It allows students to upload their solutions as files.
@@ -22,7 +21,6 @@ The endpoints are defined in [![swagger](https://img.shields.io/badge/documentat
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests.
-Test details [![codecov](https://codecov.io/gh/Ulams/Topic-Type-Project/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Topic-Type-Project)
 
 ## Events
 

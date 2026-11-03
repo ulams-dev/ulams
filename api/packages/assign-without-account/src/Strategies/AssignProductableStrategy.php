@@ -33,6 +33,12 @@ class AssignProductableStrategy extends AbstractAssignStrategy implements Assign
         AssignToProductable::dispatch($user, $model);
     }
 
+    /** The submission names the productable by alias or class name; the registered productable class loads it. */
+    protected function findModel(string $namespace, int $id): ?Model
+    {
+        return $this->productService->canonicalProductableClass($namespace)::find($id);
+    }
+
     public function getModelInstance(string $namespace, int $id): Model
     {
         if (!$this->productService->isProductableClassRegistered($namespace)) {

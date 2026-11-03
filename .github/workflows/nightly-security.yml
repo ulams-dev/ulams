@@ -1,0 +1,93 @@
+name: Nightly security scan
+
+# Daily: scan every published ghcr.io/ulams-dev/<image>:latest with Trivy. Fixable CRITICAL or HIGH findings
+# open or update ONE issue per image labelled `security` (closed again when the image is clean); the run
+# itself does not fail because of findings, so the owner gets an issue, not a failure e-mail (same pattern as
+# php-freshness.yml). The results also go to code scanning when that is enabled. Patch policy: SECURITY.md.
+# Also reports a signature that does not verify. Logic and tests: .github/scripts/security-issues.sh,
+# test-security-issues.sh. Background: ADR 0108.
+
+on:
+  schedule:
+    - cron: "43 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-security
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    name: ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: read
+      issues: write
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [php, api, h5p, pdf, admin, front, mjml, web]
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TRIVY_USERNAME: ${{ github.actor }}
+      TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      REF: ghcr.io/ulams-dev/${{ matrix.image }}:latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Script tests
+        run: sh .github/scripts/test-security-issues.sh
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+        with:
+          cosign-release: v3.1.3
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trivy database cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/trivy-ulams
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+      # CRITICAL and HIGH for the report; the SARIF file has the same findings. A missing image (not published
+      # yet, or private) means "unknown": skipped with a warning, never a failed run.
+      - name: Scan the published image
+        id: scan
+        run: |
+          if ! FORMAT=json OUTPUT=trivy.json EXIT_CODE=0 SEVERITY=CRITICAL,HIGH sh .github/scripts/trivy.sh image "$REF"; then
+            echo "::warning::could not scan $REF (not published, or not readable with this token)"
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "available=true" >> "$GITHUB_OUTPUT"
+          FORMAT=sarif OUTPUT=trivy.sarif EXIT_CODE=0 SEVERITY=CRITICAL,HIGH sh .github/scripts/trivy.sh image "$REF"
+      - name: Upload to code scanning
+        if: steps.scan.outputs.available == 'true'
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: trivy.sarif
+          category: trivy-image-${{ matrix.image }}
+      - name: Open, update or close the issue
+        if: steps.scan.outputs.available == 'true'
+        run: |
+          count="$(sh .github/scripts/security-issues.sh report "${{ matrix.image }}" trivy.json "$RUNNER_TEMP/report.md" | sed -n 's/^count=//p')"
+          echo "${{ matrix.image }}: $count fixable critical or high findings"
+          cat "$RUNNER_TEMP/report.md" >> "$GITHUB_STEP_SUMMARY"
+          sh .github/scripts/security-issues.sh sync "${{ matrix.image }}" "$count" "$RUNNER_TEMP/report.md"
+      # Informational: a latest image that was published before signing existed, or a broken signature, shows up
+      # as a warning in the run, not as a failure.
+      - name: Signature of the latest image
+        if: steps.scan.outputs.available == 'true'
+        run: |
+          digest="$(docker buildx imagetools inspect "$REF" --format '{{ json .Manifest }}' | jq -r .digest)"
+          sh .github/scripts/supply-chain.sh verify "ghcr.io/ulams-dev/${{ matrix.image }}@$digest" \
+            || echo "::warning::${{ matrix.image }}:latest ($digest) has no valid signature from the publish workflow"

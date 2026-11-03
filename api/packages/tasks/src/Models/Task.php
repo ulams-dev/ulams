@@ -2,6 +2,8 @@
 
 namespace Ulams\Tasks\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Illuminate\Support\Carbon;
 use Ulams\Tasks\Database\Factories\TaskFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -37,7 +39,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class Task extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['related_type'];
 
     protected $guarded = ['id'];
 

@@ -1,0 +1,81 @@
+{
+  "slug": "documentation-to-training",
+  "date": "2026-10-09",
+  "series": true,
+  "en": {
+    "title": "Every company has documentation. Few have training made from it",
+    "description": "Turning a runbook into onboarding is a project of its own, and the hardest part is keeping it current. A 22-second look at the idea.",
+    "tags": [
+      "Course generation"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "In the clip: a sample incident runbook (escalate after 10 minutes), the course built from it, the Escalate lesson, and a question whose correct answer comes from that sentence. The course is an unpublished draft."
+    },
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "runbook",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The sample runbook: three short sections and one number that matters.",
+        "caption": "The sample runbook: three short sections and one number that matters."
+      },
+      {
+        "name": "course",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The course built from it, in the Studio preview.",
+        "caption": "The course built from it, in the Studio preview."
+      },
+      {
+        "name": "lesson",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The Escalate lesson, with the passage it came from.",
+        "caption": "The Escalate lesson, with the passage it came from."
+      }
+    ]
+  },
+  "pl": {
+    "title": "Każda firma ma dokumentację. Niewiele ma szkolenia zrobione z niej",
+    "description": "Zamiana runbooka w onboarding to osobny projekt, a najtrudniej jest utrzymać go w aktualności. 22 sekundy o tym pomyśle.",
+    "tags": [
+      "Generowanie kursów"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "W filmie: przykładowy runbook incydentowy (eskaluj po 10 minutach), zbudowany z niego kurs, lekcja Escalate i pytanie, którego poprawna odpowiedź pochodzi z tego zdania. Kurs jest nieopublikowanym szkicem."
+    },
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "runbook",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Przykładowy runbook: trzy krótkie sekcje i jedna liczba, która ma znaczenie.",
+        "caption": "Przykładowy runbook: trzy krótkie sekcje i jedna liczba, która ma znaczenie."
+      },
+      {
+        "name": "course",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Zbudowany z niego kurs w podglądzie Studio.",
+        "caption": "Zbudowany z niego kurs w podglądzie Studio."
+      },
+      {
+        "name": "lesson",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Lekcja Escalate z fragmentem, z którego powstała.",
+        "caption": "Lekcja Escalate z fragmentem, z którego powstała."
+      }
+    ]
+  }
+}

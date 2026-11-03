@@ -21,7 +21,7 @@ const others = DEMO_TENANTS.filter((t) => t.slug !== slug)
   </summary>
   <div class="u-demo__panel">
     <p>You are logged in as a demo student. Everything you do is wiped every hour.</p>
-    <a href={adminUrl} target="_blank" rel="noopener">Open the admin panel ↗</a>
+    <a href={adminUrl} data-umami-event="demo_admin_open" target="_blank" rel="noopener">Open the admin panel ↗</a>
     {
       others.length > 0 && (
         <>
@@ -29,7 +29,7 @@ const others = DEMO_TENANTS.filter((t) => t.slug !== slug)
           <ul role="list">
             {others.map((t) => (
               <li>
-                <a href={`${Astro.url.protocol}//${t.host}/`}>{t.name}</a>
+                <a href={`${Astro.url.protocol}//${t.host}/`} data-umami-event="demo_open">{t.name}</a>
               </li>
             ))}
           </ul>
@@ -40,6 +40,13 @@ const others = DEMO_TENANTS.filter((t) => t.slug !== slug)
 </details>
 
 <style>
+  /* the pill is fixed at the bottom: room under the last line of the page keeps the footer links focusable above it (WCAG 2.4.11) */
+  :global(body:has(.u-demo):not(.u-player-body)) {
+    padding-block-end: 72px;
+  }
+  :global(body:has(.u-demo):not(.u-player-body) :is(a, button, input, select, summary, textarea)) {
+    scroll-margin-block-end: 88px;
+  }
   .u-demo {
     position: fixed;
     left: 16px;

@@ -151,3 +151,19 @@ export function resolveApiUrl({
   if (!isBlank(buildTime)) return String(buildTime);
   return null;
 }
+
+/**
+ * Where the documentation is served until the docs subdomain exists. Operators override it
+ * with `ULAMS_DOCS_URL` (the images read it as `REACT_APP_ULAMS_DOCS_URL` for the admin
+ * panel and `VITE_APP_ULAMS_DOCS_URL` for the front).
+ */
+export const DEFAULT_DOCS_URL = "https://ulams-dev.github.io/ulams/";
+
+/** Absolute docs link: the configured base (or the default) joined with a page path. */
+export function docsUrl(
+  configured?: string | null,
+  path: string = ""
+): string {
+  const base = isBlank(configured) ? DEFAULT_DOCS_URL : String(configured).trim();
+  return base.replace(/\/*$/, "/") + path.replace(/^\/+/, "");
+}

@@ -38,6 +38,15 @@ done < <(grep -oE '\{\$[A-Z_]+' "$root/Caddyfile" | tr -d '{$' | sort -u)
 if [[ -z "$missing" ]]; then ok "Caddyfile variables are all passed by compose.yml"; else bad "Caddyfile reads variables compose.yml does not pass to caddy:$missing"; fi
 
 # --- Caddyfile ---------------------------------------------------------------------------------
+# the content origin must proxy the same paths and keep the API's own CSP as the reference Caddyfile
+ref_caddy="$root/../../api/docker/conf/Caddyfile"
+if [[ -f "$ref_caddy" ]]; then
+  vps_paths="$(grep -A3 '@package {' "$root/Caddyfile" | grep -E '^\s*path ' | head -1 | sed 's/^[[:space:]]*//')"
+  ref_paths="$(grep -A3 '@package {' "$ref_caddy" | grep -E '^\s*path ' | head -1 | sed 's/^[[:space:]]*//')"
+  if [[ -n "$vps_paths" && "$vps_paths" == "$ref_paths" ]]; then ok "content origin proxies the same paths as api/docker/conf/Caddyfile"; else bad "content origin @package paths differ (vps: $vps_paths; api: $ref_paths)"; fi
+  if grep -q '^[[:space:]]*?Content-Security-Policy' "$root/Caddyfile"; then ok "content origin keeps the CSP set by the API (?Content-Security-Policy)"; else bad "content origin overrides the API's Content-Security-Policy (needs ?Content-Security-Policy)"; fi
+fi
+
 for style in flat nested; do
   for mode in tunnel origin_ca; do
     cp "$root/.env.example" "$tmp/env"
@@ -87,6 +96,20 @@ if docker run --rm -v "$root:/mnt:ro" -w /mnt koalaman/shellcheck:stable -x -S w
   ok "shellcheck scripts/*.sh"
 else
   bad "shellcheck: $(cat "$tmp/out")"
+fi
+
+# the PostgreSQL upgrade scripts (POSIX sh, shared by every compose install)
+if docker run --rm -v "$root/../scripts:/mnt:ro" -w /mnt koalaman/shellcheck:stable -x -s sh -S warning pg-lib.sh pg-verify.sh pg-major-upgrade.sh pg-logical-upgrade.sh >"$tmp/out" 2>&1; then
+  ok "shellcheck deploy/scripts/pg-*.sh"
+else
+  bad "shellcheck deploy/scripts: $(cat "$tmp/out")"
+fi
+
+# the object store scripts: compatibility run, MinIO to SeaweedFS migration and its test
+if docker run --rm -v "$root/../scripts:/mnt:ro" -w /mnt koalaman/shellcheck:stable -s sh s3-compat.sh storage-migrate.sh test-storage-migrate.sh >"$tmp/out" 2>&1; then
+  ok "shellcheck deploy/scripts/{s3-compat,storage-migrate,test-storage-migrate}.sh"
+else
+  bad "shellcheck deploy/scripts storage scripts: $(cat "$tmp/out")"
 fi
 
 exit "$failed"

@@ -2,6 +2,7 @@
 
 namespace Ulams\Consultations\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Consultations\Database\Factories\ConsultationUserFactory;
 use Ulams\Consultations\Enum\ConsultationTermReminderStatusEnum;
 use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
@@ -22,6 +23,7 @@ use Illuminate\Support\Carbon;
  */
 class ConsultationUserPivot extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
 
     protected $table = 'consultation_user';

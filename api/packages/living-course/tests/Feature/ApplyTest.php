@@ -85,6 +85,10 @@ class ApplyTest extends TestCase
         $session->refresh();
         $this->assertSame($version->id, $session->current_version_id);
         $this->assertSame($version->id, $session->applied_version_id);
+        // the apply is a release with the trigger `update` (ADR 0192): number 2 after the first generation
+        $release = \Ulams\CourseBuilder\Models\Release::query()->where('session_id', $session->id)->orderByDesc('number')->firstOrFail();
+        $this->assertSame([2, 'update', $version->id], [$release->number, $release->trigger, $release->version_id]);
+        $this->assertSame($version->source_revisions, $release->source_revisions);
 
         // the LMS reflects it through the domain services: lesson 2.1 follows the new ratio, lesson 2.2 stays
         $this->assertStringContainsString('1:15', (string) $this->topicOf($session, $lesson21)->topicable->value);

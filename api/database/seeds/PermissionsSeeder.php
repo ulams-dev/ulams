@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use Ulams\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSeeder;
 use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
 use Ulams\Bookmarks\Database\Seeders\BookmarkPermissionSeeder;
+use Ulams\Webhooks\Database\Seeders\WebhookPermissionSeeder;
+use Ulams\KnowledgeExport\Database\Seeders\KnowledgePermissionSeeder;
+use Ulams\Identity\Database\Seeders\IdentityPermissionSeeder;
 use Ulams\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
 use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
 use Ulams\Categories\Database\Seeders\CategoriesPermissionSeeder;
@@ -22,10 +25,16 @@ use Ulams\H5P\Database\Seeders\H5PPermissionSeeder;
 use Ulams\Lrs\Database\Seeders\LrsPermissionSeeder;
 use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermissionTableSeeder;
 use Ulams\Adapt\Database\Seeders\AdaptPermissionSeeder;
+use Ulams\AuthoringMetrics\Database\Seeders\AuthoringMetricsPermissionSeeder;
+use Ulams\Compliance\Database\Seeders\CompliancePermissionSeeder;
+use Ulams\CourseVariants\Database\Seeders\CourseVariantsPermissionSeeder;
 use Ulams\Interactive\Database\Seeders\InteractivePermissionSeeder;
+use Ulams\Reporting\Database\Seeders\ReportingPermissionSeeder;
 use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
 use Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder;
+use Ulams\LearnerInsights\Database\Seeders\LearnerInsightsPermissionSeeder;
 use Ulams\LivingCourse\Database\Seeders\LivingCoursePermissionSeeder;
+use Ulams\PolicyLifecycle\Database\Seeders\PolicyPermissionSeeder;
 use Ulams\Lti\Database\Seeders\LtiPermissionSeeder;
 use Ulams\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
 use Ulams\Pages\Database\Seeders\PermissionTableSeeder as PagesPermissionTableSeeder;
@@ -105,7 +114,16 @@ class PermissionsSeeder extends Seeder
         $this->call(InteractivePermissionSeeder::class);
         $this->call(CourseBuilderPermissionSeeder::class);
         $this->call(LivingCoursePermissionSeeder::class);
+        $this->call(LearnerInsightsPermissionSeeder::class);
         $this->call(AdaptPermissionSeeder::class);
+        $this->call(WebhookPermissionSeeder::class);
+        $this->call(CompliancePermissionSeeder::class);
+        $this->call(PolicyPermissionSeeder::class);
+        $this->call(CourseVariantsPermissionSeeder::class);
+        $this->call(AuthoringMetricsPermissionSeeder::class);
+        $this->call(ReportingPermissionSeeder::class);
+        $this->call(KnowledgePermissionSeeder::class);
+        $this->call(IdentityPermissionSeeder::class);
 
         // if there are no users, we need to create first admin 
 

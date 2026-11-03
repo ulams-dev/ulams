@@ -23,7 +23,7 @@ class CoreController extends UlamsBaseController
 
     /**
      * @OA\Get(
-     *      path="/api/core/packages",
+     *      path="/api/core/packages", operationId="core.packages.get",
      *      summary="List installed ulams packages",
      *      tags={"Core Admin"},
      *      security={
@@ -33,9 +33,7 @@ class CoreController extends UlamsBaseController
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

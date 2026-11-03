@@ -1,6 +1,5 @@
 # Payments
 
-
 ## Purpose
 
 This package lets you create Payments and process them using integrations with external payment providers (gateways).
@@ -109,8 +108,6 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests. See [tests/Mocks/Payable](tests/Mocks/Payable.php) as an example how a Payable is defined.
-
-Test details: [![codecov](https://codecov.io/gh/Ulams/Files/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/payments)
 
 ## Events
 

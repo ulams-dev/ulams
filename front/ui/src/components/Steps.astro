@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
   id?: string;
 }
 const { eyebrow, title, intro, status = "available", items, id = "how" } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
 ---
 
 <section class="u-section u-steps" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
@@ -18,7 +20,7 @@ const { eyebrow, title, intro, status = "available", items, id = "how" } = Astro
       {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
       {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
       {intro && <p class="u-lead">{intro}</p>}
-      {status === "coming" && <p class="u-status u-status--coming">On the roadmap</p>}
+      {status === "coming" && <p class="u-status u-status--coming">{t.roadmap}</p>}
     </div>
     <ol class="u-steps__list" role="list" style={`--n:${items.length}`}>
       {

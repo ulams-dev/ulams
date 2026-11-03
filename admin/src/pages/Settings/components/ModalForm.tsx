@@ -3,6 +3,7 @@ import ProForm, {
   ProFormCheckbox,
   ProFormDigit,
   ProFormRadio,
+  ProFormSelect,
   ProFormSwitch,
   ProFormText,
   ProFormTextArea,
@@ -207,7 +208,26 @@ export const SettingsModalForm: React.FC<{
       </ProForm.Group>
       <div>
         {type === 'text' && (
-          <ProFormText width="lg" name="value" label={<FormattedMessage id="value" />} />
+          <ProForm.Item noStyle shouldUpdate>
+            {() =>
+              form.getFieldValue('group') === 'global' &&
+              form.getFieldValue('key') === 'language' ? (
+                <ProFormSelect
+                  width="lg"
+                  name="value"
+                  label={<FormattedMessage id="Settings.defaultLanguage" />}
+                  tooltip={intl.formatMessage({ id: 'Settings.defaultLanguage.help' })}
+                  allowClear={false}
+                  options={['en', 'pl', 'zh'].map((code) => ({
+                    value: code,
+                    label: intl.formatMessage({ id: `Settings.defaultLanguage.${code}` }),
+                  }))}
+                />
+              ) : (
+                <ProFormText width="lg" name="value" label={<FormattedMessage id="value" />} />
+              )
+            }
+          </ProForm.Item>
         )}
         {type === 'json' && (
           <>

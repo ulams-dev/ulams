@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/api/contact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a message to the ULAMS team */
+        post: operations["contact.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/events": {
         parameters: {
             query?: never;
@@ -15,7 +32,7 @@ export interface paths {
          * Get a listing of the Stationary events and Webinars
          * @description Get all Stationary Events and Webinars
          */
-        get: operations["71ee276c27779404579ddadb0153d795"];
+        get: operations["events.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -35,10 +52,10 @@ export interface paths {
          * List Adapt JSON sources
          * @description Adapt Path B (behind ADAPT_SOURCE_ENABLED; 404 when off). Permission `adapt_manage`.
          */
-        get: operations["8b9ad4f7c70f3a761ffff0b47b553ff3"];
+        get: operations["adapt.list"];
         put?: never;
         /** Create from Adapt JSON (course, config, contentObjects, articles, blocks, components) */
-        post: operations["72e4db4d02b63a62703037681c624c0f"];
+        post: operations["adapt.create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -53,11 +70,11 @@ export interface paths {
             cookie?: never;
         };
         /** Show a source and its build status */
-        get: operations["cd4e1d13364cb9f0c7935ccd92b6c84a"];
+        get: operations["adapt.get"];
         put?: never;
         post?: never;
         /** Delete a source (the built SCORM package stays) */
-        delete: operations["00874d03a5aa6d89045ee0c0414b0ccc"];
+        delete: operations["adapt.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -71,7 +88,7 @@ export interface paths {
             cookie?: never;
         };
         /** JSON of the current or a given version */
-        get: operations["32b440d186aea3454c733206b640cfea"];
+        get: operations["adapt.source"];
         put?: never;
         post?: never;
         delete?: never;
@@ -88,10 +105,10 @@ export interface paths {
             cookie?: never;
         };
         /** Version history (version, change note, author, date; no source) */
-        get: operations["cccce706bca9719bcb70215298b01a60"];
+        get: operations["adapt.versions-list"];
         put?: never;
         /** Add a version */
-        post: operations["059c1b12b7d16100085d0a48ec076764"];
+        post: operations["adapt.versions-add"];
         delete?: never;
         options?: never;
         head?: never;
@@ -108,7 +125,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Build the current version into a SCORM package (queued) */
-        post: operations["35b47f4ebdcf77b9d555a4c2ee8349be"];
+        post: operations["adapt.build"];
         delete?: never;
         options?: never;
         head?: never;
@@ -123,10 +140,10 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available user submissions */
-        get: operations["cf55d1084caa7d0a7d484dd8763b2fd2"];
+        get: operations["user-submissions.list"];
         put?: never;
         /** Create a new user submission identified by id */
-        post: operations["a746f20286f9dc31d4bbb27db05a964f"];
+        post: operations["user-submissions.create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -142,10 +159,34 @@ export interface paths {
         };
         get?: never;
         /** Update an existing user submission identified by id */
-        put: operations["1946280eb0a14fe6eccdcf16fdb6f8e5"];
+        put: operations["user-submissions.update"];
         post?: never;
         /** Delete user submission identified by a id */
-        delete: operations["a0adf935e4cc3861e5a63c3e87958b88"];
+        delete: operations["user-submissions.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/theme/logo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload the tenant logo
+         * @description Stores a PNG or SVG logo (at most 200 KB; a PNG at most 4096 px a side) in the storage of the current tenant and saves it as the public setting theme.logo, with an optional text alternative as theme.logoAlt. The type is taken from the content. An SVG is checked against an allow-list and stored in its re-serialised form; one with a script, style sheet, event attribute, DOCTYPE, foreignObject or a reference to another address is refused with the reason. The stored name is random and the previous logo file is removed. Needs settings_update. Throttled to 20 requests per minute per user.
+         */
+        post: operations["admin.theme.logo.store"];
+        /**
+         * Remove the tenant logo
+         * @description Removes theme.logo and theme.logoAlt and deletes the stored file; the learner site falls back to the company name as text. Needs settings_update.
+         */
+        delete: operations["admin.theme.logo.destroy"];
         options?: never;
         head?: never;
         patch?: never;
@@ -159,7 +200,7 @@ export interface paths {
             cookie?: never;
         };
         /** Every user's scoped API tokens */
-        get: operations["c97e7ee722008f1f0aae83ea70b29fa6"];
+        get: operations["admin.tokens.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -179,7 +220,25 @@ export interface paths {
         put?: never;
         post?: never;
         /** Revoke any scoped token */
-        delete: operations["86c0bd374d2c2016525af40c59f2a18e"];
+        delete: operations["admin.tokens.by-id.delete"];
+        options?: never;
+        head?: never;
+        /** Change the per-minute rate limit of any scoped token */
+        patch: operations["admin.tokens.by-id.patch"];
+        trace?: never;
+    };
+    "/api/admin/tokens/{id}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Request counts of one token per day, and its rate limit window */
+        get: operations["admin.tokens.by-id.usage.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -193,7 +252,7 @@ export interface paths {
             cookie?: never;
         };
         /** Audit log of one token */
-        get: operations["a0d644a176215e6a71e0c442eebedd6c"];
+        get: operations["admin.tokens.by-id.audit.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -210,7 +269,7 @@ export interface paths {
             cookie?: never;
         };
         /** Agent audit log */
-        get: operations["e05f3171d6b8ada25c8975c3aa362d9c"];
+        get: operations["admin.agent-audit.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -227,10 +286,10 @@ export interface paths {
             cookie?: never;
         };
         /** List groups */
-        get: operations["48f3266e8f69a0ee73c77d3d34cb3246"];
+        get: operations["admin.user-groups.get"];
         put?: never;
         /** Create group */
-        post: operations["7b5b5469b4bfae9b2e5828a4f3adcc71"];
+        post: operations["admin.user-groups.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -245,7 +304,7 @@ export interface paths {
             cookie?: never;
         };
         /** List groups in a tree */
-        get: operations["224ed1f56dfb2dbec13c374a88ce88d8"];
+        get: operations["admin.user-groups.tree.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -262,7 +321,7 @@ export interface paths {
             cookie?: never;
         };
         /** List of groups with users */
-        get: operations["be2cf3bcdb7b77aa49c3e220fd4c617b"];
+        get: operations["admin.user-groups.users.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -279,12 +338,12 @@ export interface paths {
             cookie?: never;
         };
         /** Get group details */
-        get: operations["44d5c6df401c50e249c7753c0e9606d2"];
+        get: operations["admin.user-groups.by-id.get"];
         /** Update group */
-        put: operations["a74a1420278bf1fa77da4fe4fda3102f"];
+        put: operations["admin.user-groups.by-id.put"];
         post?: never;
         /** Delete group */
-        delete: operations["f11631d6e8fadb2db447b743a10f61c2"];
+        delete: operations["groups.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -300,7 +359,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Add user to group */
-        post: operations["e3cf1832ef9a146644ef21b182897c73"];
+        post: operations["admin.user-groups.by-id.members.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -318,7 +377,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Add user to group */
-        delete: operations["11aa08088acb95ff5fbb8ca897c4293b"];
+        delete: operations["admin.user-groups.by-id.members.by-user-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -332,17 +391,17 @@ export interface paths {
             cookie?: never;
         };
         /** Get user interests */
-        get: operations["bd8881b2f6019ed83e1146ce6d6731ec"];
+        get: operations["admin.users.by-id.interests.get"];
         /**
          * Set user interests
          * @description Set user interests
          */
-        put: operations["20765711fa45a83c2fc89dc0f9e3e764"];
+        put: operations["admin.users.by-id.interests.put"];
         /**
          * Add single user interest
          * @description Add single user interest
          */
-        post: operations["234a96fd2fa07dece6b99ea3196387b3"];
+        post: operations["admin.users.by-id.interests.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -360,7 +419,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Add single user interest */
-        delete: operations["06d1f8341c24a7bddf146fa521922804"];
+        delete: operations["admin.users.by-id.interests.by-interest-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -374,15 +433,15 @@ export interface paths {
             cookie?: never;
         };
         /** Get user settings */
-        get: operations["13139134e412617289a372bd65f6b457"];
+        get: operations["admin.users.by-id.settings.get"];
         /** Set user setting (removes settings not sent) */
-        put: operations["95b2d310d06bb3ec07934d36cc0f93a1"];
+        put: operations["admin.users.by-id.settings.put"];
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         /** Update user setting(s) without changing other settings */
-        patch: operations["6367cbaa14fd9fff447dc69c24d57601"];
+        patch: operations["admin.users.by-id.settings.patch"];
         trace?: never;
     };
     "/api/admin/users": {
@@ -393,10 +452,10 @@ export interface paths {
             cookie?: never;
         };
         /** Get users */
-        get: operations["1011126ac5615854248339ccfc0872a3"];
+        get: operations["admin.users.get"];
         put?: never;
         /** Create user */
-        post: operations["022f7631c210e0aea2353fb195cbeb22"];
+        post: operations["admin.users.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -411,11 +470,11 @@ export interface paths {
             cookie?: never;
         };
         /** Get user */
-        get: operations["9669ffd80e5ff7157d89d0cbeabfdb2c"];
+        get: operations["admin.users.by-id.get"];
         put?: never;
         post?: never;
         /** Delete user */
-        delete: operations["4fb8f56c39dab3c23b889a9baef498f5"];
+        delete: operations["users.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -430,13 +489,13 @@ export interface paths {
         };
         get?: never;
         /** Update/Replace user data (will overwrite unset fields with nulls) */
-        put: operations["a70b496578615d9708a081aaacf83c62"];
+        put: operations["admin.user.by-id.put"];
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         /** Partial Update User (will only change sent fields) */
-        patch: operations["7512da762c3a9cb0a93aea1a8e123a01"];
+        patch: operations["admin.user.by-id.patch"];
         trace?: never;
     };
     "/api/admin/users/{id}/avatar": {
@@ -449,9 +508,9 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Upload avatar */
-        post: operations["5a43b0d666216e68b7dbfef922e80fe9"];
+        post: operations["admin.users.by-id.avatar.post"];
         /** @description Delete avatar */
-        delete: operations["d7dcad949df047735485e881318b6242"];
+        delete: operations["admin.users.by-id.avatar.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -467,7 +526,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Password forget call */
-        post: operations["21bee60a81a46858f4270d4c2bbcedd9"];
+        post: operations["auth.password.forgot.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -484,7 +543,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Password reset */
-        post: operations["1bffb93e1b6520c0298fcce106b3a3ce"];
+        post: operations["auth.password.reset.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -499,7 +558,7 @@ export interface paths {
             cookie?: never;
         };
         /** Refresh access token */
-        get: operations["4e4dc11302a2f107d9676c818173a908"];
+        get: operations["auth.refresh.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -515,8 +574,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Redirect to social login */
-        get: operations["bf736b59f1ee312896620f7731c864b8"];
+        /**
+         * Redirect to social login
+         * @description Starts a login with Google or Facebook. `return_url` must be an origin of the tenant's own apps (otherwise 422). `challenge` is the S256 challenge of a random verifier that the caller keeps secret (base64url of its SHA-256, 43 characters). After the provider's consent the browser is sent to `return_url` with a one-time `code` (60 seconds, single use) to redeem at POST /api/auth/social/exchange together with the verifier; failures arrive as `error` (provider_denied, provider_failed, link_required, email_unverified, account_unavailable).
+         */
+        get: operations["auth.social.by-provider.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -532,10 +594,33 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Redirect after sucessfull login */
-        get: operations["49bb4f8de5c2c04cf92cc988dfb09e76"];
+        /**
+         * Redirect after successful login
+         * @description The provider's callback. Checks the signed, single-use state and sends the browser to the return URL with a one-time `code` (and `complete=false` when the provider gave no e-mail address and the sign-up must be completed) or an `error` reason. An access token is never put in a URL.
+         */
+        get: operations["auth.social.by-provider.callback.get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/social/exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Exchange a one-time social login code for a token
+         * @description Redeems the `code` of a social login redirect together with the secret `verifier` whose S256 challenge started the login. The code works once, within 60 seconds, on the tenant that issued it. Call it from the front end's server, never from a page that may be logged. Returns the access token (`complete=true`) or, when the sign-up needs an e-mail address, `pre_user_token` for POST /api/auth/social/complete/{token} (`complete=false`).
+         */
+        post: operations["auth.social.exchange.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -552,7 +637,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Complete the missing data from socials */
-        post: operations["43a84d17d1bc5e94c4c667184ddf04bc"];
+        post: operations["auth.social.complete.by-token.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -567,7 +652,7 @@ export interface paths {
             cookie?: never;
         };
         /** Email verification */
-        get: operations["b3e26f5d643c713542d47eaabe6a5de2"];
+        get: operations["auth.email.verify.by-id.by-hash.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -586,7 +671,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Resend email verification */
-        post: operations["42a28136c9d40d8417c8d8cab59ba33b"];
+        post: operations["auth.email.resend.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -601,7 +686,7 @@ export interface paths {
             cookie?: never;
         };
         /** List registerable groups */
-        get: operations["b4cae639139ff51d96c715a0ee7ef9b8"];
+        get: operations["auth.registerable-groups.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -623,7 +708,7 @@ export interface paths {
          * Start a device login (RFC 8628)
          * @description No authentication. Throttled to 10 requests per minute per IP.
          */
-        post: operations["ea404fe1bfc1d7cec2c000550cba8005"];
+        post: operations["auth.device.code.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -643,7 +728,7 @@ export interface paths {
          * Poll for the token of a device login (RFC 8628)
          * @description No authentication. Poll every `interval` seconds. Errors are HTTP 400 with an RFC 8628 error code. The token is returned once.
          */
-        post: operations["d021d1c83eb5b155962e28f33d742868"];
+        post: operations["auth.device.token.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -661,7 +746,7 @@ export interface paths {
          * Details of a pending device request (for the approval page)
          * @description Needs a login token of the approving user (not a scoped token). Throttled to 5 requests per minute per user.
          */
-        get: operations["d11c076f4f258f272b9d2f54496ba17a"];
+        get: operations["auth.device.requests.by-user-code.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -683,7 +768,7 @@ export interface paths {
          * Approve a device request
          * @description Mints a scoped token for the approving user with the approved scopes that the client requested. The CLI collects it on its next poll.
          */
-        post: operations["ed52f6a54e88ba0eec1daea558b8ba56"];
+        post: operations["auth.device.requests.by-user-code.approve.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -700,7 +785,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Deny a device request */
-        post: operations["502ca62527836cb88f1a6fa63b7f32be"];
+        post: operations["auth.device.requests.by-user-code.deny.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -717,7 +802,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description User login */
-        post: operations["e19db8f50fc8143b1ccb91fb21dd203a"];
+        post: operations["auth.login.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -734,7 +819,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description User impersonate */
-        post: operations["58237616881e12e669d8388267000961"];
+        post: operations["auth.impersonate.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -751,7 +836,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description User logout */
-        post: operations["7fe1da3621cd98ac4fa94d3f656f192d"];
+        post: operations["auth.logout.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -766,7 +851,7 @@ export interface paths {
             cookie?: never;
         };
         /** Capabilities of this host */
-        get: operations["49809d821fe8d943f2c8ea0d7f2347ac"];
+        get: operations["meta.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -783,9 +868,9 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get logged user info */
-        get: operations["89c99c85a48b95011a61b7114a0db782"];
+        get: operations["profile.me.get"];
         /** @description Update the profile */
-        put: operations["e2c0f5a5b7ae0ce07dbda9a1a08a803d"];
+        put: operations["profile.me.put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -802,7 +887,7 @@ export interface paths {
         };
         get?: never;
         /** @description Update the profile authorization data */
-        put: operations["65f6afd0746df87917be782e9ca845fc"];
+        put: operations["profile.me-auth.put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -819,7 +904,7 @@ export interface paths {
         };
         get?: never;
         /** @description Update password */
-        put: operations["fac3e4bacc50755579fd5c74ca2eea74"];
+        put: operations["profile.password.put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -836,7 +921,7 @@ export interface paths {
         };
         get?: never;
         /** Update user interests */
-        put: operations["767246fb2408fc7097257a92a7775103"];
+        put: operations["profile.interests.put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -854,7 +939,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Upload avatar */
-        post: operations["f20114ec5127ace1a75a37f1635171a4"];
+        post: operations["profile.upload-avatar.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -872,7 +957,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** @description Delete avatar */
-        delete: operations["93aa8ab3f349e46ede7ad00ea7ff7c54"];
+        delete: operations["profile.delete-avatar.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -886,9 +971,9 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get user settings */
-        get: operations["eb7b2b8e00805c53560077a756bfb076"];
+        get: operations["profile.settings.get"];
         /** Update user settings */
-        put: operations["b175249d6fd4776a2aedc2e3a456a9fd"];
+        put: operations["profile.settings.put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -907,7 +992,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** @description Delete user profile */
-        delete: operations["59d1c339373f98535e6f1e856d3ea908"];
+        delete: operations["profile.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -923,7 +1008,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Create user deletion request */
-        post: operations["d73dc974dbe0b7dc962e45565024b9d9"];
+        post: operations["profile.delete.init.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -938,7 +1023,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Create user deletion request */
-        get: operations["73475a8e6cc96cae7b1bb1c3b78b409f"];
+        get: operations["profile.delete.by-userid.by-token.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -957,7 +1042,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Register new user */
-        post: operations["5c66b81d373a1cf56c497035942da651"];
+        post: operations["auth.register.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -972,10 +1057,10 @@ export interface paths {
             cookie?: never;
         };
         /** My scoped API tokens */
-        get: operations["f59ede12ce38c91320ace16e57f0a1d9"];
+        get: operations["auth.tokens.get"];
         put?: never;
         /** Create a scoped API token (the secret is returned once) */
-        post: operations["a875828dc5b276a102378c005eb05829"];
+        post: operations["auth.tokens.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -993,7 +1078,25 @@ export interface paths {
         put?: never;
         post?: never;
         /** Revoke one of my scoped tokens */
-        delete: operations["fef5ceb391432c3471ee2e3223e7db42"];
+        delete: operations["auth.tokens.by-id.delete"];
+        options?: never;
+        head?: never;
+        /** Change the per-minute rate limit of one of my tokens */
+        patch: operations["auth.tokens.by-id.patch"];
+        trace?: never;
+    };
+    "/api/auth/tokens/{id}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Request counts of one of my tokens per day, and its rate limit window */
+        get: operations["auth.tokens.by-id.usage.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1007,7 +1110,7 @@ export interface paths {
             cookie?: never;
         };
         /** The token this request is authenticated with */
-        get: operations["939c4d8f2959e9d3fe7536b5174c1a78"];
+        get: operations["auth.tokens.current.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1027,13 +1130,13 @@ export interface paths {
          * Get a listing of the bookmarks
          * @description Get all bookmarks
          */
-        get: operations["8bb5dec2d1075aafd032e156aff2e87d"];
+        get: operations["admin.bookmarks.get"];
         put?: never;
         /**
          * Store a newly created bookmark
          * @description Store Bookmark
          */
-        post: operations["979690200b80390a5e4c039562a39873"];
+        post: operations["admin.bookmarks.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1054,14 +1157,14 @@ export interface paths {
          * Remove the specified bookmark
          * @description Delete Bookmarks
          */
-        delete: operations["5f9b6b3164db91248ef9f3d2dd4c3043"];
+        delete: operations["admin.bookmarks.by-id.delete"];
         options?: never;
         head?: never;
         /**
          * Update bookmark
          * @description Store Bookmark
          */
-        patch: operations["e3fa866dab7d23a8c9dece0a31aa810a"];
+        patch: operations["admin.bookmarks.by-id.patch"];
         trace?: never;
     };
     "/api/bookmarks": {
@@ -1075,13 +1178,13 @@ export interface paths {
          * Get a listing of the bookmarks
          * @description Get all bookmarks
          */
-        get: operations["24af60125c0b58b112ea62c7d26f1663"];
+        get: operations["bookmarks.get"];
         put?: never;
         /**
          * Store a newly created bookmark
          * @description Store Bookmark
          */
-        post: operations["b3d19475759989bb6b343e45473f4037"];
+        post: operations["bookmarks.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1102,14 +1205,14 @@ export interface paths {
          * Remove the specified bookmark
          * @description Delete Bookmarks
          */
-        delete: operations["e427ff1b57feba85483ea473ce8a583e"];
+        delete: operations["bookmarks.by-id.delete"];
         options?: never;
         head?: never;
         /**
          * Update bookmark
          * @description Store Bookmark
          */
-        patch: operations["8711c635bf64f052ba80361cadaf267c"];
+        patch: operations["bookmarks.by-id.patch"];
         trace?: never;
     };
     "/api/admin/bulk-notifications/send": {
@@ -1125,7 +1228,7 @@ export interface paths {
          * Store a newly notification
          * @description Store Bulk Notification
          */
-        post: operations["9842afcb40c8e7d0be23417b549d1db5"];
+        post: operations["admin.bulk-notifications.send.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1145,7 +1248,7 @@ export interface paths {
          * Store a newly notification
          * @description Store Bulk Notification
          */
-        post: operations["7a900ab186e142056605c4ed005c42ca"];
+        post: operations["admin.bulk-notifications.send.multicast.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1163,7 +1266,7 @@ export interface paths {
          * Get a listing of the bulk notifications
          * @description Get all Bulk Notifications
          */
-        get: operations["8b031395f1b239967e6c1117f689de01"];
+        get: operations["admin.bulk-notifications.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1185,7 +1288,7 @@ export interface paths {
          * Store a newly notification device token
          * @description Store Notification Device Token
          */
-        post: operations["75e6650a4aeea39a529a7cdb114d3416"];
+        post: operations["notifications.tokens.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1200,7 +1303,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Search orders */
-        get: operations["f331b0c02582de54b08d3cd6c2d62a3d"];
+        get: operations["admin.orders.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1220,7 +1323,7 @@ export interface paths {
          * Display the specified Order
          * @description Get Order
          */
-        get: operations["ea2d6e8c73d81748bd8c2558544cb817"];
+        get: operations["admin.orders.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1237,7 +1340,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Export orders to file */
-        get: operations["a123ab78f8a8560aa917b01df50a2bb6"];
+        get: operations["admin.orders.export.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1254,7 +1357,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Search products */
-        get: operations["767d682eaf04de49171f957ec88df347"];
+        get: operations["admin.products.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1273,7 +1376,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Create product */
-        post: operations["cffe6572b6ea982ddddb008eef00e2e3"];
+        post: operations["admin.products.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1288,12 +1391,12 @@ export interface paths {
             cookie?: never;
         };
         /** @description Read product */
-        get: operations["65fb5aa5935ab34403d706183aafa888"];
+        get: operations["admin.products.by-id.get"];
         /** @description Create product */
-        put: operations["78eb31d78eaff7c9ecb8c7ab9644b988"];
+        put: operations["admin.products.by-id.put"];
         post?: never;
         /** @description Delete product */
-        delete: operations["212c1460ee784936f3c0339c60ac037c"];
+        delete: operations["admin.products.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1309,7 +1412,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Attach product to user */
-        post: operations["8b8592be7fce34949936ae4a36fb71fb"];
+        post: operations["admin.products.by-id.attach.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1326,7 +1429,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Detach product from user */
-        post: operations["4057d569dfce938050d50e81078b1939"];
+        post: operations["admin.products.by-id.detach.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1343,7 +1446,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Manually triggered event for users of the product */
-        post: operations["8967a38af1d980737ef413e455b62940"];
+        post: operations["admin.products.by-id.trigger-event-manually.by-idtemplate.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1358,7 +1461,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get list of all productables */
-        get: operations["f64e11d9be1d13a7540e51b506699425"];
+        get: operations["admin.productables.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1377,7 +1480,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Attach productable to user */
-        post: operations["c21d9b78aa500d0ef9d9081448290a3c"];
+        post: operations["admin.productables.attach.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1394,7 +1497,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Detach product from user */
-        post: operations["17bd6b1719bc239cee06f9a6a7b809d8"];
+        post: operations["admin.productables.detach.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1409,7 +1512,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description List of registered Productable types */
-        get: operations["e1272deac72762a893fbda488909c98d"];
+        get: operations["admin.productables.registered.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1426,7 +1529,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get single product for this productable (if it exists) */
-        get: operations["21925d05536d1c9b64bfcc19a8966f60"];
+        get: operations["admin.productables.product.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1443,7 +1546,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get cart details */
-        get: operations["63ef8a637cd77859f3dfedb7bb146183"];
+        get: operations["cart.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1462,7 +1565,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Add product to cart and/or set product quantity */
-        post: operations["1aa037e629842ec6434961f561920f43"];
+        post: operations["cart.products.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1479,7 +1582,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Add missing products to Cart */
-        post: operations["d196489b2a7ad33207b0c0632d21a10e"];
+        post: operations["cart.missing.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1496,7 +1599,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Add productable to cart */
-        post: operations["82f7bd87ae4701394374ed195e9265a2"];
+        post: operations["cart.add.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1514,7 +1617,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** @description Remove product from cart */
-        delete: operations["7bc5659271eea0701abb9ccbde1b95f5"];
+        delete: operations["cart.products.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1528,7 +1631,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Search orders */
-        get: operations["23705ca17660ad15514131765a59cae0"];
+        get: operations["orders.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1548,7 +1651,7 @@ export interface paths {
          * Display the specified Order
          * @description Get Order
          */
-        get: operations["e0ca70419917c1b71721a06fb196cb80"];
+        get: operations["orders.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1567,7 +1670,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Pay for cart */
-        post: operations["23e06187b67b9dad8a153be0afd5b2c0"];
+        post: operations["cart.pay.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1584,7 +1687,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Pay for single product */
-        post: operations["3395e846fc95d17530083f31cbb2ec8a"];
+        post: operations["product.by-id.pay.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1599,7 +1702,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Search products */
-        get: operations["56fd7f1847396ce107633aaab2a3781c"];
+        get: operations["products.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1616,7 +1719,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Search my products */
-        get: operations["ce84bcc723f0c126902260192de24417"];
+        get: operations["products.my.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1633,7 +1736,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Read product */
-        get: operations["42bdfa316046b6a533239f4cea105706"];
+        get: operations["products.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1652,7 +1755,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Cancel recursive product */
-        post: operations["531101861dc6b0e9f05f28f660fa9714"];
+        post: operations["products.cancel.by-id.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1669,7 +1772,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Attach productable to user */
-        post: operations["56f1a21f798423cff1b0d89424963585"];
+        post: operations["productables.attach.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1684,7 +1787,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get Categories */
-        get: operations["642767a9458d541b136cc3114e9f166a"];
+        get: operations["categories.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1701,7 +1804,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get Categories Tree */
-        get: operations["1ee3aca34ac49979b157a405cb6efdfc"];
+        get: operations["categories.tree.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1718,18 +1821,18 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get single Categories */
-        get: operations["514c199ca0c425cb624bec8fa22630ca"];
+        get: operations["admin.categories.by-id.get"];
         put?: never;
         /**
          * Update category
          * @description Update single Categories
          */
-        post: operations["848b5785dc48309d934b6c265c7caa83"];
+        post: operations["admin.categories.by-id.post"];
         /**
          * Destroy category
          * @description Destroy the specified category
          */
-        delete: operations["6a91c2e277ff9fe0374afb0061767394"];
+        delete: operations["admin.categories.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1748,7 +1851,7 @@ export interface paths {
          * Category create
          * @description Create single Categories
          */
-        post: operations["a8ab23678413a1cbbf743dac4d7a24b3"];
+        post: operations["admin.categories.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1764,7 +1867,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["e860a9a9b60ce1db6f041d425db8af74"];
+        post: operations["admin.categories.sort.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1781,7 +1884,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Convert ZIP Cmi5 Package into Ulams LMS Cmi5 storage */
-        post: operations["f7d04de5330f160cc3a0cb519e16d858"];
+        post: operations["cmi5.upload"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1799,7 +1902,7 @@ export interface paths {
          * Launch a cmi5 AU
          * @description Needs `cmi5_read` (students have it). Returns the player page, or with `format=json` the launch URL on the tenant content origin. The URL carries a one-time launch token, never the learner's access token (ADR 0046).
          */
-        get: operations["110a514ff187653c675f7bbd455f20cf"];
+        get: operations["cmi5.player.by-cmi5auid.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1816,7 +1919,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get a listing of the cmi5 */
-        get: operations["21e31b44d5e341c5a1a9a8c85f802369"];
+        get: operations["cmi5.list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1836,7 +1939,619 @@ export interface paths {
         put?: never;
         post?: never;
         /** Delete cmi5 package by id */
-        delete: operations["8aa4f88b421ee0fc028851f31b036bff"];
+        delete: operations["cmi5.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/code-exercises/launches/{topic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Open a code exercise
+         * @description Code exercises (ADR 0170). The exercise runs in the browser sandbox on the tenant content origin; this
+         *     API hands the page the exercise and the runner's address, and records the results the page reports for
+         *     the learner's own session (no token ever reaches the frame).
+         */
+        post: operations["code-exercises.launches.by-topic.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/code-exercises/topics/{topic}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My attempts at a code exercise */
+        get: operations["code-exercises.topics.by-topic.attempts.get"];
+        put?: never;
+        /**
+         * Report the result of a run
+         * @description The learner's browser ran the visible tests and reports each test's result. The score is recomputed here and the attempt is stored as a practice attempt (verified = false): it moves the topic's progress by its completion rule and records a learner signal, and never counts for certificates or compliance.
+         */
+        post: operations["code-exercises.topics.by-topic.attempts.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/code-exercises/topics/{topic}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview a code exercise as its author
+         * @description The same answer as a launch, for a user who may edit the course. Nothing is tracked.
+         */
+        get: operations["admin.code-exercises.topics.by-topic.preview.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/code-exercises/topics/{topic}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Attempts at a code exercise (teacher report)
+         * @description Every learner's attempts at the exercise, newest first, for a user who may edit the course. Practice attempts are marked verified = false.
+         */
+        get: operations["admin.code-exercises.topics.by-topic.attempts.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/commerce/webhooks/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive a signed order event of the commerce provider
+         * @description Inbound order events of a commerce provider (ADR 0130). Public route, authenticated by the signature with the
+         *     tenant's own secret, never by a session: the body is verified (HMAC over `<t>.<raw body>`, 300 s tolerance,
+         *     the secret being rotated out also accepted), its event id must equal the `Ulams-Event-Id` header, and its channel
+         *     must be this tenant's channel. A valid event is stored once per event id and queued; a duplicate answers 200
+         *     with no work. The payload is untrusted: only the envelope is read, and the job re-reads the order from the provider.
+         */
+        post: operations["commerce.webhooks.by-provider.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List required-training assignments
+         * @description Required training. Admin endpoints need `compliance_manage`; `my-assignments` is the learner's own list
+         *     and `team/assignments` lists the direct reports of the manager that is logged in.
+         */
+        get: operations["admin.compliance.assignments.get"];
+        put?: never;
+        /** Assign a required course to users */
+        post: operations["admin.compliance.assignments.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/assignments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Cancel an open assignment */
+        delete: operations["admin.compliance.assignments.by-id.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/compliance/my-assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My required training */
+        get: operations["compliance.my-assignments.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/compliance/team/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Required training of my direct reports */
+        get: operations["compliance.team.assignments.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/competencies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The competency framework as a tree
+         * @description The competency framework: a tree of competencies (areas and skills). Reading needs `compliance_manage` or
+         *     `compliance_competencies` (authors pick from it); changing it needs `compliance_manage`.
+         */
+        get: operations["admin.compliance.competencies.get"];
+        put?: never;
+        /** Add a competency */
+        post: operations["admin.compliance.competencies.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/competencies/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Rename or move a competency */
+        put: operations["admin.compliance.competencies.by-id.put"];
+        post?: never;
+        /** Delete a competency (its sub-competencies move up, course tags go) */
+        delete: operations["admin.compliance.competencies.by-id.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/courses/{course}/competencies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Competency tags of a course (confirmed and suggested)
+         * @description Competency tags of a course. AI suggests, the author confirms: suggestions are `suggested` and count for
+         *     nothing (no skill profile, no rule) until confirmed. Allowed for `compliance_manage`, or for
+         *     `compliance_competencies` on a course the user authors.
+         */
+        get: operations["admin.compliance.courses.by-course.competencies.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/courses/{course}/competencies/{competency}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Tag a course with a competency (confirmed by the author), or confirm a suggestion */
+        put: operations["admin.compliance.courses.by-course.competencies.by-competency.put"];
+        post?: never;
+        /** Remove a tag or reject a suggestion */
+        delete: operations["admin.compliance.courses.by-course.competencies.by-competency.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/courses/{course}/competencies/suggest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ask the AI which competencies the course teaches
+         * @description One AI call (logged with model, tokens and cost). Replaces the pending suggestions; confirmed tags are untouched. Needs a competency framework and at least one lesson.
+         */
+        post: operations["admin.compliance.courses.by-course.competencies.suggest.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/courses/{course}/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Compliance settings of a course (defaults when none are saved)
+         * @description Compliance policy of a course. Permission `compliance_manage`.
+         */
+        get: operations["admin.compliance.courses.by-course.settings.get"];
+        /** Save the compliance settings of a course */
+        put: operations["admin.compliance.courses.by-course.settings.put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Compliance dashboard
+         * @description Required training (open, overdue, completed, completion rate, average days to complete), certificate health (valid, expiring in 30 and 90 days, expired, revoked) and the same per course, the most overdue first.
+         */
+        get: operations["admin.compliance.dashboard.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/managers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List manager links
+         * @description Who escalations of a user's overdue training go to. Permission `compliance_manage`. Until an HRIS
+         *     import exists (Phase 6.3) the links are maintained here.
+         */
+        get: operations["admin.compliance.managers.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/managers/{user}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set or clear the manager of a user */
+        put: operations["admin.compliance.managers.by-user.put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/paths": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List learning paths with their steps
+         * @description Learning paths: ordered courses with prerequisites. Admin endpoints need `compliance_manage`;
+         *     `my-paths` is the learner's own view.
+         */
+        get: operations["admin.compliance.paths.get"];
+        put?: never;
+        /** Create a learning path */
+        post: operations["admin.compliance.paths.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/paths/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show a learning path */
+        get: operations["admin.compliance.paths.by-id.get"];
+        /** Update a learning path (steps are replaced when sent) */
+        put: operations["admin.compliance.paths.by-id.put"];
+        post?: never;
+        /** Delete a learning path (its assignments stay) */
+        delete: operations["admin.compliance.paths.by-id.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/paths/{id}/enrollments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enrol users in a learning path */
+        post: operations["admin.compliance.paths.by-id.enrollments.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/compliance/my-paths": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My learning paths */
+        get: operations["compliance.my-paths.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Compliance report
+         * @description Compliance report and audit export. Permission `compliance_report`. Datasets: `assignments` (required
+         *     training and its outcome), `certificates` (every certificate with the course version it attests) and `audit`
+         *     (hash-chained Living Course audit entries, when that package is installed).
+         */
+        get: operations["admin.compliance.report.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/report/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Audit export of a compliance dataset
+         * @description Streams every matching row as CSV (default) or JSON lines. The export itself is recorded (who, dataset, filters, row count).
+         */
+        get: operations["admin.compliance.report.export.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List enrolment rules
+         * @description Enrolment rules: "a user with these attributes is enrolled in this path, due in N days". Permission
+         *     `compliance_manage`. Attributes: `group` (group names), a user column or a custom user field (model-fields).
+         *     Rules run when a user is saved and in the daily `compliance:process`.
+         */
+        get: operations["admin.compliance.rules.get"];
+        put?: never;
+        /** Create an enrolment rule */
+        post: operations["admin.compliance.rules.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/rules/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update an enrolment rule */
+        put: operations["admin.compliance.rules.by-id.put"];
+        post?: never;
+        /** Delete an enrolment rule (existing enrolments stay) */
+        delete: operations["admin.compliance.rules.by-id.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/rules/{id}/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview or run a rule now */
+        post: operations["admin.compliance.rules.by-id.evaluate.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/schedules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List scheduled reports
+         * @description Scheduled reports: a compliance dataset e-mailed as CSV or JSON lines every day, week or month to
+         *     tenant users. Permission `compliance_report`.
+         */
+        get: operations["admin.compliance.schedules.get"];
+        put?: never;
+        /** Schedule a report */
+        post: operations["admin.compliance.schedules.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/schedules/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update a scheduled report */
+        put: operations["admin.compliance.schedules.by-id.put"];
+        post?: never;
+        /** Delete a scheduled report */
+        delete: operations["admin.compliance.schedules.by-id.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/compliance/my-skills": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My skill profile
+         * @description Learner skill profiles: the confirmed competencies of the courses a learner has done, with when they were earned
+         *     and when they lapse.
+         */
+        get: operations["compliance.my-skills.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/users/{user}/skills": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The skill profile of a user */
+        get: operations["admin.compliance.users.by-user.skills.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1850,7 +2565,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get all consultation access enquiries */
-        get: operations["11ce36e434fd8ba87d204ab008a058f2"];
+        get: operations["admin.consultation-access-enquiries.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1869,7 +2584,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Approve the specified consultation access enquiry by proposed term id */
-        post: operations["02967e1d0908030ef0fee525d9b3959a"];
+        post: operations["admin.consultation-access-enquiries.approve.by-proposedtermid.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1886,7 +2601,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Disapprove the specified consultation access enquiry by id */
-        post: operations["6a0ccec87f2ec1c7b8f7e63232581c24"];
+        post: operations["admin.consultation-access-enquiries.disapprove.by-id.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1901,13 +2616,13 @@ export interface paths {
             cookie?: never;
         };
         /** Get my consultation access enquiries */
-        get: operations["162a12f50b84638a4904b5234dfaf477"];
+        get: operations["consultation-access-enquiries.get"];
         put?: never;
         /**
          * Store a newly Consultation Access Enqiury
          * @description Store Consultation Access Enqiury
          */
-        post: operations["8035621ce78dc0813cd8463d10829ba4"];
+        post: operations["consultation-access-enquiries.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1922,21 +2637,21 @@ export interface paths {
             cookie?: never;
         };
         /** Get my consultation access enquiry by id */
-        get: operations["5726c0775ea4cad02e1bbfa842f5f6fc"];
+        get: operations["consultation-access-enquiries.by-id.get"];
         put?: never;
         post?: never;
         /**
          * Remove the specified Consultation Access Enquiry
          * @description Delete Consultation Access Enquiry
          */
-        delete: operations["514c6829bb48edc77d3ab191ec0a33e5"];
+        delete: operations["consultation-access-enquiries.by-id.delete"];
         options?: never;
         head?: never;
         /**
          * Update Consultation Access Enqiury
          * @description Update Consultation Access Enqiury
          */
-        patch: operations["f942c7e93db66baaa3b622b191b89475"];
+        patch: operations["consultation-access-enquiries.by-id.patch"];
         trace?: never;
     };
     "/api/consultation-access-enquiries/{id}/join": {
@@ -1947,7 +2662,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get url to consultation by enquiry id */
-        get: operations["781c6e52904c5643ac8a5d3f877d0b0c"];
+        get: operations["consultation-access-enquiries.by-id.join.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1969,7 +2684,7 @@ export interface paths {
          * Report term with bought consultation
          * @description Report term consultation
          */
-        post: operations["a195f83b331f6dbba33a7e310bf8be56"];
+        post: operations["consultations.report-term.by-orderitemid.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1984,7 +2699,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Approve reported term with consultation author */
-        get: operations["31969a292ef95fb3108bf5dd48725700"];
+        get: operations["consultations.approve-term.by-consultationtermid.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2001,7 +2716,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Reject reported term with consultation author */
-        get: operations["593c3c8a82381143d79fab768132e7d3"];
+        get: operations["consultations.reject-term.by-consultationtermid.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2018,7 +2733,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Generate jitsi object for approved consultation term */
-        get: operations["c56033f8b7ffe9d440c6e27b5ff95f44"];
+        get: operations["consultations.generate-jitsi.by-consultationtermid.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2038,7 +2753,7 @@ export interface paths {
          * Get a listing of the Consultations.
          * @description Get all Consultations
          */
-        get: operations["3bfd217c4937b90cf5dc82be8625b344"];
+        get: operations["consultations.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2058,7 +2773,7 @@ export interface paths {
          * Get a listing of the Consultations bought by user.
          * @description Get a listing of the Consultations bought by user
          */
-        get: operations["20bed9d7e23e02e00e5bd6e28a0ff705"];
+        get: operations["consultations.me.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2075,7 +2790,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get proposedTerm For OrderItem */
-        get: operations["250b6ce79637063601306450aa5b5495"];
+        get: operations["consultations.proposed-terms.by-orderitemid.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2095,7 +2810,7 @@ export interface paths {
          * Display the specified Consultation
          * @description Get Consultation
          */
-        get: operations["4b28bd8af12cd6ca22c3ce60f8067bfd"];
+        get: operations["consultations.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2112,7 +2827,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get Consultation schedule for tutor */
-        get: operations["20700af7b0c2aa49ef3b55e1d85feac1"];
+        get: operations["consultations.my-schedule.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2134,7 +2849,7 @@ export interface paths {
          * Finish consultation term
          * @description Finish consultation term
          */
-        post: operations["9815556e99335ea3d403e97234eeb4d5"];
+        post: operations["consultations.finish-term.by-consultationtermid.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2148,13 +2863,13 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["504c6a188c8bc83df97748f044df1d37"];
+        get: operations["admin.consultations.get"];
         put?: never;
         /**
          * Store a newly created Consultation in storage
          * @description Store Consultation
          */
-        post: operations["8a625edb04844cb1358c9f758fde61d4"];
+        post: operations["admin.consultations.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2172,18 +2887,18 @@ export interface paths {
          * Display the specified Consultation
          * @description Get Consultation
          */
-        get: operations["c89e9d32aa16d3423318eb4057301c9d"];
+        get: operations["admin.consultations.by-id.get"];
         /**
          * Update the specified Consultation in storage
          * @description Update Consultation
          */
-        put: operations["146c506b1480b60dd6fe43a46742d826"];
+        put: operations["admin.consultations.by-id.put"];
         post?: never;
         /**
          * Remove the specified Consultation from storage
          * @description Delete Consultation
          */
-        delete: operations["3e0d51e402f67cc6b397fba4f58f8a7b"];
+        delete: operations["admin.consultations.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2197,7 +2912,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get Consultation schedule */
-        get: operations["864c8196e30ee5286c8afc36adab5601"];
+        get: operations["admin.consultations.by-id.schedule.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2219,7 +2934,7 @@ export interface paths {
          * Change term in consultation with tutor
          * @description Change term consultation with tutor
          */
-        post: operations["ed5f89a40f4d2400b03578e09a44d599"];
+        post: operations["consultations.change-term.by-consultationtermid.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2234,7 +2949,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get users assignable to consultations */
-        get: operations["e601ae4d0fc00b07e34e0e21e33f17bd"];
+        get: operations["admin.consultations.users.assignable.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2254,7 +2969,7 @@ export interface paths {
          * List installed ulams packages
          * @description List of installed ulams packages with versions
          */
-        get: operations["0034a37cff4ee3fc687bd797c5c9b999"];
+        get: operations["core.packages.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2276,7 +2991,7 @@ export interface paths {
          * Collect a Content Security Policy violation report
          * @description Public, rate limited (60 per minute and IP), body up to 16 KB. Accepts `application/csp-report` (report-uri) and `application/reports+json` (Reporting API). Only the directive, the host of the blocked resource and the path of the page are kept, aggregated with a counter, and pruned after 30 days.
          */
-        post: operations["85f7ae7cab7ab8ec520e63e6c427b339"];
+        post: operations["csp-report.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2294,7 +3009,7 @@ export interface paths {
          * List the aggregated CSP violation reports
          * @description Admins only. Newest first.
          */
-        get: operations["1019392d092cea54f12c8fe80cccf2bf"];
+        get: operations["admin.csp-reports.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2311,7 +3026,7 @@ export interface paths {
             cookie?: never;
         };
         /** Check health of the application */
-        get: operations["1125991bf9cc6c8f0c66c0899d22d579"];
+        get: operations["health-check.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2328,7 +3043,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get all course access enquiries */
-        get: operations["a19701d8602644735dee3c9431c55f93"];
+        get: operations["admin.course-access-enquiries.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2351,7 +3066,7 @@ export interface paths {
          * Remove the specified Course Access Enquiry
          * @description Delete Course Access Enquiry
          */
-        delete: operations["1e29763d7d23ae26cea4739459f844ca"];
+        delete: operations["admin.course-access-enquiries.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2370,7 +3085,7 @@ export interface paths {
          * Approve the specified Course Access Enquiry
          * @description Approve Course Access Enquiry
          */
-        post: operations["23b5aa60144c248cef7fd0d4fe534fdd"];
+        post: operations["admin.course-access-enquiries.approve.by-id.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2388,7 +3103,7 @@ export interface paths {
          * Get list of users and groups with access to the course
          * @description Get list of users and groups with access to the course
          */
-        get: operations["6cbfed309d67218dcdba1d8771d13b78"];
+        get: operations["admin.courses.by-id.access.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2410,7 +3125,7 @@ export interface paths {
          * Add users and groups with access to the course
          * @description Add users and groups with access to the course
          */
-        post: operations["01b212445a3448fde31b8e8e4f42677c"];
+        post: operations["admin.courses.by-id.access.add.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2430,7 +3145,7 @@ export interface paths {
          * Remove users and groups with access to the course
          * @description Remove users and groups with access to the course
          */
-        post: operations["bc1663894f8e9ee91d9fc9be2eb6d433"];
+        post: operations["admin.courses.by-id.access.remove.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2450,7 +3165,7 @@ export interface paths {
          * Set users and groups with access to the course
          * @description Set users and groups with access to the course
          */
-        post: operations["aa0a04f84fdc42473743f5c8d08ab1f8"];
+        post: operations["admin.courses.by-id.access.set.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2468,7 +3183,7 @@ export interface paths {
          * Get my course list IDs
          * @description Get my course list IDs
          */
-        get: operations["5208fc718a59a7f1aecd3a622d787b73"];
+        get: operations["courses.my.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2485,13 +3200,13 @@ export interface paths {
             cookie?: never;
         };
         /** Get my course access enquiries */
-        get: operations["a69f18183346e2669bef06c107309108"];
+        get: operations["course-access-enquiries.get"];
         put?: never;
         /**
          * Store a newly Course Access Enqiury
          * @description Store Course Access Enqiury
          */
-        post: operations["c11f95bfb47d8635701256be2fda32da"];
+        post: operations["course-access-enquiries.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2512,7 +3227,148 @@ export interface paths {
          * Remove the specified Course Access Enquiry
          * @description Delete Course Access Enquiry
          */
-        delete: operations["b3fd2c8be8fd6e1401c9d7ca941c4c95"];
+        delete: operations["course-access-enquiries.by-id.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/courses/{course}/blueprint": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export a course as a Blueprint v3 document (current version, drift, applied version)
+         * @description Course-as-code API (ADR 0160, prefix `/api/admin/course-as-code`, `auth:api`, permission
+         *     `course_builder_use`). It works with AI off: there is no AI gate on this route group. A push is
+         *     always a proposed version; a person approves it (agent tokens and MCP clients never can).
+         */
+        get: operations["admin.course-as-code.courses.by-course.blueprint.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import a Blueprint v3 document as a proposed version of kind import */
+        post: operations["admin.course-as-code.sessions.by-session.imports.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/drift": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Read admin edits made after the last apply back into a proposed author version */
+        post: operations["admin.course-as-code.sessions.by-session.drift.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One version with its Blueprint v3 document (what a three-way merge needs as the base) */
+        get: operations["admin.course-as-code.versions.by-version.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Element-aware diff of a version against its parent or ?against= */
+        get: operations["admin.course-as-code.versions.by-version.diff.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a proposed import (people and CLI tokens; never agents or MCP clients) */
+        post: operations["admin.course-as-code.versions.by-version.approve.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Apply the current version to the course (no AI needed) */
+        post: operations["admin.course-as-code.sessions.by-session.apply.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish the applied course (no AI needed) */
+        post: operations["admin.course-as-code.sessions.by-session.publish.post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2526,7 +3382,7 @@ export interface paths {
             cookie?: never;
         };
         /** My builder sessions */
-        get: operations["cd5468d0a1a722714a8a897f6bfa6afc"];
+        get: operations["admin.course-builder.sessions.get"];
         put?: never;
         /**
          * Start a builder session
@@ -2534,7 +3390,7 @@ export interface paths {
          *     `course_builder_use`). UI actions sent as runs and these endpoints share the same services, so
          *     the CLI and the MCP server can drive the builder without the UI.
          */
-        post: operations["6a2456054c25d9e388382c19ee5667de"];
+        post: operations["admin.course-builder.sessions.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2549,11 +3405,11 @@ export interface paths {
             cookie?: never;
         };
         /** A session's state snapshot */
-        get: operations["097a8f957c1e9c480479a4b73098736c"];
+        get: operations["admin.course-builder.sessions.by-session.get"];
         put?: never;
         post?: never;
         /** Delete a session (an applied course is kept) */
-        delete: operations["8f977ac329aa2e1720a4c72775c60d84"];
+        delete: operations["admin.course-builder.sessions.by-session.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2569,7 +3425,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Upload a source (MD, PDF, DOCX); ingestion and the interview start by themselves */
-        post: operations["e2d9e3dd4d42bf8a1e1e06945b4400a3"];
+        post: operations["admin.course-builder.sessions.by-session.sources.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2584,9 +3440,60 @@ export interface paths {
             cookie?: never;
         };
         /** A source with its section tree */
-        get: operations["e5ee3815ce7b28ec54e83ff99f8b9ce3"];
+        get: operations["admin.course-builder.sessions.by-session.sources.by-source.get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/citations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sources panel: sections with the elements that cite them */
+        get: operations["admin.course-builder.sessions.by-session.citations.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/outline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Edit the course structure: rename, move, add, remove, set the lesson format */
+        post: operations["admin.course-builder.sessions.by-session.outline.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/elements/{element}/variants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Give me options: 2 or 3 proposals for one element, compared side by side */
+        post: operations["admin.course-builder.sessions.by-session.elements.by-element.variants.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2601,7 +3508,7 @@ export interface paths {
             cookie?: never;
         };
         /** One source fragment (citation popover) */
-        get: operations["5514f96c136b291b703df1c82cb06c39"];
+        get: operations["admin.course-builder.fragments.by-fragment.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2618,9 +3525,9 @@ export interface paths {
             cookie?: never;
         };
         /** Course Brief */
-        get: operations["13275e2e7b5e12fc78da7860840babe3"];
+        get: operations["admin.course-builder.sessions.by-session.brief.get"];
         /** Edit the Course Brief */
-        put: operations["29adfbac442e3777b7f41b8d0531463c"];
+        put: operations["admin.course-builder.sessions.by-session.brief.put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -2638,7 +3545,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Start a run from a chat message or a UI action (AG-UI RunAgentInput) */
-        post: operations["24836a812e2252ba271af42a7ae04f58"];
+        post: operations["admin.course-builder.sessions.by-session.runs.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2653,7 +3560,7 @@ export interface paths {
             cookie?: never;
         };
         /** Status of one run (poll it for --wait) */
-        get: operations["ad22ae07ebbbb386a4c6160c18d6c433"];
+        get: operations["admin.course-builder.runs.by-run.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2672,7 +3579,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Cancel a run */
-        post: operations["c6f4943df5cfe1e54dd2ff7d3daf8357"];
+        post: operations["admin.course-builder.runs.by-run.cancel.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2689,7 +3596,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Retry one failed generation step */
-        post: operations["f1e869affcbe6253b50ab68066ad5d2a"];
+        post: operations["admin.course-builder.runs.by-run.steps.by-step.retry.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2704,7 +3611,7 @@ export interface paths {
             cookie?: never;
         };
         /** Blueprint version history */
-        get: operations["8ae74d5bbb65bad917bdebb71726b507"];
+        get: operations["admin.course-builder.sessions.by-session.versions.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2721,7 +3628,7 @@ export interface paths {
             cookie?: never;
         };
         /** A blueprint version with fragment labels */
-        get: operations["7385a7e2cb179ef1e527400ad9355a92"];
+        get: operations["admin.course-builder.versions.by-version.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2738,7 +3645,7 @@ export interface paths {
             cookie?: never;
         };
         /** Element-aware diff against another version (default: its parent) */
-        get: operations["5fa4979aba6423ee3ddd249b8d96d943"];
+        get: operations["admin.course-builder.versions.by-version.diff.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2757,7 +3664,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Approve a proposal (outline or patch) */
-        post: operations["363fe3c5faaf019b7aeccb8ce0692be2"];
+        post: operations["admin.course-builder.versions.by-version.approve.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2774,7 +3681,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Reject a proposal */
-        post: operations["894dc1e40da11f4ee1b272de9535e40f"];
+        post: operations["admin.course-builder.versions.by-version.reject.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2791,7 +3698,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Restore an old version as a new one */
-        post: operations["78c59c3a3e86e4b27532721ce0e571f7"];
+        post: operations["admin.course-builder.versions.by-version.restore.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2808,7 +3715,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Undo the last content change */
-        post: operations["dd74d5b979952d2b47442749f468fa6c"];
+        post: operations["admin.course-builder.sessions.by-session.undo.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2825,7 +3732,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Redo */
-        post: operations["109f522dfbb519cdd9c95d9fc358db68"];
+        post: operations["admin.course-builder.sessions.by-session.redo.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2842,7 +3749,41 @@ export interface paths {
         get?: never;
         put?: never;
         /** Approve the apply of the current version */
-        post: operations["509821f6c31ea0c0c3cec6ae22f4b45b"];
+        post: operations["admin.course-builder.sessions.by-session.apply.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/publish-check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Blocking items and warnings before publishing */
+        get: operations["admin.course-builder.sessions.by-session.publish-check.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/new-site": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new site and move the session there (platform operators; TENANCY_NEW_SITES) */
+        post: operations["admin.course-builder.sessions.by-session.new-site.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2858,8 +3799,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Publish the applied course */
-        post: operations["fb8f6decce43224a86c2af1707019831"];
+        /** Publish the applied course (409 while blocking items or unacknowledged warnings remain; body acknowledgedWarnings) */
+        post: operations["admin.course-builder.sessions.by-session.publish.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2874,7 +3815,7 @@ export interface paths {
             cookie?: never;
         };
         /** AI calls of the session by task and model */
-        get: operations["f914d359cc7a401202a1337d2ddd97f1"];
+        get: operations["admin.course-builder.sessions.by-session.usage.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2898,7 +3839,7 @@ export interface paths {
          *     the client reconnects with the last id. Between polls the loop watches the session's "last event"
          *     key in the cache and only queries the table when it moved (polling fallback every 500 ms).
          */
-        get: operations["cb4592a0eb6d5d81094288be826850ad"];
+        get: operations["admin.course-builder.sessions.by-session.events.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2915,7 +3856,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Exports course to ZIP package */
-        get: operations["12e665df460272401628fdf025e0bfcb"];
+        get: operations["admin.courses.by-id.export.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2934,7 +3875,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Imports course from ZIP package */
-        post: operations["2fb2271978b3099667ff27474928065b"];
+        post: operations["admin.courses.zip.import.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2949,7 +3890,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Course cloning */
-        get: operations["4affb4f5312617a0f291317f4db5e253"];
+        get: operations["admin.courses.by-id.clone.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2969,7 +3910,7 @@ export interface paths {
          * Get a listing of the Courses.
          * @description Get all Courses
          */
-        get: operations["8dbbc76a12bb48ea76260f4658f1b513"];
+        get: operations["courses.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2989,13 +3930,13 @@ export interface paths {
          * Get a listing of the Courses.
          * @description Get all Courses
          */
-        get: operations["b88c124a83489d38ea53361aa351cb00"];
+        get: operations["admin.courses.get"];
         put?: never;
         /**
          * Store a newly created Course in storage
          * @description Store Course
          */
-        post: operations["305a94df16182e2145052d6835dcefe4"];
+        post: operations["admin.courses.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3013,7 +3954,7 @@ export interface paths {
          * Get a listing of the authored Courses.
          * @description Get all Courses
          */
-        get: operations["76c49eb02e17ddf51e437cfbd2809f54"];
+        get: operations["courses.authored.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3033,7 +3974,7 @@ export interface paths {
          * Display the specified Course
          * @description Get Course
          */
-        get: operations["55583bb7a91b5bac0b2f77eac0dac864"];
+        get: operations["courses.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3053,7 +3994,7 @@ export interface paths {
          * Display the specified Course program/curriculum/syllabus. No token required when course is free
          * @description Get Course
          */
-        get: operations["ece2ab208e082e2dbb80db97dfc90372"];
+        get: operations["courses.by-id.program.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3073,7 +4014,7 @@ export interface paths {
          * Display the specified Course scorm View to be embeede with iframe
          * @description Get Course
          */
-        get: operations["ad5150de9bec464fbcc2e97d2e715d13"];
+        get: operations["courses.by-id.scorm.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3095,12 +4036,12 @@ export interface paths {
          * Update the specified Course in storage
          * @description Update Course
          */
-        post: operations["92eda5028c4f5e86d45aa9e583c54e7d"];
+        post: operations["admin.courses.by-id.post"];
         /**
          * Remove the specified Course from storage
          * @description Delete Course
          */
-        delete: operations["dade32d2819b8447244927f1b4aef9d9"];
+        delete: operations["admin.courses.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3121,7 +4062,7 @@ export interface paths {
          *          * `{"class":"Lesson","orders":[[3,0],[2,1],[4,2],[5,3],[6,4],[7,5],[1,6],[71,7]], "course_id":1}`
          *          *
          */
-        post: operations["350335404c141a6010dada19626a0ac1"];
+        post: operations["admin.courses.sort.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3139,7 +4080,7 @@ export interface paths {
          * Endpoints get unique tags from active courses
          * @description Get unique tags
          */
-        get: operations["30e57f7ede72204fc32002ac6e47ceb6"];
+        get: operations["tags.uniquetags.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3159,7 +4100,7 @@ export interface paths {
          * Preview the specified Course Topic is set to preview
          * @description Get Topic with Topicable
          */
-        get: operations["e753898d94754de9a9fc5b7c7198fc92"];
+        get: operations["courses.by-id.preview.by-topic-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3176,7 +4117,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get Tutors */
-        get: operations["d7ee8a2ec5b5b9429920b61ef4909636"];
+        get: operations["tutors.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3193,7 +4134,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get tutor course/author ID */
-        get: operations["0d07ff6a375253e0a29a4437f2deba75"];
+        get: operations["tutors.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3210,7 +4151,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get users assignable to course */
-        get: operations["f6d80c1aa2b03f013a50eb59240049bf"];
+        get: operations["admin.courses.users.assignable.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3227,7 +4168,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get Progresses */
-        get: operations["4c5387bd11b46d9b0f98f04c7e6da633"];
+        get: operations["courses.progress.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3244,7 +4185,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get Paginated Progresses */
-        get: operations["173790a724372d7a2b3007a19c5ddc45"];
+        get: operations["courses.progress.paginated.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3261,14 +4202,14 @@ export interface paths {
             cookie?: never;
         };
         /** @description Show user course progress */
-        get: operations["cf7e8fa031fede6b823a42d6a9b1f6ba"];
+        get: operations["courses.progress.by-course-id.get"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         /** @description Show user course progress */
-        patch: operations["a7e82bd2aad30db84dd26340e634e878"];
+        patch: operations["courses.progress.by-course-id.patch"];
         trace?: never;
     };
     "/api/courses/progress/{topic_id}/ping": {
@@ -3280,7 +4221,7 @@ export interface paths {
         };
         get?: never;
         /** @description Update time in course by ping. */
-        put: operations["50545574cb8b5368ed90d6437e4b9c35"];
+        put: operations["courses.progress.by-topic-id.ping.put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -3298,7 +4239,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Update h5p progress in course quiz. */
-        post: operations["57778fb12c9d40574ab3a5628bbbb0cc"];
+        post: operations["courses.progress.by-topic-id.h5p.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3316,13 +4257,13 @@ export interface paths {
          * Get a listing of the Lessons.
          * @description Get all Lessons
          */
-        get: operations["9778d710cd0d45f92cf8ed18ec374632"];
+        get: operations["admin.lessons.get"];
         put?: never;
         /**
          * Store a newly created Lesson in storage
          * @description Store Lesson
          */
-        post: operations["5e245f01cd24f62c62e91454e1225fef"];
+        post: operations["admin.lessons.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3340,18 +4281,18 @@ export interface paths {
          * Display the specified Lesson
          * @description Get Lesson
          */
-        get: operations["880b86d420d35476828b4a647a56e6cb"];
+        get: operations["admin.lessons.by-id.get"];
         /**
          * Update the specified Lesson in storage
          * @description Update Lesson
          */
-        put: operations["ba4d1e75c7877ffcdd70919bd53b5821"];
+        put: operations["admin.lessons.by-id.put"];
         post?: never;
         /**
          * Remove the specified Lesson from storage
          * @description Delete Lesson
          */
-        delete: operations["9a4aedb4e3d4044abd7db88ba7241d03"];
+        delete: operations["admin.lessons.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3370,7 +4311,7 @@ export interface paths {
          * Clone Lesson
          * @description Clone Lesson with topics
          */
-        post: operations["c1b22d4e72c30ba29c8e724fe601fd1e"];
+        post: operations["admin.lessons.by-id.clone.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3388,13 +4329,13 @@ export interface paths {
          * Get a listing of the Topics.
          * @description Get all Topics
          */
-        get: operations["44d672dcb8ee2d2c15baf1a8ec4bdfae"];
+        get: operations["admin.topics.get"];
         put?: never;
         /**
          * Store a newly created Topic in storage
          * @description Store Topic. Depending on `topicable_type` values are different. Endpoint does create both `Topic` and 1:1 related `Content` based on creating class
          */
-        post: operations["2795613b867655f0906bd7d206e532dd"];
+        post: operations["admin.topics.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3412,18 +4353,18 @@ export interface paths {
          * Display the specified Topic
          * @description Get Topic
          */
-        get: operations["186e4c1ca21c0a47ff395c2e08b20add"];
+        get: operations["admin.topics.by-id.get"];
         /**
          * Update the specified Topic in storage
          * @description Update Topic
          */
-        put: operations["13b79ade75c8e981d77b519de1abcf19"];
+        put: operations["admin.topics.by-id.put"];
         post?: never;
         /**
          * Remove the specified Topic from storage
          * @description Delete Topic
          */
-        delete: operations["3c4bb6f3addcac8c836067ef7896f941"];
+        delete: operations["admin.topics.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3440,7 +4381,7 @@ export interface paths {
          * Get a listing of the Availabe Topic Content Types Classes.
          * @description Get all Topic Contents
          */
-        get: operations["0eb3828eb09a2e9be8c53a2fe1eb6cff"];
+        get: operations["admin.topics.types.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3462,7 +4403,7 @@ export interface paths {
          * Clone topic
          * @description Clone Topic.
          */
-        post: operations["71d8e8d044b96b0f9c9a5ca9c1d50df3"];
+        post: operations["admin.topics.by-id.clone.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3480,13 +4421,13 @@ export interface paths {
          * Get list of resources
          * @description Get list of resources
          */
-        get: operations["3117627b7fdfedb4eced4d066f03c4ff"];
+        get: operations["admin.topics.by-topic-id.resources.get"];
         put?: never;
         /**
          * Post new resource
          * @description Post new resource
          */
-        post: operations["b872fa6a2e2c071382bdc3b52a4fc39a"];
+        post: operations["admin.topics.by-topic-id.resources.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3507,14 +4448,14 @@ export interface paths {
          * Delete resource
          * @description Delete resource
          */
-        delete: operations["6a8b27ea0809208bdfac5285b5f0a615"];
+        delete: operations["admin.topics.by-topic-id.resources.by-resource-id.delete"];
         options?: never;
         head?: never;
         /**
          * Rename resource
          * @description Rename resource
          */
-        patch: operations["c30a77f0711d6d95f5a4806624fea923"];
+        patch: operations["admin.topics.by-topic-id.resources.by-resource-id.patch"];
         trace?: never;
     };
     "/api/admin/csv/groups/group_id": {
@@ -3525,7 +4466,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Exports users to csv */
-        get: operations["86a961f958e098f7d3f3b1feff88ae16"];
+        get: operations["admin.csv.groups.group-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3544,7 +4485,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Imports group from csv */
-        post: operations["4ab1a2b914951ad03a93b37160475992"];
+        post: operations["csv.groups"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3559,10 +4500,10 @@ export interface paths {
             cookie?: never;
         };
         /** @description Exports users to csv */
-        get: operations["51e5fb7731a4368ab9aa3c2288210641"];
+        get: operations["admin.csv.users.get"];
         put?: never;
         /** @description Imports users from csv */
-        post: operations["7876209e5143adbf36577a9fab784b17"];
+        post: operations["csv.users-add"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3580,7 +4521,7 @@ export interface paths {
          * Demo mode status and the accounts used for the automatic login
          * @description Exists only on a tenant with DEMO_MODE=true; 404 everywhere else.
          */
-        get: operations["9a87b65bcd8010fe27d4496d482090b4"];
+        get: operations["demo.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3602,7 +4543,7 @@ export interface paths {
          * Log in as the demo student or admin without a password
          * @description Issues a regular Passport token for the seeded account of that role, with the same response body as /api/auth/login. The demo student is given access to every published course. Exists only on a tenant with DEMO_MODE=true.
          */
-        post: operations["bf97bd9d4463c3eee2373f7234beebac"];
+        post: operations["demo.login.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3617,10 +4558,10 @@ export interface paths {
             cookie?: never;
         };
         /** Get list of users with access to the dictionary */
-        get: operations["0e0a2621c2766d73ee011a72e4a6c6f3"];
+        get: operations["admin.dictionaries.by-id.access.get"];
         put?: never;
         /** Add users with access to the dictionary */
-        post: operations["312f81db9aedfdc2cf04a19266a11e02"];
+        post: operations["admin.dictionaries.by-id.access.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3635,7 +4576,7 @@ export interface paths {
             cookie?: never;
         };
         /** Display my dictionaries */
-        get: operations["702448cdd815a4bce2db8145bca5a6ad"];
+        get: operations["dictionaries.access.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3652,10 +4593,10 @@ export interface paths {
             cookie?: never;
         };
         /** Get a listing of the Dictionaries */
-        get: operations["09a4218182f6b9da5a54961cd5f4105f"];
+        get: operations["admin.dictionaries.get"];
         put?: never;
         /** Store a newly created dictionary in storage */
-        post: operations["1bbf1651b2fd1d53309eec047bb8afeb"];
+        post: operations["admin.dictionaries.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3670,12 +4611,12 @@ export interface paths {
             cookie?: never;
         };
         /** Display the specified Dictionary */
-        get: operations["be8e7e282980904a2df9749faa4cb5ae"];
+        get: operations["admin.dictionaries.by-id.get"];
         /** Update the specified Dictionary in storage */
-        put: operations["f516347bc68b0736749d6942bf60da91"];
+        put: operations["admin.dictionaries.by-id.put"];
         post?: never;
         /** Remove the specified Dictionary from storage */
-        delete: operations["fac0d36a03844b19109b1f995c9793a3"];
+        delete: operations["admin.dictionaries.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3689,10 +4630,10 @@ export interface paths {
             cookie?: never;
         };
         /** Get a listing of the Dictionary Word */
-        get: operations["27e24f60c10bb388615255104963261a"];
+        get: operations["admin.dictionary-words.get"];
         put?: never;
         /** Store a newly created dictionary word in storage */
-        post: operations["157b3c5c32d268e02d17179c8880c438"];
+        post: operations["admin.dictionary-words.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3707,12 +4648,12 @@ export interface paths {
             cookie?: never;
         };
         /** Display the specified Dictionary Word */
-        get: operations["7616647b88e2500b76e643df3351106e"];
+        get: operations["admin.dictionary-words.by-id.get"];
         /** Update the specified Dictionary Word in storage */
-        put: operations["a8bde89217771c5debcd25f4cadc32e3"];
+        put: operations["admin.dictionary-words.by-id.put"];
         post?: never;
         /** Remove the specified Dictionary Word from storage */
-        delete: operations["ed5bd73255860665cae4a0a59e2a1b01"];
+        delete: operations["admin.dictionary-words.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3728,7 +4669,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Import dictionary words from file */
-        post: operations["8ee34cec3905bac9b0aa4aa0efee6623"];
+        post: operations["admin.dictionary-words.import.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3743,7 +4684,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get a listing of the Dictionary Word */
-        get: operations["a0adaf75cfb2131780d5b9c5acc224f2"];
+        get: operations["dictionaries.by-slug.words.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3760,7 +4701,7 @@ export interface paths {
             cookie?: never;
         };
         /** Display the specified Dictionary Word */
-        get: operations["e6a5b3238b24239d2e7f7e3a23765d27"];
+        get: operations["dictionaries.by-slug.words.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3777,7 +4718,41 @@ export interface paths {
             cookie?: never;
         };
         /** Get the categories used in the dictionary for a given slug */
-        get: operations["5837e9601fa33c099afdf5c3629147b1"];
+        get: operations["dictionaries.by-slug.words.categories.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/example-plugin/greetings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send the tenant's greeting to a user (dispatches GreetingSent) */
+        post: operations["admin.example-plugin.greetings.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/example-plugin/hello": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The tenant's greeting */
+        get: operations["example-plugin.hello.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3794,7 +4769,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lists files prefixed by given directory name */
-        get: operations["6326becc1437440c7baf201e5dab9191"];
+        get: operations["admin.file.list.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3811,7 +4786,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lists files found by name */
-        get: operations["89d9f58f0dfcd2c072d1d5169de55c9b"];
+        get: operations["admin.file.find.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3830,7 +4805,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Upload files using multipart form-data */
-        post: operations["6dee3e2f03d6b3a2c672cb393c4f16f4"];
+        post: operations["admin.file.upload.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3847,7 +4822,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Move the file from one path to another */
-        post: operations["0a11a6015bea01949983a115bf456700"];
+        post: operations["admin.file.move.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3865,7 +4840,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Delete given file */
-        delete: operations["bf283602724612d612442f2b3d3a2ae5"];
+        delete: operations["admin.file.delete.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3882,7 +4857,7 @@ export interface paths {
          * List H5P contents with the number of topics using each
          * @description Needs h5p_list, or h5p_author_list (then only own contents are listed).
          */
-        get: operations["f3e09ac4bd2fa77bb48d2614c58ea494"];
+        get: operations["admin.h5p.contents.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3905,7 +4880,427 @@ export interface paths {
          * Delete H5P contents that no topic uses
          * @description Needs h5p_delete. Deletes through the H5P service (content files, user states, results).
          */
-        delete: operations["b0a324657785d13259c1774c2e3e6ee2"];
+        delete: operations["admin.h5p.unused.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Identity audit trail, newest first
+         * @description The identity audit trail (permission `identity_audit_read`): hash-chained, append-only, never holds tokens,
+         *     assertions or secrets.
+         */
+        get: operations["identity.audit.list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/audit/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recompute the hash chain of the audit trail */
+        get: operations["identity.audit.verify"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Identity providers of this academy
+         * @description Identity providers of the tenant (admin only, permission `identity_provider_manage`). The client secret is
+         *     write-only: responses say whether one is set and, for long secrets, its last four characters.
+         */
+        get: operations["identity.providers.list"];
+        put?: never;
+        /** Add an OpenID Connect or SAML identity provider */
+        post: operations["identity.providers.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/providers/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One identity provider */
+        get: operations["identity.providers.get"];
+        /** Change an identity provider (leave client_secret out to keep the stored one) */
+        put: operations["identity.providers.update"];
+        post?: never;
+        /** Delete an identity provider and its account links (accounts stay) */
+        delete: operations["identity.providers.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/providers/{provider}/metadata/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Fetch the SAML identity provider metadata again */
+        post: operations["identity.providers.metadata.refresh"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/providers/{provider}/sp-keys/rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Prepare or activate the next SAML service provider key pair */
+        post: operations["identity.providers.spkeys.rotate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/saml/{slug}/metadata": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * SAML service provider metadata of an identity provider
+         * @description SAML 2.0 service provider endpoints of a tenant's identity provider (plan 4.2): the SP metadata an administrator
+         *     gives the IdP, the assertion consumer service the browser posts the IdP's response to, single logout, and the
+         *     call that starts a logout from this side. Public routes on the tenant API host (the provider rows live in the
+         *     tenant's own database), except the logout call, which needs the user's token.
+         */
+        get: operations["identity.saml.metadata"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/saml/{slug}/acs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Assertion consumer service: the identity provider's browser POST (SAMLResponse and RelayState) */
+        post: operations["identity.saml.acs"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/saml/{slug}/slo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours */
+        get: operations["identity.saml.slo"];
+        put?: never;
+        /** Single logout service (POST binding with an enveloped XML signature) */
+        post: operations["identity.saml.slo.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/saml/{slug}/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign out of this academy and, when the identity provider supports it, start single logout there */
+        post: operations["identity.saml.logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Identity providers a learner can sign in with
+         * @description Sign-in through a tenant's identity provider (OpenID Connect and SAML 2.0; SAML endpoints are in {@see SamlController}). Public routes on the tenant API host: the
+         *     provider rows live in the tenant's own database, so another tenant's slug, state or code never resolves here.
+         */
+        get: operations["identity.providers.public"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/sso/{slug}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider */
+        get: operations["identity.sso.start"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/oidc/{slug}/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Where the provider sends the browser back; redirects to the return URL with a one-time code or an error */
+        get: operations["identity.oidc.callback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/sso/exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Redeem the one-time code with the verifier for an access token */
+        post: operations["identity.sso.exchange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/images/img": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Resize an image on the fly and redirect to the cached copy
+         * @description Optional legacy resize API, kept for self-hosted admin and third-party clients; prefer a CDN or the front's image service. Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.
+         */
+        get: operations["images.img.get"];
+        put?: never;
+        /**
+         * Resize many images at once
+         * @description Optional legacy resize API, kept for self-hosted admin and third-party clients; prefer a CDN or the front's image service. Public endpoint, throttled by `images.render`. Returns one entry per requested image, in the same order, with the URL of the cached copy.
+         */
+        post: operations["images.img.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/interactive/launches/{topic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start an Interactive topic
+         * @description Learners play an Interactive topic from the tenant content origin (ADR 0086). The frame never gets a
+         *     token: the lesson page forwards the bridge's events through the front BFF with the learner's session.
+         */
+        post: operations["interactive.launches.by-topic.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/interactive/showcase": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The interactive shown on a landing page
+         * @description Public, throttled. The first Interactive topic of the first published public course that has one, in the shape of a launch ({url, version, manifest, topic}). Nothing is tracked.
+         */
+        get: operations["interactive.showcase.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/interactive/topics/{topic}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Progress events from the lesson page
+         * @description A batch of at most 40 bridge events (stepChanged, progress, complete, score, event) for the logged-in learner. Completion follows the topic's completion rule.
+         */
+        post: operations["interactive.topics.by-topic.events.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/interactive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List interactive packages
+         * @description The interactive package library (ADR 0086): uploaded zip packages, versioned and immutable.
+         */
+        get: operations["interactive.list"];
+        put?: never;
+        /** Upload a package (.zip with ulams-interactive.json) */
+        post: operations["interactive.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/interactive/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show a package with its current manifest */
+        get: operations["interactive.get"];
+        /** Rename a package */
+        put: operations["interactive.update"];
+        post?: never;
+        /** Delete a package with all versions and files */
+        delete: operations["interactive.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/interactive/{id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List versions */
+        get: operations["interactive.versions"];
+        put?: never;
+        /** Upload a new version (the manifest id must match) */
+        post: operations["interactive.add-version"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/interactive/{id}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin preview of a version on the content origin (nothing is tracked) */
+        get: operations["interactive.preview"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -3919,9 +5314,391 @@ export interface paths {
             cookie?: never;
         };
         /** Get invoice identified by a given id identifier of order */
-        get: operations["d1539f040506efdd60023c039a071501"];
+        get: operations["order-invoices.by-id.get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/knowledge/exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Knowledge exports, newest first
+         * @description Knowledge packs for company RAG (Phase 7.6). Admin only (`knowledge_manage`); packs live in the tenant's own
+         *     database and storage, so an id from another tenant never resolves.
+         */
+        get: operations["knowledge.exports.list"];
+        put?: never;
+        /** Start a knowledge export of one course or of the whole tenant */
+        post: operations["knowledge.exports.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/knowledge/exports/{export}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One knowledge export */
+        get: operations["knowledge.exports.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/knowledge/exports/{export}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download a file of a ready export (manifest.json, chunks.jsonl or index.json) */
+        get: operations["knowledge.exports.download"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/knowledge/courses/{course}/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The latest ready export of a course */
+        get: operations["knowledge.courses.latest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/nudges/opened": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** The learner followed the link of a nudge (the frontend sends the signed `n` of the link) */
+        post: operations["learner-insights.nudges.opened.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/courses/{course}/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Per-course analytics: progress, completion, quiz performance, status distribution and interventions */
+        get: operations["admin.learner-insights.courses.by-course.summary.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/courses/{course}/elements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons */
+        get: operations["admin.learner-insights.courses.by-course.elements.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/courses/{course}/elements/{elementKey}/improve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Propose an improvement for an element learners struggle with: the estimate and the aggregated evidence first, then (confirmEstimate) a Living Course proposal of kind insights */
+        post: operations["admin.learner-insights.courses.by-course.elements.by-element-key.improve.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/courses/{course}/learners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Learners who are struggling or at risk, with the reasons (individual data) */
+        get: operations["admin.learner-insights.courses.by-course.learners.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/learners/{user}/courses/{course}/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One learner's signals in a course with element labels (support) */
+        get: operations["admin.learner-insights.learners.by-user.courses.by-course.timeline.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/backfill": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Build signals from existing data for a course or the whole tenant (queued) */
+        post: operations["admin.learner-insights.backfill.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/signals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record a media signal (replay, seek back) from the player */
+        post: operations["learner-insights.signals.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The learner's own statuses with reasons, their privacy settings and the retention periods */
+        get: operations["learner-insights.me.get"];
+        put?: never;
+        post?: never;
+        /** Erase the learner's personalisation data (the opt-out and consent settings stay) */
+        delete: operations["learner-insights.me.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/me/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Opt out of personalisation, switch personal help or nudges, give or withdraw consent */
+        put: operations["learner-insights.me.settings.put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/me/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download everything stored about the learner (signals, statuses, transitions) as JSON */
+        get: operations["learner-insights.me.export.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/courses/{course}/presentation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** How the course is presented to the learner (density, steps, navigation, hints) and why */
+        get: operations["learner-insights.courses.by-course.presentation.get"];
+        /** Override how the course is presented (for example show the whole lesson); null removes an override */
+        put: operations["learner-insights.courses.by-course.presentation.put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The effective rule thresholds of the tenant (defaults and tenant settings) */
+        get: operations["admin.learner-insights.settings.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/courses/{course}/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Thresholds of one course: the overrides and the effective values */
+        get: operations["admin.learner-insights.courses.by-course.settings.get"];
+        /** Replace the threshold overrides of one course */
+        put: operations["admin.learner-insights.courses.by-course.settings.put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/courses/{course}/topics/{topic}/support": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Extra help for the learner in a topic, with the reasons it was offered */
+        get: operations["learner-insights.courses.by-course.topics.by-topic.support.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/assignments/{assignment}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Say whether a piece of extra help was useful */
+        post: operations["learner-insights.assignments.by-assignment.feedback.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/assignments/{assignment}/hide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Hide a piece of extra help */
+        post: operations["learner-insights.assignments.by-assignment.hide.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/assignments/{assignment}/reflection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored) */
+        post: operations["learner-insights.assignments.by-assignment.reflection.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3939,10 +5716,10 @@ export interface paths {
          * List LiaScript sources
          * @description LiaScript sources (spec 1.1): versioned Markdown plus assets.
          */
-        get: operations["ea8eb3db404fe703a1c196cadb0064fc"];
+        get: operations["liascript.list"];
         put?: never;
         /** Create from Markdown, an .md file or a .zip (Markdown + assets) */
-        post: operations["fdccc039f6be45630d81157450d08157"];
+        post: operations["liascript.create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3957,12 +5734,12 @@ export interface paths {
             cookie?: never;
         };
         /** Show a LiaScript source */
-        get: operations["ff9e6d6d27d001f322a4c580edb05d75"];
+        get: operations["liascript.get"];
         /** Rename a LiaScript source */
-        put: operations["f29a6003b883037e9c37e6cd603f2c57"];
+        put: operations["liascript.update"];
         post?: never;
         /** Delete a LiaScript source with all versions and assets */
-        delete: operations["57d2eedf3af835250a8d78bd41abd68e"];
+        delete: operations["liascript.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3976,7 +5753,7 @@ export interface paths {
             cookie?: never;
         };
         /** Markdown of the current or a given version */
-        get: operations["e54c72cbabbfacaf3aa19970838d8474"];
+        get: operations["admin.liascript.by-id.source.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3993,10 +5770,10 @@ export interface paths {
             cookie?: never;
         };
         /** List versions */
-        get: operations["7104ac68daa271b7c18a9d9f9a9604ef"];
+        get: operations["liascript.versions-list"];
         put?: never;
         /** Add a version from Markdown or an upload */
-        post: operations["e9bf16fee91b5aa1905907d54594df93"];
+        post: operations["liascript.versions-add"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4013,7 +5790,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Restore a version (adds a new version with its content) */
-        post: operations["6b6b7984f00c6385a6e4b9bf0b41e890"];
+        post: operations["liascript.versions-restore"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4033,7 +5810,7 @@ export interface paths {
          * Live preview of unsaved Markdown on the tenant content origin
          * @description Publishes the text as a short-lived draft next to the current version (its assets resolve) and returns a player URL without progress tracking. Nothing is saved as a version.
          */
-        post: operations["a3cf1179533e1fef834163a046924ec6"];
+        post: operations["liascript.preview"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4053,7 +5830,7 @@ export interface paths {
          * Start a LiaScript topic on the tenant content origin
          * @description Learners play a LiaScript topic on the tenant content origin and the player reports progress.
          */
-        post: operations["e2592511607f4708bf15bb002a81c59f"];
+        post: operations["liascript.launches.by-topic.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4073,7 +5850,7 @@ export interface paths {
          * Progress reported by the content-origin player
          * @description Authenticated with the progress token (X-Ulams-Tracking-Token). The topic is complete when the learner reaches the last section, or LiaScript reports completed/passed.
          */
-        post: operations["d02be1ed0ec261b16af61bf2c927d658"];
+        post: operations["liascript.progress.by-topic.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4092,7 +5869,7 @@ export interface paths {
          * @description The audit trail (ADR 0034): who decided what and when, tied to the source revision and the
          *     blueprint versions. Per session for its author and admins; tenant-wide for admins.
          */
-        get: operations["a5674b1e8bd1a4678f62157d825bc6a0"];
+        get: operations["admin.living-course.sessions.by-session.audit.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4109,7 +5886,7 @@ export interface paths {
             cookie?: never;
         };
         /** Export the audit entries of a session as CSV or JSON */
-        get: operations["c4060fcadca6e7c0ca17650a791b6633"];
+        get: operations["admin.living-course.sessions.by-session.audit.export.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4126,7 +5903,7 @@ export interface paths {
             cookie?: never;
         };
         /** Verify the hash chain of the audit trail */
-        get: operations["cf742cf7eac0e7662e06681e61bb1d33"];
+        get: operations["admin.living-course.sessions.by-session.audit.verify.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4143,7 +5920,7 @@ export interface paths {
             cookie?: never;
         };
         /** Tenant-wide audit export (admins) */
-        get: operations["6c02d48b60a69ef2b2e712063a6c4eba"];
+        get: operations["admin.living-course.audit.export.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4160,7 +5937,7 @@ export interface paths {
             cookie?: never;
         };
         /** Tenant-wide chain verification (admins) */
-        get: operations["119dfcf567b151c09f6a8ea8a6aff036"];
+        get: operations["admin.living-course.audit.verify.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4180,7 +5957,7 @@ export interface paths {
          * The source connectors this installation offers, with their settings schema
          * @description Connecting a source through a connector, checking it on demand and rotating its webhook secret.
          */
-        get: operations["045403cfae13012786a9529d9c43b9bc"];
+        get: operations["admin.living-course.connectors.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4199,7 +5976,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1 */
-        post: operations["492bb84123f4a93ae760a119f5100422"];
+        post: operations["admin.living-course.sessions.by-session.sources.connect.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4216,7 +5993,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Check the source now */
-        post: operations["87b25a4d27c8194aebaae4c1b3843f0c"];
+        post: operations["admin.living-course.connections.by-connection.check.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4233,7 +6010,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Rotate the webhook secret (returned once) */
-        post: operations["e2189a328c5b103855d182f784b92ab9"];
+        post: operations["admin.living-course.connections.by-connection.webhook-secret.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4252,10 +6029,10 @@ export interface paths {
          * Change a connection: schedule, automatic analysis, learner notice settings, paused
          * @description Settings of a source connection and disconnecting it (history is kept).
          */
-        put: operations["6f7156f91faa8bebff6b264c7621a44b"];
+        put: operations["admin.living-course.connections.by-connection.put"];
         post?: never;
         /** Disconnect a source (revisions and the audit trail are kept) */
-        delete: operations["8471ffe30ba421f54e74cbe5037e8118"];
+        delete: operations["admin.living-course.connections.by-connection.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -4273,7 +6050,7 @@ export interface paths {
          * @description Learner side (ADR 0033): the caller's own notices about updated courses, and the opt-in "an
          *      * update is under review" marker. Notices never change progress.
          */
-        get: operations["3c52deb0f157d9c1d01e913acde4f41c"];
+        get: operations["living-course.courses.by-course.notices.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4292,7 +6069,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Mark a notice as reviewed */
-        post: operations["a1eda619d456a6eecf75d32b810d70f1"];
+        post: operations["living-course.notices.by-notice.dismiss.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4307,7 +6084,47 @@ export interface paths {
             cookie?: never;
         };
         /** Topics with an update under review (only when the course shows it) */
-        get: operations["3513137a7e99c3fff961672373daad08"];
+        get: operations["living-course.courses.by-course.freshness.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/oauth/{provider}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * The vendor sign-in address for Connect your account (provider google or notion); the session must be one the caller may change
+         * @description "Connect your Google or Notion account" for the Drive and Notion connectors. The start needs the same right
+         *     as connecting a source; the callback is the vendor's redirect and is authorised by the encrypted,
+         *     expiring state of the start. The tokens never reach the browser: it only gets a one-time grant id that
+         *     the connect request redeems.
+         */
+        post: operations["admin.living-course.oauth.by-provider.start.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/living-course/oauth/{provider}/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The vendor's redirect after the sign-in: redirects to the studio with a one-time grant, or answers with it */
+        get: operations["living-course.oauth.by-provider.callback.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4327,7 +6144,7 @@ export interface paths {
          * Update proposals of a session, newest first
          * @description Update proposals: list and detail (decisions, analysis and apply are added by their own endpoints).
          */
-        get: operations["9f72817da6b47c4be646b6984a047814"];
+        get: operations["admin.living-course.sessions.by-session.proposals.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4344,7 +6161,7 @@ export interface paths {
             cookie?: never;
         };
         /** A proposal with its items grouped by lesson, citations and source changes */
-        get: operations["13412db1de147bf01a7835b034597bb9"];
+        get: operations["admin.living-course.proposals.by-proposal.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4363,7 +6180,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Start or resume the AI analysis (confirmEstimate when above the automatic threshold) */
-        post: operations["4e671eb576fee6cbd7284c74c6247856"];
+        post: operations["admin.living-course.proposals.by-proposal.analyse.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4380,7 +6197,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Accept one item */
-        post: operations["2adb9f99a54ebd74df91f87423f91571"];
+        post: operations["admin.living-course.proposals.by-proposal.items.by-item.accept.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4397,7 +6214,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Reject one item (keep the earlier version of the element) */
-        post: operations["4b86483c24f29a73c57ceb57deac49f5"];
+        post: operations["admin.living-course.proposals.by-proposal.items.by-item.reject.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4414,7 +6231,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Back to undecided */
-        post: operations["0faf97a5821be49554bab84c4052c042"];
+        post: operations["admin.living-course.proposals.by-proposal.items.by-item.reset.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4431,7 +6248,24 @@ export interface paths {
         get?: never;
         put?: never;
         /** Ask for another version of one element ({comment}); one call, at most three per item */
-        post: operations["3214452d8179bf22ecd29f235dd1281b"];
+        post: operations["admin.living-course.proposals.by-proposal.items.by-item.regenerate.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/items/{item}/suggest-lesson": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suggest a new lesson for a new source section no lesson covers (one AI call; the item becomes `new_lesson` for review as a diff) */
+        post: operations["admin.living-course.proposals.by-proposal.items.by-item.suggest-lesson.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4448,7 +6282,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Accept every undecided update, no-change and removal item */
-        post: operations["3dab066a6de079460f9f866d2989c14e"];
+        post: operations["admin.living-course.proposals.by-proposal.accept-all.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4465,7 +6299,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Reject the whole proposal and acknowledge the source revision */
-        post: operations["4b8f251c3f67afcc429123a8d1593958"];
+        post: operations["admin.living-course.proposals.by-proposal.reject.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4482,7 +6316,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Replace the proposal by a new one from the newest source revision */
-        post: operations["4ecdad03c656ef08615bbbccf6beca1f"];
+        post: operations["admin.living-course.proposals.by-proposal.reanalyse.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4498,7 +6332,7 @@ export interface paths {
         };
         get?: never;
         /** The text learners see for updated lessons (plain text, up to 500 characters) */
-        put: operations["5f1fff47bbf112a36833f964fdd2e5fe"];
+        put: operations["admin.living-course.proposals.by-proposal.learner-note.put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -4516,7 +6350,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Apply the accepted items as a new course version (409 with conflicting items or admin edits) */
-        post: operations["0ad25825160fabdd5a5041b38a3e24c2"];
+        post: operations["admin.living-course.proposals.by-proposal.apply.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4534,7 +6368,7 @@ export interface paths {
          * Sources of a session with connection, sync state and revisions
          * @description Sources of a builder session with their sync state, and their revisions.
          */
-        get: operations["66b48a735abd7716008ee166be38392c"];
+        get: operations["admin.living-course.sessions.by-session.sources.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4551,10 +6385,10 @@ export interface paths {
             cookie?: never;
         };
         /** Revisions of a source, newest first */
-        get: operations["df75e3a7a4db6e836d052844be479220"];
+        get: operations["admin.living-course.sources.by-source.revisions.get"];
         put?: never;
         /** Upload a new version of a source (MD, PDF or DOCX): creates a revision and its fragment diff */
-        post: operations["df094d9cda3ece4e4a725254aff14dbe"];
+        post: operations["admin.living-course.sources.by-source.revisions.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4569,7 +6403,7 @@ export interface paths {
             cookie?: never;
         };
         /** Fragment changes of a revision against the synced revision it was compared with (or ?against=<revision id>) */
-        get: operations["35fa055e0edab3457af79f252d85bd98"];
+        get: operations["admin.living-course.revisions.by-revision.changes.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4586,7 +6420,7 @@ export interface paths {
             cookie?: never;
         };
         /** One revision */
-        get: operations["5b0687d7aea85b5c6c93b2d4c62e6616"];
+        get: operations["admin.living-course.revisions.by-revision.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4606,7 +6440,7 @@ export interface paths {
          * Per-element staleness and the course summary
          * @description Staleness per element and per course. Works with AI disabled.
          */
-        get: operations["7f7df3d32948fa73e3b71790bc187f90"];
+        get: operations["admin.living-course.sessions.by-session.staleness.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4631,7 +6465,7 @@ export interface paths {
          *     work, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.
          *     Payloads are never sent to the model and never stored, only their digest.
          */
-        post: operations["54af035cebb8262704cfee7f3e72bba3"];
+        post: operations["living-course.webhooks.by-webhookid.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4651,7 +6485,7 @@ export interface paths {
          * cmi5 token fetch
          * @description Exchanges the one-time token of a cmi5 launch URL for an LRS-only session token (`auth-token`). Repeat calls within the session return the same token. Public: the one-time token is the credential.
          */
-        post: operations["49c2bee176f5a6c16a83bad0630cace3"];
+        post: operations["cmi5.fetch.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4669,7 +6503,7 @@ export interface paths {
          * Get Course cmi5 launch params
          * @description Course cmi5 launch params
          */
-        get: operations["d638db65665135dd571f0e1ff00dd31b"];
+        get: operations["cmi5.courses.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4686,7 +6520,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available statements */
-        get: operations["47413fb4360dae5bc348a94465d7eaf9"];
+        get: operations["cmi5.statements"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4707,7 +6541,7 @@ export interface paths {
          * @description Registrations (permission `lti_manage`): tools we launch and platforms that launch us, plus
          *     the URLs and key set to give to the other side.
          */
-        get: operations["6c07572455eeea027effbb2da673b280"];
+        get: operations["admin.lti.endpoints.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4724,10 +6558,10 @@ export interface paths {
             cookie?: never;
         };
         /** List registered tools */
-        get: operations["b771cbefccebfc06b59ba11309cc26f3"];
+        get: operations["admin.lti.tools.get"];
         put?: never;
         /** Register a tool (we issue client_id and deployment_id) */
-        post: operations["ea302bf96dc152c876c5d0eb0232299e"];
+        post: operations["admin.lti.tools.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4742,12 +6576,12 @@ export interface paths {
             cookie?: never;
         };
         /** Show a tool */
-        get: operations["a8ff323e4c15c4db5449145088e28e4d"];
+        get: operations["admin.lti.tools.by-tool.get"];
         /** Update a tool */
-        put: operations["389eabef701408d9e07ce067cdf24ed7"];
+        put: operations["admin.lti.tools.by-tool.put"];
         post?: never;
         /** Delete a tool without topics */
-        delete: operations["f52db15a79c018b6184665f6aed037f1"];
+        delete: operations["admin.lti.tools.by-tool.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -4763,7 +6597,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Start deep linking into a lesson */
-        post: operations["667f1aefacbee6ebc97650d3d49de394"];
+        post: operations["admin.lti.tools.by-tool.deep-link.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4778,10 +6612,10 @@ export interface paths {
             cookie?: never;
         };
         /** List platforms that may launch us */
-        get: operations["4c80b8cecff4c038f772914097d1908d"];
+        get: operations["admin.lti.platforms.get"];
         put?: never;
         /** Register a platform */
-        post: operations["f9b0c227156df523f785b035a9b8d014"];
+        post: operations["admin.lti.platforms.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4796,12 +6630,12 @@ export interface paths {
             cookie?: never;
         };
         /** Show a platform */
-        get: operations["031c7ff614f2f5a67c25f16c9dad07ba"];
+        get: operations["admin.lti.platforms.by-platform.get"];
         /** Update a platform */
-        put: operations["c3deed3a7a8f857de74319c8f9b16a78"];
+        put: operations["admin.lti.platforms.by-platform.put"];
         post?: never;
         /** Delete a platform */
-        delete: operations["f686d2153b3700947c55435a1f8db370"];
+        delete: operations["admin.lti.platforms.by-platform.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -4818,7 +6652,7 @@ export interface paths {
          * Origins of the enabled external tools of this tenant
          * @description For the front's Content Security Policy: the `frame-src` of a learner page must name the origins a tool launch loads (its OIDC login, launch and deep-linking URLs). Public and cached for 5 minutes; it reveals only the origins of tools the tenant registered for its learners.
          */
-        get: operations["9501c319c6b2b356ec601963caad0176"];
+        get: operations["lti.frame-origins.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4838,7 +6672,7 @@ export interface paths {
          * Public key set of this tenant (LTI platform and tool side)
          * @description Also served at /.well-known/jwks.json. Contains the next, active and recently retired keys.
          */
-        get: operations["e21c466f7e6dac972c24fd1e77e9016c"];
+        get: operations["lti.jwks.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4859,10 +6693,10 @@ export interface paths {
          * @description AGS 2.0 endpoints of the platform side. Authenticated with an access token from
          *     /api/lti/platform/token; every line item belongs to the token's tool and the course in the URL.
          */
-        get: operations["7730a7dac173ffa45a97055e8e75c95d"];
+        get: operations["lti.platform.ags.by-course.lineitems.get"];
         put?: never;
         /** AGS: create a line item */
-        post: operations["e8f007a8e1261cc54ba33cd30a680fd2"];
+        post: operations["lti.platform.ags.by-course.lineitems.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4877,12 +6711,12 @@ export interface paths {
             cookie?: never;
         };
         /** AGS: read a line item */
-        get: operations["6992c6d0116bb09c248c024fa0422749"];
+        get: operations["lti.platform.ags.by-course.lineitems.by-lineitem.get"];
         /** AGS: update a line item */
-        put: operations["42ab598db0454b738021d26ee4a33625"];
+        put: operations["lti.platform.ags.by-course.lineitems.by-lineitem.put"];
         post?: never;
         /** AGS: delete a line item */
-        delete: operations["cbaab5f4f2960312e3544a704e1e73d8"];
+        delete: operations["lti.platform.ags.by-course.lineitems.by-lineitem.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -4898,7 +6732,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** AGS: post a score */
-        post: operations["9205b9d986d566d34fb5aeed9e3b2b46"];
+        post: operations["lti.platform.ags.by-course.lineitems.by-lineitem.scores.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4913,7 +6747,7 @@ export interface paths {
             cookie?: never;
         };
         /** AGS: latest result per learner */
-        get: operations["ffbc8addccea9d6645cde339b6e5d5fe"];
+        get: operations["lti.platform.ags.by-course.lineitems.by-lineitem.results.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4933,7 +6767,7 @@ export interface paths {
          * NRPS: members of a course (membership container)
          * @description Bearer token from /api/lti/platform/token with scope https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly. Names and e-mails only when the tool registration shares them. Paged by `limit` (max 100) and `page`; a Link header with rel=next points to the next page. `role` filters by LTI role.
          */
-        get: operations["d7b8c3bdee515c8afd8f24fc61ec218c"];
+        get: operations["lti.platform.nrps.by-course.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4955,7 +6789,7 @@ export interface paths {
          * Start an LTI launch of an external-tool topic
          * @description Returns the tool's OIDC login URL (with a signed, 2-minute login_hint) to open in an iframe or a new window.
          */
-        post: operations["a2b70edeeebeaa8a7af3caafc5670a09"];
+        post: operations["lti.launches.by-topic.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4973,7 +6807,7 @@ export interface paths {
          * OIDC authentication endpoint (the tool redirects the browser here)
          * @description Checks client_id, redirect_uri and the login_hint (single use) and posts a signed id_token to the tool. Also accepts POST.
          */
-        get: operations["7268a70fc27bb0e2b1c94b3baaa57d91"];
+        get: operations["lti.platform.authorize.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4992,7 +6826,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** AGS access token (OAuth 2 client credentials with a JWT client assertion) */
-        post: operations["9776042d51bd30ab9137a4d5f7b5ac3e"];
+        post: operations["lti.platform.token.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5012,7 +6846,7 @@ export interface paths {
          * Deep-linking return URL (the tool posts the author's selection here)
          * @description Verifies the LtiDeepLinkingResponse JWT and creates one external-tool topic per ltiResourceLink item in the lesson the request was made for.
          */
-        post: operations["735e9c6129d12dc85b291584a0b01e6d"];
+        post: operations["lti.platform.deep-links.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5027,7 +6861,7 @@ export interface paths {
             cookie?: never;
         };
         /** OIDC login initiation from a registered platform (also POST) */
-        get: operations["10a0ad0d978804363cde5d19eae1520c"];
+        get: operations["lti.tool.login.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5049,7 +6883,27 @@ export interface paths {
          * LTI launch (resource link or deep-linking request) from a registered platform
          * @description Resource link: maps the platform user, grants course access and redirects to the front with a one-time code. Deep linking: shows the course picker.
          */
-        post: operations["1263d4a5230bc11b6606102640e87bb2"];
+        post: operations["lti.tool.launch.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/tool/launch/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Second step of a launch whose login used the platform's storage (Client Side postMessage Storage)
+         * @description Posted by the storage page with the id_token, the state and the value read from the platform's storage. A different value is refused; an empty one (storage unavailable) falls back to the server-side state. Then it behaves like /api/lti/tool/launch.
+         */
+        post: operations["lti.tool.launch.verify.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5066,7 +6920,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Return the courses picked in the deep-linking picker to the platform */
-        post: operations["5e799230ade3ec16002f9f2d15108475"];
+        post: operations["lti.tool.deep-link.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5083,7 +6937,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Exchange the one-time launch code for an API token */
-        post: operations["d27017060d1d967be9b6295c32733343"];
+        post: operations["lti.tool.exchange.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5101,7 +6955,7 @@ export interface paths {
          * List all of the available mattermost teams and channels for a user
          * @description ist all of the available mattermost teams and channels for a user
          */
-        get: operations["a4c030ede5bc6ff3d75da69ad339f224"];
+        get: operations["mattermost.me.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5121,7 +6975,7 @@ export interface paths {
          * Generates user (creates one if not exists) credentials and sets a new random password
          * @description Generates user (creates one if not exists) credentials and sets a new random password
          */
-        get: operations["4ba681c4e7a25909cb83e4397f887d29"];
+        get: operations["mattermost.generate-credentials.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5141,7 +6995,7 @@ export interface paths {
          * Sends request for mattermost to send reset password link with email
          * @description Sends request for mattermost to send reset password link with email
          */
-        get: operations["0056eabd99324660ac6ac9890beb8c80"];
+        get: operations["mattermost.reset-password.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5158,12 +7012,12 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available Model extended fields */
-        get: operations["644d9345702d5e1cbc95c80223d99e90"];
+        get: operations["admin.model-fields.get"];
         put?: never;
         /** Create or update metafile */
-        post: operations["3723c2c364a60c6c8d9b97b8f08142c3"];
+        post: operations["model-fields.create"];
         /** delete metafile and related values from model */
-        delete: operations["802546bcd43f463d023a7bfdb5996fa5"];
+        delete: operations["model-fields.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -5177,7 +7031,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available Model extended fields */
-        get: operations["1594353e41bcd70483d4ebabcdd0e1b5"];
+        get: operations["model-fields.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5197,7 +7051,7 @@ export interface paths {
          * Get notifications
          * @description Get paginated list of notifications sent using `database` channel
          */
-        get: operations["5df4f107ded41b523bbbdb12d0cfdba7"];
+        get: operations["admin.notifications.all.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5217,7 +7071,7 @@ export interface paths {
          * Get list of events for which notifications exist
          * @description Get list of events for which notifications exist
          */
-        get: operations["2f255fc9d0566e1df077e63f34acdd2c"];
+        get: operations["admin.notifications.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5237,7 +7091,7 @@ export interface paths {
          * Get list of events for which notifications exist
          * @description Get list of events for which notifications exist
          */
-        get: operations["445ef83ef4b4b39b6e2700572950e0cb"];
+        get: operations["admin.notifications.events.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5259,7 +7113,7 @@ export interface paths {
          * Mark notification as read
          * @description Mark notification as read
          */
-        post: operations["6f543a6a9dfe7e81f86a01ce893298ad"];
+        post: operations["notifications.by-notification.read.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5279,7 +7133,7 @@ export interface paths {
          * Mark all notifications as read
          * @description Mark all notifications as read
          */
-        post: operations["f13931fd9e6d70769fd4cab802f2c5dd"];
+        post: operations["admin.notifications.read-all.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5294,10 +7148,10 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available pages */
-        get: operations["a3577e058a3a4b82ffe20fa6c7ca7caf"];
+        get: operations["admin.pages.get"];
         put?: never;
         /** Create a new page identified by id */
-        post: operations["87c069fd0ad8171380d749e25991da6f"];
+        post: operations["pages.create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5312,15 +7166,15 @@ export interface paths {
             cookie?: never;
         };
         /** Read a page identified by a given id identifier */
-        get: operations["dcbdeed94855b11a6ed82dcd1dcfb94e"];
+        get: operations["admin.pages.by-id.get"];
         put?: never;
         post?: never;
         /** Delete a page identified by a id */
-        delete: operations["97f4b37e3da1ce868afb33028fc5bdc2"];
+        delete: operations["pages.delete"];
         options?: never;
         head?: never;
         /** Update an existing page identified by id */
-        patch: operations["482ead41c35f2c4c1fa45cc92cab130b"];
+        patch: operations["pages.update"];
         trace?: never;
     };
     "/api/pages": {
@@ -5331,7 +7185,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available pages */
-        get: operations["f91849cac6bdced90ec6f673cf67efad"];
+        get: operations["pages.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5348,7 +7202,7 @@ export interface paths {
             cookie?: never;
         };
         /** Read a page identified by a given slug identifier */
-        get: operations["e68cdc579aca529560c19eaee141227d"];
+        get: operations["pages.by-slug.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5368,7 +7222,7 @@ export interface paths {
          * Search payments
          * @description Get filtered and paginated Payments
          */
-        get: operations["81dc7e45bf622ac2cbc0c16a72179861"];
+        get: operations["admin.payments.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5388,7 +7242,7 @@ export interface paths {
          * Display the specified Payment
          * @description Get Payment
          */
-        get: operations["3ec95715f76bc23a657762493852214f"];
+        get: operations["admin.payments.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5408,7 +7262,7 @@ export interface paths {
          * Export payments to file
          * @description Export filtered Payments
          */
-        get: operations["b1fed8de6c7c005c82d2b6743eaa1d96"];
+        get: operations["admin.payments.export.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5428,7 +7282,7 @@ export interface paths {
          * Search payments
          * @description Get filtered and paginated Payments
          */
-        get: operations["4b7ecb22efdaf37402b834d702e6a8e8"];
+        get: operations["payments.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5448,9 +7302,26 @@ export interface paths {
          * Display the specified Payment
          * @description Get Payment
          */
-        get: operations["f401848d7a54b26f990d035eb48970f2"];
+        get: operations["payments.by-id.get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/pencil-spaces/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate a direct login link */
+        post: operations["pencil-spaces.login.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5465,10 +7336,10 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available roles */
-        get: operations["a7eb9d53edf7a2c17d9e27d8c497249f"];
+        get: operations["admin.roles.get"];
         put?: never;
         /** Find or Create a Role */
-        post: operations["3e9414261c55911a2d991d27fc14993a"];
+        post: operations["roles.create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5483,15 +7354,15 @@ export interface paths {
             cookie?: never;
         };
         /** Read a role and returns list of all permissions */
-        get: operations["4ead0f58bef3ca68ce2d9e7c4cc9bf34"];
+        get: operations["admin.roles.by-name.get"];
         put?: never;
         post?: never;
         /** Delete a Role identified by a name */
-        delete: operations["cd0d24a7bab270ee4e1adf90c9b2c367"];
+        delete: operations["roles.delete"];
         options?: never;
         head?: never;
         /** Update an existing Role identified by name by list or new permissions */
-        patch: operations["f5c08f32cc9b6a24cd9243e6d497796b"];
+        patch: operations["roles.update"];
         trace?: never;
     };
     "/api/admin/question": {
@@ -5502,10 +7373,10 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available questions */
-        get: operations["2c9fd5e3cd18ca16e7ce064e4129a71c"];
+        get: operations["admin.question.get"];
         put?: never;
         /** Create a new question identified by id */
-        post: operations["db3f8caf37345180b5b0992549b1ef3f"];
+        post: operations["admin.question.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5520,15 +7391,15 @@ export interface paths {
             cookie?: never;
         };
         /** Read a question identified by a given id identifier */
-        get: operations["abdd8c5ce508ad7c4a6a054d5d62ca97"];
+        get: operations["admin.question.by-id.get"];
         put?: never;
         post?: never;
         /** Delete a question identified by a id */
-        delete: operations["2241c88896138c1c4e83e0d31919792b"];
+        delete: operations["admin.question.by-id.delete"];
         options?: never;
         head?: never;
         /** Update an existing question identified by id */
-        patch: operations["3c5f5d84c39bea1df727cc958461c467"];
+        patch: operations["admin.question.by-id.patch"];
         trace?: never;
     };
     "/api/admin/question-answers/{id}": {
@@ -5539,7 +7410,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lists questions answers for questionaire */
-        get: operations["9c57b574a3461d94f9d10dd1f21e1868"];
+        get: operations["admin.question-answers.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5558,7 +7429,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Change answer visibility on front */
-        post: operations["9bde3364a002c339ca0237262469b6c6"];
+        post: operations["admin.question-answers.by-id.change-visibility.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5573,10 +7444,10 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available questionnaires */
-        get: operations["b92c223112331df6c4eb5b24a649ec74"];
+        get: operations["admin.questionnaire.get"];
         put?: never;
         /** Create a new questionnaire */
-        post: operations["bbf375c429a283e055ea1144ca2a5387"];
+        post: operations["admin.questionnaire.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5591,15 +7462,15 @@ export interface paths {
             cookie?: never;
         };
         /** Read a questionnaire identified by a given id identifier */
-        get: operations["ba1010ec04488c6a01638292813f8b9b"];
+        get: operations["admin.questionnaire.by-id.get"];
         put?: never;
         post?: never;
         /** Delete a questionnaire identified by a id */
-        delete: operations["2208b3210e8b37b795cfb9d281097f96"];
+        delete: operations["admin.questionnaire.by-id.delete"];
         options?: never;
         head?: never;
         /** Update an existing questionnaire identified by id */
-        patch: operations["a0055d8b57c1cafdedf022b96e78b594"];
+        patch: operations["admin.questionnaire.by-id.patch"];
         trace?: never;
     };
     "/api/admin/questionnaire-model": {
@@ -5610,7 +7481,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available questionnaire model type */
-        get: operations["7ce35d9612509a7790f748c1ba2596bc"];
+        get: operations["admin.questionnaire-model.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5627,7 +7498,7 @@ export interface paths {
             cookie?: never;
         };
         /** Read a questionnaire report identified by a given id identifier and model type and model identified */
-        get: operations["76669ac1390b34b2f9a82211969e7406"];
+        get: operations["admin.questionnaire.report.by-id.by-model-type-id.by-model-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5650,7 +7521,7 @@ export interface paths {
         options?: never;
         head?: never;
         /** assign a questionnaire model */
-        patch: operations["ae4dd1d7271e84aea6277eddee5f545c"];
+        patch: operations["admin.questionnaire.assign.by-model-type-title.by-model-id.by-id.by-target-group.patch"];
         trace?: never;
     };
     "/api/admin/questionnaire/unassign/{model_type_title}/{model_id}/{id}/{target_group}": {
@@ -5664,7 +7535,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** unassign a questionnaire model */
-        delete: operations["037f456707ae2ec735f838aa2b1f9e4e"];
+        delete: operations["admin.questionnaire.unassign.by-model-type-title.by-model-id.by-id.by-target-group.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -5678,7 +7549,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available questionnaires */
-        get: operations["29564f597676b6eae9f76fb891402bc2"];
+        get: operations["questionnaire.by-model-type-title.by-model-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5695,10 +7566,10 @@ export interface paths {
             cookie?: never;
         };
         /** Read a questionnaire identified by a given id identifier and model */
-        get: operations["d73d1b7a0c11094be9b807e0a5829a60"];
+        get: operations["questionnaire.by-model-type-title.by-model-id.by-id.get"];
         put?: never;
         /** Save a questionnaire answers */
-        post: operations["6e06f9299a3db55b6653660bc1f55afd"];
+        post: operations["questionnaire.by-model-type-title.by-model-id.by-id.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5713,7 +7584,7 @@ export interface paths {
             cookie?: never;
         };
         /** Read a questionnaire stars identified by a given model title and model id identifier */
-        get: operations["5bb636651156a388a89c2d3bffd2d804"];
+        get: operations["questionnaire.stars.by-model-type-title.by-model-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5730,7 +7601,7 @@ export interface paths {
             cookie?: never;
         };
         /** Read a question answers by a given model title and model id identifier */
-        get: operations["d4050fb1357cdc7d2f9ad7de329d1ccb"];
+        get: operations["questionnaire.by-model-type-title.by-model-id.questions.by-question-id.answers.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5747,7 +7618,7 @@ export interface paths {
             cookie?: never;
         };
         /** Read a model stars by a given model title, model id identifier and question id. */
-        get: operations["c96206ea18788cd324d754ddbc8e5851"];
+        get: operations["questionnaire.by-model-type-title.by-model-id.questions.by-question-id.stars.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5764,7 +7635,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get list of available metrics */
-        get: operations["d18c0adbfd9b0c706f6f1a48c77394af"];
+        get: operations["admin.reports.metrics.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5781,7 +7652,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get list of available metrics */
-        get: operations["4b8e268e6b4f15d2b82536db38199369"];
+        get: operations["admin.reports.report.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5798,7 +7669,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get list of available metrics for logged user */
-        get: operations["f12abe568212a5c65bb095df5a3c62ef"];
+        get: operations["admin.reports.available-for-user.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5815,7 +7686,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get list of available stats for models */
-        get: operations["4bf29f19805aa3624e4f35df0dda2e9e"];
+        get: operations["admin.stats.available.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5832,7 +7703,7 @@ export interface paths {
             cookie?: never;
         };
         /** Calculate stats for Course */
-        get: operations["fb85fab3a4cd2cc07223a4bb7d3a0087"];
+        get: operations["admin.stats.course.by-course-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5849,7 +7720,7 @@ export interface paths {
             cookie?: never;
         };
         /** Calculate stats for Topic */
-        get: operations["16b9419dbe5441cf697a25caa864f222"];
+        get: operations["admin.stats.topic.by-topic-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5866,7 +7737,7 @@ export interface paths {
             cookie?: never;
         };
         /** Calculate stats for Cart */
-        get: operations["ea78ff10fc0df29c843b213e5336c07a"];
+        get: operations["admin.stats.cart.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5883,7 +7754,7 @@ export interface paths {
             cookie?: never;
         };
         /** Calculate stats for Course */
-        get: operations["0e9c18f7b9e50e7dd2d94162d9967779"];
+        get: operations["admin.stats.date-range.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5900,7 +7771,7 @@ export interface paths {
             cookie?: never;
         };
         /** Export stat for Course */
-        get: operations["bc175001e232cce9428a5abc93641a4c"];
+        get: operations["admin.stats.course.by-course-id.export.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5917,7 +7788,7 @@ export interface paths {
             cookie?: never;
         };
         /** Export stat for Topic */
-        get: operations["a61fde1dcb0b60fd6961189dd47f76ee"];
+        get: operations["admin.stats.topic.by-topic-id.export.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5939,7 +7810,7 @@ export interface paths {
          * Start a SCO on the tenant content origin
          * @description Issues a SCO-scoped tracking token and returns the player URL on the content origin. `url` is null when no content origin is configured; use /api/scorm/play/{uuid} then.
          */
-        post: operations["e9f3a5028f401c1030a8b16093efccc9"];
+        post: operations["scorm.launch.by-uuid.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5957,7 +7828,7 @@ export interface paths {
          * Launch data for the content-origin player
          * @description Authenticated with the tracking token from /api/scorm/launch/{uuid} in the X-Ulams-Tracking-Token header, not with a user token.
          */
-        get: operations["262ecdd2ec002682574687fb4fbd729c"];
+        get: operations["scorm.content.by-uuid.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5979,7 +7850,7 @@ export interface paths {
          * Store CMI data sent by the content-origin player
          * @description Authenticated with the tracking token in the X-Ulams-Tracking-Token header.
          */
-        post: operations["213ec51bfaf514aa40963dcadd464686"];
+        post: operations["scorm.content.by-uuid.track.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5994,7 +7865,7 @@ export interface paths {
             cookie?: never;
         };
         /** Vendored scorm-again runtime (MIT) for the legacy player */
-        get: operations["eea2545f66501d1424469e9023cd0378"];
+        get: operations["scorm.assets.scorm-again-min-js.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6013,7 +7884,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Convert ZIP Scorm Package into Ulams LMS Scorm storage */
-        post: operations["d6dc70f28a642c0b0a9370497b81659f"];
+        post: operations["scorm.upload"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6030,7 +7901,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Parse ZIP Scorm to see if it's valid */
-        post: operations["389d2ef29b3399e073ab8154a867a592"];
+        post: operations["scorm.parse"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6045,7 +7916,7 @@ export interface paths {
             cookie?: never;
         };
         /** Read a page identified by a given slug identifier */
-        get: operations["181e135ae5391d4fe508080ef17a453d"];
+        get: operations["scorm.play.by-uuid.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6062,7 +7933,7 @@ export interface paths {
             cookie?: never;
         };
         /** Read a page identified by a given slug identifier */
-        get: operations["855a851d42e51f67772e503ad79be202"];
+        get: operations["scorm.show.by-uuid.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6079,7 +7950,7 @@ export interface paths {
             cookie?: never;
         };
         /** Read a page identified by a given slug identifier */
-        get: operations["3cb9f2a147e944f83d87cbdeabfd9578"];
+        get: operations["scorm.list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6096,7 +7967,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get all scos */
-        get: operations["7f2221bbd91097355d13422ce83fddba"];
+        get: operations["scorm.scos"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6116,7 +7987,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Delete scorm package by id */
-        delete: operations["f7d8b497e6e134c969bbe4499150a11a"];
+        delete: operations["scorm.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -6132,7 +8003,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Track Scorm user progress */
-        post: operations["53b7e9e0bbe08d5d4a18cb44ae70f144"];
+        post: operations["scorm.track.by-uuid.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6147,7 +8018,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get user progress by scorm sco id and scorm data key */
-        get: operations["863f2d7c0e424c068f0b9e90250738b2"];
+        get: operations["scorm.track.by-scoid.by-key.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6167,10 +8038,10 @@ export interface paths {
          * Get admin config
          * @description Get a listing of registered config keys
          */
-        get: operations["0e9a44c28136b46aed69f9bebcd89426"];
+        get: operations["admin.config.get"];
         put?: never;
         /** Set config for registered config keys */
-        post: operations["49d5dfed2cb5e7de8cdbfda06d3c5a91"];
+        post: operations["admin.config.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6185,13 +8056,13 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get Settings paginated */
-        get: operations["fc8c420b48d586e17fa7f7a620979b54"];
+        get: operations["admin.settings.get"];
         put?: never;
         /**
          * Settings create
          * @description Create single setting
          */
-        post: operations["439891854f81058f9641a3a5e2d2dac9"];
+        post: operations["admin.settings.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6206,18 +8077,18 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get single settings */
-        get: operations["078af3d8fc571aa5fbc0292486b1dc1b"];
+        get: operations["admin.settings.by-id.get"];
         /**
          * Update setting
          * @description Update single setting
          */
-        put: operations["808d8ae8c41edc1568ddb96e85a4f4b9"];
+        put: operations["admin.settings.by-id.put"];
         post?: never;
         /**
          * Destroy setting
          * @description Destroy the specified setting
          */
-        delete: operations["a4242fe04173941b257d4f471bb32909"];
+        delete: operations["admin.settings.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -6231,7 +8102,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get Settings unique groups */
-        get: operations["9a6227cae673915f28689a5556dd9da8"];
+        get: operations["admin.settings.groups.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6251,7 +8122,7 @@ export interface paths {
          * Get a listing of public config values.
          * @description Get public config values
          */
-        get: operations["df574ce69f60c5bcdaebd4a50ed11695"];
+        get: operations["config.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6271,7 +8142,7 @@ export interface paths {
          * Get a listing of the public and enuerable settings.
          * @description Get settings
          */
-        get: operations["de1dc6d27f83bb5720e291a27ff9003c"];
+        get: operations["settings.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6291,7 +8162,7 @@ export interface paths {
          * Display the specified public setting
          * @description Get Course
          */
-        get: operations["2334e3fbb9431a6a3b065ebe50613494"];
+        get: operations["settings.by-group.by-key.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6311,13 +8182,13 @@ export interface paths {
          * Get a listing of the Stationary events
          * @description Get all Stationary Events
          */
-        get: operations["d9ee642f412aac628d6519d50a18ad57"];
+        get: operations["admin.stationary-events.get"];
         put?: never;
         /**
          * Store a newly created Stationary event in storage
          * @description Store Stationary Event
          */
-        post: operations["c8aa7025bc2ff6471c8c0e182de34f49"];
+        post: operations["admin.stationary-events.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6335,18 +8206,18 @@ export interface paths {
          * Display the specified Stationary Event
          * @description Get Stationary Event
          */
-        get: operations["3d20f93c4eaa70452b0c4ec72d415078"];
+        get: operations["admin.stationary-events.by-id.get"];
         /**
          * Update the specified Stationary Event in storage
          * @description Update Stationary Events
          */
-        put: operations["f83502cf590a8f356c87f204823af2e3"];
+        put: operations["admin.stationary-events.by-id.put"];
         post?: never;
         /**
          * Remove the specified Stationary Event from storage
          * @description Delete Stationary Event
          */
-        delete: operations["8d9ad4138ca4fefec0787a1e219c452a"];
+        delete: operations["admin.stationary-events.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -6363,7 +8234,7 @@ export interface paths {
          * Get a listing of published stationary events
          * @description Get all stationary events with published or published_unactivated status
          */
-        get: operations["1931e3963fab3f7cb9d1617d239cffa7"];
+        get: operations["stationary-events.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6383,7 +8254,7 @@ export interface paths {
          * Get a listing of stationary events bought by user
          * @description Get a listing of stationary events bought by user
          */
-        get: operations["66f32b581612556d3ea9cae63f8022cf"];
+        get: operations["stationary-events.me.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6403,7 +8274,7 @@ export interface paths {
          * Display the specified Stationary Event.
          * @description Get stationary event by id with published or published_unactivated status
          */
-        get: operations["e2b146ba44b082d8238f458f31517435"];
+        get: operations["stationary-events.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6420,7 +8291,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Display a listing of the Tag */
-        get: operations["b41c0e040482cefc62a48006c2cd3807"];
+        get: operations["tags.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6437,7 +8308,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Display the unique Tags */
-        get: operations["a7fc6fcef6b19c3b037207e95eeba585"];
+        get: operations["tags.unique.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6456,12 +8327,12 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Create multiple Tags */
-        post: operations["770a202ae86e7b65ba276ba3b8ff8003"];
+        post: operations["admin.tags.post"];
         /**
          * Destroy Tags
          * @description Destroy Tags
          */
-        delete: operations["762db52a081b3bb72f8de52c6c82141c"];
+        delete: operations["admin.tags.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -6475,7 +8346,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Display the specified Tag */
-        get: operations["b76580467477d1acb30a23fe5889de3f"];
+        get: operations["admin.tags.by-tag.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6492,7 +8363,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Display the unique Tags (admin) */
-        get: operations["d963be93f13bd4ab990c024bd695d8ad"];
+        get: operations["admin.tags.unique.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6512,13 +8383,13 @@ export interface paths {
          * Get a listing of the tasks
          * @description Get all Tasks
          */
-        get: operations["19ba292ade317483139390e94d7503b3"];
+        get: operations["admin.tasks.get"];
         put?: never;
         /**
          * Store a newly created task
          * @description Store Task
          */
-        post: operations["92b6651aa9a8ebda80e63584ed264d34"];
+        post: operations["admin.tasks.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6536,21 +8407,21 @@ export interface paths {
          * Task details
          * @description Get task details by ID
          */
-        get: operations["c72226d1311aa9db0be722ff4c2f82a0"];
+        get: operations["admin.tasks.by-id.get"];
         put?: never;
         post?: never;
         /**
          * Remove the specified task
          * @description Delete Task
          */
-        delete: operations["d378329e12b783d70e4cd1cf7526375b"];
+        delete: operations["admin.tasks.by-id.delete"];
         options?: never;
         head?: never;
         /**
          * Update the specified task
          * @description Update Task
          */
-        patch: operations["f4d094de2da8743d25698f1c9aa3a395"];
+        patch: operations["admin.tasks.by-id.patch"];
         trace?: never;
     };
     "/api/admin/tasks/complete/{id}": {
@@ -6566,7 +8437,7 @@ export interface paths {
          * Complete task
          * @description Complete Task
          */
-        post: operations["039e48eb3c077b7f6970a377b890b85b"];
+        post: operations["admin.tasks.complete.by-id.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6586,7 +8457,7 @@ export interface paths {
          * Incomplete task
          * @description Incomplete Task
          */
-        post: operations["60e677f21389849aa2df5753ea47f7ea"];
+        post: operations["admin.tasks.incomplete.by-id.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6606,7 +8477,7 @@ export interface paths {
          * Store a newly created task note
          * @description Store Task Note
          */
-        post: operations["2ba4fd2da59146d6563f6c2f1c4564d4"];
+        post: operations["admin.tasks.notes.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6627,14 +8498,14 @@ export interface paths {
          * Remove the specified task notes
          * @description Delete Task Note
          */
-        delete: operations["906933847fb6575372ddd18e7f2719b3"];
+        delete: operations["admin.tasks.notes.by-id.delete"];
         options?: never;
         head?: never;
         /**
          * Update task note
          * @description Update Task Note
          */
-        patch: operations["2e1bcddafcded59e071de2b0963f13e0"];
+        patch: operations["admin.tasks.notes.by-id.patch"];
         trace?: never;
     };
     "/api/tasks": {
@@ -6648,13 +8519,13 @@ export interface paths {
          * Get a listing of the tasks
          * @description Get all Tasks
          */
-        get: operations["5b127c759c50a5fd67603352876591f5"];
+        get: operations["tasks.get"];
         put?: never;
         /**
          * Store a newly created task
          * @description Store Task
          */
-        post: operations["d587770514b389d9f26775f002ca298e"];
+        post: operations["tasks.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6672,21 +8543,21 @@ export interface paths {
          * Task details
          * @description Get task details by ID
          */
-        get: operations["1cdee1ef12b8e6ec9445444825cebb97"];
+        get: operations["tasks.by-id.get"];
         put?: never;
         post?: never;
         /**
          * Remove the specified task
          * @description Delete Task
          */
-        delete: operations["fb54ca8adf0d427edfe12d4c728bd974"];
+        delete: operations["tasks.by-id.delete"];
         options?: never;
         head?: never;
         /**
          * Update task
          * @description Store Task
          */
-        patch: operations["c37d352252ae91d697c0bf00441b9ed8"];
+        patch: operations["tasks.by-id.patch"];
         trace?: never;
     };
     "/api/tasks/complete/{id}": {
@@ -6702,7 +8573,7 @@ export interface paths {
          * Complete task
          * @description Complete Task
          */
-        post: operations["1085eec0f6c79f87e68bf33585724381"];
+        post: operations["tasks.complete.by-id.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6722,7 +8593,7 @@ export interface paths {
          * Incomplete task
          * @description Incomplete Task
          */
-        post: operations["7a7c0b823e60de691db76c96c8d97cc5"];
+        post: operations["tasks.incomplete.by-id.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6742,7 +8613,7 @@ export interface paths {
          * Store a newly created task note
          * @description Store Task Note
          */
-        post: operations["00fa4b3e78a172d84acdc189509bb3c4"];
+        post: operations["tasks.notes.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6763,14 +8634,114 @@ export interface paths {
          * Remove the specified task notes
          * @description Delete Task Note
          */
-        delete: operations["17ba956545978db3f980cf3456149a70"];
+        delete: operations["tasks.notes.by-id.delete"];
         options?: never;
         head?: never;
         /**
          * Update task note
          * @description Update Task Note
          */
-        patch: operations["b183ee48bea13fe9a93ec2d2b0516fce"];
+        patch: operations["tasks.notes.by-id.patch"];
+        trace?: never;
+    };
+    "/api/admin/templates/email/render": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Render an unsaved e-mail template draft with sample data
+         * @description Nothing is stored and nothing is sent. Returns the rendered HTML with the sample values of the event, the MJML errors reported by the renderer and accessibility warnings (warnings never fail the request). Throttled to 30 requests per minute per user.
+         */
+        post: operations["templates.email.render"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/templates/email/test-send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send an unsaved e-mail template draft to the signed-in admin
+         * @description Renders the draft like the render endpoint and sends it, with the subject prefixed by [Test], only to the e-mail address of the authenticated user. There is no recipient field. Throttled to 5 requests per minute per user.
+         */
+        post: operations["templates.email.test-send"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/templates/email/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload an image for an e-mail template
+         * @description Stores a PNG, JPEG, GIF or WebP image (up to 2 MB by default) in the storage of the current tenant and returns its public URL, which e-mail clients fetch remotely. The type is sniffed from the content; SVG and every other type is refused. The stored name is random. Throttled to 30 requests per minute per user.
+         */
+        post: operations["templates.email.images"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/certificates/verify/{certificateId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Verify a certificate
+         * @description Public and throttled. Returns the status (valid, expired or revoked), the course, the holder name (masked per tenant setting), issue and expiry dates. Unknown ids answer 404.
+         */
+        get: operations["certificates.verify.by-certificateid.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/pdfs/{id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoke a certificate
+         * @description Marks the certificate revoked. It stays verifiable and shows as revoked. Needs the fabricjs_pdf_revoke permission.
+         */
+        post: operations["admin.pdfs.by-id.revoke.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/pdfs": {
@@ -6784,7 +8755,7 @@ export interface paths {
          * Get generated PDFs
          * @description Get paginated list of PDFs generated by templates
          */
-        get: operations["ed2821d394aff67e9d5090553468a512"];
+        get: operations["pdfs.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6804,7 +8775,7 @@ export interface paths {
          * Display the specified generated PDF
          * @description Get generated PDF
          */
-        get: operations["803aeff6fef9cfd761d5626146945732"];
+        get: operations["pdfs.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6824,7 +8795,7 @@ export interface paths {
          * Display the specified generated PDF
          * @description Get generated PDF, IF user_id or template_id is provided all records are returned, otherwise list is paginated
          */
-        get: operations["9da8da37dc0399227c742f5fb3d234e8"];
+        get: operations["admin.pdfs.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6844,7 +8815,7 @@ export interface paths {
          * Download a generated PDF (certificate)
          * @description Returns the stored PDF, or renders it from its pdfme template and variables through the PDF renderer service
          */
-        get: operations["8fd7da32ef43271dbbc712807b4e031d"];
+        get: operations["pdfs.generate.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6866,7 +8837,7 @@ export interface paths {
          * Preview a pdfme template with sample data
          * @description Renders a pdfme template (unsaved designer content) with the mocked variables of the event, through the PDF renderer service
          */
-        post: operations["322eb94958e440c42672ff39ee638b24"];
+        post: operations["admin.pdfs.preview.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6884,7 +8855,7 @@ export interface paths {
          * Fonts available in PDF templates
          * @description Fonts bundled with the PDF renderer (SIL OFL); the admin designer loads them from /api/pdfs/fonts/{file}
          */
-        get: operations["1306ff154cdf28ebe5528ed65fd62235"];
+        get: operations["pdfs.fonts.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6901,7 +8872,7 @@ export interface paths {
             cookie?: never;
         };
         /** Font file used in PDF templates */
-        get: operations["5ee00f063b8cb6eae3e76ae0af68c100"];
+        get: operations["pdfs.fonts.by-file.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6920,7 +8891,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Manually triggered event for users */
-        post: operations["5a6a658aaacc059b2d70d0dffd1620c4"];
+        post: operations["events.trigger-manually"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6935,10 +8906,10 @@ export interface paths {
             cookie?: never;
         };
         /** Lists available templates */
-        get: operations["0a3b2dd879b4313d2bb47ccb587efab5"];
+        get: operations["admin.templates.get"];
         put?: never;
         /** Create a new template identified by id */
-        post: operations["6a4d9da57506b5093b51f743a62193c9"];
+        post: operations["templates.create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6953,15 +8924,15 @@ export interface paths {
             cookie?: never;
         };
         /** Read a template identified by a given id identifier */
-        get: operations["ca2fa59917273b4142166017cee6784f"];
+        get: operations["admin.templates.by-id.get"];
         put?: never;
         post?: never;
         /** Delete a template identified by a id */
-        delete: operations["313dc9b2f5379c5f42aa467207e2569f"];
+        delete: operations["templates.delete"];
         options?: never;
         head?: never;
         /** Update an existing template identified by id */
-        patch: operations["25572e235c554c96bdf9aea85864da17"];
+        patch: operations["templates.update"];
         trace?: never;
     };
     "/api/admin/templates/variables": {
@@ -6972,7 +8943,7 @@ export interface paths {
             cookie?: never;
         };
         /** Dictionary list of available template variables */
-        get: operations["0826f3f964be84bedaf9c56f2d206b8e"];
+        get: operations["templates.variables"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6989,7 +8960,7 @@ export interface paths {
             cookie?: never;
         };
         /** Read a template identified by a given id identifier */
-        get: operations["1663a269b01483914250b7d48f5219cc"];
+        get: operations["templates.preview"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7008,7 +8979,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Assign template to model (of class assignable to the Variable Set) */
-        post: operations["82a224b944d34cbf68583cfe4457ca66"];
+        post: operations["templates.assign"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7025,7 +8996,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Remove template assignment to model */
-        post: operations["f46e6e43a380174a98da5661e30f183d"];
+        post: operations["templates.unassign"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7040,7 +9011,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get Templates that can be assigned to model */
-        get: operations["bba7f91abe386bb823af4e5c714a34f3"];
+        get: operations["templates.assignable"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7057,7 +9028,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get Template assigned to the model */
-        get: operations["5a88665aa6e27668775f3353174d5081"];
+        get: operations["templates.assigned"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7074,7 +9045,7 @@ export interface paths {
             cookie?: never;
         };
         /** The latest tenant operations */
-        get: operations["fd8a8310786cb7d3b749da1945c41573"];
+        get: operations["platform.operations.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7091,7 +9062,7 @@ export interface paths {
             cookie?: never;
         };
         /** Status and steps of a tenant operation (poll it) */
-        get: operations["63486428fcc1835220898ec2e1775315"];
+        get: operations["platform.operations.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7108,10 +9079,10 @@ export interface paths {
             cookie?: never;
         };
         /** List the tenants */
-        get: operations["4ee59d29162c33be46676ac192fea763"];
+        get: operations["platform.tenants.get"];
         put?: never;
         /** Create a tenant (queued; poll the operation) */
-        post: operations["135135c2c7a8b3f064f45fc65b42e3e2"];
+        post: operations["platform.tenants.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7126,11 +9097,11 @@ export interface paths {
             cookie?: never;
         };
         /** One tenant */
-        get: operations["2008e0e13e05d2463e87c51103f3e725"];
+        get: operations["platform.tenants.by-slug.get"];
         put?: never;
         post?: never;
         /** Delete a tenant and all its data (queued; send the slug as confirm) */
-        delete: operations["7e5d0171cf58c83d4e39f68c56ab1f6d"];
+        delete: operations["platform.tenants.by-slug.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -7150,7 +9121,7 @@ export interface paths {
         options?: never;
         head?: never;
         /** Override or reset inheritable settings (AI driver, models) of a tenant */
-        patch: operations["fc7c9945e536e6e4e77fc034a89aeada"];
+        patch: operations["platform.tenants.by-slug.env.patch"];
         trace?: never;
     };
     "/api/admin/quiz-answers/{id}": {
@@ -7170,7 +9141,7 @@ export interface paths {
          * Update answer
          * @description Update answer
          */
-        patch: operations["aebe83e0059027d6275f8058ab07f48d"];
+        patch: operations["admin.quiz-answers.by-id.patch"];
         trace?: never;
     };
     "/api/quiz-answers": {
@@ -7186,7 +9157,7 @@ export interface paths {
          * Save your answer
          * @description Save your answer
          */
-        post: operations["e5e6da060b19008bba5f346119fd11cb"];
+        post: operations["quiz-answers.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7206,7 +9177,7 @@ export interface paths {
          * Save your all answers
          * @description Save your all answers
          */
-        post: operations["9026edfef85cb26098c68c2b8aac040a"];
+        post: operations["quiz-answers.all.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7226,7 +9197,7 @@ export interface paths {
          * Store a newly Gift Question
          * @description Store Gift Question
          */
-        post: operations["9e171650c0ec2fcb2a8cf9e2987fb8e1"];
+        post: operations["admin.gift-questions.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7245,13 +9216,13 @@ export interface paths {
          * Update Gift Question
          * @description Update Gift Question
          */
-        put: operations["65519a43c3c670f2e236f438e306b045"];
+        put: operations["admin.gift-questions.by-id.put"];
         post?: never;
         /**
          * Remove the specified Gift Question
          * @description Delete Gift Question
          */
-        delete: operations["2b8c9877c3fa3404842c93c9000a1390"];
+        delete: operations["admin.gift-questions.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -7270,7 +9241,7 @@ export interface paths {
          * Sort Gift Questions
          * @description Sort Gift Questions
          */
-        post: operations["e0ba9ba761958c27377fc23523bae446"];
+        post: operations["admin.gift-questions.sort.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7288,7 +9259,7 @@ export interface paths {
          * Export Gift Questions
          * @description Export Gift Questions
          */
-        get: operations["264d890a26f79abc6d272dd2eab375a0"];
+        get: operations["admin.gift-questions.export.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7310,7 +9281,7 @@ export interface paths {
          * Import Gift Questions
          * @description Import Gift Questions
          */
-        post: operations["5480a1c56912460580e6b8bd1e1f0a5e"];
+        post: operations["admin.gift-questions.import.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7325,7 +9296,7 @@ export interface paths {
             cookie?: never;
         };
         /** List gift quizes of a course (for report filter select) */
-        get: operations["073105103173305090e88d1b3d63a215"];
+        get: operations["admin.gift-quizes.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7342,9 +9313,9 @@ export interface paths {
             cookie?: never;
         };
         /** Get gift quiz by id */
-        get: operations["d3f211acc8963d522348a486311696e6"];
+        get: operations["admin.gift-quizes.by-id.get"];
         /** Update gift quiz by id */
-        put: operations["ed1ed73473ed578bb20057616591f062"];
+        put: operations["admin.gift-quizes.by-id.put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -7360,7 +9331,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get all quiz attempts */
-        get: operations["beef21f763f6c6b9dd1e1248552273e1"];
+        get: operations["admin.quiz-attempts.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7377,7 +9348,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get quiz attempt by id */
-        get: operations["198ab7973108b7fdd9292b3f9a3ca9b7"];
+        get: operations["admin.quiz-attempts.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7403,7 +9374,7 @@ export interface paths {
          * Add, edit or remove tutor feedback for a quiz attempt
          * @description Sets the tutor feedback (light rich text or video link) on a quiz attempt. Sending null or an empty string removes it.
          */
-        patch: operations["a84ccadb34545e635dfd1e4bf8d6e223"];
+        patch: operations["admin.quiz-attempts.by-id.feedback.patch"];
         trace?: never;
     };
     "/api/admin/quiz-attempts/export": {
@@ -7417,7 +9388,7 @@ export interface paths {
          * Export course quiz results to an XLSX or XLS file
          * @description Exports all attempts of all students. Without topic_gift_quiz_id every quiz of the course is exported to a separate worksheet; with it a single worksheet is exported. The format query parameter selects the spreadsheet format (xlsx or xls), defaulting to xlsx.
          */
-        get: operations["f2072dd5565325039929ef3c520a3ec5"];
+        get: operations["admin.quiz-attempts.export.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7434,13 +9405,13 @@ export interface paths {
             cookie?: never;
         };
         /** Get my quiz attempts */
-        get: operations["e2c554d50c33a8e3a8002992edbc8910"];
+        get: operations["quiz-attempts.get"];
         put?: never;
         /**
          * Create a new attempt or return an active attempt
          * @description Store Gift Quiz Attempt
          */
-        post: operations["54194f47734066ea2c8ac15c157a6eeb"];
+        post: operations["quiz-attempts.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7455,7 +9426,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get my quiz attempt by id */
-        get: operations["c30f76ddff06ac4edbf8f35db37c5053"];
+        get: operations["quiz-attempts.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7474,7 +9445,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Finish quiz attempt */
-        post: operations["f585a46e6cf973c1c85e5dcb98f706a6"];
+        post: operations["quiz-attempts.by-id.end.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7492,7 +9463,7 @@ export interface paths {
          * Get a listing of the project solutions
          * @description Get all project solutions
          */
-        get: operations["8e02a761a66ef6682456de1dbb531a3e"];
+        get: operations["admin.topic-project-solutions.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7512,14 +9483,14 @@ export interface paths {
          * Get a single project solution
          * @description Get a single project solution (with tutor feedback) by id
          */
-        get: operations["313669004e9d1bef44b957623fedeb43"];
+        get: operations["admin.topic-project-solutions.by-id.get"];
         put?: never;
         post?: never;
         /**
          * Remove the specified Project Solution
          * @description Delete Project Solution
          */
-        delete: operations["a85eef1d901f0faf4d78a02cd726b08c"];
+        delete: operations["admin.topic-project-solutions.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -7542,7 +9513,7 @@ export interface paths {
          * Add, edit or remove tutor feedback for a project solution
          * @description Sets the tutor feedback (rich text or video link) on a project solution. Sending null or an empty string removes it.
          */
-        patch: operations["dcb676ab830112a613abed9dc9f6dda2"];
+        patch: operations["admin.topic-project-solutions.by-id.feedback.patch"];
         trace?: never;
     };
     "/api/admin/topic-project-solutions/{id}/grade": {
@@ -7562,7 +9533,7 @@ export interface paths {
          * Grade the specified Project Solution
          * @description Set score and max_score for a Project Solution
          */
-        patch: operations["46983be1fca1003a97b9641532b1d23c"];
+        patch: operations["admin.topic-project-solutions.by-id.grade.patch"];
         trace?: never;
     };
     "/api/topic-project-solutions": {
@@ -7576,13 +9547,13 @@ export interface paths {
          * Get a listing of the project solutions
          * @description Get all my project solutions
          */
-        get: operations["d19af5426d3341de71009016f7b0d390"];
+        get: operations["topic-project-solutions.get"];
         put?: never;
         /**
          * Store a newly Project Solution
          * @description Project Solution
          */
-        post: operations["8712f55d3548078ba387fcb45f7d9842"];
+        post: operations["topic-project-solutions.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7600,14 +9571,14 @@ export interface paths {
          * Get a single project solution
          * @description Get my single project solution (with tutor feedback) by id
          */
-        get: operations["de684fcf50c445217b849400263d2c36"];
+        get: operations["topic-project-solutions.by-id.get"];
         put?: never;
         post?: never;
         /**
          * Remove the specified Project Solution
          * @description Delete Project Solution
          */
-        delete: operations["a4e73ac1a3e09552329897e00fc5e0d0"];
+        delete: operations["topic-project-solutions.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -7624,13 +9595,13 @@ export interface paths {
          * Get a list of translations stored in the database
          * @description Get translations
          */
-        get: operations["902b19fe337fa523bb065f114e7d672f"];
+        get: operations["admin.translations.get"];
         put?: never;
         /**
          * Store a newly created translation
          * @description Store translation
          */
-        post: operations["5d3593793f743aaa1da11e3ad80bc56b"];
+        post: operations["admin.translations.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7648,18 +9619,18 @@ export interface paths {
          * Display the specified translation
          * @description Get translation
          */
-        get: operations["aaa2aefd90287bad773ed0407ee993eb"];
+        get: operations["admin.translations.by-id.get"];
         /**
          * Update the specified translation
          * @description Update translation
          */
-        put: operations["0f76deebde9d06f1f3148f55d578f792"];
+        put: operations["admin.translations.by-id.put"];
         post?: never;
         /**
          * Remove the specified translation
          * @description Delete transalation
          */
-        delete: operations["997bcc455d11328fecf5b61cb707842b"];
+        delete: operations["admin.translations.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -7678,7 +9649,7 @@ export interface paths {
          * Retrieve translation
          * @description Retrieve translation
          */
-        post: operations["986986a0838d0c3cd8af3c40c37745b4"];
+        post: operations["admin.translations.retrieve.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7696,7 +9667,113 @@ export interface paths {
          * Get a list of public translations
          * @description Get public translations
          */
-        get: operations["ffbcd4cb27045c94497f61aedfa97903"];
+        get: operations["translations.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tutor/runs/{run}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * AG-UI event stream (SSE) of one streamed tutor answer
+         * @description Text events are a draft; the `CUSTOM` event `tutor.final` carries the validated answer with its citations and always replaces it. During an open quiz attempt only `tutor.final` is sent. The stream ends after `RUN_FINISHED` or `RUN_ERROR`, or after 25 seconds (reconnect with `Last-Event-ID`).
+         */
+        get: operations["tutor.runs.by-run.events.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tutor/courses/{course}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open */
+        get: operations["tutor.courses.by-course.status.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tutor/courses/{course}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ask the course tutor a question; it answers only from the course, with citations */
+        post: operations["tutor.courses.by-course.messages.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tutor/courses/{course}/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The learner's own conversations in a course */
+        get: operations["tutor.courses.by-course.conversations.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tutor/conversations/{conversation}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One of the learner's conversations with its messages */
+        get: operations["tutor.conversations.by-conversation.get"];
+        put?: never;
+        post?: never;
+        /** Delete one of the learner's conversations */
+        delete: operations["tutor.conversations.by-conversation.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/tutor/courses/{course}/analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Anonymous tutor analytics for a course: questions, out-of-scope share and refusals during attempts */
+        get: operations["admin.tutor.courses.by-course.analytics.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7713,7 +9790,7 @@ export interface paths {
             cookie?: never;
         };
         /** List of processed videos */
-        get: operations["4182d684e9fdd0d957aa4fc4251dfa1e"];
+        get: operations["admin.video.states.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7733,13 +9810,13 @@ export interface paths {
          * Get a listing of the Vouchers.
          * @description Get all Vouchers
          */
-        get: operations["42890b01e3a00f31a8c6ceb8d0138744"];
+        get: operations["admin.vouchers.get"];
         put?: never;
         /**
          * Create Voucher
          * @description Create Voucher
          */
-        post: operations["71644f504f6cbd9c450f65624dce99f0"];
+        post: operations["admin.vouchers.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7757,21 +9834,21 @@ export interface paths {
          * Read Voucher
          * @description Read Voucher
          */
-        get: operations["d1c3e71e48f71822d2a37945317ac92e"];
+        get: operations["admin.vouchers.by-id.get"];
         put?: never;
         post?: never;
         /**
          * Delete Voucher
          * @description Delete Voucher
          */
-        delete: operations["9055ca70b04f6699a7f162a20b56e8f3"];
+        delete: operations["admin.vouchers.by-id.delete"];
         options?: never;
         head?: never;
         /**
          * Update Voucher
          * @description Update Voucher
          */
-        patch: operations["5e1458aef655851e8866fa0ae66d1837"];
+        patch: operations["admin.vouchers.by-id.patch"];
         trace?: never;
     };
     "/api/cart/voucher": {
@@ -7787,12 +9864,155 @@ export interface paths {
          * Add Voucher Code to your Cart
          * @description Add Voucher Code to your Cart
          */
-        post: operations["c168a9af1675608c04ef7294f422255c"];
+        post: operations["cart.voucher.post"];
         /**
          * Remove Voucher from your Cart
          * @description Remove Voucher from your Cart
          */
-        delete: operations["d3cb03091b4f8fe650a96b24e5c499e9"];
+        delete: operations["cart.voucher.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Webhook event types (available and planned)
+         * @description Outgoing webhooks (Phase 7.3). Admin only (`webhook_manage`); the data lives in the tenant's own
+         *     database, so an id from another tenant never resolves.
+         */
+        get: operations["webhooks.events.list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/endpoints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List webhook endpoints */
+        get: operations["webhooks.endpoints.list"];
+        put?: never;
+        /** Create a webhook endpoint (the signing secret is returned once) */
+        post: operations["webhooks.endpoints.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/endpoints/{endpoint}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One webhook endpoint */
+        get: operations["webhooks.endpoints.get"];
+        /** Change a webhook endpoint (URL, events, enabled) */
+        put: operations["webhooks.endpoints.update"];
+        post?: never;
+        /** Delete a webhook endpoint and its delivery log */
+        delete: operations["webhooks.endpoints.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/endpoints/{endpoint}/rotate-secret": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Replace the signing secret (returned once; the old one stops working at once) */
+        post: operations["webhooks.endpoints.rotate-secret"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/endpoints/{endpoint}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a sample event once and return the result */
+        post: operations["webhooks.endpoints.test"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/deliveries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Delivery log (newest first) */
+        get: operations["webhooks.deliveries.list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/deliveries/{delivery}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One delivery with its payload and every attempt */
+        get: operations["webhooks.deliveries.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/deliveries/{delivery}/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a delivery again as a new delivery with the same event id */
+        post: operations["webhooks.deliveries.replay"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -7806,7 +10026,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Generate jitsi object for approved webinar */
-        get: operations["04949001127a5f1cf8b933180b7aae85"];
+        get: operations["webinars.generate-jitsi.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7826,7 +10046,7 @@ export interface paths {
          * Get a listing of the Webinars.
          * @description Get all Webinars
          */
-        get: operations["7a869d402f23f76a4b51a81af1e8b2c4"];
+        get: operations["webinars.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7846,7 +10066,7 @@ export interface paths {
          * Display the specified Webinar
          * @description Get Webinar
          */
-        get: operations["e4316f71859f9178d587eac330999537"];
+        get: operations["webinars.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7866,7 +10086,7 @@ export interface paths {
          * Get a listing of the Webinars bought by user.
          * @description Get a listing of the Webinars bought by user
          */
-        get: operations["97358e1e01dd74064fd82ba429dd9c0b"];
+        get: operations["webinars.me.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7886,7 +10106,7 @@ export interface paths {
          * Start live stream in yt.
          * @description Start live stream in yt. Endpoint void
          */
-        get: operations["1efbdd8510bc8b612b9e5641e46646de"];
+        get: operations["webinars.start-live-stream.by-id.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7902,13 +10122,13 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["498256da7f0c76193971b11fc2d54a84"];
+        get: operations["admin.webinars.get"];
         put?: never;
         /**
          * Store a newly created Webinar in storage
          * @description Store Webinar
          */
-        post: operations["2ed856795a9cba0df5bbd7ab83d9e290"];
+        post: operations["admin.webinars.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7926,18 +10146,18 @@ export interface paths {
          * Display the specified Webinar
          * @description Get Webinars
          */
-        get: operations["3fe0e78997de346670d141803955e001"];
+        get: operations["admin.webinars.by-id.get"];
         /**
          * Update the specified Webinar in storage
          * @description Update Webinar
          */
-        put: operations["de68a522c589c0d37b7d092d78addf61"];
+        put: operations["admin.webinars.by-id.put"];
         post?: never;
         /**
          * Remove the specified Webinar from storage
          * @description Delete Webinar
          */
-        delete: operations["3a0b6db09323a340b7c2c5c79e6d50c2"];
+        delete: operations["admin.webinars.by-id.delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -7951,7 +10171,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get users assignable to webinars */
-        get: operations["4bd86507564fdd023d62cbcc1e2d3149"];
+        get: operations["admin.webinars.users.assignable.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7968,7 +10188,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get webinars users */
-        get: operations["61aaf885ca2951af1de4ac336dae3058"];
+        get: operations["admin.webinars.by-id.users.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7981,6 +10201,388 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Every JSON answer of the API: success flag and a message; the payload is `data` (and `meta` for pages). */
+        ApiEnvelope: {
+            /**
+             * @description Response schemas of the operations the CLI generates noun commands for (plan docs/plans/cli.md 6.7, S5).
+             *     Every JSON answer is the envelope `ApiEnvelope` plus `data` (and `meta` for a page); the `*Response`
+             *     schemas combine it with the resource the controller returns. Generated by hand from the controllers and
+             *     their Resource classes: when a resource changes, change its schema here.
+             */
+            success: boolean;
+            message?: string;
+            /** @description The payload: an object, a list or a scalar, depending on the operation (typed in the operations that have a resource schema) */
+            data?: unknown;
+            meta?: components["schemas"]["ApiPage"];
+        };
+        /** @description A JSON answer whose body is not described yet (it does not follow the ApiEnvelope, or the controller builds it by hand). Replace with a precise schema when the endpoint gets one. */
+        ApiJson: {
+            [key: string]: unknown;
+        };
+        /** @description Pagination meta of a page of results. Controllers that build it by hand send only current_page, last_page and total. */
+        ApiPage: {
+            current_page?: number;
+            last_page?: number;
+            per_page?: number;
+            total?: number;
+            from?: number | null;
+            to?: number | null;
+            path?: string;
+            first_page_url?: string;
+            last_page_url?: string;
+            next_page_url?: string | null;
+            prev_page_url?: string | null;
+        };
+        /** @description TemplateResource */
+        TemplateData: {
+            id?: number;
+            name?: string;
+            event?: string;
+            channel?: string;
+            default?: boolean;
+            sections?: {
+                [key: string]: unknown;
+            };
+            variable_class?: string;
+            assignable_class?: string | null;
+            is_assignable?: boolean;
+            assignables?: Record<string, never>[];
+            created_at?: string;
+            updated_at?: string;
+        };
+        /** @description A template as stored (the update answer is the model, more attributes may follow) */
+        TemplateRecord: {
+            id?: number;
+            name?: string;
+            event?: string;
+            channel?: string;
+            created_at?: string;
+            updated_at?: string;
+        };
+        /** @description PageResource */
+        PageData: {
+            id?: number;
+            title?: string;
+            slug?: string;
+            author_id?: number;
+            content?: string;
+            active?: boolean;
+        };
+        /** @description RoleResource */
+        RoleData: {
+            id?: number;
+            name?: string;
+            guard_name?: string;
+        };
+        /** @description PermissionResource */
+        PermissionData: {
+            id?: number;
+            name?: string;
+            guard_name?: string;
+            assigned?: boolean;
+        };
+        /** @description MetadataResource */
+        ModelFieldMetadata: {
+            id?: number;
+            name?: string;
+            type?: string;
+            rules?: {
+                [key: string]: unknown;
+            };
+            extra?: {
+                [key: string]: unknown;
+            };
+            default?: string | null;
+            class_type?: string;
+            created_at?: string;
+            updated_at?: string;
+        };
+        /** @description UserSubmissionResource */
+        UserSubmissionData: {
+            id?: number;
+            email?: string;
+            status?: string;
+            morphable_id?: number;
+            morphable_type?: string;
+            created_at?: string;
+        };
+        Cmi5AuData: {
+            id?: number;
+            iri?: string;
+            title?: string;
+            url?: string;
+        };
+        /** @description Cmi5Resource */
+        Cmi5Data: {
+            id?: number;
+            iri?: string;
+            title?: string;
+            au?: components["schemas"]["Cmi5AuData"][];
+        };
+        /** @description A stored xAPI statement; `data` is the statement itself. */
+        LrsStatementData: {
+            id?: number;
+            uuid?: string;
+            data?: {
+                [key: string]: unknown;
+            };
+            voided?: boolean;
+            owner_id?: number | null;
+            entity_id?: number | null;
+            client_id?: number | null;
+            access_id?: number | null;
+            pending?: boolean;
+            validation?: {
+                [key: string]: unknown;
+            };
+        };
+        /** @description A SCORM package row (more attributes may follow) */
+        ScormPackageData: {
+            id?: number;
+            version?: string | null;
+            hash_name?: string | null;
+            origin_file?: string | null;
+            origin_file_mime?: string | null;
+            ratio?: number | null;
+            uuid?: string | null;
+            user_id?: number | null;
+            source_format?: string | null;
+        };
+        /** @description A SCO of a package */
+        ScormScoData: {
+            id?: number;
+            scorm_id?: number | null;
+            uuid?: string | null;
+            entry_url?: string | null;
+            identifier?: string | null;
+            title?: string | null;
+            sco_parameters?: string | null;
+        };
+        /** @description A page of packages (the laravel paginator); with per_page=0 only `data` is present */
+        ScormPackagePage: {
+            data: components["schemas"]["ScormPackageData"][];
+            current_page?: number;
+            last_page?: number;
+            per_page?: number;
+            total?: number;
+        };
+        /** @description The parsed manifest (`version`, `hashName`, `name`, `type`, `scos`) and the saved package */
+        ScormUploadData: {
+            scormData?: {
+                [key: string]: unknown;
+            };
+            model?: components["schemas"]["ScormPackageData"] | null;
+        };
+        /** @description The manifest of the archive; nothing is saved */
+        ScormParseData: {
+            version?: string;
+            scos?: Record<string, never>[];
+        };
+        /** @description status: draft, building, built or failed */
+        AdaptSourceData: {
+            id?: number;
+            title?: string;
+            current_version?: number;
+            status?: string;
+            built_version?: number | null;
+            scorm_id?: number | null;
+            last_error?: string | null;
+            author_id?: number | null;
+            created_at?: string;
+            updated_at?: string;
+        };
+        AdaptVersionSummary: {
+            version?: number;
+            change_note?: string | null;
+            author_id?: number | null;
+            created_at?: string | null;
+        };
+        /** @description InteractivePackageResource */
+        InteractivePackageData: {
+            id?: number;
+            title?: string;
+            current_version?: number;
+            versions_count?: number;
+            topics_count?: number;
+            licence?: string | null;
+            author_id?: number | null;
+            updated_at?: string | null;
+        };
+        /** @description The package with its current manifest; `files` maps a file path to its size in bytes */
+        InteractivePackageDetail: {
+            id?: number;
+            title?: string;
+            current_version?: number;
+            versions_count?: number;
+            topics_count?: number;
+            licence?: string | null;
+            author_id?: number | null;
+            updated_at?: string | null;
+            manifest?: {
+                [key: string]: unknown;
+            };
+            network?: string[];
+            network_allowed?: boolean;
+            files?: {
+                [key: string]: number;
+            };
+        };
+        InteractiveVersionSummary: {
+            version?: number;
+            manifest_version?: string | null;
+            licence?: string | null;
+            change_note?: string | null;
+            author_id?: number | null;
+            files?: number;
+            total_bytes?: number | null;
+            steps?: number;
+            network?: string[];
+            created_at?: string | null;
+        };
+        InteractivePreviewData: {
+            url?: string;
+            nonce?: string;
+            version?: number;
+            manifest?: {
+                [key: string]: unknown;
+            };
+        };
+        /** @description A document row with its version count */
+        LiaScriptDocumentListItem: {
+            id?: number;
+            title?: string;
+            current_version?: number;
+            versions_count?: number;
+            author_id?: number | null;
+            created_at?: string;
+            updated_at?: string;
+        };
+        LiaScriptDocumentData: {
+            id?: number;
+            title?: string;
+            current_version?: number;
+            versions_count?: number;
+            assets?: string[];
+            warnings?: string[];
+            author_id?: number | null;
+            updated_at?: string | null;
+        };
+        LiaScriptVersionSummary: {
+            version?: number;
+            change_note?: string | null;
+            author_id?: number | null;
+            restored_from?: number | null;
+            size?: number;
+            assets?: string[];
+            created_at?: string | null;
+        };
+        LiaScriptPreviewData: {
+            url?: string;
+            sections?: string[];
+            warnings?: string[];
+        };
+        TemplateResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["TemplateData"];
+        };
+        TemplateRecordResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["TemplateRecord"];
+        };
+        TemplateListResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["TemplateData"][];
+        };
+        TemplateVariablesResponse: components["schemas"]["ApiEnvelope"] & {
+            /** @description Map of event class to channels with their sections and required variables */
+            data?: {
+                [key: string]: unknown;
+            };
+        };
+        TemplatePreviewResponse: components["schemas"]["ApiEnvelope"] & {
+            /** @description The rendered sections of the template and whether the preview was sent */
+            data?: {
+                [key: string]: unknown;
+            };
+        };
+        ApiBooleanResponse: components["schemas"]["ApiEnvelope"] & {
+            /** @example true */
+            data?: boolean;
+        };
+        PageResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["PageData"];
+        };
+        RoleResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["RoleData"];
+        };
+        PermissionListResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["PermissionData"][];
+        };
+        ModelFieldMetadataResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["ModelFieldMetadata"];
+        };
+        UserSubmissionPageResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["UserSubmissionData"][];
+            meta?: components["schemas"]["ApiPage"];
+        };
+        UserSubmissionResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["UserSubmissionData"];
+        };
+        Cmi5Response: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["Cmi5Data"];
+        };
+        Cmi5PageResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["Cmi5Data"][];
+            meta?: components["schemas"]["ApiPage"];
+        };
+        LrsStatementPageResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["LrsStatementData"][];
+            meta?: components["schemas"]["ApiPage"];
+        };
+        ScormPackagePageResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["ScormPackagePage"];
+        };
+        ScormScoListResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["ScormScoData"][];
+        };
+        ScormUploadResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["ScormUploadData"];
+        };
+        ScormParseResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["ScormParseData"];
+        };
+        AdaptSourceResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["AdaptSourceData"];
+        };
+        AdaptSourceListResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["AdaptSourceData"][];
+        };
+        AdaptVersionListResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["AdaptVersionSummary"][];
+        };
+        InteractivePackagePageResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["InteractivePackageData"][];
+            meta?: components["schemas"]["ApiPage"];
+        };
+        InteractivePackageDetailResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["InteractivePackageDetail"];
+        };
+        InteractiveVersionListResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["InteractiveVersionSummary"][];
+        };
+        InteractivePreviewResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["InteractivePreviewData"];
+        };
+        LiaScriptDocumentPageResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["LiaScriptDocumentListItem"][];
+            meta?: components["schemas"]["ApiPage"];
+        };
+        LiaScriptDocumentResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["LiaScriptDocumentData"];
+        };
+        LiaScriptVersionListResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["LiaScriptVersionSummary"][];
+        };
+        LiaScriptPreviewResponse: components["schemas"]["ApiEnvelope"] & {
+            data?: components["schemas"]["LiaScriptPreviewData"];
+        };
         UserSubmission: {
             /** @description user submission id */
             id?: number;
@@ -8072,6 +10674,37 @@ export interface components {
              * @example ulams_pat_eyJ0eXAi...
              */
             token?: string;
+        };
+        ApiTokenUsage: {
+            token_id?: string;
+            days?: number;
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            rate_limit_per_minute?: number | null;
+            /** @description The current one-minute window; null when the token has no limit */
+            window?: {
+                limit?: number;
+                used?: number;
+                remaining?: number;
+                resets_in_seconds?: number;
+            } | null;
+            /** Format: date-time */
+            last_used_at?: string | null;
+            totals?: {
+                requests?: number;
+                /** @description 4xx and 5xx answers except 429 */
+                errors?: number;
+                rate_limited?: number;
+            };
+            daily?: {
+                /** Format: date */
+                date?: string;
+                requests?: number;
+                errors?: number;
+                rate_limited?: number;
+            }[];
         };
         ApiTokenList: {
             success?: boolean;
@@ -8264,6 +10897,29 @@ export interface components {
             id?: number;
             /** @description order */
             order?: number;
+        };
+        TopicCodeExercise: {
+            id?: number;
+            /** @enum {string} */
+            language: "javascript" | "typescript";
+            /** @description Starter files (a JSON string is accepted in multipart requests): at most 20, 64 KB each, 256 KB together */
+            files: {
+                path?: string;
+                content?: string;
+            }[];
+            /** @description Test files the learner can read and run in the browser */
+            visible_tests: {
+                path?: string;
+                content?: string;
+            }[];
+            /** @description A run is stopped after this long (500 to 30000) */
+            timeout_ms?: number;
+            /** @enum {string} */
+            completion_rule?: "on_pass" | "on_attempt";
+            /** @description Percentage of passing tests that completes the topic (on_pass) */
+            pass_score?: number;
+            /** @description The task, in Markdown */
+            text?: string | null;
         };
         AdminApproveConsultationAccessEnquiryRequest: {
             /** @description meeting_link */
@@ -8799,6 +11455,15 @@ export interface components {
             /** Format: date-time */
             updated_at?: string;
         };
+        ExamplePluginSendGreetingRequest: {
+            /** @description Recipient */
+            user_id: number;
+        };
+        ExamplePluginGreetingResource: {
+            /** @example Hello from the example plugin, Ada */
+            greeting?: string;
+            user_id?: number | null;
+        };
         H5PContentListRequest: {
             title?: string;
             main_library?: string;
@@ -8849,6 +11514,224 @@ export interface components {
             library?: string;
             /** @example H5P.MultiChoice */
             main_library?: string;
+        };
+        IdentityAuditEntry: {
+            id?: number;
+            /** @enum {string} */
+            actor?: "user" | "scim" | "hris" | "system" | "idp";
+            actor_id?: number | null;
+            /** Format: uuid */
+            provider_id?: string | null;
+            /** @example sso.login */
+            action?: string;
+            subject_type?: string | null;
+            subject_id?: string | null;
+            /** @description Reason codes and ids only */
+            data?: Record<string, never> | null;
+            ip?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+            hash?: string;
+        };
+        IdentityProvider: {
+            /** Format: uuid */
+            id?: string;
+            /** @description Used in the sign-in URLs; fixed after creation */
+            slug?: string;
+            /** @description Shown on the sign-in button */
+            name?: string;
+            /** @enum {string} */
+            protocol?: "oidc" | "saml";
+            enabled?: boolean;
+            /** @description Domains of the organisation */
+            email_domains?: string[];
+            /** @description The provider is authoritative for e-mail addresses of email_domains: an existing non-privileged account with a verified address there is linked on first sign-in */
+            trust_email?: boolean;
+            /** @description Create an account on first sign-in */
+            jit_enabled?: boolean;
+            /** @enum {string} */
+            default_role?: "student" | "tutor";
+            /** @description OpenID Connect providers only */
+            oidc?: {
+                /** Format: uri */
+                issuer?: string;
+                client_id?: string;
+                scopes?: string[];
+                /** @enum {string} */
+                token_auth?: "client_secret_basic" | "client_secret_post";
+                userinfo?: boolean;
+            } | null;
+            /** @description SAML providers only. Private keys never leave the API */
+            saml?: {
+                /** @description The identity provider's entity id */
+                entity_id?: string | null;
+                /** Format: uri */
+                sso_url?: string | null;
+                /** Format: uri */
+                slo_url?: string | null;
+                /**
+                 * Format: uri
+                 * @description Refreshed daily; new signing certificates are added automatically
+                 */
+                metadata_url?: string | null;
+                name_id_format?: string | null;
+                want_encrypted_assertions?: boolean;
+                /** @description Accept SHA-1 signatures (legacy). Weak: every such sign-in is audited */
+                allow_sha1?: boolean;
+                /** @description Attribute names for email, first_name, last_name, name and subject */
+                attribute_map?: Record<string, never>;
+                /** @description Signing certificates trusted for this provider */
+                idp_certificates?: {
+                    /** @description SHA-256 of the certificate */
+                    fingerprint?: string;
+                    /** Format: date-time */
+                    not_before?: string | null;
+                    /** Format: date-time */
+                    not_after?: string | null;
+                    /** Format: date-time */
+                    added_at?: string;
+                    /** @enum {string} */
+                    source?: "metadata" | "admin";
+                }[];
+                /** @description What to give the identity provider */
+                sp?: {
+                    /** Format: uri */
+                    entity_id?: string;
+                    /** Format: uri */
+                    metadata_url?: string;
+                    /** Format: uri */
+                    acs_url?: string;
+                    /** Format: uri */
+                    slo_url?: string;
+                    certificate_fingerprint?: string | null;
+                    /** @description A prepared key pair, already published in the metadata */
+                    next_certificate_fingerprint?: string | null;
+                };
+            } | null;
+            /** Format: date-time */
+            metadata_refreshed_at?: string | null;
+            client_secret_set?: boolean;
+            client_secret_hint?: string | null;
+            /**
+             * Format: uri
+             * @description Register this redirect URI at the provider
+             */
+            redirect_uri?: string;
+            /** Format: date-time */
+            last_login_at?: string | null;
+            /** @description Reason code of the last failed sign-in */
+            last_error?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+            /** Format: date-time */
+            updated_at?: string;
+        };
+        IdentityProviderInput: {
+            /**
+             * @description Fixed at creation (default oidc); ignored on update
+             * @enum {string}
+             */
+            protocol?: "oidc" | "saml";
+            /** @description Lowercase letters, digits and hyphens; required on create, ignored on update */
+            slug?: string;
+            name?: string;
+            enabled?: boolean;
+            email_domains?: string[];
+            trust_email?: boolean;
+            jit_enabled?: boolean;
+            /** @enum {string} */
+            default_role?: "student" | "tutor";
+            oidc?: {
+                /** Format: uri */
+                issuer?: string;
+                client_id?: string;
+                scopes?: string[];
+                /** @enum {string} */
+                token_auth?: "client_secret_basic" | "client_secret_post";
+                userinfo?: boolean;
+            };
+            /** @description Write-only; stored encrypted */
+            client_secret?: string;
+            /** @description SAML providers: give metadata_url or metadata_xml (entity id, endpoints and certificates are read from it), or the fields by hand */
+            saml?: {
+                /** Format: uri */
+                metadata_url?: string;
+                /** @description Uploaded IdP metadata (at most 2 MB) */
+                metadata_xml?: string;
+                entity_id?: string;
+                /** Format: uri */
+                sso_url?: string;
+                /** Format: uri */
+                slo_url?: string;
+                name_id_format?: string;
+                want_encrypted_assertions?: boolean;
+                allow_sha1?: boolean;
+                /** @description Replaces the trusted signing certificates (PEM or base64) */
+                idp_certificates?: string[];
+                attribute_map?: {
+                    email?: string;
+                    first_name?: string;
+                    last_name?: string;
+                    name?: string;
+                    subject?: string;
+                };
+            };
+        };
+        IdentityMetadataRefresh: {
+            /**
+             * @description attention: a change needs an administrator (another entity id, certificates unrelated to the trusted ones)
+             * @enum {string}
+             */
+            status?: "unchanged" | "updated" | "attention" | "failed";
+            /** @description SHA-256 fingerprints of certificates added */
+            added?: string[];
+            /** @description SHA-256 fingerprints of certificates removed */
+            removed?: string[];
+            reason?: string | null;
+        };
+        TopicInteractive: {
+            id?: number;
+            /** @description Interactive package id */
+            value: number;
+            /** @description Pinned package version; set to the current one when omitted */
+            version?: number | null;
+            /** @description Play the package's current version instead of a pinned one */
+            follow_latest?: boolean;
+            start_step?: string | null;
+            end_step?: string | null;
+            /** @enum {string} */
+            completion_rule?: "on_open" | "on_range_end" | "on_complete" | "on_score";
+            /** @description Percentage, for on_score */
+            pass_score?: number | null;
+            /** @enum {string} */
+            display?: "inline" | "background";
+            height?: number;
+            /** @description Markdown shown beside the frame or over the background */
+            text?: string | null;
+        };
+        KnowledgeExport: {
+            /** @example 01j9z8x3v7c5qk2m4n6p8r0t1w */
+            id?: string;
+            /** @enum {string} */
+            scope?: "course" | "tenant";
+            course_id?: number | null;
+            /** @enum {string} */
+            status?: "queued" | "running" | "ready" | "failed";
+            /** @enum {string} */
+            trigger?: "manual" | "auto";
+            /** @description SHA-256 over the chunk ids, text hashes and citations; unchanged content gives the same hash */
+            pack_hash?: string | null;
+            courses?: number;
+            chunks?: number;
+            /** @description Chunks without source citations (hand-written or edited text) */
+            uncited_chunks?: number;
+            error?: string | null;
+            /** @description Names for the download endpoint */
+            files?: ("manifest" | "chunks" | "index")[];
+            /** Format: date-time */
+            created_at?: string;
+            /** Format: date-time */
+            finished_at?: string | null;
         };
         TopicLiaScript: {
             id?: number;
@@ -8942,6 +11825,10 @@ export interface components {
             payable_type?: string;
             /** @description user_id */
             user_id?: number;
+        };
+        LoginPencilSpaceRequest: {
+            /** @example https://my.pencilapp.com */
+            redirect_url: string;
         };
         Role: {
             /** @description id */
@@ -9318,6 +12205,28 @@ export interface components {
             /** @description last_name */
             last_name: string;
         };
+        EmailTemplateDraft: {
+            /** @description subject with the sample values */
+            title?: string;
+            /** @description rendered e-mail HTML with the sample values */
+            html?: string;
+            /** @description MJML errors reported by the renderer */
+            errors?: string[];
+            /** @description variables required by the event that the draft does not use */
+            missing_variables?: string[];
+            /** @description accessibility warnings of the generated e-mail */
+            warnings?: {
+                code?: string;
+                message?: string;
+                count?: number;
+            }[];
+            /** @description the language the draft was rendered in, as requested */
+            locale?: string | null;
+            /** @description only in the test-send response */
+            sent?: boolean;
+            /** @description only in the test-send response: the address of the signed-in admin */
+            recipient?: string;
+        };
         FabricPDF: {
             /** @description template id */
             id?: number;
@@ -9329,6 +12238,10 @@ export interface components {
             path?: string;
             assignable_type?: string;
             assignable_id?: number;
+            /** @description valid, expired or revoked */
+            status?: string;
+            /** Format: date-time */
+            expires_at?: string | null;
         };
         Template: {
             /** @description template id */
@@ -9339,6 +12252,8 @@ export interface components {
             event?: string;
             /** @description channel full classname */
             channel?: string;
+            /** @description language code the template is written for (en, pl, zh); null for a template of no particular language, the last fallback */
+            locale?: string | null;
             /** @description this template is default template for given channel and event pair */
             default?: boolean;
         };
@@ -9488,6 +12403,15 @@ export interface components {
             /** @description email */
             email?: string;
         };
+        TopicLayout: {
+            id?: number;
+            /** @description Layout document (a JSON string is accepted in multipart requests): a list of {component, props, id?} nodes using only the approved learner layout components (Callout, Steps, ComparisonTable, H5PFrame, LiaScriptLesson, Timeline, FlipCards, CodeBlock, PracticeActivity), validated against the learner layout manifest */
+            document: Record<string, never>[];
+            /** @enum {string} */
+            schema_version?: "1";
+            /** @description Markdown shown by clients that do not render layouts, and when the document cannot be rendered */
+            markdown_fallback: string;
+        };
         AdminGradeProjectSolutionRequest: {
             score: number;
         };
@@ -9526,6 +12450,63 @@ export interface components {
              * @description graded_at
              */
             graded_at?: string;
+        };
+        TopicAudio: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+        };
+        TopicCmi5Au: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+        };
+        TopicH5P: {
+            /** @description id */
+            id?: unknown;
+            /** @description H5P content id (h5p.contents.id, H5P service) */
+            value: number;
+            content?: components["schemas"]["H5PContentSummary"];
+        };
+        TopicImage: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+        };
+        TopicOEmbed: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+        };
+        TopicPDF: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+            /** @description length */
+            length?: number;
+            /** @description page_count */
+            page_count?: number;
+        };
+        TopicRichText: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+            /** @description length */
+            length?: number;
+        };
+        TopicScormSco: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+            /** @description uuid */
+            uuid?: unknown;
         };
         "language-line-save-request": {
             /** @description group */
@@ -9581,6 +12562,67 @@ export interface components {
             excluded_categories?: number[];
             active?: boolean[];
             exclude_promotions?: boolean[];
+        };
+        WebhookEndpoint: {
+            /** @example 01j9z8x3v7c5qk2m4n6p8r0t1w */
+            id?: string;
+            /** @example https://example.com/hooks/ulams */
+            url?: string;
+            description?: string | null;
+            /** @description Event types, or [*] for every available event */
+            events?: string[];
+            /** @example 2026-10-20 */
+            api_version?: string;
+            enabled?: boolean;
+            disabled_reason?: string | null;
+            consecutive_failures?: number;
+            /** @description Last characters of the signing secret */
+            secret_hint?: string;
+            /** @description The signing secret; only in the response that creates the endpoint or rotates its secret */
+            secret?: string;
+            /** Format: date-time */
+            last_delivery_at?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+        };
+        WebhookDelivery: {
+            id?: string;
+            endpoint_id?: string;
+            /** @example evt_01j9z8x3v7c5qk2m4n6p8r0t1w */
+            event_id?: string;
+            /** @example course.completed */
+            event_type?: string;
+            /** @enum {string} */
+            status?: "pending" | "retrying" | "succeeded" | "failed" | "cancelled";
+            attempts?: number;
+            last_status_code?: number | null;
+            is_test?: boolean;
+            replay_of?: string | null;
+            /** Format: date-time */
+            next_attempt_at?: string | null;
+            /** Format: date-time */
+            delivered_at?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+            /** @description The event that was signed and sent (delivery detail only) */
+            payload?: Record<string, never>;
+            /** @description One entry per HTTP attempt (delivery detail only) */
+            attempt_log?: {
+                number?: number;
+                status_code?: number | null;
+                response_body?: string | null;
+                error?: string | null;
+                duration_ms?: number;
+                /** Format: date-time */
+                created_at?: string;
+            }[];
+        };
+        WebhookEventType: {
+            /** @example course.completed */
+            type?: string;
+            description?: string;
+            /** @enum {string} */
+            status?: "available" | "planned" | "test";
         };
         Webinar: {
             /** @description id */
@@ -9654,7 +12696,60 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    "71ee276c27779404579ddadb0153d795": {
+    "contact.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    /** Format: email */
+                    email: string;
+                    subject: string;
+                    message: string;
+                    /** @description Spam honeypot; leave empty */
+                    website?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Message delivered to the private contact inbox */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Input validation failed */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Message delivery is temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "events.get": {
         parameters: {
             query?: {
                 order_by?: "next" | "past";
@@ -9675,12 +12770,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "8b9ad4f7c70f3a761ffff0b47b553ff3": {
+    "adapt.list": {
         parameters: {
             query?: never;
             header?: never;
@@ -9694,11 +12789,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AdaptSourceListResponse"];
+                };
             };
         };
     };
-    "72e4db4d02b63a62703037681c624c0f": {
+    "adapt.create": {
         parameters: {
             query?: never;
             header?: never;
@@ -9712,7 +12809,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AdaptSourceResponse"];
+                };
             };
             /** @description structural errors with paths */
             422: {
@@ -9723,7 +12822,7 @@ export interface operations {
             };
         };
     };
-    cd4e1d13364cb9f0c7935ccd92b6c84a: {
+    "adapt.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -9739,11 +12838,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AdaptSourceResponse"];
+                };
             };
         };
     };
-    "00874d03a5aa6d89045ee0c0414b0ccc": {
+    "adapt.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -9759,11 +12860,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "32b440d186aea3454c733206b640cfea": {
+    "adapt.source": {
         parameters: {
             query?: never;
             header?: never;
@@ -9779,11 +12882,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
             };
         };
     };
-    cccce706bca9719bcb70215298b01a60: {
+    "adapt.versions-list": {
         parameters: {
             query?: never;
             header?: never;
@@ -9799,11 +12906,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AdaptVersionListResponse"];
+                };
             };
         };
     };
-    "059c1b12b7d16100085d0a48ec076764": {
+    "adapt.versions-add": {
         parameters: {
             query?: never;
             header?: never;
@@ -9819,11 +12928,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AdaptSourceResponse"];
+                };
             };
         };
     };
-    "35b47f4ebdcf77b9d555a4c2ee8349be": {
+    "adapt.build": {
         parameters: {
             query?: never;
             header?: never;
@@ -9839,11 +12950,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AdaptSourceResponse"];
+                };
             };
         };
     };
-    cf55d1084caa7d0a7d484dd8763b2fd2: {
+    "user-submissions.list": {
         parameters: {
             query?: {
                 /** @description User email */
@@ -9870,7 +12983,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserSubmissionPageResponse"];
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -9895,7 +13010,7 @@ export interface operations {
             };
         };
     };
-    a746f20286f9dc31d4bbb27db05a964f: {
+    "user-submissions.create": {
         parameters: {
             query?: never;
             header?: never;
@@ -9914,7 +13029,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserSubmissionResponse"];
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -9946,7 +13063,7 @@ export interface operations {
             };
         };
     };
-    "1946280eb0a14fe6eccdcf16fdb6f8e5": {
+    "user-submissions.update": {
         parameters: {
             query?: never;
             header?: never;
@@ -9968,7 +13085,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserSubmissionResponse"];
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -10000,7 +13119,7 @@ export interface operations {
             };
         };
     };
-    a0adf935e4cc3861e5a63c3e87958b88: {
+    "user-submissions.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -10017,7 +13136,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -10042,7 +13163,101 @@ export interface operations {
             };
         };
     };
-    c97e7ee722008f1f0aae83ea70b29fa6: {
+    "admin.theme.logo.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description PNG or SVG file, at most 200 KB
+                     */
+                    logo: string;
+                    /** @description Text alternative of the logo; the company name when empty */
+                    alt?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description the stored logo */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an accepted logo, or too large */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.theme.logo.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description removed (also when there was no logo) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.tokens.get": {
         parameters: {
             query?: {
                 user_id?: number;
@@ -10081,7 +13296,7 @@ export interface operations {
             };
         };
     };
-    "86c0bd374d2c2016525af40c59f2a18e": {
+    "admin.tokens.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -10127,7 +13342,117 @@ export interface operations {
             };
         };
     };
-    a0d644a176215e6a71e0c442eebedd6c: {
+    "admin.tokens.by-id.patch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description null removes the limit */
+                    rate_limit_per_minute: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiToken"];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs token_manage or token owner */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid limit */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.tokens.by-id.usage.get": {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Usage */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiTokenUsage"];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs token_manage or token owner */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.tokens.by-id.audit.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -10170,7 +13495,7 @@ export interface operations {
             };
         };
     };
-    e05f3171d6b8ada25c8975c3aa362d9c: {
+    "admin.agent-audit.get": {
         parameters: {
             query?: {
                 token_id?: string;
@@ -10209,7 +13534,7 @@ export interface operations {
             };
         };
     };
-    "48f3266e8f69a0ee73c77d3d34cb3246": {
+    "admin.user-groups.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -10235,7 +13560,7 @@ export interface operations {
             };
         };
     };
-    "7b5b5469b4bfae9b2e5828a4f3adcc71": {
+    "admin.user-groups.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -10259,7 +13584,7 @@ export interface operations {
             };
         };
     };
-    "224ed1f56dfb2dbec13c374a88ce88d8": {
+    "admin.user-groups.tree.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -10284,7 +13609,7 @@ export interface operations {
             };
         };
     };
-    be2cf3bcdb7b77aa49c3e220fd4c617b: {
+    "admin.user-groups.users.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -10311,7 +13636,7 @@ export interface operations {
             };
         };
     };
-    "44d5c6df401c50e249c7753c0e9606d2": {
+    "admin.user-groups.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -10333,7 +13658,7 @@ export interface operations {
             };
         };
     };
-    a74a1420278bf1fa77da4fe4fda3102f: {
+    "admin.user-groups.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -10366,7 +13691,7 @@ export interface operations {
             };
         };
     };
-    f11631d6e8fadb2db447b743a10f61c2: {
+    "groups.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -10382,20 +13707,30 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    e3cf1832ef9a146644ef21b182897c73: {
+    "admin.user-groups.by-id.members.post": {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                id: number;
+            };
             cookie?: never;
         };
-        requestBody?: {
+        requestBody: {
             content: {
-                "*/*"?: never;
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Id of user to be added
+                     */
+                    user_id?: number;
+                };
             };
         };
         responses: {
@@ -10410,7 +13745,7 @@ export interface operations {
             };
         };
     };
-    "11aa08088acb95ff5fbb8ca897c4293b": {
+    "admin.user-groups.by-id.members.by-user-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -10433,7 +13768,7 @@ export interface operations {
             };
         };
     };
-    bd8881b2f6019ed83e1146ce6d6731ec: {
+    "admin.users.by-id.interests.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -10455,7 +13790,7 @@ export interface operations {
             };
         };
     };
-    "20765711fa45a83c2fc89dc0f9e3e764": {
+    "admin.users.by-id.interests.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -10484,7 +13819,7 @@ export interface operations {
             };
         };
     };
-    "234a96fd2fa07dece6b99ea3196387b3": {
+    "admin.users.by-id.interests.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -10516,7 +13851,7 @@ export interface operations {
             };
         };
     };
-    "06d1f8341c24a7bddf146fa521922804": {
+    "admin.users.by-id.interests.by-interest-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -10539,7 +13874,7 @@ export interface operations {
             };
         };
     };
-    "13139134e412617289a372bd65f6b457": {
+    "admin.users.by-id.settings.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -10561,7 +13896,7 @@ export interface operations {
             };
         };
     };
-    "95b2d310d06bb3ec07934d36cc0f93a1": {
+    "admin.users.by-id.settings.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -10570,9 +13905,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
+        requestBody: {
             content: {
-                "*/*"?: never;
+                "application/json": {
+                    settings?: Record<string, never>[];
+                };
             };
         };
         responses: {
@@ -10582,12 +13919,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
         };
     };
-    "6367cbaa14fd9fff447dc69c24d57601": {
+    "admin.users.by-id.settings.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -10596,9 +13933,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
+        requestBody: {
             content: {
-                "*/*"?: never;
+                "application/json": {
+                    settings?: Record<string, never>[];
+                };
             };
         };
         responses: {
@@ -10608,12 +13947,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
         };
     };
-    "1011126ac5615854248339ccfc0872a3": {
+    "admin.users.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -10652,7 +13991,7 @@ export interface operations {
             };
         };
     };
-    "022f7631c210e0aea2353fb195cbeb22": {
+    "admin.users.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -10676,7 +14015,7 @@ export interface operations {
             };
         };
     };
-    "9669ffd80e5ff7157d89d0cbeabfdb2c": {
+    "admin.users.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -10698,7 +14037,7 @@ export interface operations {
             };
         };
     };
-    "4fb8f56c39dab3c23b889a9baef498f5": {
+    "users.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -10714,7 +14053,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description Invalid id */
             400: {
@@ -10732,7 +14073,7 @@ export interface operations {
             };
         };
     };
-    a70b496578615d9708a081aaacf83c62: {
+    "admin.user.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -10772,7 +14113,7 @@ export interface operations {
             };
         };
     };
-    "7512da762c3a9cb0a93aea1a8e123a01": {
+    "admin.user.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -10812,7 +14153,7 @@ export interface operations {
             };
         };
     };
-    "5a43b0d666216e68b7dbfef922e80fe9": {
+    "admin.users.by-id.avatar.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -10833,7 +14174,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -10847,7 +14188,7 @@ export interface operations {
             };
         };
     };
-    d7dcad949df047735485e881318b6242: {
+    "admin.users.by-id.avatar.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -10864,7 +14205,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -10878,7 +14219,7 @@ export interface operations {
             };
         };
     };
-    "21bee60a81a46858f4270d4c2bbcedd9": {
+    "auth.password.forgot.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -10902,12 +14243,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "1bffb93e1b6520c0298fcce106b3a3ce": {
+    "auth.password.reset.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -10933,12 +14274,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "4e4dc11302a2f107d9676c818173a908": {
+    "auth.refresh.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -10953,15 +14294,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    bf736b59f1ee312896620f7731c864b8: {
+    "auth.social.by-provider.get": {
         parameters: {
-            query?: {
+            query: {
                 return_url?: string;
+                challenge: string;
             };
             header?: never;
             path: {
@@ -10971,7 +14313,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description successful operation */
+            /** @description Redirect to the provider */
             302: {
                 headers: {
                     [name: string]: unknown;
@@ -10980,31 +14322,97 @@ export interface operations {
                     "application/json": unknown;
                 };
             };
+            /** @description Unknown provider, return URL not allowed or challenge missing */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
         };
     };
-    "49bb4f8de5c2c04cf92cc988dfb09e76": {
+    "auth.social.by-provider.callback.get": {
+        parameters: {
+            query: {
+                state: string;
+            };
+            header?: never;
+            path: {
+                provider: "facebook" | "google";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Redirect to the return URL with a code or an error */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description The state is missing, forged, expired or already used */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "auth.social.exchange.post": {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                provider: "facebook" | "google";
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    code: string;
+                    /** @description 43 to 128 characters of [A-Za-z0-9._~-] */
+                    verifier: string;
+                };
+            };
+        };
         responses: {
             /** @description successful operation */
-            302: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description The code is invalid, expired, already used or does not match the verifier */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "43a84d17d1bc5e94c4c667184ddf04bc": {
+    "auth.social.complete.by-token.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -11030,12 +14438,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    b3e26f5d643c713542d47eaabe6a5de2: {
+    "auth.email.verify.by-id.by-hash.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -11058,7 +14466,7 @@ export interface operations {
             };
         };
     };
-    "42a28136c9d40d8417c8d8cab59ba33b": {
+    "auth.email.resend.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -11082,12 +14490,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    b4cae639139ff51d96c715a0ee7ef9b8: {
+    "auth.registerable-groups.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -11107,7 +14515,7 @@ export interface operations {
             };
         };
     };
-    ea404fe1bfc1d7cec2c000550cba8005: {
+    "auth.device.code.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -11159,7 +14567,7 @@ export interface operations {
             };
         };
     };
-    d021d1c83eb5b155962e28f33d742868: {
+    "auth.device.token.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -11210,7 +14618,7 @@ export interface operations {
             };
         };
     };
-    d11c076f4f258f272b9d2f54496ba17a: {
+    "auth.device.requests.by-user-code.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -11266,7 +14674,7 @@ export interface operations {
             };
         };
     };
-    ed52f6a54e88ba0eec1daea558b8ba56: {
+    "auth.device.requests.by-user-code.approve.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -11340,7 +14748,7 @@ export interface operations {
             };
         };
     };
-    "502ca62527836cb88f1a6fa63b7f32be": {
+    "auth.device.requests.by-user-code.deny.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -11397,7 +14805,7 @@ export interface operations {
             };
         };
     };
-    e19db8f50fc8143b1ccb91fb21dd203a: {
+    "auth.login.post": {
         parameters: {
             query: {
                 email: string;
@@ -11416,7 +14824,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11430,7 +14838,7 @@ export interface operations {
             };
         };
     };
-    "58237616881e12e669d8388267000961": {
+    "auth.impersonate.post": {
         parameters: {
             query: {
                 user_id: number;
@@ -11447,7 +14855,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
             /** @description Bad request */
@@ -11461,7 +14869,7 @@ export interface operations {
             };
         };
     };
-    "7fe1da3621cd98ac4fa94d3f656f192d": {
+    "auth.logout.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -11476,12 +14884,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "49809d821fe8d943f2c8ea0d7f2347ac": {
+    "meta.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -11524,7 +14932,7 @@ export interface operations {
             };
         };
     };
-    "89c99c85a48b95011a61b7114a0db782": {
+    "profile.me.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -11539,7 +14947,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11553,7 +14961,7 @@ export interface operations {
             };
         };
     };
-    e2c0f5a5b7ae0ce07dbda9a1a08a803d: {
+    "profile.me.put": {
         parameters: {
             query?: {
                 first_name?: string;
@@ -11580,7 +14988,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11594,7 +15002,7 @@ export interface operations {
             };
         };
     };
-    "65f6afd0746df87917be782e9ca845fc": {
+    "profile.me-auth.put": {
         parameters: {
             query: {
                 email: string;
@@ -11611,7 +15019,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11625,7 +15033,7 @@ export interface operations {
             };
         };
     };
-    fac3e4bacc50755579fd5c74ca2eea74: {
+    "profile.password.put": {
         parameters: {
             query: {
                 current_password: string;
@@ -11644,7 +15052,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11658,7 +15066,7 @@ export interface operations {
             };
         };
     };
-    "767246fb2408fc7097257a92a7775103": {
+    "profile.interests.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -11680,12 +15088,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    f20114ec5127ace1a75a37f1635171a4: {
+    "profile.upload-avatar.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -11704,7 +15112,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11718,7 +15126,7 @@ export interface operations {
             };
         };
     };
-    "93aa8ab3f349e46ede7ad00ea7ff7c54": {
+    "profile.delete-avatar.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -11733,7 +15141,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11747,7 +15155,7 @@ export interface operations {
             };
         };
     };
-    eb7b2b8e00805c53560077a756bfb076: {
+    "profile.settings.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -11762,7 +15170,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11776,7 +15184,7 @@ export interface operations {
             };
         };
     };
-    b175249d6fd4776a2aedc2e3a456a9fd: {
+    "profile.settings.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -11806,12 +15214,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "59d1c339373f98535e6f1e856d3ea908": {
+    "profile.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -11826,7 +15234,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11840,7 +15248,7 @@ export interface operations {
             };
         };
     };
-    d73dc974dbe0b7dc962e45565024b9d9: {
+    "profile.delete.init.post": {
         parameters: {
             query?: {
                 return_url?: string;
@@ -11857,7 +15265,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11871,7 +15279,7 @@ export interface operations {
             };
         };
     };
-    "73475a8e6cc96cae7b1bb1c3b78b409f": {
+    "profile.delete.by-userid.by-token.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -11889,7 +15297,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -11903,7 +15311,7 @@ export interface operations {
             };
         };
     };
-    "5c66b81d373a1cf56c497035942da651": {
+    "auth.register.post": {
         parameters: {
             query: {
                 first_name: string;
@@ -11926,12 +15334,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    f59ede12ce38c91320ace16e57f0a1d9: {
+    "auth.tokens.get": {
         parameters: {
             query?: {
                 include_revoked?: boolean;
@@ -11973,7 +15381,7 @@ export interface operations {
             };
         };
     };
-    a875828dc5b276a102378c005eb05829: {
+    "auth.tokens.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12035,7 +15443,7 @@ export interface operations {
             };
         };
     };
-    fef5ceb391432c3471ee2e3223e7db42: {
+    "auth.tokens.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -12081,7 +15489,117 @@ export interface operations {
             };
         };
     };
-    "939c4d8f2959e9d3fe7536b5174c1a78": {
+    "auth.tokens.by-id.patch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description null removes the limit */
+                    rate_limit_per_minute: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiToken"];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Somebody else's token */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid limit */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "auth.tokens.by-id.usage.get": {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Usage */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiTokenUsage"];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Somebody else's token */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "auth.tokens.current.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -12132,7 +15650,7 @@ export interface operations {
             };
         };
     };
-    "8bb5dec2d1075aafd032e156aff2e87d": {
+    "admin.bookmarks.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "id" | "value";
@@ -12162,12 +15680,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "979690200b80390a5e4c039562a39873": {
+    "admin.bookmarks.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12195,7 +15713,7 @@ export interface operations {
             };
         };
     };
-    "5f9b6b3164db91248ef9f3d2dd4c3043": {
+    "admin.bookmarks.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -12213,12 +15731,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    e3fa866dab7d23a8c9dece0a31aa810a: {
+    "admin.bookmarks.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -12249,7 +15767,7 @@ export interface operations {
             };
         };
     };
-    "24af60125c0b58b112ea62c7d26f1663": {
+    "bookmarks.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "id" | "value";
@@ -12279,12 +15797,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    b3d19475759989bb6b343e45473f4037: {
+    "bookmarks.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12312,7 +15830,7 @@ export interface operations {
             };
         };
     };
-    e427ff1b57feba85483ea473ce8a583e: {
+    "bookmarks.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -12330,12 +15848,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "8711c635bf64f052ba80361cadaf267c": {
+    "bookmarks.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -12366,7 +15884,7 @@ export interface operations {
             };
         };
     };
-    "9842afcb40c8e7d0be23417b549d1db5": {
+    "admin.bulk-notifications.send.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12394,7 +15912,7 @@ export interface operations {
             };
         };
     };
-    "7a900ab186e142056605c4ed005c42ca": {
+    "admin.bulk-notifications.send.multicast.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12422,7 +15940,7 @@ export interface operations {
             };
         };
     };
-    "8b031395f1b239967e6c1117f689de01": {
+    "admin.bulk-notifications.get": {
         parameters: {
             query?: {
                 /** @description Pagination Page Number */
@@ -12444,12 +15962,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "75e6650a4aeea39a529a7cdb114d3416": {
+    "notifications.tokens.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12476,7 +15994,7 @@ export interface operations {
             };
         };
     };
-    f331b0c02582de54b08d3cd6c2d62a3d: {
+    "admin.orders.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "updated_at" | "user_id";
@@ -12508,7 +16026,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12522,7 +16040,7 @@ export interface operations {
             };
         };
     };
-    ea2d6e8c73d81748bd8c2558544cb817: {
+    "admin.orders.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -12540,12 +16058,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    a123ab78f8a8560aa917b01df50a2bb6: {
+    "admin.orders.export.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "updated_at" | "user_id";
@@ -12580,7 +16098,7 @@ export interface operations {
             };
         };
     };
-    "767d682eaf04de49171f957ec88df347": {
+    "admin.products.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "updated_at" | "name";
@@ -12616,7 +16134,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12630,7 +16148,7 @@ export interface operations {
             };
         };
     };
-    cffe6572b6ea982ddddb008eef00e2e3: {
+    "admin.products.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12668,7 +16186,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12682,7 +16200,7 @@ export interface operations {
             };
         };
     };
-    "65fb5aa5935ab34403d706183aafa888": {
+    "admin.products.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -12699,7 +16217,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12713,7 +16231,7 @@ export interface operations {
             };
         };
     };
-    "78eb31d78eaff7c9ecb8c7ab9644b988": {
+    "admin.products.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -12755,7 +16273,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12769,7 +16287,7 @@ export interface operations {
             };
         };
     };
-    "212c1460ee784936f3c0339c60ac037c": {
+    "admin.products.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -12786,7 +16304,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12800,7 +16318,7 @@ export interface operations {
             };
         };
     };
-    "8b8592be7fce34949936ae4a36fb71fb": {
+    "admin.products.by-id.attach.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12824,7 +16342,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12838,7 +16356,7 @@ export interface operations {
             };
         };
     };
-    "4057d569dfce938050d50e81078b1939": {
+    "admin.products.by-id.detach.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12862,7 +16380,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12876,7 +16394,7 @@ export interface operations {
             };
         };
     };
-    "8967a38af1d980737ef413e455b62940": {
+    "admin.products.by-id.trigger-event-manually.by-idtemplate.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12895,7 +16413,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -12927,7 +16447,7 @@ export interface operations {
             };
         };
     };
-    f64e11d9be1d13a7540e51b506699425: {
+    "admin.productables.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -12942,7 +16462,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12956,7 +16476,7 @@ export interface operations {
             };
         };
     };
-    c21d9b78aa500d0ef9d9081448290a3c: {
+    "admin.productables.attach.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -12979,7 +16499,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -12993,7 +16513,7 @@ export interface operations {
             };
         };
     };
-    "17bd6b1719bc239cee06f9a6a7b809d8": {
+    "admin.productables.detach.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13016,7 +16536,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13030,7 +16550,7 @@ export interface operations {
             };
         };
     };
-    e1272deac72762a893fbda488909c98d: {
+    "admin.productables.registered.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -13045,7 +16565,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13059,7 +16579,7 @@ export interface operations {
             };
         };
     };
-    "21925d05536d1c9b64bfcc19a8966f60": {
+    "admin.productables.product.get": {
         parameters: {
             query: {
                 /** @description Productable class */
@@ -13079,7 +16599,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13093,7 +16613,7 @@ export interface operations {
             };
         };
     };
-    "63ef8a637cd77859f3dfedb7bb146183": {
+    "cart.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -13108,7 +16628,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13122,7 +16642,7 @@ export interface operations {
             };
         };
     };
-    "1aa037e629842ec6434961f561920f43": {
+    "cart.products.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13144,7 +16664,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13158,7 +16678,7 @@ export interface operations {
             };
         };
     };
-    d196489b2a7ad33207b0c0632d21a10e: {
+    "cart.missing.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13179,7 +16699,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13193,7 +16713,7 @@ export interface operations {
             };
         };
     };
-    "82f7bd87ae4701394374ed195e9265a2": {
+    "cart.add.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13215,7 +16735,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13229,7 +16749,7 @@ export interface operations {
             };
         };
     };
-    "7bc5659271eea0701abb9ccbde1b95f5": {
+    "cart.products.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -13247,7 +16767,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13261,7 +16781,7 @@ export interface operations {
             };
         };
     };
-    "23705ca17660ad15514131765a59cae0": {
+    "orders.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "updated_at" | "user_id";
@@ -13291,7 +16811,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13305,7 +16825,7 @@ export interface operations {
             };
         };
     };
-    e0ca70419917c1b71721a06fb196cb80: {
+    "orders.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -13323,12 +16843,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "23e06187b67b9dad8a153be0afd5b2c0": {
+    "cart.pay.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13358,7 +16878,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13372,7 +16892,7 @@ export interface operations {
             };
         };
     };
-    "3395e846fc95d17530083f31cbb2ec8a": {
+    "product.by-id.pay.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13405,7 +16925,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description The product is not purchasable or the user reached its limits */
@@ -13428,7 +16948,7 @@ export interface operations {
             };
         };
     };
-    "56fd7f1847396ce107633aaab2a3781c": {
+    "products.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "updated_at" | "name";
@@ -13462,7 +16982,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13476,7 +16996,7 @@ export interface operations {
             };
         };
     };
-    ce84bcc723f0c126902260192de24417: {
+    "products.my.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "updated_at" | "id";
@@ -13518,7 +17038,7 @@ export interface operations {
             };
         };
     };
-    "42bdfa316046b6a533239f4cea105706": {
+    "products.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -13535,7 +17055,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13549,7 +17069,7 @@ export interface operations {
             };
         };
     };
-    "531101861dc6b0e9f05f28f660fa9714": {
+    "products.cancel.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13566,7 +17086,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13580,7 +17100,7 @@ export interface operations {
             };
         };
     };
-    "56f1a21f798423cff1b0d89424963585": {
+    "productables.attach.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13602,7 +17122,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13616,7 +17136,7 @@ export interface operations {
             };
         };
     };
-    "642767a9458d541b136cc3114e9f166a": {
+    "categories.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -13631,7 +17151,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13645,7 +17165,7 @@ export interface operations {
             };
         };
     };
-    "1ee3aca34ac49979b157a405cb6efdfc": {
+    "categories.tree.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -13660,7 +17180,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13674,7 +17194,7 @@ export interface operations {
             };
         };
     };
-    "514c199ca0c425cb624bec8fa22630ca": {
+    "admin.categories.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -13691,7 +17211,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13705,7 +17225,7 @@ export interface operations {
             };
         };
     };
-    "848b5785dc48309d934b6c265c7caa83": {
+    "admin.categories.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13738,7 +17258,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13752,7 +17272,7 @@ export interface operations {
             };
         };
     };
-    "6a91c2e277ff9fe0374afb0061767394": {
+    "admin.categories.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -13769,7 +17289,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13783,7 +17303,7 @@ export interface operations {
             };
         };
     };
-    a8ab23678413a1cbbf743dac4d7a24b3: {
+    "admin.categories.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13814,7 +17334,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -13828,7 +17348,7 @@ export interface operations {
             };
         };
     };
-    e860a9a9b60ce1db6f041d425db8af74: {
+    "admin.categories.sort.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -13855,7 +17375,7 @@ export interface operations {
             };
         };
     };
-    f7d04de5330f160cc3a0cb519e16d858: {
+    "cmi5.upload": {
         parameters: {
             query?: never;
             header?: never;
@@ -13876,7 +17396,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Cmi5Response"];
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -13901,7 +17423,7 @@ export interface operations {
             };
         };
     };
-    "110a514ff187653c675f7bbd455f20cf": {
+    "cmi5.player.by-cmi5auid.get": {
         parameters: {
             query?: {
                 /** @description `json` returns {data: {url, origin}} instead of the player page */
@@ -13949,7 +17471,7 @@ export interface operations {
             };
         };
     };
-    "21e31b44d5e341c5a1a9a8c85f802369": {
+    "cmi5.list": {
         parameters: {
             query?: {
                 /** @description page */
@@ -13968,7 +17490,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Cmi5PageResponse"];
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -13993,7 +17517,7 @@ export interface operations {
             };
         };
     };
-    "8aa4f88b421ee0fc028851f31b036bff": {
+    "cmi5.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -14010,7 +17534,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -14035,7 +17561,1554 @@ export interface operations {
             };
         };
     };
-    "11ce36e434fd8ba87d204ab008a058f2": {
+    "code-exercises.launches.by-topic.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {runner: {url, version}, exercise, attempts}; runner.url is the sandboxed runner page on the content origin */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise, or the type is switched off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "code-exercises.topics.by-topic.attempts.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The caller's own attempts, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "code-exercises.topics.by-topic.attempts.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    results: {
+                        name: string;
+                        /** @enum {string} */
+                        status: "pass" | "fail" | "error";
+                        message?: string | null;
+                    }[];
+                    /** @description sha256 of the submitted files */
+                    files_hash?: string | null;
+                    runner?: string | null;
+                    duration_ms?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description {attempt, status}; status 1 means the topic is complete */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid result */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.code-exercises.topics.by-topic.preview.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {runner, exercise} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed to edit the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.code-exercises.topics.by-topic.attempts.get": {
+        parameters: {
+            query?: {
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A page of attempts with the learner's id and name */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed to edit the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "commerce.webhooks.by-provider.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description duplicate delivery, nothing to do */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description the event is stored and queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description invalid or expired signature, malformed event or another tenant's channel */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown provider or webhooks not configured */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description body too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rate limit */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.assignments.get": {
+        parameters: {
+            query?: {
+                status?: "assigned" | "overdue" | "completed" | "cancelled";
+                user_id?: number;
+                course_id?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description assignments with user, course and certificate */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.assignments.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    course_id: number;
+                    user_ids: number[];
+                    /** Format: date-time */
+                    due_at?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description one assignment per user (existing open ones are returned unchanged) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.assignments.by-id.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description cancelled assignment */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "compliance.my-assignments.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the logged-in user's assignments, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "compliance.team.assignments.get": {
+        parameters: {
+            query?: {
+                status?: "assigned" | "overdue" | "completed" | "cancelled";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description assignments of the users that have the logged-in user as manager (empty for everyone else) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.compliance.competencies.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description competencies with nested children */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.competencies.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    code?: string | null;
+                    description?: string | null;
+                    parent_id?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description the competency */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.competencies.by-id.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the competency */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Moving it under itself or its descendants */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.competencies.by-id.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Unknown competency */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.courses.by-course.competencies.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description tags with status, source, rationale and the lessons they point at */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.courses.by-course.competencies.by-competency.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                competency: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the confirmed tag */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Unknown course or competency */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.courses.by-course.competencies.by-competency.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                competency: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description removed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.courses.by-course.competencies.suggest.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the new suggestions, for the author to confirm */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI is not configured or the call failed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.courses.by-course.settings.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description mandatory, validity_days, recertify_before_days, default_due_days, reminder_days, escalation_days */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.courses.by-course.settings.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    mandatory?: boolean;
+                    /** @description Days a new certificate stays valid; null = never expires */
+                    validity_days?: number | null;
+                    /** @description Start recertification this many days before expiry; 0 = off */
+                    recertify_before_days?: number | null;
+                    /** @description Due date offset for assignments without an explicit date */
+                    default_due_days?: number | null;
+                    reminder_days?: number[] | null;
+                    escalation_days?: number[] | null;
+                };
+            };
+        };
+        responses: {
+            /** @description saved settings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.dashboard.get": {
+        parameters: {
+            query?: {
+                /** @description Limit to one course */
+                course_id?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description assignments, certificates and courses blocks */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.managers.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description user_id and manager_id pairs */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.managers.by-user.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    manager_id?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description the link, or null when cleared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.paths.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description paths with steps (course_id, position, prerequisites) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.paths.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    title: string;
+                    description?: string | null;
+                    /** @description Ordered; prerequisites are course ids of this path */
+                    steps?: {
+                        course_id?: number;
+                        prerequisites?: number[];
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description the path */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course, foreign prerequisite or a cycle */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.paths.by-id.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the path with enrolment counts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Unknown path */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.paths.by-id.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the path */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.paths.by-id.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Unknown path */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.paths.by-id.enrollments.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    user_ids: number[];
+                    /** Format: date-time */
+                    due_at?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description enrolments (a user already in the path keeps theirs) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "compliance.my-paths.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description each enrolment with the path steps and their status (done, available, locked) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.compliance.report.get": {
+        parameters: {
+            query: {
+                dataset: "assignments" | "certificates" | "audit";
+                course_id?: number;
+                user_id?: number;
+                /** @description assignments: assigned, overdue, completed, cancelled; certificates: valid, expired, revoked */
+                status?: string;
+                /** @description assigned or issued on or after this date */
+                from?: string;
+                /** @description assigned or issued on or before this date */
+                to?: string;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description columns and rows of the dataset, with pagination meta */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown dataset */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.report.export.get": {
+        parameters: {
+            query: {
+                dataset: "assignments" | "certificates" | "audit";
+                format?: "csv" | "jsonl";
+                course_id?: number;
+                user_id?: number;
+                status?: string;
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description file download */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown dataset */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.rules.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description rules */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.rules.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    path_id: number;
+                    active?: boolean;
+                    due_days?: number | null;
+                    /** @description All must hold */
+                    conditions: {
+                        /** @example department */
+                        attribute?: string;
+                        /** @enum {string} */
+                        operator?: "equals" | "not_equals" | "in" | "contains" | "starts_with" | "ends_with" | "exists";
+                        value?: string[];
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description the rule */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.rules.by-id.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the rule */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Unknown rule */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.rules.by-id.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Unknown rule */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.rules.by-id.evaluate.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @default true */
+                    dry_run?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description count and a sample of the users that match and are not enrolled yet; enrolled count when dry_run is false */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.compliance.schedules.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description schedules */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.schedules.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    /** @enum {string} */
+                    dataset: "assignments" | "certificates" | "audit";
+                    /** @enum {string} */
+                    frequency: "daily" | "weekly" | "monthly";
+                    /** @enum {string} */
+                    format?: "csv" | "jsonl";
+                    /** @description course_id, user_id, status, from, to */
+                    filters?: Record<string, never>;
+                    /** @description Ids of users of this tenant */
+                    recipient_ids: number[];
+                };
+            };
+        };
+        responses: {
+            /** @description the schedule; the first run is the next 06:00 */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.schedules.by-id.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the schedule */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Unknown schedule */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.compliance.schedules.by-id.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Unknown schedule */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "compliance.my-skills.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description competencies with the courses that prove them, earned_at and expires_at */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.compliance.users.by-user.skills.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description competencies */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown user */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.consultation-access-enquiries.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -14071,7 +19144,7 @@ export interface operations {
             };
         };
     };
-    "02967e1d0908030ef0fee525d9b3959a": {
+    "admin.consultation-access-enquiries.approve.by-proposedtermid.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -14093,12 +19166,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "6a0ccec87f2ec1c7b8f7e63232581c24": {
+    "admin.consultation-access-enquiries.disapprove.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -14120,12 +19193,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "162a12f50b84638a4904b5234dfaf477": {
+    "consultation-access-enquiries.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -14161,7 +19234,7 @@ export interface operations {
             };
         };
     };
-    "8035621ce78dc0813cd8463d10829ba4": {
+    "consultation-access-enquiries.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -14189,7 +19262,7 @@ export interface operations {
             };
         };
     };
-    "5726c0775ea4cad02e1bbfa842f5f6fc": {
+    "consultation-access-enquiries.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -14215,7 +19288,7 @@ export interface operations {
             };
         };
     };
-    "514c6829bb48edc77d3ab191ec0a33e5": {
+    "consultation-access-enquiries.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -14233,12 +19306,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    f942c7e93db66baaa3b622b191b89475: {
+    "consultation-access-enquiries.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -14269,7 +19342,7 @@ export interface operations {
             };
         };
     };
-    "781c6e52904c5643ac8a5d3f877d0b0c": {
+    "consultation-access-enquiries.by-id.join.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -14295,7 +19368,7 @@ export interface operations {
             };
         };
     };
-    a195f83b331f6dbba33a7e310bf8be56: {
+    "consultations.report-term.by-orderitemid.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -14319,7 +19392,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -14333,7 +19406,7 @@ export interface operations {
             };
         };
     };
-    "31969a292ef95fb3108bf5dd48725700": {
+    "consultations.approve-term.by-consultationtermid.get": {
         parameters: {
             query: {
                 term: string;
@@ -14353,7 +19426,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -14367,7 +19440,7 @@ export interface operations {
             };
         };
     };
-    "593c3c8a82381143d79fab768132e7d3": {
+    "consultations.reject-term.by-consultationtermid.get": {
         parameters: {
             query: {
                 term: string;
@@ -14387,7 +19460,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -14401,7 +19474,7 @@ export interface operations {
             };
         };
     };
-    c56033f8b7ffe9d440c6e27b5ff95f44: {
+    "consultations.generate-jitsi.by-consultationtermid.get": {
         parameters: {
             query: {
                 term: string;
@@ -14420,7 +19493,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -14434,7 +19507,7 @@ export interface operations {
             };
         };
     };
-    "3bfd217c4937b90cf5dc82be8625b344": {
+    "consultations.get": {
         parameters: {
             query?: {
                 order_by?: "id" | "name" | "status" | "duration" | "active_from" | "active_to" | "created_at";
@@ -14462,12 +19535,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "20bed9d7e23e02e00e5bd6e28a0ff705": {
+    "consultations.me.get": {
         parameters: {
             query?: {
                 order_by?: "finished_at" | "started_at" | "created_at" | "name";
@@ -14497,12 +19570,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "250b6ce79637063601306450aa5b5495": {
+    "consultations.proposed-terms.by-orderitemid.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -14519,7 +19592,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -14533,7 +19606,7 @@ export interface operations {
             };
         };
     };
-    "4b28bd8af12cd6ca22c3ce60f8067bfd": {
+    "consultations.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -14551,12 +19624,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "20700af7b0c2aa49ef3b55e1d85feac1": {
+    "consultations.my-schedule.get": {
         parameters: {
             query?: {
                 /** @description Consultation ID integer array */
@@ -14574,12 +19647,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "9815556e99335ea3d403e97234eeb4d5": {
+    "consultations.finish-term.by-consultationtermid.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -14605,7 +19678,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -14619,7 +19692,7 @@ export interface operations {
             };
         };
     };
-    "504c6a188c8bc83df97748f044df1d37": {
+    "admin.consultations.get": {
         parameters: {
             query?: {
                 order_by?: "id" | "name" | "status" | "duration" | "active_from" | "active_to" | "created_at";
@@ -14647,12 +19720,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "8a625edb04844cb1358c9f758fde61d4": {
+    "admin.consultations.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -14671,12 +19744,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    c89e9d32aa16d3423318eb4057301c9d: {
+    "admin.consultations.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -14694,12 +19767,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "146c506b1480b60dd6fe43a46742d826": {
+    "admin.consultations.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -14721,12 +19794,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "3e0d51e402f67cc6b397fba4f58f8a7b": {
+    "admin.consultations.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -14744,12 +19817,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "864c8196e30ee5286c8afc36adab5601": {
+    "admin.consultations.by-id.schedule.get": {
         parameters: {
             query?: {
                 /** @description Course term date from */
@@ -14774,18 +19847,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    ed5f89a40f4d2400b03578e09a44d599: {
+    "consultations.change-term.by-consultationtermid.post": {
         parameters: {
             query?: never;
             header?: never;
             path: {
                 /** @description id of Consultation Term */
-                id: number;
+                consultationTermId: number;
             };
             cookie?: never;
         };
@@ -14807,12 +19880,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    e601ae4d0fc00b07e34e0e21e33f17bd: {
+    "admin.consultations.users.assignable.get": {
         parameters: {
             query?: {
                 search?: string;
@@ -14829,7 +19902,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -14843,7 +19916,7 @@ export interface operations {
             };
         };
     };
-    "0034a37cff4ee3fc687bd797c5c9b999": {
+    "core.packages.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -14858,12 +19931,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "85f7ae7cab7ab8ec520e63e6c427b339": {
+    "csp-report.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -14914,7 +19987,7 @@ export interface operations {
             };
         };
     };
-    "1019392d092cea54f12c8fe80cccf2bf": {
+    "admin.csp-reports.get": {
         parameters: {
             query?: {
                 per_page?: number;
@@ -14967,7 +20040,7 @@ export interface operations {
             };
         };
     };
-    "1125991bf9cc6c8f0c66c0899d22d579": {
+    "health-check.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -14992,7 +20065,7 @@ export interface operations {
             };
         };
     };
-    a19701d8602644735dee3c9431c55f93: {
+    "admin.course-access-enquiries.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -15024,7 +20097,7 @@ export interface operations {
             };
         };
     };
-    "1e29763d7d23ae26cea4739459f844ca": {
+    "admin.course-access-enquiries.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -15042,12 +20115,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "23b5aa60144c248cef7fd0d4fe534fdd": {
+    "admin.course-access-enquiries.approve.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15065,12 +20138,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "6cbfed309d67218dcdba1d8771d13b78": {
+    "admin.courses.by-id.access.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15088,12 +20161,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
         };
     };
-    "01b212445a3448fde31b8e8e4f42677c": {
+    "admin.courses.by-id.access.add.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15118,12 +20191,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
         };
     };
-    bc1663894f8e9ee91d9fc9be2eb6d433: {
+    "admin.courses.by-id.access.remove.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15148,12 +20221,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
         };
     };
-    aa0a04f84fdc42473743f5c8d08ab1f8: {
+    "admin.courses.by-id.access.set.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15178,12 +20251,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
         };
     };
-    "5208fc718a59a7f1aecd3a622d787b73": {
+    "courses.my.get": {
         parameters: {
             query?: {
                 active?: 0 | 1;
@@ -15200,12 +20273,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    a69f18183346e2669bef06c107309108: {
+    "course-access-enquiries.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -15234,7 +20307,7 @@ export interface operations {
             };
         };
     };
-    c11f95bfb47d8635701256be2fda32da: {
+    "course-access-enquiries.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15262,7 +20335,7 @@ export interface operations {
             };
         };
     };
-    b3fd2c8be8fd6e1401c9d7ca941c4c95: {
+    "course-access-enquiries.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -15280,12 +20353,341 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    cd5468d0a1a722714a8a897f6bfa6afc: {
+    "admin.course-as-code.courses.by-course.blueprint.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the blueprint with versionId, appliedVersionId and drift */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description NOT_ADOPTED (no builder session) or NO_BLUEPRINT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.imports.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    document: Record<string, never>;
+                    baseVersionId: string;
+                    message?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description unchanged: the document equals the current version, no version is created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description proposed version, element diff and warnings */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown session */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description document too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.drift.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    dryRun?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description nothing to absorb (or dryRun): the same listing, no version */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description proposed version with what was absorbed and what could not be mapped back */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown session */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description NO_BLUEPRINT or NOT_APPLIED */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description INVALID_BLUEPRINT */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the version and its document */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown version */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.diff.get": {
+        parameters: {
+            query?: {
+                against?: string;
+            };
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description changes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.approve.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description approved; apply it next */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description APPROVAL_REQUIRES_HUMAN */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not proposed, or STALE_PROPOSAL (the course changed after the import was proposed) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.apply.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description apply run */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.publish.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description published */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description blocking items or unacknowledged warnings */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-builder.sessions.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15299,11 +20701,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "6a2456054c25d9e388382c19ee5667de": {
+    "admin.course-builder.sessions.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15323,7 +20727,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description daily limit reached */
             429: {
@@ -15341,7 +20747,7 @@ export interface operations {
             };
         };
     };
-    "097a8f957c1e9c480479a4b73098736c": {
+    "admin.course-builder.sessions.by-session.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15357,7 +20763,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description another author's session */
             403: {
@@ -15375,7 +20783,7 @@ export interface operations {
             };
         };
     };
-    "8f977ac329aa2e1720a4c72775c60d84": {
+    "admin.course-builder.sessions.by-session.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -15391,11 +20799,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    e2d9e3dd4d42bf8a1e1e06945b4400a3: {
+    "admin.course-builder.sessions.by-session.sources.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15418,7 +20828,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description rejected upload */
             422: {
@@ -15429,7 +20841,7 @@ export interface operations {
             };
         };
     };
-    e5ee3815ce7b28ec54e83ff99f8b9ce3: {
+    "admin.course-builder.sessions.by-session.sources.by-source.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15446,11 +20858,101 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-builder.sessions.by-session.citations.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description sources, sections, citing elements */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-builder.sessions.by-session.outline.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    action?: string;
+                    id?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description new author version, re-apply run */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description the edit is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
                 content?: never;
             };
         };
     };
-    "5514f96c136b291b703df1c82cb06c39": {
+    "admin.course-builder.sessions.by-session.elements.by-element.variants.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+                element: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    count?: number;
+                    instruction?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description run id */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-builder.fragments.by-fragment.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15466,11 +20968,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "13275e2e7b5e12fc78da7860840babe3": {
+    "admin.course-builder.sessions.by-session.brief.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15486,11 +20990,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "29adfbac442e3777b7f41b8d0531463c": {
+    "admin.course-builder.sessions.by-session.brief.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -15510,7 +21016,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description invalid */
             422: {
@@ -15521,7 +21029,7 @@ export interface operations {
             };
         };
     };
-    "24836a812e2252ba271af42a7ae04f58": {
+    "admin.course-builder.sessions.by-session.runs.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15544,11 +21052,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    ad22ae07ebbbb386a4c6160c18d6c433: {
+    "admin.course-builder.runs.by-run.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15588,7 +21098,7 @@ export interface operations {
             };
         };
     };
-    c6f4943df5cfe1e54dd2ff7d3daf8357: {
+    "admin.course-builder.runs.by-run.cancel.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15604,11 +21114,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    f1e869affcbe6253b50ab68066ad5d2a: {
+    "admin.course-builder.runs.by-run.steps.by-step.retry.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15625,11 +21137,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "8ae74d5bbb65bad917bdebb71726b507": {
+    "admin.course-builder.sessions.by-session.versions.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15645,11 +21159,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "7385a7e2cb179ef1e527400ad9355a92": {
+    "admin.course-builder.versions.by-version.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15665,11 +21181,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "5fa4979aba6423ee3ddd249b8d96d943": {
+    "admin.course-builder.versions.by-version.diff.get": {
         parameters: {
             query?: {
                 against?: string;
@@ -15687,11 +21205,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "363fe3c5faaf019b7aeccb8ce0692be2": {
+    "admin.course-builder.versions.by-version.approve.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15707,11 +21227,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
         };
     };
-    "894dc1e40da11f4ee1b272de9535e40f": {
+    "admin.course-builder.versions.by-version.reject.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15727,11 +21249,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
         };
     };
-    "78c59c3a3e86e4b27532721ce0e571f7": {
+    "admin.course-builder.versions.by-version.restore.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15747,11 +21271,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
         };
     };
-    dd74d5b979952d2b47442749f468fa6c: {
+    "admin.course-builder.sessions.by-session.undo.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15767,11 +21293,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
         };
     };
-    "109f522dfbb519cdd9c95d9fc358db68": {
+    "admin.course-builder.sessions.by-session.redo.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15787,11 +21315,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
         };
     };
-    "509821f6c31ea0c0c3cec6ae22f4b45b": {
+    "admin.course-builder.sessions.by-session.apply.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15807,11 +21337,68 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-builder.sessions.by-session.publish-check.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description blocking, warnings and facts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-builder.sessions.by-session.new-site.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
                 content?: never;
             };
         };
     };
-    fb8f6decce43224a86c2af1707019831: {
+    "admin.course-builder.sessions.by-session.publish.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15827,11 +21414,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    f914d359cc7a401202a1337d2ddd97f1: {
+    "admin.course-builder.sessions.by-session.usage.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15847,11 +21436,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    cb4592a0eb6d5d81094288be826850ad: {
+    "admin.course-builder.sessions.by-session.events.get": {
         parameters: {
             query?: {
                 /** @description resume after this event id (or Last-Event-ID header) */
@@ -15874,7 +21465,7 @@ export interface operations {
             };
         };
     };
-    "12e665df460272401628fdf025e0bfcb": {
+    "admin.courses.by-id.export.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15891,7 +21482,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -15905,7 +21496,7 @@ export interface operations {
             };
         };
     };
-    "2fb2271978b3099667ff27474928065b": {
+    "admin.courses.zip.import.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -15926,7 +21517,26 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @description The imported course (id, title, status and the other simple-resource fields) */
+                        data?: Record<string, never>;
+                    };
+                };
+            };
+            /** @description The package could not be imported */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error?: string;
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -15951,7 +21561,7 @@ export interface operations {
             };
         };
     };
-    "4affb4f5312617a0f291317f4db5e253": {
+    "admin.courses.by-id.clone.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -15968,7 +21578,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -15982,7 +21592,7 @@ export interface operations {
             };
         };
     };
-    "8dbbc76a12bb48ea76260f4658f1b513": {
+    "courses.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "title" | "duration" | "only_with_categories";
@@ -16022,12 +21632,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    b88c124a83489d38ea53361aa351cb00: {
+    "admin.courses.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "title" | "duration";
@@ -16063,12 +21673,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "305a94df16182e2145052d6835dcefe4": {
+    "admin.courses.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -16088,12 +21698,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "76c49eb02e17ddf51e437cfbd2809f54": {
+    "courses.authored.get": {
         parameters: {
             query?: {
                 /** @description Pagination Page Number */
@@ -16117,12 +21727,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "55583bb7a91b5bac0b2f77eac0dac864": {
+    "courses.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16140,12 +21750,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    ece2ab208e082e2dbb80db97dfc90372: {
+    "courses.by-id.program.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16163,12 +21773,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    ad5150de9bec464fbcc2e97d2e715d13: {
+    "courses.by-id.scorm.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16191,7 +21801,7 @@ export interface operations {
             };
         };
     };
-    "92eda5028c4f5e86d45aa9e583c54e7d": {
+    "admin.courses.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -16213,12 +21823,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    dade32d2819b8447244927f1b4aef9d9: {
+    "admin.courses.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -16236,12 +21846,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "350335404c141a6010dada19626a0ac1": {
+    "admin.courses.sort.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -16264,12 +21874,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "30e57f7ede72204fc32002ac6e47ceb6": {
+    "tags.uniquetags.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16284,12 +21894,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "text/html": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    e753898d94754de9a9fc5b7c7198fc92: {
+    "courses.by-id.preview.by-topic-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16314,7 +21924,7 @@ export interface operations {
             };
         };
     };
-    d7ee8a2ec5b5b9429920b61ef4909636: {
+    "tutors.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16329,7 +21939,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -16343,7 +21953,7 @@ export interface operations {
             };
         };
     };
-    "0d07ff6a375253e0a29a4437f2deba75": {
+    "tutors.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16360,7 +21970,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -16374,7 +21984,7 @@ export interface operations {
             };
         };
     };
-    f6d80c1aa2b03f013a50eb59240049bf: {
+    "admin.courses.users.assignable.get": {
         parameters: {
             query?: {
                 search?: string;
@@ -16391,7 +22001,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -16405,7 +22015,7 @@ export interface operations {
             };
         };
     };
-    "4c5387bd11b46d9b0f98f04c7e6da633": {
+    "courses.progress.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16420,7 +22030,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -16434,7 +22044,7 @@ export interface operations {
             };
         };
     };
-    "173790a724372d7a2b3007a19c5ddc45": {
+    "courses.progress.paginated.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16453,7 +22063,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -16467,7 +22077,7 @@ export interface operations {
             };
         };
     };
-    cf7e8fa031fede6b823a42d6a9b1f6ba: {
+    "courses.progress.by-course-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16484,7 +22094,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -16498,7 +22108,7 @@ export interface operations {
             };
         };
     };
-    a7e82bd2aad30db84dd26340e634e878: {
+    "courses.progress.by-course-id.patch": {
         parameters: {
             query: {
                 "progress[]": {
@@ -16520,7 +22130,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -16534,7 +22144,7 @@ export interface operations {
             };
         };
     };
-    "50545574cb8b5368ed90d6437e4b9c35": {
+    "courses.progress.by-topic-id.ping.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -16551,7 +22161,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -16565,7 +22175,7 @@ export interface operations {
             };
         };
     };
-    "57778fb12c9d40574ab3a5628bbbb0cc": {
+    "courses.progress.by-topic-id.h5p.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -16590,7 +22200,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -16604,7 +22214,7 @@ export interface operations {
             };
         };
     };
-    "9778d710cd0d45f92cf8ed18ec374632": {
+    "admin.lessons.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16619,12 +22229,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "5e245f01cd24f62c62e91454e1225fef": {
+    "admin.lessons.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -16643,12 +22253,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "880b86d420d35476828b4a647a56e6cb": {
+    "admin.lessons.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16666,12 +22276,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    ba4d1e75c7877ffcdd70919bd53b5821: {
+    "admin.lessons.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -16693,12 +22303,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "9a4aedb4e3d4044abd7db88ba7241d03": {
+    "admin.lessons.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -16716,12 +22326,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    c1b22d4e72c30ba29c8e724fe601fd1e: {
+    "admin.lessons.by-id.clone.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -16739,12 +22349,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "44d672dcb8ee2d2c15baf1a8ec4bdfae": {
+    "admin.topics.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16759,12 +22369,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "2795613b867655f0906bd7d206e532dd": {
+    "admin.topics.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -16783,12 +22393,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "186e4c1ca21c0a47ff395c2e08b20add": {
+    "admin.topics.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16806,12 +22416,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "13b79ade75c8e981d77b519de1abcf19": {
+    "admin.topics.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -16833,12 +22443,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "3c4bb6f3addcac8c836067ef7896f941": {
+    "admin.topics.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -16856,12 +22466,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "0eb3828eb09a2e9be8c53a2fe1eb6cff": {
+    "admin.topics.types.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16876,12 +22486,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "71d8e8d044b96b0f9c9a5ca9c1d50df3": {
+    "admin.topics.by-id.clone.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -16899,12 +22509,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "3117627b7fdfedb4eced4d066f03c4ff": {
+    "admin.topics.by-topic-id.resources.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -16922,12 +22532,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    b872fa6a2e2c071382bdc3b52a4fc39a: {
+    "admin.topics.by-topic-id.resources.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -16952,12 +22562,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "6a8b27ea0809208bdfac5285b5f0a615": {
+    "admin.topics.by-topic-id.resources.by-resource-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -16977,12 +22587,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    c30a77f0711d6d95f5a4806624fea923: {
+    "admin.topics.by-topic-id.resources.by-resource-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -17008,12 +22618,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "86a961f958e098f7d3f3b1feff88ae16": {
+    "admin.csv.groups.group-id.get": {
         parameters: {
             query?: {
                 /** @description exported file format */
@@ -17031,7 +22641,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/csv": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
             /** @description Bad request */
@@ -17045,7 +22655,7 @@ export interface operations {
             };
         };
     };
-    "4ab1a2b914951ad03a93b37160475992": {
+    "csv.groups": {
         parameters: {
             query?: never;
             header?: never;
@@ -17071,7 +22681,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -17096,7 +22708,7 @@ export interface operations {
             };
         };
     };
-    "51e5fb7731a4368ab9aa3c2288210641": {
+    "admin.csv.users.get": {
         parameters: {
             query?: {
                 /** @description will search through first_name, last_name and email */
@@ -17140,7 +22752,7 @@ export interface operations {
             };
         };
     };
-    "7876209e5143adbf36577a9fab784b17": {
+    "csv.users-add": {
         parameters: {
             query?: never;
             header?: never;
@@ -17166,7 +22778,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -17191,7 +22805,7 @@ export interface operations {
             };
         };
     };
-    "9a87b65bcd8010fe27d4496d482090b4": {
+    "demo.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -17232,7 +22846,7 @@ export interface operations {
             };
         };
     };
-    bf97bd9d4463c3eee2373f7234beebac: {
+    "demo.login.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -17281,7 +22895,7 @@ export interface operations {
             };
         };
     };
-    "0e0a2621c2766d73ee011a72e4a6c6f3": {
+    "admin.dictionaries.by-id.access.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -17308,7 +22922,7 @@ export interface operations {
             };
         };
     };
-    "312f81db9aedfdc2cf04a19266a11e02": {
+    "admin.dictionaries.by-id.access.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -17338,7 +22952,7 @@ export interface operations {
             };
         };
     };
-    "702448cdd815a4bce2db8145bca5a6ad": {
+    "dictionaries.access.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -17362,7 +22976,7 @@ export interface operations {
             };
         };
     };
-    "09a4218182f6b9da5a54961cd5f4105f": {
+    "admin.dictionaries.get": {
         parameters: {
             query?: {
                 order_by?: "id" | "name" | "created_at";
@@ -17395,7 +23009,7 @@ export interface operations {
             };
         };
     };
-    "1bbf1651b2fd1d53309eec047bb8afeb": {
+    "admin.dictionaries.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -17423,7 +23037,7 @@ export interface operations {
             };
         };
     };
-    be8e7e282980904a2df9749faa4cb5ae: {
+    "admin.dictionaries.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -17450,7 +23064,7 @@ export interface operations {
             };
         };
     };
-    f516347bc68b0736749d6942bf60da91: {
+    "admin.dictionaries.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -17481,7 +23095,7 @@ export interface operations {
             };
         };
     };
-    fac0d36a03844b19109b1f995c9793a3: {
+    "admin.dictionaries.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -17507,7 +23121,7 @@ export interface operations {
             };
         };
     };
-    "27e24f60c10bb388615255104963261a": {
+    "admin.dictionary-words.get": {
         parameters: {
             query?: {
                 order_by?: "id" | "name" | "created_at";
@@ -17542,7 +23156,7 @@ export interface operations {
             };
         };
     };
-    "157b3c5c32d268e02d17179c8880c438": {
+    "admin.dictionary-words.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -17570,7 +23184,7 @@ export interface operations {
             };
         };
     };
-    "7616647b88e2500b76e643df3351106e": {
+    "admin.dictionary-words.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -17597,7 +23211,7 @@ export interface operations {
             };
         };
     };
-    a8bde89217771c5debcd25f4cadc32e3: {
+    "admin.dictionary-words.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -17628,7 +23242,7 @@ export interface operations {
             };
         };
     };
-    ed5bd73255860665cae4a0a59e2a1b01: {
+    "admin.dictionary-words.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -17654,7 +23268,7 @@ export interface operations {
             };
         };
     };
-    "8ee34cec3905bac9b0aa4aa0efee6623": {
+    "admin.dictionary-words.import.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -17681,7 +23295,7 @@ export interface operations {
             };
         };
     };
-    a0adaf75cfb2131780d5b9c5acc224f2: {
+    "dictionaries.by-slug.words.get": {
         parameters: {
             query?: {
                 /** @description word %ILIKE% */
@@ -17713,7 +23327,7 @@ export interface operations {
             };
         };
     };
-    e6a5b3238b24239d2e7f7e3a23765d27: {
+    "dictionaries.by-slug.words.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -17748,7 +23362,7 @@ export interface operations {
             };
         };
     };
-    "5837e9601fa33c099afdf5c3629147b1": {
+    "dictionaries.by-slug.words.categories.get": {
         parameters: {
             query?: {
                 /** @description word %ILIKE% */
@@ -17780,7 +23394,82 @@ export interface operations {
             };
         };
     };
-    "6326becc1437440c7baf201e5dab9191": {
+    "admin.example-plugin.greetings.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExamplePluginSendGreetingRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        data?: components["schemas"]["ExamplePluginGreetingResource"];
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing the example-plugin_send-greeting permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "example-plugin.hello.get": {
+        parameters: {
+            query?: {
+                name?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        data?: components["schemas"]["ExamplePluginGreetingResource"];
+                        message?: string;
+                    };
+                };
+            };
+        };
+    };
+    "admin.file.list.get": {
         parameters: {
             query?: {
                 directory?: string;
@@ -17847,7 +23536,7 @@ export interface operations {
             };
         };
     };
-    "89d9f58f0dfcd2c072d1d5169de55c9b": {
+    "admin.file.find.get": {
         parameters: {
             query: {
                 directory?: string;
@@ -17915,7 +23604,7 @@ export interface operations {
             };
         };
     };
-    "6dee3e2f03d6b3a2c672cb393c4f16f4": {
+    "admin.file.upload.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -17932,12 +23621,19 @@ export interface operations {
             };
         };
         responses: {
-            /** @description successful operation */
+            /** @description Paths of the stored files */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: string[];
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -17953,13 +23649,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description one of the uploaded files already exists */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
             /** @description server-side error */
             422: {
                 headers: {
@@ -17969,7 +23658,7 @@ export interface operations {
             };
         };
     };
-    "0a11a6015bea01949983a115bf456700": {
+    "admin.file.move.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -17985,12 +23674,20 @@ export interface operations {
             };
         };
         responses: {
-            /** @description successful operation */
+            /** @description The file was moved */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description invalid request */
             302: {
@@ -18029,7 +23726,7 @@ export interface operations {
             };
         };
     };
-    bf283602724612d612442f2b3d3a2ae5: {
+    "admin.file.delete.delete": {
         parameters: {
             query: {
                 url: string;
@@ -18040,12 +23737,20 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description successful operation */
+            /** @description The file was deleted */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description file doesn't exists */
             400: {
@@ -18084,7 +23789,7 @@ export interface operations {
             };
         };
     };
-    f3e09ac4bd2fa77bb48d2614c58ea494: {
+    "admin.h5p.contents.get": {
         parameters: {
             query?: {
                 title?: string;
@@ -18127,7 +23832,7 @@ export interface operations {
             };
         };
     };
-    b0a324657785d13259c1774c2e3e6ee2: {
+    "admin.h5p.unused.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -18164,7 +23869,1245 @@ export interface operations {
             };
         };
     };
-    d1539f040506efdd60023c039a071501: {
+    "identity.audit.list": {
+        parameters: {
+            query?: {
+                action?: string;
+                provider_id?: string;
+                /** @description Page: entries older than this id */
+                before_id?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Entries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityAuditEntry"][];
+                    };
+                };
+            };
+            /** @description Needs identity_audit_read */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.audit.verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            ok?: boolean;
+                            checked?: number;
+                            broken_id?: number | null;
+                            reason?: string | null;
+                        };
+                    };
+                };
+            };
+            /** @description Needs identity_audit_read */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Providers */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityProvider"][];
+                    };
+                };
+            };
+            /** @description Needs identity_provider_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentityProviderInput"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityProvider"];
+                    };
+                };
+            };
+            /** @description Needs identity_provider_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid input, duplicate slug, or the academy has too many providers */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Provider */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityProvider"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentityProviderInput"];
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityProvider"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid input */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.metadata.refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @description Apply a changed entity id and replace the trusted certificates with the ones in the metadata (an administrator's decision) */
+                    accept_changes?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Outcome */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityMetadataRefresh"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not a SAML provider with a metadata URL */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.spkeys.rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description prepare: generate the next pair and publish it in the SP metadata; promote: make it the current pair once the identity provider has imported it
+                     * @enum {string}
+                     */
+                    step: "prepare" | "promote";
+                };
+            };
+        };
+        responses: {
+            /** @description Rotated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            step?: string;
+                            /** @description SHA-256 of the certificate */
+                            fingerprint?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not a SAML provider, or nothing prepared to promote */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.metadata": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description SAML 2.0 metadata XML: entity id (this URL), assertion consumer service, single logout service and the certificates to import at the identity provider */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/samlmetadata+xml": string;
+                };
+            };
+            /** @description Unknown provider or not a SAML provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.acs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": {
+                    /** @description Base64 SAML response, at most 256 KB */
+                    SAMLResponse: string;
+                    /** @description The signed login state this service gave the identity provider in the AuthnRequest redirect */
+                    RelayState: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Redirect to the return URL with ?code=... (success) or ?error=provider_failed|link_required|email_required|email_unverified|account_unavailable|signup_disabled */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The state is invalid, expired or already used (nothing trusted says where to send the browser) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The body is too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.slo": {
+        parameters: {
+            query?: {
+                SAMLRequest?: string;
+                SAMLResponse?: string;
+                RelayState?: string;
+                SigAlg?: string;
+                Signature?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Logged out; the identity provider has no logout response endpoint */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Redirect to the identity provider with our LogoutResponse, or to the return URL after a logout started here */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The message is not valid: unsigned, wrong issuer or destination, expired, replayed or unknown */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown provider or not a SAML provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.slo.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": {
+                    SAMLRequest?: string;
+                    SAMLResponse?: string;
+                    RelayState?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Logged out */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Redirect to the identity provider with our LogoutResponse, or to the return URL */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The message is not valid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown provider or not a SAML provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: uri
+                     * @description Where the browser lands after the identity provider logged it out; must be an origin of this academy
+                     */
+                    return_to?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description The token is revoked. redirect_url is the signed LogoutRequest URL to send the browser to, or null when this login did not come from the provider or it has no single logout */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** Format: uri */
+                            redirect_url?: string | null;
+                        };
+                    };
+                };
+            };
+            /** @description Unknown provider or not a SAML provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Return URL not allowed */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.public": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Enabled providers: slug, name and protocol, nothing else */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @example acme-keycloak */
+                            slug?: string;
+                            /** @example Acme staff */
+                            name?: string;
+                            /** @enum {string} */
+                            protocol?: "oidc" | "saml";
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    "identity.sso.start": {
+        parameters: {
+            query: {
+                /** @description base64url SHA-256 of a verifier only the caller's server knows (43 characters) */
+                challenge: string;
+                /** @description Where to send the browser afterwards; must be an origin of this academy (default: the learner app) */
+                return_to?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Redirect to the provider's authorization endpoint (OpenID Connect) or single sign-on URL with a signed AuthnRequest (SAML) */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown or disabled provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Return URL not allowed or challenge missing */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The provider could not be reached or is misconfigured */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.oidc.callback": {
+        parameters: {
+            query?: {
+                state?: string;
+                code?: string;
+                error?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Redirect to the return URL with ?code=... (success) or ?error=provider_denied|provider_failed|link_required|email_required|email_unverified|account_unavailable|signup_disabled */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The state is invalid, expired or already used */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.sso.exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description The one-time code from the return URL (43 characters) */
+                    code: string;
+                    /** @description The secret whose SHA-256 was sent as the challenge (43 to 128 characters) */
+                    verifier: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Access token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            token?: string;
+                            /** Format: date-time */
+                            expires_at?: string;
+                        };
+                    };
+                };
+            };
+            /** @description The code is invalid, expired, used already or does not match the verifier */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "images.img.get": {
+        parameters: {
+            query: {
+                /** @description Path of the source image on the storage disk */
+                path: string;
+                /** @description Predefined size from `config('images.public.size_definitions')`; wins over `w` and `h` */
+                size?: string;
+                /** @description Target width in pixels; the aspect ratio is kept and the image is never enlarged */
+                w?: number;
+                /** @description Target height in pixels; the aspect ratio is kept and the image is never enlarged */
+                h?: number;
+                /** @description Output format; the source extension is kept when it is omitted or unsupported */
+                format?: "jpg" | "png" | "gif" | "webp";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Redirect to the cached, resized file */
+            302: {
+                headers: {
+                    /** @description URL of the cached file */
+                    Location?: string;
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many requests (`images.render` throttle) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example Too Many Attempts. */
+                        message?: string;
+                    };
+                };
+            };
+        };
+    };
+    "images.img.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    paths: {
+                        /**
+                         * @description Path of the source image on the storage disk
+                         * @example avatars/1/avatar.jpg
+                         */
+                        path: string;
+                        params?: {
+                            /**
+                             * @description Predefined size
+                             * @example thumbnail
+                             */
+                            size?: string | null;
+                            /** @example 100 */
+                            w?: number | null;
+                            /** @example 100 */
+                            h?: number | null;
+                        } | null;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Resized images */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example http://localhost/storage/imgcache/68840270724ee4ff0b481f4fbd2299e13dfe2447.jpg */
+                        url?: string;
+                        /** @example imgcache/68840270724ee4ff0b481f4fbd2299e13dfe2447.jpg */
+                        path?: string;
+                        /** @example 68840270724ee4ff0b481f4fbd2299e13dfe2447 */
+                        hash?: string;
+                    }[];
+                };
+            };
+            /** @description Validation error (more than 20 paths, a dimension outside 1-4096) */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                        errors?: Record<string, never>;
+                    };
+                };
+            };
+            /** @description Too many requests (`images.render` throttle) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example Too Many Attempts. */
+                        message?: string;
+                    };
+                };
+            };
+        };
+    };
+    "interactive.launches.by-topic.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {url, version, manifest, topic}; url is the entry file on the content origin */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an Interactive topic, or the type is switched off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "interactive.showcase.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {url, version, manifest, topic} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description no public interactive, or the type is switched off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "interactive.topics.by-topic.events.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    events: Record<string, never>[];
+                };
+            };
+        };
+        responses: {
+            /** @description {status, progress}; status 1 means the topic is complete */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an Interactive topic */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid batch */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "interactive.list": {
+        parameters: {
+            query?: {
+                search?: string;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description packages */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InteractivePackagePageResponse"];
+                };
+            };
+            /** @description interactive_manage required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "interactive.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                    title?: string;
+                    change_note?: string;
+                    /** @description Confirm the manifest's network origins; without it a manifest that lists some answers 422 with errors.network */
+                    accept_network?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description package with version 1 */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InteractivePackageDetailResponse"];
+                };
+            };
+            /** @description rejected upload or invalid manifest */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "interactive.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description package */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InteractivePackageDetailResponse"];
+                };
+            };
+            /** @description not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "interactive.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description package */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InteractivePackageDetailResponse"];
+                };
+            };
+        };
+    };
+    "interactive.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description topics use this package */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "interactive.versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description versions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InteractiveVersionListResponse"];
+                };
+            };
+        };
+    };
+    "interactive.add-version": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                    change_note?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description package with the new current version */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InteractivePackageDetailResponse"];
+                };
+            };
+            /** @description rejected upload or invalid manifest */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "interactive.preview": {
+        parameters: {
+            query?: {
+                version?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {url, nonce, version, manifest} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InteractivePreviewResponse"];
+                };
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "order-invoices.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18180,7 +25123,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -18205,7 +25150,984 @@ export interface operations {
             };
         };
     };
-    ea8eb3db404fe703a1c196cadb0064fc: {
+    "knowledge.exports.list": {
+        parameters: {
+            query?: {
+                course_id?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Exports */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["KnowledgeExport"][];
+                    };
+                };
+            };
+            /** @description Needs knowledge_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "knowledge.exports.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    scope: "course" | "tenant";
+                    /** @description Required for scope course */
+                    course_id?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["KnowledgeExport"];
+                    };
+                };
+            };
+            /** @description Needs knowledge_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course, or a course learners cannot see */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "knowledge.exports.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                export: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["KnowledgeExport"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "knowledge.exports.download": {
+        parameters: {
+            query: {
+                file: "manifest" | "chunks" | "index";
+                /** @description Course of a tenant export (for manifest and chunks) */
+                course?: number;
+            };
+            header?: never;
+            path: {
+                export: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The file (JSON, or JSON Lines for chunks) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/x-ndjson": string;
+                };
+            };
+            /** @description Not found, or the export is not ready */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "knowledge.courses.latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["KnowledgeExport"];
+                    };
+                };
+            };
+            /** @description The course was never exported */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.nudges.opened.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    n: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Recorded (once per nudge) */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description The token is not genuine or the nudge belongs to another learner */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.courses.by-course.summary.get": {
+        parameters: {
+            query?: {
+                period?: 7 | 30 | 90;
+            };
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Aggregates; `smallGroup` is true (and only `enrolled` is given) below the minimum group size */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs learner_insights_view or authorship of the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.courses.by-course.elements.get": {
+        parameters: {
+            query?: {
+                period?: 7 | 30 | 90;
+                sort?: "struggle" | "active" | "recovery";
+            };
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Elements; those with fewer active learners than the minimum group are returned as `hidden`; `improvable` says whether a proposal can be made for the element */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs learner_insights_view or authorship of the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.courses.by-course.elements.by-element-key.improve.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                /** @description The element key of the insights table (a Course Builder element id) */
+                elementKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    confirmEstimate?: boolean;
+                    /**
+                     * @default 30
+                     * @enum {integer}
+                     */
+                    period?: 7 | 30 | 90;
+                };
+            };
+        };
+        responses: {
+            /** @description Without confirmEstimate: `estimateUsd` and the `evidence` that would be sent (aggregates only); or the open proposal of the element (`kept_existing`) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description The proposal was created and its analysis started; review it as a Living Course proposal */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs authorship of the course or learner_insights_view, and authorship of its builder session or living_course_review */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course, or the element was not built with the Course Builder */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Group below the minimum size, nothing to cite, element not improvable, or the budget blocks the analysis */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The daily limit of improvement proposals of the course is reached */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI is disabled */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.courses.by-course.learners.get": {
+        parameters: {
+            query?: {
+                status?: "struggling" | "at_risk" | "on_track";
+            };
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Individual statuses */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs learner_insights_view_individuals, or the tenant setting that lets course authors see individuals */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.learners.by-user.courses.by-course.timeline.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: number;
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs learner_insights_view_individuals */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course or learner */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.backfill.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    courseId?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs learner_insights_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.signals.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    type: "media.replayed" | "media.seeked_back";
+                    topicId: number;
+                    /** @description Seconds */
+                    value?: number;
+                    /** @enum {string} */
+                    media?: "video" | "audio";
+                    /**
+                     * Format: uuid
+                     * @description Client generated id, used to drop duplicates
+                     */
+                    ref: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Accepted (nothing is stored when the module is off or the learner opted out) */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description The learner may not attend the course of the topic */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown topic */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many signals */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.me.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `enabled` (module on for the tenant), `settings`, `courses` (status and reasons per course and element), `retention` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+        };
+    };
+    "learner-insights.me.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Rows deleted per table */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+        };
+    };
+    "learner-insights.me.settings.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    enabled?: boolean;
+                    help?: boolean;
+                    nudges?: boolean;
+                    consent?: boolean;
+                    /** @description With enabled=false: also delete what was recorded before */
+                    eraseExisting?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description The settings after the change */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Invalid value */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.me.export.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A JSON file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.courses.by-course.presentation.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `adaptive` (the tenant switch), `profile` (what to show), `derived` (what the rules chose), `overrides` (the learner's choices), `why` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.courses.by-course.presentation.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @enum {string|null} */
+                    density?: "comfortable" | "compact" | null;
+                    /** @enum {string|null} */
+                    chunking?: "whole" | "steps" | null;
+                    /** @enum {string|null} */
+                    navigation?: "linear" | "overview" | null;
+                    /** @enum {integer|null} */
+                    hints?: 0 | 1 | 2 | 3 | null;
+                };
+            };
+        };
+        responses: {
+            /** @description The profile after the change */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid option */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.settings.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Rules by name, each with its parameters */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs learner_insights_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.courses.by-course.settings.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `overrides` and `effective` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs learner_insights_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.courses.by-course.settings.put": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @example {
+                     *       "inactivity": {
+                     *         "inactive_days": 5
+                     *       }
+                     *     }
+                     */
+                    rules?: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description `overrides` and `effective` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs learner_insights_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown rule or parameter, or an invalid value */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.courses.by-course.topics.by-topic.support.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `enabled`, and per assignment: `status` (generating or ready), `kind`, `document` (declarative blocks), `citations`, `reasons`, `why`, `feedback` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown topic or the topic is not in the course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.assignments.by-assignment.feedback.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    helpful: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Not the learner's assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.assignments.by-assignment.hide.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Hidden */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Not the learner's assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "learner-insights.assignments.by-assignment.reflection.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    text: string;
+                };
+            };
+        };
+        responses: {
+            /** @description `correct`, `missing`, `followUp`, `citations`, `remaining` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Not the learner's assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Daily limit reached */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI is disabled or the feedback could not be produced */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "liascript.list": {
         parameters: {
             query?: never;
             header?: never;
@@ -18219,7 +26141,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LiaScriptDocumentPageResponse"];
+                };
             };
             /** @description liascript_manage required */
             403: {
@@ -18230,7 +26154,7 @@ export interface operations {
             };
         };
     };
-    fdccc039f6be45630d81157450d08157: {
+    "liascript.create": {
         parameters: {
             query?: never;
             header?: never;
@@ -18253,7 +26177,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LiaScriptDocumentResponse"];
+                };
             };
             /** @description invalid Markdown or upload */
             422: {
@@ -18264,7 +26190,7 @@ export interface operations {
             };
         };
     };
-    ff9e6d6d27d001f322a4c580edb05d75: {
+    "liascript.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18280,11 +26206,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LiaScriptDocumentResponse"];
+                };
             };
         };
     };
-    f29a6003b883037e9c37e6cd603f2c57: {
+    "liascript.update": {
         parameters: {
             query?: never;
             header?: never;
@@ -18300,11 +26228,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LiaScriptDocumentResponse"];
+                };
             };
         };
     };
-    "57d2eedf3af835250a8d78bd41abd68e": {
+    "liascript.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -18320,11 +26250,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    e54c72cbabbfacaf3aa19970838d8474: {
+    "admin.liascript.by-id.source.get": {
         parameters: {
             query?: {
                 version?: number;
@@ -18343,12 +26275,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "text/markdown": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
         };
     };
-    "7104ac68daa271b7c18a9d9f9a9604ef": {
+    "liascript.versions-list": {
         parameters: {
             query?: never;
             header?: never;
@@ -18364,11 +26296,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LiaScriptVersionListResponse"];
+                };
             };
         };
     };
-    e9bf16fee91b5aa1905907d54594df93: {
+    "liascript.versions-add": {
         parameters: {
             query?: never;
             header?: never;
@@ -18384,11 +26318,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LiaScriptDocumentResponse"];
+                };
             };
         };
     };
-    "6b6b7984f00c6385a6e4b9bf0b41e890": {
+    "liascript.versions-restore": {
         parameters: {
             query?: never;
             header?: never;
@@ -18405,11 +26341,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LiaScriptDocumentResponse"];
+                };
             };
         };
     };
-    a3cf1179533e1fef834163a046924ec6: {
+    "liascript.preview": {
         parameters: {
             query?: never;
             header?: never;
@@ -18431,7 +26369,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LiaScriptPreviewResponse"];
+                };
             };
             /** @description invalid Markdown */
             422: {
@@ -18449,7 +26389,7 @@ export interface operations {
             };
         };
     };
-    e2592511607f4708bf15bb002a81c59f: {
+    "liascript.launches.by-topic.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -18465,7 +26405,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -18497,7 +26439,7 @@ export interface operations {
             };
         };
     };
-    d02be1ed0ec261b16af61bf2c927d658: {
+    "liascript.progress.by-topic.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -18520,7 +26462,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description invalid or expired token */
             401: {
@@ -18531,7 +26475,7 @@ export interface operations {
             };
         };
     };
-    a5674b1e8bd1a4678f62157d825bc6a0: {
+    "admin.living-course.sessions.by-session.audit.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18547,7 +26491,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description not allowed */
             403: {
@@ -18558,7 +26504,7 @@ export interface operations {
             };
         };
     };
-    c4060fcadca6e7c0ca17650a791b6633: {
+    "admin.living-course.sessions.by-session.audit.export.get": {
         parameters: {
             query?: {
                 format?: "csv" | "json";
@@ -18580,7 +26526,7 @@ export interface operations {
             };
         };
     };
-    cf742cf7eac0e7662e06681e61bb1d33: {
+    "admin.living-course.sessions.by-session.audit.verify.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18596,11 +26542,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "6c02d48b60a69ef2b2e712063a6c4eba": {
+    "admin.living-course.audit.export.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18625,7 +26573,7 @@ export interface operations {
             };
         };
     };
-    "119dfcf567b151c09f6a8ea8a6aff036": {
+    "admin.living-course.audit.verify.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18639,7 +26587,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description admins only */
             403: {
@@ -18650,7 +26600,7 @@ export interface operations {
             };
         };
     };
-    "045403cfae13012786a9529d9c43b9bc": {
+    "admin.living-course.connectors.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18664,11 +26614,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "492bb84123f4a93ae760a119f5100422": {
+    "admin.living-course.sessions.by-session.sources.connect.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -18693,7 +26645,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description settings refused by the connector */
             422: {
@@ -18704,7 +26658,7 @@ export interface operations {
             };
         };
     };
-    "87b25a4d27c8194aebaae4c1b3843f0c": {
+    "admin.living-course.connections.by-connection.check.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -18720,7 +26674,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description nothing to check */
             409: {
@@ -18731,7 +26687,7 @@ export interface operations {
             };
         };
     };
-    e2189a328c5b103855d182f784b92ab9: {
+    "admin.living-course.connections.by-connection.webhook-secret.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -18747,11 +26703,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "6f7156f91faa8bebff6b264c7621a44b": {
+    "admin.living-course.connections.by-connection.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -18771,7 +26729,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description not allowed */
             403: {
@@ -18796,7 +26756,7 @@ export interface operations {
             };
         };
     };
-    "8471ffe30ba421f54e74cbe5037e8118": {
+    "admin.living-course.connections.by-connection.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -18812,7 +26772,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description not allowed */
             403: {
@@ -18830,7 +26792,7 @@ export interface operations {
             };
         };
     };
-    "3c52deb0f157d9c1d01e913acde4f41c": {
+    "living-course.courses.by-course.notices.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18846,7 +26808,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description not signed in */
             401: {
@@ -18857,7 +26821,7 @@ export interface operations {
             };
         };
     };
-    a1eda619d456a6eecf75d32b810d70f1: {
+    "living-course.notices.by-notice.dismiss.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -18873,7 +26837,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description not the caller's notice */
             404: {
@@ -18884,7 +26850,7 @@ export interface operations {
             };
         };
     };
-    "3513137a7e99c3fff961672373daad08": {
+    "living-course.courses.by-course.freshness.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18900,7 +26866,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description unknown course */
             404: {
@@ -18911,7 +26879,86 @@ export interface operations {
             };
         };
     };
-    "9f72817da6b47c4be646b6984a047814": {
+    "admin.living-course.oauth.by-provider.start.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: "google" | "notion";
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    sessionId?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description url to send the browser to */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description sign-in not set up on this installation */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "living-course.oauth.by-provider.callback.get": {
+        parameters: {
+            query?: {
+                code?: string;
+                state?: string;
+            };
+            header?: never;
+            path: {
+                provider: "google" | "notion";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description grant (when no return address is configured) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description redirect to the studio */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description sign-in refused or expired */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.living-course.sessions.by-session.proposals.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18927,7 +26974,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description another author's session */
             403: {
@@ -18945,7 +26994,7 @@ export interface operations {
             };
         };
     };
-    "13412db1de147bf01a7835b034597bb9": {
+    "admin.living-course.proposals.by-proposal.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -18961,7 +27010,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description another author's session */
             403: {
@@ -18979,7 +27030,7 @@ export interface operations {
             };
         };
     };
-    "4e671eb576fee6cbd7284c74c6247856": {
+    "admin.living-course.proposals.by-proposal.analyse.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19001,7 +27052,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description estimate must be confirmed */
             409: {
@@ -19026,7 +27079,7 @@ export interface operations {
             };
         };
     };
-    "2adb9f99a54ebd74df91f87423f91571": {
+    "admin.living-course.proposals.by-proposal.items.by-item.accept.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19043,7 +27096,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description not allowed */
             403: {
@@ -19068,7 +27123,7 @@ export interface operations {
             };
         };
     };
-    "4b86483c24f29a73c57ceb57deac49f5": {
+    "admin.living-course.proposals.by-proposal.items.by-item.reject.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19085,7 +27140,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description not allowed */
             403: {
@@ -19110,7 +27167,7 @@ export interface operations {
             };
         };
     };
-    "0faf97a5821be49554bab84c4052c042": {
+    "admin.living-course.proposals.by-proposal.items.by-item.reset.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19127,7 +27184,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description not allowed */
             403: {
@@ -19152,7 +27211,7 @@ export interface operations {
             };
         };
     };
-    "3214452d8179bf22ecd29f235dd1281b": {
+    "admin.living-course.proposals.by-proposal.items.by-item.regenerate.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19169,7 +27228,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description not allowed */
             403: {
@@ -19194,7 +27255,65 @@ export interface operations {
             };
         };
     };
-    "3dab066a6de079460f9f866d2989c14e": {
+    "admin.living-course.proposals.by-proposal.items.by-item.suggest-lesson.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+                item: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the item with the suggested lesson */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an uncovered section, or settled */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description budget */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI disabled */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.living-course.proposals.by-proposal.accept-all.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19210,7 +27329,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description not allowed */
             403: {
@@ -19228,7 +27349,7 @@ export interface operations {
             };
         };
     };
-    "4b8f251c3f67afcc429123a8d1593958": {
+    "admin.living-course.proposals.by-proposal.reject.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19244,7 +27365,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description not allowed */
             403: {
@@ -19262,7 +27385,7 @@ export interface operations {
             };
         };
     };
-    "4ecdad03c656ef08615bbbccf6beca1f": {
+    "admin.living-course.proposals.by-proposal.reanalyse.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19278,7 +27401,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description already settled */
             409: {
@@ -19289,7 +27414,7 @@ export interface operations {
             };
         };
     };
-    "5f1fff47bbf112a36833f964fdd2e5fe": {
+    "admin.living-course.proposals.by-proposal.learner-note.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -19311,7 +27436,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description already settled */
             409: {
@@ -19322,7 +27449,7 @@ export interface operations {
             };
         };
     };
-    "0ad25825160fabdd5a5041b38a3e24c2": {
+    "admin.living-course.proposals.by-proposal.apply.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19344,7 +27471,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description conflicts or admin edits */
             409: {
@@ -19355,7 +27484,7 @@ export interface operations {
             };
         };
     };
-    "66b48a735abd7716008ee166be38392c": {
+    "admin.living-course.sessions.by-session.sources.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19371,7 +27500,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description another author's session */
             403: {
@@ -19389,7 +27520,7 @@ export interface operations {
             };
         };
     };
-    df75e3a7a4db6e836d052844be479220: {
+    "admin.living-course.sources.by-source.revisions.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19405,7 +27536,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description another author's session */
             403: {
@@ -19423,7 +27556,7 @@ export interface operations {
             };
         };
     };
-    df094d9cda3ece4e4a725254aff14dbe: {
+    "admin.living-course.sources.by-source.revisions.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19446,14 +27579,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description the new revision */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description rejected upload */
             422: {
@@ -19464,7 +27601,7 @@ export interface operations {
             };
         };
     };
-    "35fa055e0edab3457af79f252d85bd98": {
+    "admin.living-course.revisions.by-revision.changes.get": {
         parameters: {
             query?: {
                 against?: string;
@@ -19482,7 +27619,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description unknown revision */
             404: {
@@ -19493,7 +27632,7 @@ export interface operations {
             };
         };
     };
-    "5b0687d7aea85b5c6c93b2d4c62e6616": {
+    "admin.living-course.revisions.by-revision.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19509,7 +27648,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description another author's session */
             403: {
@@ -19527,7 +27668,7 @@ export interface operations {
             };
         };
     };
-    "7f7df3d32948fa73e3b71790bc187f90": {
+    "admin.living-course.sessions.by-session.staleness.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19543,7 +27684,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description another author's session */
             403: {
@@ -19561,7 +27704,7 @@ export interface operations {
             };
         };
     };
-    "54af035cebb8262704cfee7f3e72bba3": {
+    "living-course.webhooks.by-webhookid.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19577,14 +27720,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description a check is queued */
             202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description invalid signature */
             401: {
@@ -19616,7 +27763,7 @@ export interface operations {
             };
         };
     };
-    "49c2bee176f5a6c16a83bad0630cace3": {
+    "cmi5.fetch.post": {
         parameters: {
             query: {
                 /** @description one-time launch token */
@@ -19634,7 +27781,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
             /** @description the launch token is unknown or expired */
@@ -19646,7 +27793,7 @@ export interface operations {
             };
         };
     };
-    d638db65665135dd571f0e1ff00dd31b: {
+    "cmi5.courses.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19664,12 +27811,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "47413fb4360dae5bc348a94465d7eaf9": {
+    "cmi5.statements": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "id";
@@ -19704,7 +27851,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LrsStatementPageResponse"];
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -19729,7 +27878,7 @@ export interface operations {
             };
         };
     };
-    "6c07572455eeea027effbb2da673b280": {
+    "admin.lti.endpoints.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19743,7 +27892,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description lti_manage required */
             403: {
@@ -19754,7 +27905,7 @@ export interface operations {
             };
         };
     };
-    b771cbefccebfc06b59ba11309cc26f3: {
+    "admin.lti.tools.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19768,11 +27919,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    ea302bf96dc152c876c5d0eb0232299e: {
+    "admin.lti.tools.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19786,11 +27939,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    a8ff323e4c15c4db5449145088e28e4d: {
+    "admin.lti.tools.by-tool.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19806,11 +27961,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "389eabef701408d9e07ce067cdf24ed7": {
+    "admin.lti.tools.by-tool.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -19826,11 +27983,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    f52db15a79c018b6184665f6aed037f1: {
+    "admin.lti.tools.by-tool.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -19846,7 +28005,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description used by topics */
             409: {
@@ -19857,7 +28018,7 @@ export interface operations {
             };
         };
     };
-    "667f1aefacbee6ebc97650d3d49de394": {
+    "admin.lti.tools.by-tool.deep-link.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19873,11 +28034,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "4c80b8cecff4c038f772914097d1908d": {
+    "admin.lti.platforms.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19891,11 +28054,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    f9b0c227156df523f785b035a9b8d014: {
+    "admin.lti.platforms.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -19909,11 +28074,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "031c7ff614f2f5a67c25f16c9dad07ba": {
+    "admin.lti.platforms.by-platform.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19929,11 +28096,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    c3deed3a7a8f857de74319c8f9b16a78: {
+    "admin.lti.platforms.by-platform.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -19949,11 +28118,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    f686d2153b3700947c55435a1f8db370: {
+    "admin.lti.platforms.by-platform.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -19969,11 +28140,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "9501c319c6b2b356ec601963caad0176": {
+    "lti.frame-origins.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -19997,7 +28170,7 @@ export interface operations {
             };
         };
     };
-    e21c466f7e6dac972c24fd1e77e9016c: {
+    "lti.jwks.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20011,11 +28184,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
         };
     };
-    "7730a7dac173ffa45a97055e8e75c95d": {
+    "lti.platform.ags.by-course.lineitems.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20031,7 +28206,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description invalid token */
             401: {
@@ -20042,7 +28219,7 @@ export interface operations {
             };
         };
     };
-    e8f007a8e1261cc54ba33cd30a680fd2: {
+    "lti.platform.ags.by-course.lineitems.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20058,7 +28235,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description scope lineitem required */
             403: {
@@ -20069,7 +28248,7 @@ export interface operations {
             };
         };
     };
-    "6992c6d0116bb09c248c024fa0422749": {
+    "lti.platform.ags.by-course.lineitems.by-lineitem.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20086,11 +28265,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
         };
     };
-    "42ab598db0454b738021d26ee4a33625": {
+    "lti.platform.ags.by-course.lineitems.by-lineitem.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -20107,11 +28288,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
         };
     };
-    cbaab5f4f2960312e3544a704e1e73d8: {
+    "lti.platform.ags.by-course.lineitems.by-lineitem.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -20132,7 +28315,7 @@ export interface operations {
             };
         };
     };
-    "9205b9d986d566d34fb5aeed9e3b2b46": {
+    "lti.platform.ags.by-course.lineitems.by-lineitem.scores.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20153,7 +28336,7 @@ export interface operations {
             };
         };
     };
-    ffbc8addccea9d6645cde339b6e5d5fe: {
+    "lti.platform.ags.by-course.lineitems.by-lineitem.results.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20170,11 +28353,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
         };
     };
-    d7b8c3bdee515c8afd8f24fc61ec218c: {
+    "lti.platform.nrps.by-course.get": {
         parameters: {
             query?: {
                 limit?: number;
@@ -20194,7 +28379,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description invalid token */
             401: {
@@ -20219,7 +28406,7 @@ export interface operations {
             };
         };
     };
-    a2b70edeeebeaa8a7af3caafc5670a09: {
+    "lti.launches.by-topic.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20235,7 +28422,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -20267,7 +28456,7 @@ export interface operations {
             };
         };
     };
-    "7268a70fc27bb0e2b1c94b3baaa57d91": {
+    "lti.platform.authorize.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20299,7 +28488,7 @@ export interface operations {
             };
         };
     };
-    "9776042d51bd30ab9137a4d5f7b5ac3e": {
+    "lti.platform.token.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20313,7 +28502,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description invalid request or scope */
             400: {
@@ -20331,7 +28522,7 @@ export interface operations {
             };
         };
     };
-    "735e9c6129d12dc85b291584a0b01e6d": {
+    "lti.platform.deep-links.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20356,15 +28547,25 @@ export interface operations {
             };
         };
     };
-    "10a0ad0d978804363cde5d19eae1520c": {
+    "lti.tool.login.get": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Client Side postMessage Storage: the platform's storage frame. Present: the response is a page that puts the nonce in the platform's storage before it continues. */
+                lti_storage_target?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description storage page that continues to the platform's OIDC auth URL (lti_storage_target given) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description redirect to the platform's OIDC auth URL */
             302: {
                 headers: {
@@ -20381,7 +28582,7 @@ export interface operations {
             };
         };
     };
-    "1263d4a5230bc11b6606102640e87bb2": {
+    "lti.tool.launch.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20413,7 +28614,41 @@ export interface operations {
             };
         };
     };
-    "5e799230ade3ec16002f9f2d15108475": {
+    "lti.tool.launch.verify.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description course picker (deep linking) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description redirect to the front landing page */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the value does not match, or the login expired */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "lti.tool.deep-link.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20427,7 +28662,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description the deep-linking session expired */
             410: {
@@ -20438,7 +28675,7 @@ export interface operations {
             };
         };
     };
-    d27017060d1d967be9b6295c32733343: {
+    "lti.tool.exchange.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20458,7 +28695,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description expired or used code */
             401: {
@@ -20469,7 +28708,7 @@ export interface operations {
             };
         };
     };
-    a4c030ede5bc6ff3d75da69ad339f224: {
+    "mattermost.me.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20484,12 +28723,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "4ba681c4e7a25909cb83e4397f887d29": {
+    "mattermost.generate-credentials.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20504,12 +28743,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "0056eabd99324660ac6ac9890beb8c80": {
+    "mattermost.reset-password.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20524,12 +28763,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "644d9345702d5e1cbc95c80223d99e90": {
+    "admin.model-fields.get": {
         parameters: {
             query: {
                 /** @description class type of which field is extended */
@@ -20583,7 +28822,7 @@ export interface operations {
             };
         };
     };
-    "3723c2c364a60c6c8d9b97b8f08142c3": {
+    "model-fields.create": {
         parameters: {
             query?: never;
             header?: never;
@@ -20602,7 +28841,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ModelFieldMetadataResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -20634,7 +28875,7 @@ export interface operations {
             };
         };
     };
-    "802546bcd43f463d023a7bfdb5996fa5": {
+    "model-fields.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -20653,7 +28894,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiBooleanResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -20685,7 +28928,7 @@ export interface operations {
             };
         };
     };
-    "1594353e41bcd70483d4ebabcdd0e1b5": {
+    "model-fields.get": {
         parameters: {
             query: {
                 /** @description class type of which field is extended */
@@ -20731,7 +28974,7 @@ export interface operations {
             };
         };
     };
-    "5df4f107ded41b523bbbdb12d0cfdba7": {
+    "admin.notifications.all.get": {
         parameters: {
             query?: {
                 /** @description Pagination Page Number */
@@ -20762,12 +29005,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "2f255fc9d0566e1df077e63f34acdd2c": {
+    "admin.notifications.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20782,12 +29025,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "445ef83ef4b4b39b6e2700572950e0cb": {
+    "admin.notifications.events.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20802,12 +29045,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "6f543a6a9dfe7e81f86a01ce893298ad": {
+    "notifications.by-notification.read.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20825,12 +29068,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    f13931fd9e6d70769fd4cab802f2c5dd: {
+    "admin.notifications.read-all.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -20845,12 +29088,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    a3577e058a3a4b82ffe20fa6c7ca7caf: {
+    "admin.pages.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20893,7 +29136,7 @@ export interface operations {
             };
         };
     };
-    "87c069fd0ad8171380d749e25991da6f": {
+    "pages.create": {
         parameters: {
             query?: never;
             header?: never;
@@ -20912,7 +29155,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PageResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -20951,7 +29196,7 @@ export interface operations {
             };
         };
     };
-    dcbdeed94855b11a6ed82dcd1dcfb94e: {
+    "admin.pages.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -20994,7 +29239,7 @@ export interface operations {
             };
         };
     };
-    "97f4b37e3da1ce868afb33028fc5bdc2": {
+    "pages.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -21011,7 +29256,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiBooleanResponse"];
+                };
             };
             /** @description cannot find a page with provided slug identifier */
             400: {
@@ -21043,7 +29290,7 @@ export interface operations {
             };
         };
     };
-    "482ead41c35f2c4c1fa45cc92cab130b": {
+    "pages.update": {
         parameters: {
             query?: never;
             header?: never;
@@ -21065,7 +29312,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PageResponse"];
+                };
             };
             /** @description cannot find a page with provided slug identifier */
             400: {
@@ -21104,7 +29353,7 @@ export interface operations {
             };
         };
     };
-    f91849cac6bdced90ec6f673cf67efad: {
+    "pages.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -21147,7 +29396,7 @@ export interface operations {
             };
         };
     };
-    e68cdc579aca529560c19eaee141227d: {
+    "pages.by-slug.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -21190,7 +29439,7 @@ export interface operations {
             };
         };
     };
-    "81dc7e45bf622ac2cbc0c16a72179861": {
+    "admin.payments.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "updated_at" | "status" | "payable_id" | "user_id" | "amount" | "order_id" | "id";
@@ -21226,12 +29475,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "3ec95715f76bc23a657762493852214f": {
+    "admin.payments.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -21249,12 +29498,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    b1fed8de6c7c005c82d2b6743eaa1d96: {
+    "admin.payments.export.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "updated_at" | "status" | "payable_id" | "user_id" | "amount" | "order_id" | "id";
@@ -21291,7 +29540,7 @@ export interface operations {
             };
         };
     };
-    "4b7ecb22efdaf37402b834d702e6a8e8": {
+    "payments.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "updated_at" | "status" | "payable_id" | "user_id" | "amount" | "order_id" | "id";
@@ -21325,12 +29574,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    f401848d7a54b26f990d035eb48970f2: {
+    "payments.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -21348,12 +29597,42 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    a7eb9d53edf7a2c17d9e27d8c497249f: {
+    "pencil-spaces.login.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginPencilSpaceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successfull operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        data?: {
+                            url?: string;
+                        };
+                        message?: string;
+                    };
+                };
+            };
+        };
+    };
+    "admin.roles.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -21394,7 +29673,7 @@ export interface operations {
             };
         };
     };
-    "3e9414261c55911a2d991d27fc14993a": {
+    "roles.create": {
         parameters: {
             query?: never;
             header?: never;
@@ -21413,7 +29692,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RoleResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -21445,7 +29726,7 @@ export interface operations {
             };
         };
     };
-    "4ead0f58bef3ca68ce2d9e7c4cc9bf34": {
+    "admin.roles.by-name.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -21489,7 +29770,7 @@ export interface operations {
             };
         };
     };
-    cd0d24a7bab270ee4e1adf90c9b2c367: {
+    "roles.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -21506,7 +29787,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiBooleanResponse"];
+                };
             };
             /** @description cannot find a role with provided slug identifier */
             400: {
@@ -21538,7 +29821,7 @@ export interface operations {
             };
         };
     };
-    f5c08f32cc9b6a24cd9243e6d497796b: {
+    "roles.update": {
         parameters: {
             query?: never;
             header?: never;
@@ -21563,7 +29846,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PermissionListResponse"];
+                };
             };
             /** @description cannot find a role with provided slug identifier */
             400: {
@@ -21602,7 +29887,7 @@ export interface operations {
             };
         };
     };
-    "2c9fd5e3cd18ca16e7ce064e4129a71c": {
+    "admin.question.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -21645,7 +29930,7 @@ export interface operations {
             };
         };
     };
-    db3f8caf37345180b5b0992549b1ef3f: {
+    "admin.question.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -21673,7 +29958,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["Question"];
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -21705,7 +29997,7 @@ export interface operations {
             };
         };
     };
-    abdd8c5ce508ad7c4a6a054d5d62ca97: {
+    "admin.question.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -21748,7 +30040,7 @@ export interface operations {
             };
         };
     };
-    "2241c88896138c1c4e83e0d31919792b": {
+    "admin.question.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -21765,7 +30057,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description cannot find a question */
             400: {
@@ -21797,7 +30097,7 @@ export interface operations {
             };
         };
     };
-    "3c5f5d84c39bea1df727cc958461c467": {
+    "admin.question.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -21819,7 +30119,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["Question"];
+                    };
+                };
             };
             /** @description cannot find a question with provided slug identifier */
             400: {
@@ -21858,7 +30165,7 @@ export interface operations {
             };
         };
     };
-    "9c57b574a3461d94f9d10dd1f21e1868": {
+    "admin.question-answers.by-id.get": {
         parameters: {
             query?: {
                 /** @description id of questionnaire model */
@@ -21919,7 +30226,7 @@ export interface operations {
             };
         };
     };
-    "9bde3364a002c339ca0237262469b6c6": {
+    "admin.question-answers.by-id.change-visibility.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -21941,7 +30248,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["QuestionAnswer"];
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -21966,7 +30280,7 @@ export interface operations {
             };
         };
     };
-    b92c223112331df6c4eb5b24a649ec74: {
+    "admin.questionnaire.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -22015,7 +30329,7 @@ export interface operations {
             };
         };
     };
-    bbf375c429a283e055ea1144ca2a5387: {
+    "admin.questionnaire.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -22034,7 +30348,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["Questionnaire"];
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -22073,7 +30394,7 @@ export interface operations {
             };
         };
     };
-    ba1010ec04488c6a01638292813f8b9b: {
+    "admin.questionnaire.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22116,7 +30437,7 @@ export interface operations {
             };
         };
     };
-    "2208b3210e8b37b795cfb9d281097f96": {
+    "admin.questionnaire.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -22133,7 +30454,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description cannot find a questionnaire */
             400: {
@@ -22165,7 +30494,7 @@ export interface operations {
             };
         };
     };
-    a0055d8b57c1cafdedf022b96e78b594: {
+    "admin.questionnaire.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -22187,7 +30516,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["Questionnaire"];
+                    };
+                };
             };
             /** @description cannot find a questionnaire */
             400: {
@@ -22226,7 +30562,7 @@ export interface operations {
             };
         };
     };
-    "7ce35d9612509a7790f748c1ba2596bc": {
+    "admin.questionnaire-model.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22269,7 +30605,7 @@ export interface operations {
             };
         };
     };
-    "76669ac1390b34b2f9a82211969e7406": {
+    "admin.questionnaire.report.by-id.by-model-type-id.by-model-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22316,7 +30652,7 @@ export interface operations {
             };
         };
     };
-    ae4dd1d7271e84aea6277eddee5f545c: {
+    "admin.questionnaire.assign.by-model-type-title.by-model-id.by-id.by-target-group.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -22346,7 +30682,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description cannot find a questionnaire */
             400: {
@@ -22378,7 +30722,7 @@ export interface operations {
             };
         };
     };
-    "037f456707ae2ec735f838aa2b1f9e4e": {
+    "admin.questionnaire.unassign.by-model-type-title.by-model-id.by-id.by-target-group.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -22401,7 +30745,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description cannot find a questionnaire */
             400: {
@@ -22433,7 +30785,7 @@ export interface operations {
             };
         };
     };
-    "29564f597676b6eae9f76fb891402bc2": {
+    "questionnaire.by-model-type-title.by-model-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22481,7 +30833,7 @@ export interface operations {
             };
         };
     };
-    d73d1b7a0c11094be9b807e0a5829a60: {
+    "questionnaire.by-model-type-title.by-model-id.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22528,7 +30880,7 @@ export interface operations {
             };
         };
     };
-    "6e06f9299a3db55b6653660bc1f55afd": {
+    "questionnaire.by-model-type-title.by-model-id.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -22580,7 +30932,7 @@ export interface operations {
             };
         };
     };
-    "5bb636651156a388a89c2d3bffd2d804": {
+    "questionnaire.stars.by-model-type-title.by-model-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22625,7 +30977,7 @@ export interface operations {
             };
         };
     };
-    d4050fb1357cdc7d2f9ad7de329d1ccb: {
+    "questionnaire.by-model-type-title.by-model-id.questions.by-question-id.answers.get": {
         parameters: {
             query?: {
                 /** @description order by (created_at, updated_at, rate) */
@@ -22674,7 +31026,7 @@ export interface operations {
             };
         };
     };
-    c96206ea18788cd324d754ddbc8e5851: {
+    "questionnaire.by-model-type-title.by-model-id.questions.by-question-id.stars.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22714,7 +31066,7 @@ export interface operations {
             };
         };
     };
-    d18c0adbfd9b0c706f6f1a48c77394af: {
+    "admin.reports.metrics.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22734,7 +31086,7 @@ export interface operations {
             };
         };
     };
-    "4b8e268e6b4f15d2b82536db38199369": {
+    "admin.reports.report.get": {
         parameters: {
             query: {
                 /** @description one of available metrics */
@@ -22761,7 +31113,7 @@ export interface operations {
             };
         };
     };
-    f12abe568212a5c65bb095df5a3c62ef: {
+    "admin.reports.available-for-user.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22781,7 +31133,7 @@ export interface operations {
             };
         };
     };
-    "4bf29f19805aa3624e4f35df0dda2e9e": {
+    "admin.stats.available.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -22801,7 +31153,7 @@ export interface operations {
             };
         };
     };
-    fb85fab3a4cd2cc07223a4bb7d3a0087: {
+    "admin.stats.course.by-course-id.get": {
         parameters: {
             query?: {
                 /** @description array of stats to be calculated, leave empty to calculate all available stats */
@@ -22827,7 +31179,7 @@ export interface operations {
             };
         };
     };
-    "16b9419dbe5441cf697a25caa864f222": {
+    "admin.stats.topic.by-topic-id.get": {
         parameters: {
             query?: {
                 /** @description array of stats to be calculated, leave empty to calculate all available stats */
@@ -22853,7 +31205,7 @@ export interface operations {
             };
         };
     };
-    ea78ff10fc0df29c843b213e5336c07a: {
+    "admin.stats.cart.get": {
         parameters: {
             query?: {
                 /** @description array of stats to be calculated, leave empty to calculate all available stats */
@@ -22876,7 +31228,7 @@ export interface operations {
             };
         };
     };
-    "0e9c18f7b9e50e7dd2d94162d9967779": {
+    "admin.stats.date-range.get": {
         parameters: {
             query?: {
                 /** @description array of stats to be calculated, leave empty to calculate all available stats */
@@ -22904,7 +31256,7 @@ export interface operations {
             };
         };
     };
-    bc175001e232cce9428a5abc93641a4c: {
+    "admin.stats.course.by-course-id.export.get": {
         parameters: {
             query: {
                 stat: string;
@@ -22938,7 +31290,7 @@ export interface operations {
             };
         };
     };
-    a61fde1dcb0b60fd6961189dd47f76ee: {
+    "admin.stats.topic.by-topic-id.export.get": {
         parameters: {
             query: {
                 stat: string;
@@ -22972,7 +31324,7 @@ export interface operations {
             };
         };
     };
-    e9f3a5028f401c1030a8b16093efccc9: {
+    "scorm.launch.by-uuid.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -22989,7 +31341,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -23007,7 +31361,7 @@ export interface operations {
             };
         };
     };
-    "262ecdd2ec002682574687fb4fbd729c": {
+    "scorm.content.by-uuid.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23024,7 +31378,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description invalid, expired or foreign tracking token */
             401: {
@@ -23035,7 +31391,7 @@ export interface operations {
             };
         };
     };
-    "213ec51bfaf514aa40963dcadd464686": {
+    "scorm.content.by-uuid.track.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -23058,7 +31414,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description invalid, expired or foreign tracking token */
             401: {
@@ -23069,7 +31427,7 @@ export interface operations {
             };
         };
     };
-    eea2545f66501d1424469e9023cd0378: {
+    "scorm.assets.scorm-again-min-js.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23087,7 +31445,7 @@ export interface operations {
             };
         };
     };
-    d6dc70f28a642c0b0a9370497b81659f: {
+    "scorm.upload": {
         parameters: {
             query?: never;
             header?: never;
@@ -23108,7 +31466,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ScormUploadResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -23133,7 +31493,7 @@ export interface operations {
             };
         };
     };
-    "389d2ef29b3399e073ab8154a867a592": {
+    "scorm.parse": {
         parameters: {
             query?: never;
             header?: never;
@@ -23154,7 +31514,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ScormParseResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -23179,7 +31541,7 @@ export interface operations {
             };
         };
     };
-    "181e135ae5391d4fe508080ef17a453d": {
+    "scorm.play.by-uuid.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23220,7 +31582,7 @@ export interface operations {
             };
         };
     };
-    "855a851d42e51f67772e503ad79be202": {
+    "scorm.show.by-uuid.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23261,7 +31623,7 @@ export interface operations {
             };
         };
     };
-    "3cb9f2a147e944f83d87cbdeabfd9578": {
+    "scorm.list": {
         parameters: {
             query?: {
                 /** @description page */
@@ -23279,7 +31641,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ScormPackagePageResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -23304,7 +31668,7 @@ export interface operations {
             };
         };
     };
-    "7f2221bbd91097355d13422ce83fddba": {
+    "scorm.scos": {
         parameters: {
             query?: never;
             header?: never;
@@ -23317,7 +31681,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ScormScoListResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -23342,7 +31708,7 @@ export interface operations {
             };
         };
     };
-    f7d8b497e6e134c969bbe4499150a11a: {
+    "scorm.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -23358,7 +31724,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -23383,7 +31751,7 @@ export interface operations {
             };
         };
     };
-    "53b7e9e0bbe08d5d4a18cb44ae70f144": {
+    "scorm.track.by-uuid.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -23400,7 +31768,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -23425,13 +31795,13 @@ export interface operations {
             };
         };
     };
-    "863f2d7c0e424c068f0b9e90250738b2": {
+    "scorm.track.by-scoid.by-key.get": {
         parameters: {
             query?: never;
             header?: never;
             path: {
                 /** @description Unique scorm identifier */
-                sco_id: string;
+                scoId: string;
                 /** @description Unique scorm data key */
                 key: string;
             };
@@ -23443,7 +31813,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -23468,7 +31840,7 @@ export interface operations {
             };
         };
     };
-    "0e9a44c28136b46aed69f9bebcd89426": {
+    "admin.config.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23483,21 +31855,23 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "49d5dfed2cb5e7de8cdbfda06d3c5a91": {
+    "admin.config.post": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: {
+        requestBody: {
             content: {
-                "*/*"?: never;
+                "application/json": {
+                    config?: Record<string, never>[];
+                };
             };
         };
         responses: {
@@ -23507,12 +31881,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    fc8c420b48d586e17fa7f7a620979b54: {
+    "admin.settings.get": {
         parameters: {
             query?: {
                 group?: string;
@@ -23533,7 +31907,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -23547,7 +31921,7 @@ export interface operations {
             };
         };
     };
-    "439891854f81058f9641a3a5e2d2dac9": {
+    "admin.settings.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -23562,7 +31936,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -23576,7 +31950,7 @@ export interface operations {
             };
         };
     };
-    "078af3d8fc571aa5fbc0292486b1dc1b": {
+    "admin.settings.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23593,7 +31967,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -23607,11 +31981,13 @@ export interface operations {
             };
         };
     };
-    "808d8ae8c41edc1568ddb96e85a4f4b9": {
+    "admin.settings.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                id: number;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -23622,7 +31998,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -23636,11 +32012,13 @@ export interface operations {
             };
         };
     };
-    a4242fe04173941b257d4f471bb32909: {
+    "admin.settings.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                id: number;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -23651,7 +32029,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -23665,7 +32043,7 @@ export interface operations {
             };
         };
     };
-    "9a6227cae673915f28689a5556dd9da8": {
+    "admin.settings.groups.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23680,7 +32058,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -23694,7 +32072,7 @@ export interface operations {
             };
         };
     };
-    df574ce69f60c5bcdaebd4a50ed11695: {
+    "config.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23709,12 +32087,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    de1dc6d27f83bb5720e291a27ff9003c: {
+    "settings.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23729,12 +32107,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "2334e3fbb9431a6a3b065ebe50613494": {
+    "settings.by-group.by-key.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23754,12 +32132,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    d9ee642f412aac628d6519d50a18ad57: {
+    "admin.stationary-events.get": {
         parameters: {
             query?: {
                 order_by?: "finished_at" | "started_at" | "created_at" | "name";
@@ -23784,12 +32162,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    c8aa7025bc2ff6471c8c0e182de34f49: {
+    "admin.stationary-events.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -23808,12 +32186,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "3d20f93c4eaa70452b0c4ec72d415078": {
+    "admin.stationary-events.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23831,12 +32209,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    f83502cf590a8f356c87f204823af2e3: {
+    "admin.stationary-events.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -23858,12 +32236,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "8d9ad4138ca4fefec0787a1e219c452a": {
+    "admin.stationary-events.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -23881,12 +32259,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "1931e3963fab3f7cb9d1617d239cffa7": {
+    "stationary-events.get": {
         parameters: {
             query?: {
                 order_by?: "finished_at" | "started_at" | "created_at" | "name";
@@ -23912,12 +32290,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "66f32b581612556d3ea9cae63f8022cf": {
+    "stationary-events.me.get": {
         parameters: {
             query?: {
                 order_by?: "finished_at" | "started_at" | "created_at" | "name";
@@ -23941,12 +32319,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    e2b146ba44b082d8238f458f31517435: {
+    "stationary-events.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23964,12 +32342,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    b41c0e040482cefc62a48006c2cd3807: {
+    "tags.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -23984,7 +32362,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -23998,7 +32376,7 @@ export interface operations {
             };
         };
     };
-    a7fc6fcef6b19c3b037207e95eeba585: {
+    "tags.unique.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -24013,7 +32391,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -24027,7 +32405,7 @@ export interface operations {
             };
         };
     };
-    "770a202ae86e7b65ba276ba3b8ff8003": {
+    "admin.tags.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24055,7 +32433,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Unauthenticated */
@@ -24087,7 +32465,7 @@ export interface operations {
             };
         };
     };
-    "762db52a081b3bb72f8de52c6c82141c": {
+    "admin.tags.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -24108,7 +32486,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Unauthenticated */
@@ -24140,7 +32518,7 @@ export interface operations {
             };
         };
     };
-    b76580467477d1acb30a23fe5889de3f: {
+    "admin.tags.by-tag.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -24157,7 +32535,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Unauthenticated */
@@ -24189,7 +32567,7 @@ export interface operations {
             };
         };
     };
-    d963be93f13bd4ab990c024bd695d8ad: {
+    "admin.tags.unique.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -24204,7 +32582,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Unauthenticated */
@@ -24227,7 +32605,7 @@ export interface operations {
             };
         };
     };
-    "19ba292ade317483139390e94d7503b3": {
+    "admin.tasks.get": {
         parameters: {
             query?: {
                 /** @description Pagination Page Number */
@@ -24265,12 +32643,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "92b6651aa9a8ebda80e63584ed264d34": {
+    "admin.tasks.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24298,7 +32676,7 @@ export interface operations {
             };
         };
     };
-    c72226d1311aa9db0be722ff4c2f82a0: {
+    "admin.tasks.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -24325,7 +32703,7 @@ export interface operations {
             };
         };
     };
-    d378329e12b783d70e4cd1cf7526375b: {
+    "admin.tasks.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -24343,12 +32721,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    f4d094de2da8743d25698f1c9aa3a395: {
+    "admin.tasks.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -24379,7 +32757,7 @@ export interface operations {
             };
         };
     };
-    "039e48eb3c077b7f6970a377b890b85b": {
+    "admin.tasks.complete.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24406,7 +32784,7 @@ export interface operations {
             };
         };
     };
-    "60e677f21389849aa2df5753ea47f7ea": {
+    "admin.tasks.incomplete.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24433,7 +32811,7 @@ export interface operations {
             };
         };
     };
-    "2ba4fd2da59146d6563f6c2f1c4564d4": {
+    "admin.tasks.notes.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24461,7 +32839,7 @@ export interface operations {
             };
         };
     };
-    "906933847fb6575372ddd18e7f2719b3": {
+    "admin.tasks.notes.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -24479,12 +32857,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "2e1bcddafcded59e071de2b0963f13e0": {
+    "admin.tasks.notes.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -24515,7 +32893,7 @@ export interface operations {
             };
         };
     };
-    "5b127c759c50a5fd67603352876591f5": {
+    "tasks.get": {
         parameters: {
             query?: {
                 /** @description Pagination Page Number */
@@ -24553,12 +32931,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    d587770514b389d9f26775f002ca298e: {
+    "tasks.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24586,7 +32964,7 @@ export interface operations {
             };
         };
     };
-    "1cdee1ef12b8e6ec9445444825cebb97": {
+    "tasks.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -24613,7 +32991,7 @@ export interface operations {
             };
         };
     };
-    fb54ca8adf0d427edfe12d4c728bd974: {
+    "tasks.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -24631,16 +33009,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    c37d352252ae91d697c0bf00441b9ed8: {
+    "tasks.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                id: number;
+            };
             cookie?: never;
         };
         requestBody: {
@@ -24664,7 +33044,7 @@ export interface operations {
             };
         };
     };
-    "1085eec0f6c79f87e68bf33585724381": {
+    "tasks.complete.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24691,7 +33071,7 @@ export interface operations {
             };
         };
     };
-    "7a7c0b823e60de691db76c96c8d97cc5": {
+    "tasks.incomplete.by-id.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24718,7 +33098,7 @@ export interface operations {
             };
         };
     };
-    "00fa4b3e78a172d84acdc189509bb3c4": {
+    "tasks.notes.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24746,7 +33126,7 @@ export interface operations {
             };
         };
     };
-    "17ba956545978db3f980cf3456149a70": {
+    "tasks.notes.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -24764,12 +33144,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    b183ee48bea13fe9a93ec2d2b0516fce: {
+    "tasks.notes.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -24800,7 +33180,339 @@ export interface operations {
             };
         };
     };
-    ed2821d394aff67e9d5090553468a512: {
+    "templates.email.render": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description event full classname, as listed by GET /api/admin/templates/events */
+                    event: string;
+                    /** @description subject */
+                    title: string;
+                    /** @description MJML (or HTML) source, up to 512 KiB */
+                    content: string;
+                    /** @description language code (en, pl, zh) the draft is written for; sample values are rendered in it */
+                    locale?: string | null;
+                    /** @description variable name to sample value, for this preview only */
+                    sample_overrides?: {
+                        [key: string]: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description rendered draft */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["EmailTemplateDraft"];
+                    };
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description user doesn't have required access rights */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the MJML renderer is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "templates.email.test-send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    event: string;
+                    title: string;
+                    content: string;
+                    /** @description language code (en, pl, zh) the draft is written for */
+                    locale?: string | null;
+                    sample_overrides?: {
+                        [key: string]: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description the draft was sent to the signed-in admin */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["EmailTemplateDraft"];
+                    };
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description user doesn't have required access rights */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the MJML renderer is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "templates.email.images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description PNG, JPEG, GIF or WebP file
+                     */
+                    image: string;
+                };
+            };
+        };
+        responses: {
+            /** @description the stored image */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @description public URL to put in mj-image src */
+                            url?: string;
+                            /** @description path in the tenant storage */
+                            name?: string;
+                            mime?: string;
+                            /** @description bytes */
+                            size?: number;
+                            width?: number;
+                            height?: number;
+                        };
+                    };
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description user doesn't have required access rights */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an accepted image, or too large */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "certificates.verify.by-certificateid.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description random certificate id encoded in the QR code */
+                certificateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            certificate_id?: string;
+                            /** @enum {string} */
+                            status?: "valid" | "expired" | "revoked";
+                            title?: string;
+                            course_title?: string | null;
+                            holder_name?: string | null;
+                            /** Format: date-time */
+                            issued_at?: string;
+                            /** Format: date-time */
+                            expires_at?: string | null;
+                            /** Format: date-time */
+                            revoked_at?: string | null;
+                            issuer?: string;
+                        };
+                    };
+                };
+            };
+            /** @description unknown certificate id */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.pdfs.by-id.revoke.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description id of the generated PDF */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    reason: string;
+                };
+            };
+        };
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown PDF */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "pdfs.get": {
         parameters: {
             query?: {
                 /** @description Pagination Page Number */
@@ -24824,12 +33536,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "803aeff6fef9cfd761d5626146945732": {
+    "pdfs.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -24847,12 +33559,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "9da8da37dc0399227c742f5fb3d234e8": {
+    "admin.pdfs.get": {
         parameters: {
             query?: {
                 /** @description either user_id */
@@ -24872,12 +33584,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "8fd7da32ef43271dbbc712807b4e031d": {
+    "pdfs.generate.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -24895,7 +33607,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/pdf": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
             /** @description legacy (ReportBro) or invalid template */
@@ -24914,7 +33626,7 @@ export interface operations {
             };
         };
     };
-    "322eb94958e440c42672ff39ee638b24": {
+    "admin.pdfs.preview.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -24957,7 +33669,7 @@ export interface operations {
             };
         };
     };
-    "1306ff154cdf28ebe5528ed65fd62235": {
+    "pdfs.fonts.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -24971,11 +33683,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
         };
     };
-    "5ee00f063b8cb6eae3e76ae0af68c100": {
+    "pdfs.fonts.by-file.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -25004,7 +33718,7 @@ export interface operations {
             };
         };
     };
-    "5a6a658aaacc059b2d70d0dffd1620c4": {
+    "events.trigger-manually": {
         parameters: {
             query?: never;
             header?: never;
@@ -25028,7 +33742,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -25060,13 +33776,15 @@ export interface operations {
             };
         };
     };
-    "0a3b2dd879b4313d2bb47ccb587efab5": {
+    "admin.templates.get": {
         parameters: {
             query?: {
                 /** @description Channel class for filtering */
                 channel?: string;
                 /** @description Event class for filtering */
                 event?: string;
+                /** @description Language code (en, pl, zh) the template is written for */
+                locale?: string;
             };
             header?: never;
             path?: never;
@@ -25108,7 +33826,7 @@ export interface operations {
             };
         };
     };
-    "6a4d9da57506b5093b51f743a62193c9": {
+    "templates.create": {
         parameters: {
             query?: never;
             header?: never;
@@ -25127,7 +33845,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TemplateResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -25166,7 +33886,7 @@ export interface operations {
             };
         };
     };
-    ca2fa59917273b4142166017cee6784f: {
+    "admin.templates.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -25209,7 +33929,7 @@ export interface operations {
             };
         };
     };
-    "313dc9b2f5379c5f42aa467207e2569f": {
+    "templates.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -25226,7 +33946,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiBooleanResponse"];
+                };
             };
             /** @description cannot find a template with provided slug identifier */
             400: {
@@ -25258,7 +33980,7 @@ export interface operations {
             };
         };
     };
-    "25572e235c554c96bdf9aea85864da17": {
+    "templates.update": {
         parameters: {
             query?: never;
             header?: never;
@@ -25280,7 +34002,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TemplateRecordResponse"];
+                };
             };
             /** @description cannot find a template with provided slug identifier */
             400: {
@@ -25319,7 +34043,7 @@ export interface operations {
             };
         };
     };
-    "0826f3f964be84bedaf9c56f2d206b8e": {
+    "templates.variables": {
         parameters: {
             query?: never;
             header?: never;
@@ -25335,7 +34059,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TemplateVariablesResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -25360,7 +34086,7 @@ export interface operations {
             };
         };
     };
-    "1663a269b01483914250b7d48f5219cc": {
+    "templates.preview": {
         parameters: {
             query?: never;
             header?: never;
@@ -25377,7 +34103,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TemplatePreviewResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -25402,7 +34130,7 @@ export interface operations {
             };
         };
     };
-    "82a224b944d34cbf68583cfe4457ca66": {
+    "templates.assign": {
         parameters: {
             query?: never;
             header?: never;
@@ -25425,7 +34153,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TemplateResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -25450,7 +34180,7 @@ export interface operations {
             };
         };
     };
-    f46e6e43a380174a98da5661e30f183d: {
+    "templates.unassign": {
         parameters: {
             query?: never;
             header?: never;
@@ -25473,7 +34203,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TemplateResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -25498,7 +34230,7 @@ export interface operations {
             };
         };
     };
-    bba7f91abe386bb823af4e5c714a34f3: {
+    "templates.assignable": {
         parameters: {
             query?: {
                 /** @description Class of assignable model for which we want to find assignable Templates */
@@ -25519,7 +34251,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TemplateListResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -25544,7 +34278,7 @@ export interface operations {
             };
         };
     };
-    "5a88665aa6e27668775f3353174d5081": {
+    "templates.assigned": {
         parameters: {
             query: {
                 /** @description Class of assignable model for which we want to fetch assigned Template */
@@ -25563,7 +34297,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TemplateListResponse"];
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -25588,7 +34324,7 @@ export interface operations {
             };
         };
     };
-    fd8a8310786cb7d3b749da1945c41573: {
+    "platform.operations.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -25612,7 +34348,7 @@ export interface operations {
             };
         };
     };
-    "63486428fcc1835220898ec2e1775315": {
+    "platform.operations.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -25645,7 +34381,7 @@ export interface operations {
             };
         };
     };
-    "4ee59d29162c33be46676ac192fea763": {
+    "platform.tenants.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -25683,7 +34419,7 @@ export interface operations {
             };
         };
     };
-    "135135c2c7a8b3f064f45fc65b42e3e2": {
+    "platform.tenants.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -25741,7 +34477,7 @@ export interface operations {
             };
         };
     };
-    "2008e0e13e05d2463e87c51103f3e725": {
+    "platform.tenants.by-slug.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -25774,7 +34510,7 @@ export interface operations {
             };
         };
     };
-    "7e5d0171cf58c83d4e39f68c56ab1f6d": {
+    "platform.tenants.by-slug.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -25823,7 +34559,7 @@ export interface operations {
             };
         };
     };
-    fc7c9945e536e6e4e77fc034a89aeada: {
+    "platform.tenants.by-slug.env.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -25870,7 +34606,7 @@ export interface operations {
             };
         };
     };
-    aebe83e0059027d6275f8058ab07f48d: {
+    "admin.quiz-answers.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -25900,7 +34636,7 @@ export interface operations {
             };
         };
     };
-    e5e6da060b19008bba5f346119fd11cb: {
+    "quiz-answers.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -25927,7 +34663,7 @@ export interface operations {
             };
         };
     };
-    "9026edfef85cb26098c68c2b8aac040a": {
+    "quiz-answers.all.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -25955,7 +34691,7 @@ export interface operations {
             };
         };
     };
-    "9e171650c0ec2fcb2a8cf9e2987fb8e1": {
+    "admin.gift-questions.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -25983,7 +34719,7 @@ export interface operations {
             };
         };
     };
-    "65519a43c3c670f2e236f438e306b045": {
+    "admin.gift-questions.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -26014,7 +34750,7 @@ export interface operations {
             };
         };
     };
-    "2b8c9877c3fa3404842c93c9000a1390": {
+    "admin.gift-questions.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -26032,12 +34768,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    e0ba9ba761958c27377fc23523bae446: {
+    "admin.gift-questions.sort.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -26064,7 +34800,7 @@ export interface operations {
             };
         };
     };
-    "264d890a26f79abc6d272dd2eab375a0": {
+    "admin.gift-questions.export.get": {
         parameters: {
             query?: {
                 "category_ids[]"?: unknown[];
@@ -26098,7 +34834,7 @@ export interface operations {
             };
         };
     };
-    "5480a1c56912460580e6b8bd1e1f0a5e": {
+    "admin.gift-questions.import.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -26116,7 +34852,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
             };
             /** @description Bad request */
             422: {
@@ -26129,7 +34867,7 @@ export interface operations {
             };
         };
     };
-    "073105103173305090e88d1b3d63a215": {
+    "admin.gift-quizes.get": {
         parameters: {
             query: {
                 course_id: number;
@@ -26155,7 +34893,7 @@ export interface operations {
             };
         };
     };
-    d3f211acc8963d522348a486311696e6: {
+    "admin.gift-quizes.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -26181,7 +34919,7 @@ export interface operations {
             };
         };
     };
-    ed1ed73473ed578bb20057616591f062: {
+    "admin.gift-quizes.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -26211,7 +34949,7 @@ export interface operations {
             };
         };
     };
-    beef21f763f6c6b9dd1e1248552273e1: {
+    "admin.quiz-attempts.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -26241,7 +34979,7 @@ export interface operations {
             };
         };
     };
-    "198ab7973108b7fdd9292b3f9a3ca9b7": {
+    "admin.quiz-attempts.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -26267,7 +35005,7 @@ export interface operations {
             };
         };
     };
-    a84ccadb34545e635dfd1e4bf8d6e223: {
+    "admin.quiz-attempts.by-id.feedback.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -26297,7 +35035,7 @@ export interface operations {
             };
         };
     };
-    f2072dd5565325039929ef3c520a3ec5: {
+    "admin.quiz-attempts.export.get": {
         parameters: {
             query: {
                 course_id: number;
@@ -26323,7 +35061,7 @@ export interface operations {
             };
         };
     };
-    e2c554d50c33a8e3a8002992edbc8910: {
+    "quiz-attempts.get": {
         parameters: {
             query?: {
                 page?: number;
@@ -26351,7 +35089,7 @@ export interface operations {
             };
         };
     };
-    "54194f47734066ea2c8ac15c157a6eeb": {
+    "quiz-attempts.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -26379,7 +35117,7 @@ export interface operations {
             };
         };
     };
-    c30f76ddff06ac4edbf8f35db37c5053: {
+    "quiz-attempts.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -26405,7 +35143,7 @@ export interface operations {
             };
         };
     };
-    f585a46e6cf973c1c85e5dcb98f706a6: {
+    "quiz-attempts.by-id.end.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -26431,7 +35169,7 @@ export interface operations {
             };
         };
     };
-    "8e02a761a66ef6682456de1dbb531a3e": {
+    "admin.topic-project-solutions.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "id" | "user_id" | "topic_id";
@@ -26459,12 +35197,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "313669004e9d1bef44b957623fedeb43": {
+    "admin.topic-project-solutions.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -26490,7 +35228,7 @@ export interface operations {
             };
         };
     };
-    a85eef1d901f0faf4d78a02cd726b08c: {
+    "admin.topic-project-solutions.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -26508,12 +35246,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    dcb676ab830112a613abed9dc9f6dda2: {
+    "admin.topic-project-solutions.by-id.feedback.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -26543,7 +35281,7 @@ export interface operations {
             };
         };
     };
-    "46983be1fca1003a97b9641532b1d23c": {
+    "admin.topic-project-solutions.by-id.grade.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -26565,12 +35303,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    d19af5426d3341de71009016f7b0d390: {
+    "topic-project-solutions.get": {
         parameters: {
             query?: {
                 order_by?: "created_at" | "id";
@@ -26596,12 +35334,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "8712f55d3548078ba387fcb45f7d9842": {
+    "topic-project-solutions.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -26629,7 +35367,7 @@ export interface operations {
             };
         };
     };
-    de684fcf50c445217b849400263d2c36: {
+    "topic-project-solutions.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -26655,7 +35393,7 @@ export interface operations {
             };
         };
     };
-    a4e73ac1a3e09552329897e00fc5e0d0: {
+    "topic-project-solutions.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -26673,12 +35411,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "902b19fe337fa523bb065f114e7d672f": {
+    "admin.translations.get": {
         parameters: {
             query?: {
                 order_by?: string;
@@ -26704,12 +35442,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "5d3593793f743aaa1da11e3ad80bc56b": {
+    "admin.translations.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -26728,12 +35466,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    aaa2aefd90287bad773ed0407ee993eb: {
+    "admin.translations.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -26751,12 +35489,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "0f76deebde9d06f1f3148f55d578f792": {
+    "admin.translations.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -26778,12 +35516,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "997bcc455d11328fecf5b61cb707842b": {
+    "admin.translations.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -26801,12 +35539,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "986986a0838d0c3cd8af3c40c37745b4": {
+    "admin.translations.retrieve.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -26825,12 +35563,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    ffbcd4cb27045c94497f61aedfa97903: {
+    "translations.get": {
         parameters: {
             query?: {
                 order_by?: string;
@@ -26856,12 +35594,278 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "4182d684e9fdd0d957aa4fc4251dfa1e": {
+    "tutor.runs.by-run.events.get": {
+        parameters: {
+            query?: {
+                /** @description resume after this event id (or Last-Event-ID header) */
+                after?: number;
+            };
+            header?: never;
+            path: {
+                run: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description text/event-stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown run, or a run of another learner */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "tutor.courses.by-course.status.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `enabled` (tutor on for the tenant), `aiEnabled` (AI on), `remaining` and `dailyLimit` questions, `attemptActive` (a quiz attempt is open: the tutor explains concepts only), `streaming` (the operator allows streamed answers) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "tutor.courses.by-course.messages.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    text: string;
+                    conversationId?: string | null;
+                    /** @description The topic the learner has open: its content is added to the search */
+                    topicId?: number | null;
+                    /** @description Queue the answer and return 202 with a run id; read it at `GET /api/tutor/runs/{run}/events`. Ignored (the answer comes back in the response) when the operator switched streaming off */
+                    stream?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description `answer`, `citations` (label, topic, source fragments), `refusal` (none, out_of_scope, attempt_active, unsafe), `inScope`, `remaining` questions today */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description `stream: true`: the question is stored and the answer is queued; `conversationId`, `runId`, `questionId` */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course or conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The conversation already has an answer running */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Daily or monthly limit reached, or too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The tutor is switched off or AI is disabled */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "tutor.courses.by-course.conversations.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+        };
+    };
+    "tutor.conversations.by-conversation.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Messages in order */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Not the learner's conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "tutor.conversations.by-conversation.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Not the learner's conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description An answer is still being written */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.tutor.courses.by-course.analytics.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Counts only; `smallGroup` below the minimum group size. No transcripts, no names */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs learner_insights_view or authorship of the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.video.states.get": {
         parameters: {
             query?: {
                 /** @description Video process state (error, finished, coding) */
@@ -26873,12 +35877,29 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description List of available */
+            /** @description Processed videos with the state of their conversion to HLS */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @example 1 */
+                            id?: number;
+                            /** @example 12 */
+                            topic_id?: number | null;
+                            topic_title?: string | null;
+                            /** @description The topic json, with the ffmpeg state under `ffmpeg` */
+                            json?: Record<string, never> | null;
+                            /** @enum {string|null} */
+                            state?: "coding" | "finished" | "error" | null;
+                        }[];
+                    };
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -26903,7 +35924,7 @@ export interface operations {
             };
         };
     };
-    "42890b01e3a00f31a8c6ceb8d0138744": {
+    "admin.vouchers.get": {
         parameters: {
             query?: {
                 /** @description Pagination Page Number */
@@ -26923,12 +35944,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "71644f504f6cbd9c450f65624dce99f0": {
+    "admin.vouchers.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -26948,12 +35969,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    d1c3e71e48f71822d2a37945317ac92e: {
+    "admin.vouchers.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -26971,12 +35992,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "9055ca70b04f6699a7f162a20b56e8f3": {
+    "admin.vouchers.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -26994,12 +36015,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "5e1458aef655851e8866fa0ae66d1837": {
+    "admin.vouchers.by-id.patch": {
         parameters: {
             query?: never;
             header?: never;
@@ -27022,12 +36043,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    c168a9af1675608c04ef7294f422255c: {
+    "cart.voucher.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -27051,12 +36072,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    d3cb03091b4f8fe650a96b24e5c499e9: {
+    "cart.voucher.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -27071,12 +36092,423 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "04949001127a5f1cf8b933180b7aae85": {
+    "webhooks.events.list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event types */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEventType"][];
+                    };
+                };
+            };
+            /** @description Needs webhook_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Endpoints */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"][];
+                    };
+                };
+            };
+            /** @description Needs webhook_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @example https://example.com/hooks/ulams */
+                    url: string;
+                    description?: string | null;
+                    /**
+                     * @example [
+                     *       "course.completed"
+                     *     ]
+                     */
+                    events: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"];
+                    };
+                };
+            };
+            /** @description Needs webhook_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid events, a URL that is not https or points to a private address, or the endpoint limit */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Endpoint */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    url?: string;
+                    description?: string | null;
+                    events?: string[];
+                    enabled?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid input */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.rotate-secret": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Endpoint with the new secret */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description A sample of this event type; default webhook.test
+                     * @example course.completed
+                     */
+                    event_type?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description The finished delivery */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookDelivery"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many test sends */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.deliveries.list": {
+        parameters: {
+            query?: {
+                endpoint_id?: string;
+                status?: "pending" | "retrying" | "succeeded" | "failed" | "cancelled";
+                event_type?: string;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deliveries and pagination meta */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookDelivery"][];
+                        meta?: Record<string, never>;
+                    };
+                };
+            };
+        };
+    };
+    "webhooks.deliveries.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                delivery: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Delivery */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookDelivery"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.deliveries.replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                delivery: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The new delivery, queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookDelivery"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many replays */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webinars.generate-jitsi.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -27093,7 +36525,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -27107,7 +36539,7 @@ export interface operations {
             };
         };
     };
-    "7a869d402f23f76a4b51a81af1e8b2c4": {
+    "webinars.get": {
         parameters: {
             query?: {
                 order_by?: "finished_at" | "started_at" | "created_at" | "name";
@@ -27135,12 +36567,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    e4316f71859f9178d587eac330999537: {
+    "webinars.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -27158,12 +36590,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "97358e1e01dd74064fd82ba429dd9c0b": {
+    "webinars.me.get": {
         parameters: {
             query?: {
                 order_by?: "finished_at" | "started_at" | "created_at" | "name";
@@ -27191,12 +36623,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "1efbdd8510bc8b612b9e5641e46646de": {
+    "webinars.start-live-stream.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -27213,12 +36645,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiJson"];
                 };
             };
         };
     };
-    "498256da7f0c76193971b11fc2d54a84": {
+    "admin.webinars.get": {
         parameters: {
             query?: {
                 order_by?: "finished_at" | "started_at" | "created_at" | "name";
@@ -27244,12 +36676,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "2ed856795a9cba0df5bbd7ab83d9e290": {
+    "admin.webinars.post": {
         parameters: {
             query?: never;
             header?: never;
@@ -27268,12 +36700,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "3fe0e78997de346670d141803955e001": {
+    "admin.webinars.by-id.get": {
         parameters: {
             query?: never;
             header?: never;
@@ -27291,12 +36723,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    de68a522c589c0d37b7d092d78addf61: {
+    "admin.webinars.by-id.put": {
         parameters: {
             query?: never;
             header?: never;
@@ -27318,12 +36750,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "3a0b6db09323a340b7c2c5c79e6d50c2": {
+    "admin.webinars.by-id.delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -27341,12 +36773,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
-    "4bd86507564fdd023d62cbcc1e2d3149": {
+    "admin.webinars.users.assignable.get": {
         parameters: {
             query?: {
                 search?: string;
@@ -27363,7 +36795,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */
@@ -27377,7 +36809,7 @@ export interface operations {
             };
         };
     };
-    "61aaf885ca2951af1de4ac336dae3058": {
+    "admin.webinars.by-id.users.get": {
         parameters: {
             query?: {
                 search?: string;
@@ -27397,7 +36829,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
             /** @description Bad request */

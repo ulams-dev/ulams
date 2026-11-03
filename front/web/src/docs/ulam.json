@@ -253,6 +253,10 @@
           {
             "label": "FAQ",
             "href": "#faq"
+          },
+          {
+            "label": "Accessibility",
+            "href": "/accessibility"
           }
         ],
         "note": "Stanisław Ulam is named as history, not as an account or an endorsement. The interactives run in a sandbox."

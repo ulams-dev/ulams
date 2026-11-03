@@ -1,0 +1,31 @@
+{
+    "name": "ulams/sdk",
+    "version": "0.1.0",
+    "description": "PHP client for the ulams API, generated from its OpenAPI document with a small hand-written wrapper for authentication, idempotency keys and pagination.",
+    "keywords": ["ulams", "lms", "api", "sdk", "openapi"],
+    "homepage": "https://github.com/ulams-dev/ulams/tree/main/sdk-php",
+    "license": "MIT",
+    "require": {
+        "php": "^8.1",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "guzzlehttp/guzzle": "^7.3",
+        "guzzlehttp/psr7": "^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5 || ^11.0"
+    },
+    "autoload": {
+        "psr-4": { "Ulams\\Sdk\\": ["lib/", "src/"] }
+    },
+    "autoload-dev": {
+        "psr-4": { "Ulams\\Sdk\\Tests\\": "tests/" }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

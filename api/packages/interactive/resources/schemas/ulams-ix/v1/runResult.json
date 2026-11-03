@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/ulams-ix/v1/runResult.json",
+  "title": "runResult",
+  "description": "Runner to parent (code exercises, ADR 0170). The outcome of one run. Messages of this type may be up to 640 KB.",
+  "type": "object",
+  "required": [
+    "ulams-ix",
+    "type",
+    "nonce",
+    "runId",
+    "status",
+    "tests",
+    "passed",
+    "total",
+    "durationMs"
+  ],
+  "properties": {
+    "ulams-ix": {
+      "const": 1
+    },
+    "type": {
+      "const": "runResult"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "runId": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "error",
+        "timeout"
+      ]
+    },
+    "tests": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "status"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "error"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "passed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 200
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 200
+    },
+    "durationMs": {
+      "type": "number",
+      "minimum": 0
+    },
+    "output": {
+      "type": "string",
+      "maxLength": 8192
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "error": {
+      "type": "string",
+      "maxLength": 500
+    }
+  },
+  "additionalProperties": false
+}

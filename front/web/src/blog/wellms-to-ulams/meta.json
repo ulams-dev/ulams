@@ -1,0 +1,41 @@
+{
+  "slug": "wellms-to-ulams",
+  "date": "2026-10-08",
+  "series": false,
+  "en": {
+    "title": "Wellms → ULAMS: where this came from",
+    "description": "How a Wellms headless LMS fork became ULAMS: courses from existing documentation, a source behind every sentence, and AI that only proposes.",
+    "tags": [
+      "Wellms",
+      "History"
+    ],
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "2022-2026",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The 2022 course-format paper above today's course preview in the Studio.",
+        "caption": "The 2022 course-format paper above today's course preview in the Studio."
+      }
+    ]
+  },
+  "pl": {
+    "title": "Wellms → ULAMS: skąd się to wzięło",
+    "description": "Jak fork bezgłowego LMS-a Wellms stał się ULAMS: kursy z istniejącej dokumentacji, źródło przy każdym zdaniu i AI, które tylko proponuje.",
+    "tags": [
+      "Wellms",
+      "Historia"
+    ],
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "2022-2026",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Artykuł o formacie kursu z 2022 roku nad dzisiejszym podglądem kursu w Studio.",
+        "caption": "Artykuł o formacie kursu z 2022 roku nad dzisiejszym podglądem kursu w Studio."
+      }
+    ]
+  }
+}

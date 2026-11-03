@@ -221,7 +221,7 @@ export class UlamsStory extends HTMLElement {
 
   connectedCallback(): void {
     this.player = new StoryPlayer(this, {
-      reduced: reducedMotion(),
+      reduced: reducedMotion() || this.hasAttribute("data-static"),
       loop: this.hasAttribute("loop"),
       onEnd: () => this.dispatchEvent(new CustomEvent("story-end", { bubbles: true })),
     });
@@ -239,7 +239,7 @@ export class UlamsStory extends HTMLElement {
       const paused = !this.player.userPaused;
       this.player.set({ userPaused: paused });
       pause.setAttribute("aria-pressed", String(paused));
-      pause.textContent = paused ? "Play" : "Pause";
+      pause.textContent = (paused ? pause.dataset.labelPlay : pause.dataset.labelPause) ?? (paused ? "Play" : "Pause");
     });
     if (this.player.ended && reducedMotion()) this.querySelectorAll("[data-replay],[data-pause]").forEach((b) => b.setAttribute("hidden", ""));
   }
@@ -264,6 +264,7 @@ export class UlamsWorkflows extends HTMLElement {
   private index = 0;
   private auto = true;
   private paused = false;
+  private finished = false;
   private held = false;
   private timer = 0;
   private reduced = false;
@@ -276,18 +277,45 @@ export class UlamsWorkflows extends HTMLElement {
       tab.addEventListener("click", () => this.select(i, true));
       tab.addEventListener("keydown", (e) => this.onKey(e as KeyboardEvent, i));
     });
-    this.addEventListener("story-end", () => this.schedule());
+    this.addEventListener("story-end", () => {
+      this.finished = true;
+      const pause = this.querySelector<HTMLButtonElement>("[data-pause]");
+      if (pause && !this.paused) {
+        pause.setAttribute("aria-pressed", "true");
+        const label = pause.dataset.labelPlay ?? "Play";
+        pause.setAttribute("aria-label", label);
+        pause.setAttribute("title", label);
+      }
+      this.schedule();
+    });
     for (const ev of ["pointerenter", "focusin"]) this.addEventListener(ev, () => this.hold(true));
     for (const ev of ["pointerleave", "focusout"]) this.addEventListener(ev, () => this.hold(false));
     const pause = this.querySelector<HTMLButtonElement>("[data-pause]");
     if (this.reduced) pause?.setAttribute("hidden", "");
     pause?.addEventListener("click", () => {
+      const current = this.story(this.index);
+      if (this.finished && current?.player.ended) {
+        this.finished = false;
+        this.paused = false;
+        pause.setAttribute("aria-pressed", "false");
+        const label = pause.dataset.labelPause ?? "Pause";
+        pause.setAttribute("aria-label", label);
+        pause.setAttribute("title", label);
+        current.player.replay();
+        return;
+      }
+      if (!this.paused && current?.player.ended) {
+        current.player.replay();
+        return;
+      }
       this.paused = !this.paused;
       pause.setAttribute("aria-pressed", String(this.paused));
-      pause.textContent = this.paused ? "Play" : "Pause";
+      const label = (this.paused ? pause.dataset.labelPlay : pause.dataset.labelPause) ?? (this.paused ? "Play" : "Pause");
+      pause.setAttribute("aria-label", label);
+      pause.setAttribute("title", label);
       this.stories().forEach((s) => s.player.set({ userPaused: this.paused }));
       if (this.paused) clearTimeout(this.timer);
-      else if (this.story(this.index)?.player.ended) this.schedule();
+      else if (current?.player.ended) current.player.replay();
     });
     customElements.whenDefined("ulams-story").then(() => this.select(0, false));
   }
@@ -308,6 +336,18 @@ export class UlamsWorkflows extends HTMLElement {
     if (manual) this.auto = false;
     clearTimeout(this.timer);
     this.index = i;
+    this.finished = false;
+    if (!this.paused) {
+      const pause = this.querySelector<HTMLButtonElement>("[data-pause]");
+      if (pause) {
+        pause.setAttribute("aria-pressed", "false");
+        const label = pause.dataset.labelPause ?? "Pause";
+        pause.setAttribute("aria-label", label);
+        pause.setAttribute("title", label);
+      }
+    }
+    const box = this.panels[i]?.parentElement;
+    const from = box?.getBoundingClientRect().height ?? 0;
     this.tabs.forEach((tab, k) => {
       const on = k === i;
       tab.setAttribute("aria-selected", String(on));
@@ -324,6 +364,39 @@ export class UlamsWorkflows extends HTMLElement {
         s.player.update();
       }
     });
+    if (box) this.resize(box, from);
+    this.reveal(this.tabs[i]);
+  }
+
+  /** Keeps the active tab visible when the tab row scrolls sideways (narrow screens). */
+  private reveal(tab: HTMLElement | undefined): void {
+    const row = tab?.parentElement;
+    if (!tab || !row || row.scrollWidth <= row.clientWidth) return;
+    const offset = tab.getBoundingClientRect().left - row.getBoundingClientRect().left + row.scrollLeft;
+    row.scrollTo({ left: offset - 8, behavior: this.reduced ? "auto" : "smooth" });
+  }
+
+  /** Animates the panel box from its previous height to the height of the newly active panel. */
+  private resize(box: HTMLElement, from: number): void {
+    box.style.height = "";
+    const to = this.panels[this.index]?.getBoundingClientRect().height ?? 0;
+    if (this.reduced || !from || Math.abs(to - from) < 1) {
+      box.removeAttribute("data-resizing");
+      return;
+    }
+    box.removeAttribute("data-resizing");
+    box.style.height = `${from}px`;
+    void box.offsetHeight;
+    box.setAttribute("data-resizing", "");
+    box.style.height = `${to}px`;
+    const done = (e?: TransitionEvent): void => {
+      if (e && (e.target !== box || e.propertyName !== "height")) return;
+      box.removeEventListener("transitionend", done);
+      if (box.style.height !== `${to}px`) return;
+      box.style.height = "";
+      box.removeAttribute("data-resizing");
+    };
+    box.addEventListener("transitionend", done);
   }
 
   private hold(on: boolean): void {

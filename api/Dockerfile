@@ -7,6 +7,8 @@ ARG BASE_IMAGE=php-base
 ARG PHP_IMAGE=php:8.4-fpm-alpine3.24
 
 FROM ${PHP_IMAGE} AS php-base
+# Minimum PHP version install.sh accepts; empty uses the default in install.sh (see docker/php/README.md).
+ARG MIN_PHP_VERSION
 COPY --from=mlocati/php-extension-installer:2.12.0 /usr/bin/install-php-extensions /usr/local/bin/
 COPY --from=composer:2.10 /usr/bin/composer /usr/local/bin/composer
 COPY docker/php/ /usr/local/src/ulams-php/
@@ -24,13 +26,17 @@ RUN \
   && cp docker/conf/php/ulams-production-php.ini /usr/local/etc/php/conf.d/zz-ulams-production-php.ini \
   && cp docker/conf/php/php-fpm-custom.conf /usr/local/etc/php-fpm.d/php-fpm-custom.conf
 # No dev dependencies; every class is in the classmap, so autoloading never probes the disk.
-RUN composer install --no-scripts --no-dev --no-interaction --classmap-authoritative
+RUN n=1; until composer install --no-scripts --no-dev --no-interaction --classmap-authoritative; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): composer install --no-scripts --no-dev --no-interaction --classmap-authoritative" >&2; sleep 5; done
 # LiaScript player (BSD-3-Clause), pinned version and checksum, not kept in git
 RUN sh packages/liascript/bin/fetch-player.sh
+# esbuild.wasm (MIT) of the code exercises runner (ADR 0170), pinned version and checksum, not kept in git
+RUN sh packages/code-exercises/bin/fetch-esbuild.sh
 # The package manifest is built at start from this vendor/ (php-profile.sh), never copied in
 RUN rm -f bootstrap/cache/*.php
 # init.sh builds the config/route/event/view caches per domain at start (php-profile.sh)
 ENV ULAMS_OPTIMIZE=true
+# one JSON object per line on stderr (docs/operators/monitoring); a bare checkout keeps the file channel
+ENV LOG_CHANNEL=stderr_json
 
 CMD /var/www/html/init.sh
 

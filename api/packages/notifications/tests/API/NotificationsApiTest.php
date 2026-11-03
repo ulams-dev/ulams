@@ -34,7 +34,7 @@ class NotificationsApiTest extends TestCase
         event(new TestEvent($student, $friend, 'foo'));
         event(new TestEvent($friend, $student, 'foo'));
 
-        $response = $this->actingAs($student)->json('GET', '/api/notifications/');
+        $response = $this->actingAs($student, 'api')->json('GET', '/api/notifications/');
         $response->assertOk();
         $response->assertJsonCount(1, 'data');
 
@@ -57,25 +57,25 @@ class NotificationsApiTest extends TestCase
 
         $this->assertNull($notification->read_at);
 
-        $response = $this->actingAs($student)->json('GET', '/api/notifications/');
+        $response = $this->actingAs($student, 'api')->json('GET', '/api/notifications/');
         $response->assertOk();
         $response->assertJsonCount(1, 'data');
 
-        $response = $this->actingAs($student)->json('POST', '/api/notifications/' . $notification->getKey() . '/read');
+        $response = $this->actingAs($student, 'api')->json('POST', '/api/notifications/' . $notification->getKey() . '/read');
         $response->assertOk();
 
         $notification->refresh();
         $this->assertNotNull($notification->read_at);
 
-        $response = $this->actingAs($student)->json('GET', '/api/notifications/');
+        $response = $this->actingAs($student, 'api')->json('GET', '/api/notifications/');
         $response->assertOk();
         $response->assertJsonCount(0, 'data');
 
-        $response = $this->actingAs($student)->json('GET', '/api/notifications/', ['include_read' => true]);
+        $response = $this->actingAs($student, 'api')->json('GET', '/api/notifications/', ['include_read' => true]);
         $response->assertOk();
         $response->assertJsonCount(1, 'data');
 
-        $response = $this->actingAs($student)->json('POST', '/api/notifications/' . $friendNotification->getKey() . '/read');
+        $response = $this->actingAs($student, 'api')->json('POST', '/api/notifications/' . $friendNotification->getKey() . '/read');
         $response->assertForbidden();
     }
 
@@ -99,9 +99,12 @@ class NotificationsApiTest extends TestCase
         event(new TestEvent($student, $friend, 'foo'));
         event(new TestEvent($friend, $student, 'foo'));
 
-        $response = $this->actingAs($student)->json('GET', '/api/notifications/' . $friend->getKey());
+        $response = $this->actingAs($student, 'api')->json('GET', '/api/notifications/' . $friend->getKey());
         $response->assertStatus(404);
 
+        // as a guest: the guard of the previous request must not leak into these two
+        $this->app['auth']->forgetGuards();
+        $this->app['auth']->shouldUse('web');
         $response = $this->actingAs($student)->json('GET', '/api/admin/notifications/' . $student->getKey());
         $response->assertStatus(401);
 

@@ -1,0 +1,21 @@
+{
+  "slug": "git-drive-notion-connectors",
+  "date": "2026-10-20",
+  "series": false,
+  "en": {
+    "title": "A course that follows its repository, its Drive doc and its Notion page",
+    "description": "Living Course can now watch a Git repository, a Google Drive file or a Notion page. A change becomes a cited proposal you review, and a new section can become a suggested lesson.",
+    "tags": [
+      "Living Course",
+      "Connectors"
+    ]
+  },
+  "pl": {
+    "title": "Kurs, który podąża za repozytorium, dokumentem na Dysku i stroną w Notion",
+    "description": "Living Course potrafi teraz śledzić repozytorium Git, plik na Dysku Google albo stronę w Notion. Zmiana staje się propozycją z cytatami do przeglądu, a nowy rozdział może dać sugerowaną lekcję.",
+    "tags": [
+      "Living Course",
+      "Konektory"
+    ]
+  }
+}

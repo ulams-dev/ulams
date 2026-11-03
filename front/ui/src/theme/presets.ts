@@ -1,7 +1,12 @@
 /**
- * Tenant theme presets as the studio's theme picker shows them. The values mirror
- * `../styles/themes/*.css` (a test fails when they drift), so a card previews the real tokens
- * without loading every theme's stylesheet.
+ * The one list of tenant theme presets. The studio's picker, the admin theme screen, the learner site
+ * (`front/web`) and the API (`api/packages/settings/resources/themes.json`, read by `ThemePresets`) all
+ * take it from here: `scripts/theme-manifest.mjs` writes the manifest (`catalogue/themes.json`) and its
+ * API copy, and `yarn test` fails when either is stale. The values mirror `../styles/themes/*.css` (a
+ * test fails when they drift), so a card previews the real tokens without loading every stylesheet.
+ *
+ * A new preset is one CSS file in `styles/themes/`, one entry here, one `[data-theme]` import in
+ * `front/web/src/layouts/Base.astro` and `yarn workspace @ulams/ui theme-manifest`.
  */
 export const THEME_PRESETS = {
   coffee: { label: "The Coffee Atlas", mood: "Warm, editorial, paper-like", dark: false, bg: "#f6f1e9", card: "#ede5d8", text: "#2b1d14", muted: "#5e4a40", primary: "#a84521", onPrimary: "#fdfaf5", accent: "#c2552d", border: "#d9cfc2" },
@@ -14,3 +19,18 @@ export const THEME_PRESETS = {
 
 export type TenantThemeName = keyof typeof THEME_PRESETS;
 export const TENANT_THEMES = Object.keys(THEME_PRESETS) as TenantThemeName[];
+
+/** The product site's own theme: never a tenant's, so it is not in the list above. */
+export const PLATFORM_THEME = { bg: "#fafaf9", themeColor: "#fafaf9" } as const;
+
+/** Browser chrome colour (`<meta name="theme-color">`) of a tenant preset: the page background. */
+export const themeColorOf = (name: TenantThemeName): string => THEME_PRESETS[name].bg;
+
+/** The manifest the API and the sites read: presets in display order, with the colour of the browser chrome. */
+export function themeManifest() {
+  return {
+    $comment: "Generated from front/ui/src/theme/presets.ts by scripts/theme-manifest.mjs. Do not edit.",
+    presets: TENANT_THEMES.map((name) => ({ name, ...THEME_PRESETS[name], themeColor: themeColorOf(name) })),
+    platform: PLATFORM_THEME,
+  };
+}

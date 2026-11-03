@@ -1,6 +1,8 @@
 ---
 import Icon from "./Icon.astro";
 import Img from "./Img.astro";
+import { pageLocale } from "../lib/i18n.ts";
+import { playerStrings } from "../lib/player-strings.ts";
 
 interface Person {
   name: string;
@@ -19,9 +21,12 @@ interface Props {
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
   progress?: number;
+  /** One line under the progress bar: what is next and how much is left. */
+  progressNote?: string;
   id?: string;
 }
-const { variant = "editorial", eyebrow, title, subtitle, summary, facts = [], image, tutors = [], primaryCta, secondaryCta, progress } = Astro.props;
+const { variant = "editorial", eyebrow, title, subtitle, summary, facts = [], image, tutors = [], primaryCta, secondaryCta, progress, progressNote } = Astro.props;
+const t = playerStrings(pageLocale(Astro));
 ---
 
 <header class={`u-course-head u-course-head--${variant}`}>
@@ -45,10 +50,13 @@ const { variant = "editorial", eyebrow, title, subtitle, summary, facts = [], im
       }
       {
         typeof progress === "number" && (
-          <div class="u-course-head__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progress} aria-label="Your progress" style={`--progress:${progress}%`} data-course-progress>
+          <Fragment>
+          <div class="u-course-head__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progress} aria-label={t.yourProgress} style={`--progress:${progress}%`} data-course-progress>
             <span class="u-course-head__track" />
             <span data-progress-label>{progress}%</span>
           </div>
+          {progressNote && <p class="u-course-head__note">{progressNote}</p>}
+          </Fragment>
         )
       }
       <div class="u-actions">
@@ -70,12 +78,12 @@ const { variant = "editorial", eyebrow, title, subtitle, summary, facts = [], im
       </div>
       {
         tutors.length > 0 && (
-          <ul class="u-course-head__tutors" role="list" aria-label="Tutors">
+          <ul class="u-course-head__tutors" role="list" aria-label={t.tutors}>
             {tutors.map((t) => (
               <li>
                 {t.image && (
                   <span class="u-course-head__avatar">
-                    <Img {...t.image} sizes="44px" />
+                    <Img {...t.image} sizes="44px" preset="avatar" />
                   </span>
                 )}
                 <span>
@@ -161,6 +169,11 @@ const { variant = "editorial", eyebrow, title, subtitle, summary, facts = [], im
     width: min(100%, 420px);
     font-weight: 700;
     font-size: 0.875rem;
+  }
+  .u-course-head__note {
+    margin: 8px 0 0;
+    font-size: 0.9375rem;
+    color: var(--ulams-color-muted);
   }
   .u-course-head__track {
     flex: 1;

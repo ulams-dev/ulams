@@ -2,6 +2,7 @@
 
 namespace Ulams\Tasks;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Settings\UlamsSettingsServiceProvider;
 use Ulams\Tasks\Providers\AuthServiceProvider;
@@ -38,6 +39,11 @@ class UlamsTasksServiceProvider extends ServiceProvider
 
     public function register()
     {
+        MorphMap::register([
+            'task' => \Ulams\Tasks\Models\Task::class,
+            'task_note' => \Ulams\Tasks\Models\TaskNote::class,
+        ]);
+
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
 
         $this->app->register(AuthServiceProvider::class);

@@ -58,8 +58,13 @@ Notes:
   `TopicRepository` runs `Validator::make($request->all(), $class::rules())`, fills the model
   with the validated attributes, saves it and attaches the topic. Validation errors come back
   as a `TopicException` (`CONTENT_VALIDATION`).
-- **`getMorphClass()`** returns the class name, which is stored in `topics.topicable_type`.
-  Clients identify the type by that string.
+- **Morph alias**: `topics.topicable_type` stores a stable alias, never the class name, so renaming or
+  moving the class cannot orphan topics. Register one in your service provider, as
+  `MorphMap::register(['topic.<type>' => YourContent::class])` (`Ulams\Core\Support\MorphMap`; the built-in
+  types are `topic.rich_text`, `topic.video`, `topic.h5p`, ...). The base class already uses
+  `HasMorphAlias`, so the model stores its alias, and a class without an alias fails with
+  `ClassMorphViolationException` as soon as it is saved. Never change an alias after release. Clients keep
+  seeing the class name in `topicable_type` and may send either form.
 - **Files**: types with uploads (Video, Audio, PDF, Image) implement `TopicFileContentContract`.
   The repository then accepts an upload or a stored path for each `getFileKeyNames()` field
   and stores it under the course directory.
@@ -186,7 +191,7 @@ unless you still ship the legacy app.
 
 ## Checklist
 
-- Content model, migration, `rules()`, `getMorphClass()`, factory.
+- Content model, migration, `rules()`, morph alias, factory.
 - `client`, `admin` and `export` resources, registered in `boot()`.
 - Feature tests: create a topic through `POST /api/admin/topics` with your type, read it as a
   learner, and test completion. Add a tenant isolation test if you add endpoints.

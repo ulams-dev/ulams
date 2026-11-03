@@ -10,7 +10,7 @@ modules:
   - web
   - admin
   - tenancy
-needsReview: "Prepared and validated locally (compose config, Caddy and cloudflared validation, shellcheck, a local run of install.sh with MinIO standing in for R2), not yet deployed to a VPS or run against a real Cloudflare account: do the first install on a staging domain and check the Cloudflare API steps, the R2 custom domain and the tunnel."
+needsReview: "Prepared and validated locally (compose config, Caddy and cloudflared validation, shellcheck, a local run of install.sh with SeaweedFS standing in for R2), not yet deployed to a VPS or run against a real Cloudflare account: do the first install on a staging domain and check the Cloudflare API steps, the R2 custom domain and the tunnel."
 ---
 
 import { Aside, Badge, Code, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
@@ -27,7 +27,7 @@ important ones at the end, so the page and the files cannot drift apart. The dec
 [ADR 0092](/decisions/0092-vps-cloudflare-hosting-reference/).
 
 <Aside type="caution" title="Prepared, not yet deployed">
-  The files were validated locally and run once with the published images and MinIO instead of R2. Nothing has run
+  The files were validated locally and run once with the published images and SeaweedFS instead of R2. Nothing has run
   against a real Cloudflare account or a real VPS yet. Use a staging domain for the first install.
 </Aside>
 
@@ -107,7 +107,7 @@ Prices change; the figures below were read from Cloudflare's documentation on 20
    ```
 
    Copy `cloudflared/credentials.json` there if `cloudflare-setup.sh` ran on another machine. For a dry run on your
-   laptop first, `scripts/install.sh --local` starts the same stack on `http://*.ulams.localhost:8480` with MinIO instead
+   laptop first, `scripts/install.sh --local` starts the same stack on `http://*.ulams.localhost:8480` with SeaweedFS instead
    of R2 and changes nothing on the host.
 
 3. **Run the installer.**
@@ -243,6 +243,13 @@ Private data never goes into a public bucket. Uploaded course sources stay on th
 Static files of the admin (hashed JavaScript and CSS) are cached by Cloudflare's default rules by extension. To turn
 the catalogue cache off, set `HTTP_CACHE_PUBLIC=false` on the API (the API then sends `private` everywhere).
 
+## Images
+
+Resizing is optional and off by default here: the front uses sharp and the admin the PHP resize API. Because every host is proxied,
+you can move both to Cloudflare Image Transformations: enable them for the zone (Images > Transformations), then set
+`ULAMS_IMAGE_SERVICE=cloudflare` and `REACT_APP_IMAGE_SERVICE=cloudflare`. `cloudflare-setup.sh` does not touch Images. The settings,
+the free-plan budget, the kill switch and the optional WAF rule are in [Image service](/operators/image-service/).
+
 ## E-mail
 
 Set the `MAIL_*` variables to any SMTP provider (host, port 587 with `tls`, user, password). Tenants send as
@@ -269,8 +276,7 @@ the earlier ones. See [First admin and first tenant](/operators/first-tenant/) f
 - **Demo mode off.** `create-tenant.sh` creates tenants with `--demo=off`. Demo mode (password-less login, hourly reset
   of the tenant, see [Demo mode](/admin/demo-mode/)) must never be on in production. The compose file sets no demo tenants on the
   landing (`ULAMS_DEMO_TENANTS` empty). Check a tenant with `docker compose exec api php artisan ulams:tenant:list`.
-- **Landing status.** `ULAMS_LANDING_STATUS=actual` is the default in this compose file: the landing keeps the honest
-  Coming and Partial labels. `final` renders everything as delivered; do not use it for a public launch (issue #92).
+- **Landing status.** Public Overview and Comparison pages always show the actual status in source data.
 - **CSP.** Both Content Security Policies start in **report-only** mode (`CSP_ENFORCE=false`,
   `ULAMS_CSP_HEADER=Content-Security-Policy-Report-Only`). After about a week of real traffic without unexpected rows in
   `GET /api/admin/csp-reports` (see [Security headers](/operators/security-headers/)), set `CSP_ENFORCE=true` and
@@ -342,7 +348,7 @@ The installer does the first four; the rest is yours.
 - **Cloudflare**: turn on 2FA on the account; scope API tokens (the setup token can be deleted after the install);
   consider a WAF rate-limiting rule on `/api/auth/*` and the platform login; enable "Block AI bots" or Bot Fight Mode if you
   do not want crawlers; keep the SSL mode on Full (strict).
-- Do not publish container ports. Do not run the optional MinIO or Adminer services on this host.
+- Do not publish container ports. Do not run the local-trial object store (`compose.local.yml`) or Adminer on this host.
 - Uploads: virus scanning is optional (`clamav` profile of the generic example, see [Security](/operators/security/)).
 
 ## Troubleshooting

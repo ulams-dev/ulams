@@ -1,0 +1,145 @@
+---
+import { renderMarkdown } from "../lib/markdown.ts";
+import { pageLocale, uiStrings } from "../lib/i18n.ts";
+
+interface Props {
+  title: string;
+  markdown: string;
+  practice: { stem: string; options: Array<{ text: string; correct?: boolean }>; explanation: string };
+  locale?: string;
+  id?: string;
+}
+const { title, markdown, practice, locale, id } = Astro.props;
+const t = uiStrings(locale ?? pageLocale(Astro));
+// A stable key from the text, so two questions on one page never share a radio group.
+const hash = [...`${title}|${practice.stem}`].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0, 7).toString(36);
+const key = id ?? `pq${hash}`;
+const html = renderMarkdown(markdown);
+---
+
+<article class="u-pq" id={id} aria-labelledby={`${key}-title`}>
+  <h3 class="u-pq__title" id={`${key}-title`}>{title}</h3>
+  <div class="u-pq__body" set:html={html} />
+  <ulams-practice-question data-correct-text={t.supportCorrect} data-wrong-text={t.supportNotQuite} data-choose-text={t.supportChoose}>
+    <fieldset class="u-pq__options">
+      <legend>{practice.stem}</legend>
+      {
+        practice.options.map((option, i) => (
+          <label class="u-pq__option">
+            <input type="radio" name={`${key}-answer`} value={i} data-correct={option.correct ? "1" : "0"} />
+            <span>{option.text}</span>
+            <span class="u-pq__mark" data-mark aria-hidden="true" />
+          </label>
+        ))
+      }
+    </fieldset>
+    <template data-explanation>{practice.explanation}</template>
+    <p class="u-pq__nojs" data-nojs>{t.supportNoScript}</p>
+    <button class="u-btn u-btn--sm" type="button" data-check hidden>{t.supportCheck}</button>
+    <p class="u-pq__result" role="status" aria-live="polite" data-result></p>
+  </ulams-practice-question>
+</article>
+
+<script>
+  import "../elements/practice-question.ts";
+</script>
+
+<style>
+  .u-pq {
+    display: grid;
+    gap: 0.7em;
+    padding: 14px 16px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-primary);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-pq__title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    color: var(--ulams-color-header);
+  }
+  .u-pq__body {
+    max-width: 70ch;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+  .u-pq__body :global(> * + *) {
+    margin-top: 0.8em;
+  }
+  ulams-practice-question {
+    display: grid;
+    gap: 0.7em;
+  }
+  .u-pq__options {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .u-pq__options legend {
+    margin-bottom: 6px;
+    padding: 0;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .u-pq__option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    cursor: pointer;
+  }
+  .u-pq__option input {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    margin-top: 0;
+  }
+  .u-pq__option span:nth-of-type(1) {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .u-pq__option:has(input:focus-visible) {
+    outline: 2px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-pq__option--correct {
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--ulams-color-primary);
+  }
+  .u-pq__option--wrong {
+    border-width: 2px;
+    border-style: dashed;
+    border-color: var(--ulams-color-warn, currentColor);
+  }
+  .u-pq__mark {
+    flex: none;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .u-pq__mark:empty {
+    display: none;
+  }
+  .u-pq :global(.u-btn[hidden]),
+  .u-pq__nojs[hidden] {
+    display: none;
+  }
+  .u-pq__nojs {
+    font-size: 0.9375rem;
+  }
+  .u-pq__result {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  .u-pq__result:empty {
+    display: none;
+  }
+</style>

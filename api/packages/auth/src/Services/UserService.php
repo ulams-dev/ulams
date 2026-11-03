@@ -24,6 +24,7 @@ use Ulams\Files\Helpers\FileHelper;
 use Ulams\ModelFields\Facades\ModelFields;
 use Exception;
 use Illuminate\Contracts\Auth\Authenticatable as User;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -271,7 +272,12 @@ class UserService implements UserServiceContract
     public function confirmDeletionProfile(int $userId, string $token): void
     {
         $user = $this->userRepository->find($userId);
-        $expiredAt = Crypt::decrypt($token);
+
+        try {
+            $expiredAt = Crypt::decrypt($token);
+        } catch (DecryptException) {
+            throw new DeletionTokenExpiredException('Deletion token is invalid');
+        }
 
         if (!$user || !$user->delete_user_token || $user->delete_user_token !== $token) {
             throw new DeletionTokenExpiredException("Deletion token is invalid");

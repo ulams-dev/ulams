@@ -167,6 +167,27 @@ export async function refreshToken(apiUrl: string, token: string) {
   );
 }
 
+/** Redeems the one-time code of a social login redirect together with the verifier of this browser. */
+export async function exchangeSocialCode(
+  apiUrl: string,
+  body: { code: string; verifier: string }
+) {
+  return request<
+    API.DefaultResponse<
+      | { complete: true; token: string; expires_at?: string | null }
+      | { complete: false; pre_user_token: string }
+    >
+  >(`${apiUrl}/api/auth/social/exchange`, {
+    method: "POST",
+    data: body,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Current-timezone": currentTimezone(),
+    },
+  });
+}
+
 export async function completeSocialAuth(
   apiUrl: string,
   token: string,

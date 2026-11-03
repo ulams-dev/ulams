@@ -7,6 +7,7 @@ use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Auth\Http\Requests\ExtendableRequest;
 use Ulams\Auth\Models\Group;
 use Ulams\Auth\Models\User;
+use Ulams\Auth\Rules\AllowedReturnUrl;
 use Ulams\Auth\Rules\NoHtmlTags;
 use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Support\Facades\Config;
@@ -46,7 +47,7 @@ class UserCreateRequest extends ExtendableRequest
                 'nullable',
                 'string',
             ],
-            'return_url' => ['url', Rule::requiredIf(fn () => !Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.return_url'))],
+            'return_url' => ['url', 'max:2048', new AllowedReturnUrl(), Rule::requiredIf(fn () => !Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.return_url'))],
         ];
 
         return array_merge($rules, ModelFields::getFieldsMetadataRules(User::class));

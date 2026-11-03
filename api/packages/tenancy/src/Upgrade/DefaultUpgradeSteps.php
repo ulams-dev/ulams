@@ -27,6 +27,8 @@ class DefaultUpgradeSteps
 
             return trim($preview . "\n" . $context->artisan('meetings:purge-frames'));
         }, since: '0.2', requiresCommand: 'meetings:purge-frames');
+        // accounts of the old social login carry the password "1": make it unusable and revoke their tokens
+        UpgradeSteps::command('disarm_legacy_social_passwords', 'ulams:auth:disarm-legacy-social-passwords', since: '0.3', requiresCommand: true);
         // views created before the package rename carry the old class names
         UpgradeSteps::command('recreate_views', 'ulams:db:recreate-views', since: '0.2');
     }

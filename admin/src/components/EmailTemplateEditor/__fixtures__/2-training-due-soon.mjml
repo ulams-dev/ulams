@@ -1,0 +1,12 @@
+<mjml>
+  <mj-body>
+    <mj-section background-color="white">
+      <mj-column>
+        <mj-text
+          ><h1>Hello @VarUserName!</h1>
+          <p>The course "@VarCourseTitle" is due on @VarDueDate, in @VarDaysLeft days.</p></mj-text
+        >
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

@@ -338,6 +338,10 @@
               "$data": "/course/href",
               "$default": "/"
             }
+          },
+          {
+            "label": "Accessibility",
+            "href": "/accessibility"
           }
         ]
       }

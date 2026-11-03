@@ -7,6 +7,8 @@ export interface BffRule {
   pattern: RegExp;
   /** Drops the cached progress after the call. */
   writesProgress?: boolean;
+  /** The response is a `text/event-stream`: piped through as it arrives, with `Last-Event-ID` forwarded. */
+  stream?: boolean;
 }
 
 export const BFF_RULES: BffRule[] = [
@@ -17,6 +19,8 @@ export const BFF_RULES: BffRule[] = [
   { method: "POST", pattern: /^\/api\/courses\/progress\/\d+\/h5p$/, writesProgress: true },
   // Interactive topics: the lesson page forwards the bridge's events with the learner's own session (ADR 0086)
   { method: "POST", pattern: /^\/api\/interactive\/topics\/\d+\/events$/, writesProgress: true },
+  // Code exercises: the lesson page reports a finished run of the visible tests as a practice attempt (ADR 0170)
+  { method: "POST", pattern: /^\/api\/code-exercises\/topics\/\d+\/attempts$/, writesProgress: true },
   { method: "GET", pattern: /^\/api\/quiz-attempts$/ },
   { method: "GET", pattern: /^\/api\/quiz-attempts\/\d+$/ },
   { method: "POST", pattern: /^\/api\/quiz-attempts$/ },
@@ -26,6 +30,24 @@ export const BFF_RULES: BffRule[] = [
   { method: "GET", pattern: /^\/api\/living-course\/courses\/\d+\/notices$/ },
   { method: "POST", pattern: /^\/api\/living-course\/notices\/\d+\/dismiss$/ },
   { method: "GET", pattern: /^\/api\/living-course\/courses\/\d+\/freshness$/ },
+  // Course variants (CV-5): the learner's own variant in the family, the choice to change it, the hint to switch and the
+  // placement check. The API scopes every call to the caller; the public picker data is read on the server instead.
+  { method: "GET", pattern: /^\/api\/courses\/\d+\/variant$/ },
+  { method: "PUT", pattern: /^\/api\/courses\/\d+\/variant$/, writesProgress: true },
+  { method: "POST", pattern: /^\/api\/courses\/\d+\/variant\/hints\/\d+\/dismiss$/ },
+  { method: "GET", pattern: /^\/api\/courses\/\d+\/placement$/ },
+  { method: "POST", pattern: /^\/api\/courses\/\d+\/placement\/attempts$/ },
+  // Learner Insights: the learner's own extra help (the API scopes every call to the caller)
+  { method: "GET", pattern: /^\/api\/learner-insights\/courses\/\d+\/topics\/\d+\/support$/ },
+  { method: "POST", pattern: /^\/api\/learner-insights\/assignments\/[0-9A-Za-z]{26}\/(feedback|hide|reflection)$/ },
+  // Course tutor: the learner's own questions and conversations (the API scopes them to the caller)
+  { method: "GET", pattern: /^\/api\/tutor\/courses\/\d+\/status$/ },
+  { method: "POST", pattern: /^\/api\/tutor\/courses\/\d+\/messages$/ },
+  { method: "GET", pattern: /^\/api\/tutor\/courses\/\d+\/conversations$/ },
+  { method: "GET", pattern: /^\/api\/tutor\/conversations\/[0-9A-Za-z]{26}$/ },
+  { method: "DELETE", pattern: /^\/api\/tutor\/conversations\/[0-9A-Za-z]{26}$/ },
+  // Streamed tutor answers: the run's events over SSE (ADR 0105); the API resolves the run through the caller's own conversation
+  { method: "GET", pattern: /^\/api\/tutor\/runs\/[0-9A-Za-z]{26}\/events$/, stream: true },
 ];
 
 export function matchBffRule(method: string, path: string): BffRule | null {

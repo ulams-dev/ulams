@@ -7,7 +7,7 @@ modules:
   - lti
 ---
 
-import { Aside, Badge } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
 LTI 1.3 lets you integrate an external learning tool without writing a ulams package, and lets
 other LMSs use ulams courses. The `lti` package implements both directions. For the admin
@@ -22,11 +22,12 @@ screens (Integrations → LTI) see [LTI](/admin/lti/). The library choice is rec
 | Core launch (OIDC third-party login) | yes | yes |
 | Deep Linking 2.0 | yes, creates `LtiLink` topics | yes |
 | Assignment and Grade Services 2.0 | yes, serves line items, scores, results | yes, sends scores |
-| Names and Role Provisioning | <Badge text="Coming" variant="caution" /> | not used |
-| Client-side OIDC (`postMessage` storage) | not implemented | <Badge text="Coming" variant="caution" /> |
+| Names and Role Provisioning 2.0 | yes, per tool switch (off by default) | not used |
+| Client-side OIDC (`postMessage` storage) | not implemented | yes |
 | Dynamic registration | no, manual registration | no |
 
-The open items are tracked in `docs/ROADMAP-TODO.md` (Phase 1, LTI).
+Both directions pass round trips with Moodle 5.0 in the nightly conformance job; the one open item, an
+operator run of the saLTIre certification suite, is tracked in `docs/ROADMAP-TODO.md` (Phase 1, LTI).
 
 ## ulams as a platform: launch an external tool
 

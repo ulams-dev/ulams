@@ -2,6 +2,7 @@
 
 namespace Ulams\Dictionaries\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Dictionaries\Database\Factories\DictionaryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ use Illuminate\Support\Collection;
  */
 class Dictionary extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
 
     protected $guarded = ['id'];

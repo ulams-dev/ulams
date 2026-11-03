@@ -7,7 +7,8 @@ platform (`api.localhost`) and any number of tenants, each on its own host
 (`<slug>.localhost`) with its own:
 
 - PostgreSQL role and database (`ulams_<slug>`),
-- MinIO/S3 bucket with public read (`ulams-<slug>`),
+- S3 bucket with public read (`ulams-<slug>`) and, on the bundled SeaweedFS, its own S3 key limited to that
+  bucket (`TENANCY_S3_IDENTITY_DRIVER=seaweedfs`, ADR 0041),
 - `.env.<host>` file and storage directory (gecche/laravel-multidomain),
 - `APP_KEY` and Passport key pair (a token from one tenant is rejected by every other),
 - Redis key prefix for queues, cache and Horizon (`ulams_<slug>_`),
@@ -43,6 +44,11 @@ php artisan ulams:tenant:list --hosts         # active API hosts, one per line
 
 # rebuild env files, registrations and Passport keys from the tenants table (init.sh)
 php artisan ulams:tenant:sync-env --migrate
+# per-tenant S3 keys (ADR 0041): issue (or add) a key for every tenant, then drop the old ones
+php artisan ulams:tenant:sync-env --rotate-storage-keys [--tenant=acme]
+php artisan ulams:tenant:sync-env --prune-storage-keys
+# create missing buckets and re-apply their public read policy (after moving object stores)
+php artisan ulams:tenant:ensure-buckets
 
 # AI settings (ANTHROPIC_API_KEY, AI_*) are inherited from the platform env; per-tenant override (ADR 0063)
 php artisan ulams:tenant:set-env acme --set=AI_DRIVER=disabled
@@ -65,6 +71,7 @@ Steps of `ulams:tenant:create`, recorded in `tenants.steps`:
 |---|---|
 | `database` | `CREATE ROLE` + `CREATE DATABASE` through the `pgsql_admin` connection |
 | `bucket` | creates the bucket and a public read policy (AWS SDK) |
+| `storage_identity` | `StorageIdentityProvisioner`: the tenant's own S3 key limited to its bucket (`seaweedfs` driver) or nothing (`none`); stored encrypted in `tenants.storage_key`/`storage_secret` |
 | `env` | `domain:add <slug>.localhost` with the tenant values |
 | `migrate` | `migrate --force` |
 | `passport_keys` | `passport:keys`, copy stored encrypted on the tenant row |
@@ -96,3 +103,17 @@ The end-to-end isolation test provisions two real tenants and is opt-in:
 ```bash
 docker compose exec -T -e TENANCY_INTEGRATION=1 api vendor/bin/phpunit packages/tenancy/tests/Integration
 ```
+
+The nightly workflow (`.github/workflows/nightly-conformance.yml`, job `tenancy`) runs it against the compose stack.
+Every route is also probed in-process on each pull request: `api/tests/Integrations/TenantIsolationCoverageTest.php`
+(ADR 0190).
+
+## Templates and tenants created for a purpose (ADR 0141, amendment)
+
+- `ulams:tenant:template <slug>` (and `/api/platform/templates`): a named starting point for new tenants (theme, accent, demo flag,
+  demo users, inheritable settings). `ulams:tenant:create --template=<slug>` applies it to a tenant that does not exist yet; options win.
+- `ulams:tenant:create --derived-from=<parent> --purpose=<purpose> --reference=<id>` records the tenant as created for another tenant
+  (a department academy of a policy): once per reference, at most `TENANCY_MAX_DERIVED_PER_PARENT` active per parent, no chains,
+  the record kept after deletion (`tenant_derivations`). `ulams:tenant:delete --with-derived` removes the derived tenants first.
+- Tables (platform database): `tenant_templates`, `tenant_derivations`.
+

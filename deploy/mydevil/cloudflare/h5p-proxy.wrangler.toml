@@ -1,0 +1,5 @@
+# wrangler deploy -c h5p-proxy.wrangler.toml (the /h5p* routes are created by production-hosts.py)
+name = "ulams-h5p-proxy"
+main = "h5p-proxy.worker.js"
+compatibility_date = "2024-11-01"
+workers_dev = false

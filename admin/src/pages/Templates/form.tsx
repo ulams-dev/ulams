@@ -1,11 +1,19 @@
 import PdfList from '@/components/Pdf/list';
 import TemplateFields from '@/components/TemplateFields';
+import TemplateLanguages from '@/components/TemplateLanguages';
+import {
+  NO_LANGUAGE,
+  TEMPLATE_LANGUAGES,
+  languageName,
+  translationDraft,
+} from '@/components/TemplateLanguages/languages';
 import TemplateManuallyTrigger from '@/components/TemplateManuallyTrigger';
 import TemplateManuallyTriggerProduct from '@/components/TemplateManuallyTrigger/product';
 import { TemplateChannelValue, TemplateEvents } from '@/services/ulams/enums';
 import {
   createTemplate,
   template as fetchTemplate,
+  templates as fetchTemplates,
   variables as fetchVariables,
   updateTemplate,
 } from '@/services/ulams/templates';
@@ -35,7 +43,7 @@ const objectFlatten = (data: Record<string, string>[]): Record<string, string> =
 // helper function that throws away unnecessary keys to create a sections collection
 
 const filterNotAllowedKeys = (values: Partial<API.Template>) => {
-  const notAllowedKeys = ['name', 'event', 'default'];
+  const notAllowedKeys = ['name', 'event', 'default', 'locale'];
   return Object.keys(values)
     .filter((key) => !notAllowedKeys.includes(key))
     .reduce((obj, key) => {
@@ -68,6 +76,9 @@ export default () => {
   const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
   const [previewData, setPreviewData] = useState<any>();
   const [isManuallyTriggered, setIsManuallyTriggered] = useState<boolean>(false);
+  const [currentEvent, setCurrentEvent] = useState<string | undefined>();
+  const [siblings, setSiblings] = useState<API.Template[]>([]);
+  const supportsLanguages = template === 'email';
 
   useEffect(() => {
     fetchVariables().then((response) => {
@@ -102,6 +113,7 @@ export default () => {
         setTokens(_tokens as Tokens);
       }
       setIsManuallyTriggered(event === TemplateEvents.ManuallyTriggeredEvent);
+      setCurrentEvent(event || undefined);
     },
     [variables, id],
   );
@@ -122,6 +134,7 @@ export default () => {
       form.setFieldsValue({
         ...response.data,
         ...obj,
+        locale: response.data.locale ?? NO_LANGUAGE,
       });
       handleSetTokens(String(response.data.event));
       setSaved(true);
@@ -159,6 +172,74 @@ export default () => {
 
     fetchData();
   }, [id, variables]);
+
+  // Every template of the event, in every language: the language strip and the copy helper read them.
+  useEffect(() => {
+    if (!supportsLanguages || !currentEvent) {
+      setSiblings([]);
+      return;
+    }
+    let cancelled = false;
+    fetchTemplates({
+      channel: channels[template as keyof typeof TemplateChannelValue] as string,
+      event: currentEvent,
+      per_page: 100,
+    } as API.TemplatesParams).then((response) => {
+      if (!cancelled && response.success) {
+        setSiblings(response.data);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentEvent, id, supportsLanguages]);
+
+  const copyInto = useCallback(
+    (source: API.Template) => {
+      const draft = translationDraft(
+        { name: source.name, event: source.event, sections: source.sections },
+        form.getFieldValue('locale') || NO_LANGUAGE,
+      );
+      // Only the content moves: the name, event, language and default flag of this form stay.
+      const content = Object.fromEntries(
+        Object.entries(draft).filter(
+          ([key]) => !['name', 'event', 'locale', 'default'].includes(key),
+        ),
+      );
+      form.setFieldsValue(content);
+      setSaved(false);
+      message.info(intl.formatMessage({ id: 'templates.lang_copied' }, { name: source.name }));
+    },
+    [form, intl],
+  );
+
+  // A new template for a missing language starts from the query: ?event=…&locale=pl&copy=<id>
+  const query = new URLSearchParams(history.location.search);
+  const queryEvent = query.get('event');
+  const queryLocale = query.get('locale');
+  const queryCopy = Number(query.get('copy'));
+  useEffect(() => {
+    if (!isNew || !variables || !queryEvent) {
+      return;
+    }
+    form.setFieldsValue({
+      event: queryEvent,
+      locale: queryLocale ?? NO_LANGUAGE,
+      default: true,
+    });
+    handleSetTokens(queryEvent);
+    if (queryCopy) {
+      fetchTemplate(queryCopy).then((response) => {
+        if (response.success) {
+          const draft = translationDraft(response.data as API.Template, queryLocale ?? NO_LANGUAGE);
+          form.setFieldsValue(draft);
+          message.info(
+            intl.formatMessage({ id: 'templates.lang_copied' }, { name: response.data.name }),
+          );
+        }
+      });
+    }
+  }, [isNew, variables, queryEvent, queryLocale, queryCopy]);
 
   const variablesForChannel = useCallback(
     (channel: string): Record<string, string> => {
@@ -224,10 +305,38 @@ export default () => {
               rules={[{ required: true, message: <FormattedMessage id="select" /> }]}
             />
 
+            {supportsLanguages && (
+              <ProFormSelect
+                name="locale"
+                width="sm"
+                label={<FormattedMessage id="templates.lang_field" />}
+                tooltip={<FormattedMessage id="templates.lang_field_tooltip" />}
+                allowClear={false}
+                initialValue={NO_LANGUAGE}
+                options={[
+                  ...TEMPLATE_LANGUAGES.map((language) => ({
+                    value: language,
+                    label: languageName(language),
+                  })),
+                  { value: NO_LANGUAGE, label: intl.formatMessage({ id: 'templates.lang_none' }) },
+                ]}
+              />
+            )}
+
             <ProForm.Item label={<FormattedMessage id="templates.set_as_default_template" />}>
               <ProFormCheckbox name="default" />
             </ProForm.Item>
           </ProForm.Group>
+
+          {supportsLanguages && (
+            <TemplateLanguages
+              templates={siblings}
+              event={currentEvent}
+              currentId={isNew ? undefined : Number(id)}
+              basePath={`/configuration/templates/${template}`}
+              onCopy={copyInto}
+            />
+          )}
 
           {!isNew && template !== 'pdf' && (
             <ProForm.Group>

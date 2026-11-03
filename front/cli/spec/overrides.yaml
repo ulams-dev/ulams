@@ -23,6 +23,17 @@ operations:
   "POST /api/admin/consultation-access-enquiries/approve/{proposedTermId}": { id: consultations.access-enquiries-approve }
   "POST /api/admin/consultation-access-enquiries/disapprove/{id}": { id: consultations.access-enquiries-disapprove }
 
+  # --- authoring metrics (time, cost and element counts of how a course was produced, ADR 0194)
+  "GET /api/admin/authoring-metrics/courses": { id: authoring-metrics.list, summary: "Authoring metric snapshots of courses built with the Course Builder" }
+  "GET /api/admin/authoring-metrics/courses/{course}": { id: authoring-metrics.get, summary: "Authoring metric of one course: time per stage, cost and the split of AI elements" }
+  # --- compliance (certificates, required training, reports)
+  "GET /api/admin/compliance/managers": { id: compliance.managers-list }
+  "PUT /api/admin/compliance/managers/{user}": { id: compliance.managers-set, summary: "Set or clear (manager_id null) the manager that overdue training escalates to" }
+  "GET /api/admin/compliance/paths/{id}": { id: compliance.paths-get }
+  "POST /api/admin/compliance/paths/{id}/enrollments": { id: compliance.paths-enroll, summary: "Enrol users in a learning path" }
+  "POST /api/admin/compliance/rules/{id}/evaluate": { id: compliance.rules-evaluate, summary: "Preview (default) or run (--dry-run false) an enrolment rule" }
+  "GET /api/admin/compliance/report/export": { id: compliance.report-export, output: file, summary: "Download a compliance dataset as CSV or JSON lines (use --out)" }
+
   # --- courses
   "GET /api/admin/courses/{id}/clone": { id: courses.clone, kind: write, idempotent: false, summary: "Clone a course with its lessons and topics" }
   "GET /api/admin/courses/{id}/export": { id: courses.export, output: file, summary: "Export a course as a .zip (use --out)" }
@@ -55,6 +66,42 @@ operations:
   "DELETE /api/admin/tokens/{id}": { id: tokens.revoke-any, positionals: [id] }
   "GET /api/admin/tokens/{id}/audit": { id: tokens.audit, positionals: [id] }
   "GET /api/admin/agent-audit": { id: tokens.agent-audit }
+  "PATCH /api/auth/tokens/{id}": { id: tokens.set-limit, positionals: [id], summary: "Change the per-minute rate limit of one of my tokens (null removes it)" }
+  "GET /api/auth/tokens/{id}/usage": { id: tokens.usage, positionals: [id], summary: "Requests per day of one of my tokens and its rate limit window" }
+  "PATCH /api/admin/tokens/{id}": { id: tokens.set-limit-any, positionals: [id], summary: "Change the per-minute rate limit of any token" }
+  "GET /api/admin/tokens/{id}/usage": { id: tokens.usage-any, positionals: [id], summary: "Requests per day of any token and its rate limit window" }
+
+  # --- outgoing webhooks (7.3); the path parameter names differ, so the generator cannot tell list from get
+  "GET /api/admin/webhooks/events": { id: webhooks.events }
+  "GET /api/admin/webhooks/endpoints": { id: webhooks.endpoints-list }
+  "POST /api/admin/webhooks/endpoints": { id: webhooks.endpoints-create, summary: "Register a webhook endpoint (the signing secret is shown once)", examples: [{ title: "Send course completions to a CRM", argv: "webhooks endpoints-create --url https://crm.example.com/hooks/ulams --events course.completed --json" }] }
+  "GET /api/admin/webhooks/endpoints/{endpoint}": { id: webhooks.endpoints-get, positionals: [endpoint] }
+  "PUT /api/admin/webhooks/endpoints/{endpoint}": { id: webhooks.endpoints-update, positionals: [endpoint] }
+  "DELETE /api/admin/webhooks/endpoints/{endpoint}": { id: webhooks.endpoints-delete, positionals: [endpoint] }
+  "POST /api/admin/webhooks/endpoints/{endpoint}/rotate-secret": { id: webhooks.endpoints-rotate-secret, positionals: [endpoint] }
+  "POST /api/admin/webhooks/endpoints/{endpoint}/test": { id: webhooks.endpoints-test, positionals: [endpoint], summary: "Send one sample event and show the receiver's answer" }
+  "GET /api/admin/webhooks/deliveries": { id: webhooks.deliveries-list }
+  "GET /api/admin/webhooks/deliveries/{delivery}": { id: webhooks.deliveries-get, positionals: [delivery] }
+  "POST /api/admin/webhooks/deliveries/{delivery}/replay": { id: webhooks.deliveries-replay, positionals: [delivery], summary: "Send a delivery again (same event id, fresh signature)" }
+
+  # --- knowledge export (7.6)
+  "GET /api/admin/knowledge/exports": { id: knowledge.exports-list }
+  "POST /api/admin/knowledge/exports": { id: knowledge.exports-create, summary: "Start a knowledge pack export of one course or of the whole tenant", examples: [{ title: "Export one course for company RAG", argv: "knowledge exports-create --scope course --course-id 12 --json" }] }
+  "GET /api/admin/knowledge/exports/{export}": { id: knowledge.exports-get, positionals: [export] }
+  "GET /api/admin/knowledge/exports/{export}/download": { id: knowledge.exports-download, positionals: [export], output: file, summary: "Download manifest.json, chunks.jsonl or index.json of a ready export (use --out)" }
+  "GET /api/admin/knowledge/courses/{course}/latest": { id: knowledge.latest, positionals: [course], summary: "The latest ready export of a course" }
+
+  # --- identity providers and their audit trail (6.3)
+  "GET /api/identity/providers": { id: identity.providers-public, summary: "The identity providers a learner can sign in with (slug and name only)" }
+  "GET /api/admin/identity/providers": { id: identity.providers-list }
+  "POST /api/admin/identity/providers": { id: identity.providers-create, summary: "Add an OpenID Connect or SAML identity provider (secrets and keys are stored encrypted and never shown again)" }
+  "GET /api/admin/identity/providers/{provider}": { id: identity.providers-get, positionals: [provider] }
+  "PUT /api/admin/identity/providers/{provider}": { id: identity.providers-update, positionals: [provider], summary: "Change an identity provider (leave client_secret out to keep the stored one)" }
+  "DELETE /api/admin/identity/providers/{provider}": { id: identity.providers-delete, positionals: [provider] }
+  "POST /api/admin/identity/providers/{provider}/metadata/refresh": { id: identity.providers-refresh-metadata, positionals: [provider], summary: "Fetch the SAML identity provider metadata again (accept_changes applies a new entity id and certificate set)" }
+  "POST /api/admin/identity/providers/{provider}/sp-keys/rotate": { id: identity.providers-rotate-sp-keys, positionals: [provider], summary: "Prepare or activate the next SAML service provider key pair (step prepare or promote)" }
+  "GET /api/admin/identity/audit": { id: identity.audit-list }
+  "GET /api/admin/identity/audit/verify": { id: identity.audit-verify, summary: "Recompute the hash chain of the identity audit trail" }
 
   # --- users
   "PUT /api/admin/user/{id}": { id: users.update }

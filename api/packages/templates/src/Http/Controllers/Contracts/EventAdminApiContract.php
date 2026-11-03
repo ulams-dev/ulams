@@ -9,7 +9,7 @@ interface EventAdminApiContract
 {
     /**
      * @OA\Post(
-     *     path="/api/admin/events/trigger-manually/{id}",
+     *     path="/api/admin/events/trigger-manually/{id}", operationId="events.trigger-manually",
      *     summary="Manually triggered event for users",
      *     tags={"Templates"},
      *     security={
@@ -36,10 +36,7 @@ interface EventAdminApiContract
      *              )
      *          )
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="Event dispatched successfully",
-     *      ),
+     *     @OA\Response(response=200, description="Event dispatched successfully", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",

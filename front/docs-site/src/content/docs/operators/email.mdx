@@ -48,10 +48,215 @@ an MJML HTTP service:
 |---|---|
 | `MJML_API_URL` | `http://mjml:15500/v1` |
 
-Setting `MJML_API_URL` switches the renderer to the API (`config/ulams_templates_email.php`). The
-example runs `danihodovic/mjml-server` on the internal network; it needs no inbound or outbound
-access. Alternatives are the hosted MJML API (`MJML_API_ID`, `MJML_API_SECRET`) or a binary path
-(`MJML_BINARY_PATH`) in a custom image.
+Setting `MJML_API_URL` switches the renderer to the HTTP service (`config/ulams_templates_email.php`).
+The development stack (`api/docker-compose.yml`) builds the service from `deploy/stack/mjml`, and the
+production examples pull the same image as `ghcr.io/ulams-dev/mjml` (tagged like the other ulams
+images, `ULAMS_VERSION`). It is a small Node service on the latest MJML 4.x (4.18 today; the
+version is part of every answer as `mjml_version`) and runs on the internal `ulams` network; it needs
+no inbound or outbound access, and in the development stack the `api` service gets
+`LARAVEL_MJML_API_URL=http://mjml:15500/v1`. The visual editor draws its canvas with the same 4.x
+line, so the canvas and the sent e-mail stay close. An older stack that still runs
+`danihodovic/mjml-server` keeps working (same endpoint), but switch to the ulams image: it is the one
+that gets MJML updates with the platform.
+
+The renderer is chosen in this order:
+
+1. `MJML_API_URL` is set: the HTTP service renders the template.
+2. `MJML_BINARY_PATH` points to an executable file (a custom image that contains Node and `mjml`).
+3. Neither is available: the text of the template is sent without layout (one paragraph per block,
+   buttons as `label (address)`), and the API logs the warning `No MJML renderer is configured` once
+   per process. Nothing fails and no empty message is sent.
+
+If the HTML of a template looks unstyled, check the log for that warning first.
+
+## Previewing and test-sending a draft
+
+### In the admin
+
+On the page of an e-mail template (Configuration, Templates) the `content` section is a code editor
+with a live preview next to it. No setup is needed beyond the MJML service above.
+
+- **Code and variables.** Edit the MJML on the left. The Variables list shows the variables of the
+  event; choosing one inserts it at the cursor. Variables the event requires are marked `*`.
+- **Preview.** About a second after you stop typing, the unsaved draft is sent to the render
+  endpoint below and shown in a sandboxed frame (no scripts, no access to the admin session). The
+  list above the frame shows the MJML errors, the required variables the draft does not use and the
+  accessibility warnings. Sample data comes from the event, not from real learners.
+- **Send a test e-mail.** Sends the current unsaved content to your own address only.
+- The preview is not the saved e-mail: save the template to store it. If the MJML service is down
+  the editor shows an error and keeps the last good preview.
+
+### Visual mode
+
+Above the code editor a switch chooses between **Code** and **Visual**. Code is always the view the
+page opens in. Visual mode edits the same MJML (GrapesJS with the `grapesjs-mjml` plugin), so the
+stored template, the renderer and the preview do not change. It works with the mouse (drag and drop)
+and entirely with the keyboard.
+
+- **Nothing is lost silently.** Before Visual mode opens, the editor loads the template, exports it
+  again and compares both as trees. Self-closing head tags (`<mj-font ... />`) are normalised first,
+  and the `<tbody>` and trailing `;` that the browser adds inside `mj-raw` are ignored. If anything
+  else differs (for example the rows of an `mj-table`, which the editor cannot represent), the
+  template stays in Code view and a banner lists the lines that would be removed or changed. The
+  only way on is **Convert and review**: it shows a diff, and the template text is replaced only
+  after you confirm. Cancel leaves the text byte for byte as it was. Plain HTML templates (no
+  `<mjml>` root) always stay in Code view.
+- **Edits are written to the form** about 300 ms after you stop, and only when the content really
+  changed, so opening Visual mode and leaving it does not rewrite a hand-written template.
+- **Keyboard and screen readers.** The panel **Structure and keyboard tools** above the canvas does
+  everything drag and drop does, on the same model as the canvas:
+  - **Add block**: choose a block (section with 1, 2 or 3 columns, text, button, image, divider,
+    spacer) and press **Add block**. Content goes after the selected content block, into the selected
+    column, or into the first column of the selected section; a section goes after the section that
+    holds the selection. The new block is selected and focused.
+  - **Structure**: the e-mail as a tree. Selecting a block there selects it in the canvas and the
+    other way round.
+  - **Properties**: a form for the selected block (link address, alternative text, colours, font,
+    spacing, alignment). A field is saved with Enter or when you leave it.
+  - Changes (added, moved, removed, changed) are announced in a live region.
+
+  | Where | Key | Does |
+  |---|---|---|
+  | Structure | Up, Down | previous, next block (selects it) |
+  | Structure | Right, Left | open, close a branch (Left on a closed one goes to the parent) |
+  | Structure | Home, End | first, last block |
+  | Structure | Alt+Up, Alt+Down | move the block up or down; at the edge of a column it continues into the neighbouring column |
+  | Structure | Delete or Backspace | remove the block (shared parts cannot be removed) |
+  | Structure | Enter or Space | text block: edit the text; image: open the image dialog; other: go to the properties |
+  | Action bar | Left, Right, Home, End | move between the buttons (Tab leaves the bar) |
+  | While editing text | Escape | stop editing, back to the structure |
+  | While editing text | Ctrl+B, Ctrl+I | bold, italic |
+
+  The structure and the action bar are one Tab stop each (roving tabindex), and focus is visible on
+  every control. Reduced motion (`prefers-reduced-motion`) turns the transitions of the editor off.
+- **Known limits.** The grey toolbar of the canvas (device preview, code view) and the built-in
+  blocks, layers and style panels of GrapesJS are mouse tools; the panel above replaces what they do,
+  except the desktop/tablet/mobile width switch and the code view (use the Code mode). Bold, italic and
+  links inside a text are made with Ctrl+B and Ctrl+I; there is no keyboard way to make a link inside
+  a paragraph, set the button link in its properties instead. A content block cannot be moved into
+  another section by keyboard other than by moving it through the columns in between.
+- **Checks.** The editor is tested in a real browser with axe (WCAG 2.2 AA) in Code, Visual, preview
+  and image dialog, with a keyboard-only run, reduced motion, and a guard that fails on any request
+  outside the origin (the editor sends no telemetry). The preview frame is sandboxed without scripts,
+  so axe cannot enter it; the accessibility warnings of the generated e-mail are shown above it.
+- **Variables are chips.** A registered variable (`@VarUserName` or `${VarUserName}`) inside a text
+  block is shown as a chip that cannot be edited letter by letter: it is deleted or moved as one
+  piece. Select a text block and choose a variable in the list below the editor to add a chip at the
+  caret (while you edit the text) or at the end of the block. The stored MJML keeps the plain token,
+  so Code view, the server and the preview read the same text as before. Buttons and images have a
+  "Link from a variable" field next to their link field. A token you type yourself that is not in the
+  list stays plain text. The list also shows the required variables the content does not use yet,
+  updated as you type, with the same rule as the server (`@Var` or `${Var}` form).
+- **Shared headers and footers are locked.** A global setting (`@GlobalSettings…`, for example a
+  shared footer) that stands on its own in the layout is shown as a locked block: it cannot be
+  edited, moved, copied or removed inside the template, and it is never expanded into it, so a change
+  in Settings reaches every template that uses it. The editor lists these parts with an **Edit in
+  Settings** link. To remove one from a template, switch to Code view.
+- **Images.** The image block's **Choose or upload an image** button (or a double click on the image)
+  opens a dialog that uploads the file with `POST /api/admin/templates/email/images` to the storage of
+  the current tenant, then asks for the alternative text, which is required; an image that is only
+  decoration is marked explicitly and is written as `alt=""`. Accepted: PNG, JPEG, GIF and WebP up to
+  2 MB (`TEMPLATES_EMAIL_IMAGE_MAX_KB`). **SVG is refused**: it can carry scripts and most mail clients
+  do not draw it. The type is checked on the content, not on the file name, and the stored name is
+  random. Mail clients fetch the image from its public URL, so the storage of the tenant has to be
+  reachable from the internet.
+- **Offline and CSP.** The editor is a separate script loaded when you open Visual mode (about 690
+  KB gzip; the build fails above 700 KB), is served by the admin itself and fetches nothing from a CDN.
+  The blocks offered have no remote images. It needs no change of the admin Content-Security-Policy.
+
+To turn Visual mode off for a tenant, create the public boolean setting `templates.email.visual_editor`
+(Settings, group global) and set it to `false`; the switch disappears and only Code view remains.
+Without the setting, or with `true`, Visual mode is on.
+
+### API
+
+The editor uses admin endpoints that work on a draft that is not saved yet. All need the `template_update`
+permission and work on the current tenant only. The first two write nothing; the third stores an image.
+
+| Endpoint | Does | Limit |
+|---|---|---|
+| `POST /api/admin/templates/email/render` | Renders `{event, title, content}` with the sample values of the event and returns the HTML | 30 per minute per user |
+| `POST /api/admin/templates/email/test-send` | Same, then sends the e-mail with the subject prefixed `[Test]` | 5 per minute per user |
+| `POST /api/admin/templates/email/images` | Stores one image (multipart field `image`) in the tenant storage and returns its public `url`, `name`, `mime`, `size`, `width` and `height`; `422` for SVG, other types, files that are not images and files over the size limit | 30 per minute per user |
+
+The test e-mail goes only to the address of the signed-in admin; the request has no recipient
+field and anything extra in the body is ignored. Optional `sample_overrides` (variable name to
+text, up to 500 characters, limited to the variables of the event) change a sample value for that
+request only. The body of `content` is limited to 512 KiB.
+
+The response data has:
+
+- `html` and `title`: the e-mail with the sample values (values are HTML-escaped, as on send).
+- `errors`: the MJML errors the rendering service reported (soft validation: the HTML is still
+  returned), as short lines such as `line 3: Attribute foo is illegal (mj-text)`.
+- `missing_variables`: variables the event requires that the draft does not use.
+- `warnings`: accessibility warnings of the generated e-mail, each `{code, message, count}`. They
+  never fail the request. Codes: `image-missing-alt`, `missing-lang` (set `lang` on `<mjml>`),
+  `missing-title` (add `<mj-title>`), `link-without-text`, `layout-table-without-role` and
+  `low-contrast` (inline colours below 4.5:1, 3:1 for large text; white is assumed when no
+  background colour is set).
+
+If the rendering service is down or times out the endpoints answer `503`.
+
+```bash
+curl -s -X POST "$API/api/admin/templates/email/render" \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"event":"Ulams\\Templates\\Events\\ManuallyTriggeredEvent","title":"Hello @VarUserName",
+       "content":"<mjml><mj-body><mj-section><mj-column><mj-text>Hi @VarUserName</mj-text></mj-column></mj-section></mj-body></mjml>"}'
+```
+
+With the development stack the test e-mail arrives in MailHog on port 8025.
+
+## Templates per language
+
+A template can be written for one language (`en`, `pl` or `zh`; the API accepts any two or three
+letter code). When an e-mail is sent, the template is chosen in this order, and the first default
+template found is used:
+
+1. the template **assigned** to the item the event is about, if there is one (an explicit choice,
+   the language does not override it);
+2. the default template written for the **language of the course** the event is about (the
+   course's `language`);
+3. the default template for the **default language of the academy** (the public setting
+   `global.language`, see [Settings](/admin/settings/));
+4. the default template for **English**;
+5. the template **without a language**, which is every template that existed before this feature.
+
+Events that are not about a course (an account, a payment) skip step 2. A course in a language
+that has no template, or a course with no language, therefore gets the academy's language, then
+English.
+
+A new tenant gets one default template per event in English, Polish and Chinese, each written in
+its language and with `lang` set on `<mjml>` (config `ulams_templates_email.seed_locales`, an empty
+list creates one template without a language, as before). Existing tenants are not touched: an
+event that already has a default template is left alone, so what you send does not change when you
+upgrade. Add a language to an existing tenant from the admin with **Create translation**, which
+starts as a copy of the template you already have. The Polish and Chinese texts come with the
+product and are waiting for a native review; edit them in the admin like any template.
+
+### Languages in the admin
+
+On the page of an e-mail template, the **Languages** panel lists English, Polski and 中文 for the
+event: which have a template (with **Edit**), and which are missing, marked **Missing translation**
+in words, not only by colour. **Create translation** opens a new template for that language that
+starts as a copy of the template without a language, or of the English one. **Copy content from**
+copies the content of any other template of the event into the form after a confirmation, to start
+a translation from it. The **Language** field of the form sets the language of the template; **No
+language** keeps it as the last fallback. **Send a test e-mail** and the preview use the language of
+the template for the sample values. The list of templates has a **Language** column and a
+**Translations** column that shows, for every event, which languages are still missing.
+
+### Languages API
+
+All fields are optional, so clients that do not know about languages keep working.
+
+- `GET /api/admin/templates` returns `locale` for every template (`null` without a language) and
+  accepts `locale=pl` as a filter.
+- `POST /api/admin/templates` and `PATCH /api/admin/templates/{id}` accept `locale`: a two or
+  three letter code (stored in lower case), `null` or an empty string for no language. An update
+  that does not mention `locale` keeps it.
+- `POST /api/admin/templates/email/render` and `.../test-send` accept `locale`: the sample values
+  are rendered in that language and the response echoes it. The test e-mail still goes only to you.
 
 ## Queues and the scheduler
 
@@ -66,4 +271,5 @@ platform and `queue.sh` for tenants, both inside `api` unless disabled with `DIS
 
 Use a staging relay or a capture service (the development stack uses MailHog on port 8025)
 before pointing a server at real learners. A password-reset request from the sign-in page is a
-quick end-to-end test of SMTP, MJML and the queue.
+quick end-to-end test of SMTP, MJML and the queue; the message should arrive formatted, not as plain
+paragraphs.

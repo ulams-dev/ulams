@@ -1,8 +1,10 @@
 import ProForm, { ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 import { Space, Tag, Typography } from 'antd';
 import React, { useCallback } from 'react';
-import { FormattedMessage } from 'umi';
+import { FormattedMessage, getLocale, useModel } from 'umi';
 import AutoCompleteArea from '../AutoCompleteArea';
+import EmailTemplateEditor from '../EmailTemplateEditor';
+import { isVisualEditorEnabled } from '../EmailTemplateEditor/featureSwitch';
 import PdfEditor from '../PdfEditor';
 import './index.css';
 
@@ -15,6 +17,8 @@ interface FormWysiwygProps {
 }
 
 export const TemplateFields: React.FC<FormWysiwygProps> = ({ name, field, variables = [] }) => {
+  const { initialState } = useModel('@@initialState');
+  const visualEnabled = isVisualEditorEnabled(initialState?.config);
   const renderRequiredVariables = useCallback(
     (requiredVars: string[]) => {
       if (!!requiredVars.length) {
@@ -172,28 +176,20 @@ export const TemplateFields: React.FC<FormWysiwygProps> = ({ name, field, variab
       case 'mjml':
         return (
           <React.Fragment>
-            <p>
-              <FormattedMessage id={'templates.to_create_template'} />{' '}
-              <a target="_blank" rel="noreferrer" href="https://mjml.io/try-it-live">
-                https://mjml.io/try-it-live
-              </a>
-            </p>
-            <code>
-              <FormattedMessage id={'code.snippet'} />
-            </code>
             <ProForm.Item shouldUpdate>
               {(form) => {
                 return (
-                  <AutoCompleteArea
+                  <EmailTemplateEditor
                     requiredVariables={field.required_variables}
                     variables={variables}
                     value={form.getFieldValue(name)}
                     onChange={(value: string) => form.setFieldsValue({ [name]: value })}
                     error={form.getFieldError(name)}
-                    styles={{
-                      width: '100%',
-                      height: '40vh',
-                    }}
+                    event={form.getFieldValue('event')}
+                    title={form.getFieldValue('title')}
+                    visualEnabled={visualEnabled}
+                    locale={getLocale()}
+                    templateLocale={form.getFieldValue('locale') || undefined}
                   />
                 );
               }}

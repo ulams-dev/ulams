@@ -78,9 +78,4 @@ class RichText extends AbstractTopicContent
             $topic->length = strlen($topic->value);
         });
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

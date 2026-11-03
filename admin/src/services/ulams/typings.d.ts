@@ -763,6 +763,8 @@ declare namespace API {
     sections?: TemplateSections[];
     created_at?: Date;
     default?: boolean;
+    /** Language the template is written for (`en`, `pl`, `zh`); null for a template of no particular language. */
+    locale?: string | null;
   };
 
   type TemplateSections = {
@@ -793,6 +795,16 @@ declare namespace API {
   };
 
   type TemplateVariables = Record<string, Record<string, TemplateChannelVariable>>;
+
+  type EmailTemplateDraft = {
+    title: string;
+    html: string;
+    errors: string[];
+    missing_variables: string[];
+    warnings: { code: string; message: string; count?: number }[];
+    sent?: boolean;
+    recipient?: string;
+  };
 
   type File = {
     name: string;
@@ -1507,6 +1519,8 @@ declare namespace API {
     API.PageParams &
     API.PaginationParams & {
       name?: string;
+      event?: string;
+      locale?: string;
     };
 
   type SubjectGroups = {

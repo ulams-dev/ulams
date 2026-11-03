@@ -24,13 +24,14 @@ env:
   # Every <testsuite> in api/phpunit.xml must appear exactly once (checked in each shard).
   # Grouped by package area and balanced on local run times (~100-130 s of tests per shard).
   PHPUNIT_SHARDS: |
-    learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,interactive,adapt,course-builder
-    living=living-course
+    learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,interactive,code-exercises,adapt,course-builder,course-variants
+    living=living-course,authoring-metrics,learner-insights,tutor,knowledge-export
     tasks-topics=tasks,topic-types,topic-type-layout,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
-    commerce=cart,commerce,vouchers,payments,invoices,consultations,consultation-access,webinar,jitsi,assign-without-account
-    platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai
-    content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
+    commerce=cart,commerce,entitlements,vouchers,payments,invoices,consultations,consultation-access,webinar,youtube,jitsi,assign-without-account
+    platform=Integrations,auth,identity,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai,webhooks
+    content=compliance,reporting,templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
+    policy=policy-lifecycle
 
 jobs:
   changes:
@@ -43,7 +44,9 @@ jobs:
     outputs:
       js: ${{ steps.filter.outputs.js }}
       demo: ${{ steps.filter.outputs.demo }}
+      scorm: ${{ steps.filter.outputs.scorm }}
       deploy: ${{ steps.filter.outputs.deploy }}
+      sdk: ${{ steps.filter.outputs.sdk }}
       php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
     steps:
       - uses: actions/checkout@v7
@@ -68,6 +71,13 @@ jobs:
       # The table in docs/decisions/README.md is generated from the ADR files (scripts/adr-index.mjs).
       - name: ADR index is up to date
         run: node scripts/adr-index.mjs --check
+      # Hostnames come from configuration (ULAMS_DOCS_URL, the tenant host pattern): no new hard-coded
+      # `ulams.app` host in source files. Legitimate ones are listed in scripts/hosts-allowed.txt.
+      - name: No hard-coded ulams.app hosts
+        run: node scripts/check-hosts.mjs
+      # PostgreSQL has one tag in api/docker-compose.yml, every workflow, the CLI and the examples.
+      - name: Pinned images agree
+        run: node scripts/check-pinned-images.mjs
       - name: Every API package has a README.md
         run: |
           missing=0
@@ -96,11 +106,32 @@ jobs:
               - "package.json"
               - "yarn.lock"
               - ".github/**"
+            scorm:
+              - "front/src/lib/scorm-player/**"
+              - "front/tests/scorm-playback/**"
+              - "front/playwright.scorm.config.ts"
+              - "front/public/service-worker-scorm.js"
+              - "front/public/modules/**"
+              - "admin/public/service-worker-scorm.js"
+              - "admin/public/modules/**"
+              - "api/packages/scorm/tests/fixtures/**"
+              - "api/packages/scorm/resources/**"
+              - "front/package.json"
+              - "admin/package.json"
+              - "package.json"
+              - "yarn.lock"
+              - ".github/**"
             ci:
+              - ".github/**"
+            sdk:
+              - "sdk-php/**"
+              - "front/cli/spec/openapi.json"
               - ".github/**"
             deploy:
               - "deploy/**"
               - "front/docs-site/examples/**"
+              - "front/sdk/src/images.ts"
+              - "front/sdk/src/images/**"
               - ".github/**"
       # Separate call: `every` is needed for the exclusions and applies to the whole call.
       - uses: dorny/paths-filter@v4
@@ -126,16 +157,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: yarn
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Install dependencies
-        run: corepack yarn install --frozen-lockfile
+        uses: ./.github/actions/setup-yarn
 
       # Fails on any GPL-licensed or styled-components import in front/ and the shared
       # component library (front/src/lib, also compiled into admin). Runs before the slow tasks.
@@ -167,12 +195,13 @@ jobs:
           --filter=admin --filter=front --filter=api-h5p --filter=api-pdf
           --concurrency=2
 
-      # The reference frontend and its libraries: typecheck, lint and unit tests. Playwright (e2e,
-      # visual, a11y) needs the whole stack and stays out of CI.
-      - name: Typecheck, lint, test (web, ui, sdk, interactive-bridge)
+      # The reference frontend and its libraries: typecheck, lint and unit tests. Playwright e2e and
+      # visual need the whole stack and stay out of CI; the axe suite has its own job (web-a11y).
+      # @ulams/code-runner: its test also fails when the runner files committed in api/packages/code-exercises are stale.
+      - name: Typecheck, lint, test (web, ui, sdk, interactive-bridge, code-runner)
         run: >-
           corepack yarn turbo run typecheck lint test
-          --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk --filter=@ulams/interactive-bridge
+          --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk --filter=@ulams/interactive-bridge --filter=@ulams/code-runner
           --concurrency=2
 
       # Interactive content packages (ADR 0088): the boundary lint, manifests, unit tests and the gravity build.
@@ -185,9 +214,128 @@ jobs:
       - name: Typecheck, lint, build, test (ulams CLI)
         run: corepack yarn turbo run typecheck lint build test --filter=ulams --concurrency=2
 
+      # create-ulams (front/create-ulams): unit tests, the packed file list and a dry run through the CLI built above.
+      - name: Test (create-ulams)
+        run: corepack yarn workspace create-ulams test
+
       # Every operation of the API's OpenAPI snapshot has a CLI command or a reasoned exclusion.
       - name: CLI endpoint coverage
         run: corepack yarn workspace ulams coverage
+
+      # Phase 7.3: every operation has a readable unique operationId and a typed 2xx response (or a reasoned exception).
+      - name: OpenAPI quality (operationIds, typed responses)
+        run: corepack yarn workspace ulams spec-quality
+
+  # The learner pages of the reference frontend against a mock tenant API (no PHP, Postgres or Docker):
+  # axe (WCAG 2.2 AA) light and dark at desktop and 360 px, keyboard focus and reduced motion.
+  web-a11y:
+    name: Web accessibility (axe, keyboard)
+    needs: changes
+    if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    # about 6 min of install on a cache miss plus 9-10 min of specs
+    timeout-minutes: 25
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - name: Install dependencies
+        uses: ./.github/actions/setup-yarn
+      - name: Install Chromium
+        run: corepack yarn playwright install --with-deps chromium
+      - name: Build the reference frontend
+        run: corepack yarn workspace @ulams/web build
+      - name: Axe and keyboard checks
+        run: corepack yarn workspace @ulams/web test:a11y
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-a11y-playwright
+          path: front/web/test-results
+          retention-days: 7
+
+  # The admin in a real browser without a backend: the built admin is served statically and every API call is
+  # answered by a deterministic in-browser mock (admin/src/e2e/mocked/mockApi.ts). Covers the pdfme certificate
+  # designer (open, edit, preview, save, reopen), the legacy ReportBro banner, the e-mail template editor (axe in
+  # code, visual, preview and image dialog, the keyboard-only path, reduced motion, locales, no request leaves the
+  # origin) and axe (WCAG 2.2 AA).
+  # The other admin specs in src/e2e need a live API and stay out of CI.
+  admin-a11y:
+    name: Admin browser tests (Playwright, axe)
+    needs: changes
+    if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - name: Install dependencies
+        uses: ./.github/actions/setup-yarn
+      - name: Install Chromium
+        run: corepack yarn playwright install --with-deps chromium
+      - name: Build the admin
+        working-directory: admin
+        env:
+          REACT_APP_API_URL: http://api.mock
+        run: corepack yarn build
+      - name: Playwright (mocked API)
+        working-directory: admin
+        run: corepack yarn playwright:mock
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: admin-a11y-playwright
+          path: admin/test-results
+          retention-days: 7
+
+  # SCORM playback regression (docs/plans/scorm-playback-tests.md, ADR 0197): the fixture packages played in a
+  # real browser through the legacy front's <ScormPreview> (each app's own service worker) and the API content
+  # player, compared with the golden traces in api/packages/scorm/tests/fixtures/playback/golden. No API stack,
+  # no network.
+  scorm-playback:
+    name: SCORM playback (Playwright)
+    needs: changes
+    if: needs.changes.outputs.scorm == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - name: Install dependencies
+        uses: ./.github/actions/setup-yarn
+      - name: Fixture zips are up to date
+        run: node api/packages/scorm/tests/fixtures/playback/build.mjs --check
+      - name: Install Chromium
+        run: corepack yarn playwright install --with-deps chromium
+      - name: Play the fixtures (React player with both service workers, API content player)
+        working-directory: front
+        run: corepack yarn test:scorm
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: scorm-playback-playwright
+          path: front/test-results/pw
+          retention-days: 7
 
   # The interactive content packages (demo-content) in a real browser, on throwaway servers: each package
   # loads in the opaque sandbox, steps advance, no request leaves the origin, keyboard, WebGL fallback, axe.
@@ -196,25 +344,25 @@ jobs:
     needs: changes
     if: needs.changes.outputs.demo == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: yarn
-      - run: corepack enable
-      - run: corepack yarn install --frozen-lockfile
+      - name: Install dependencies
+        uses: ./.github/actions/setup-yarn
       - name: Install Chromium
         run: corepack yarn playwright install --with-deps chromium
       - name: Package tests
         run: corepack yarn workspace @ulams/demo-content test:e2e
       - name: Playwright report
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: demo-content-playwright
           path: demo-content/test-results
@@ -229,14 +377,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content]
+        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content, policy]
     defaults:
       run:
         working-directory: api
     services:
-      # Same major as api/docker-compose.yml; move together when Postgres is upgraded.
+      # Same tag as api/docker-compose.yml and the other workflows: scripts/check-pinned-images.mjs fails when they differ.
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           # Matches the <env> defaults in api/phpunit.xml (DB default/default/secret on 127.0.0.1).
           POSTGRES_DB: default
@@ -291,11 +439,39 @@ jobs:
 
       # ffprobe reads the length of audio/video topics (topic-types, php-ffmpeg) and ffmpeg
       # transcodes in packages/video; both are in our PHP image (api/docker/php/install.sh).
+      # apt on the hosted runners is sometimes very slow or fails (apt exit 100; shards sat 10 to 26 minutes in
+      # `apt-get install ffmpeg` and hit the job limit). So: a pinned static build (BtbN autobuild, GPL, the same
+      # ffmpeg/ffprobe our PHP image ships), verified by SHA-256 and cached; apt only as a bounded fallback.
+      - name: Cache static ffmpeg
+        id: ffmpeg-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/ffmpeg-static
+          key: ffmpeg-static-n8.1.3-23-g5c4f5744cd
+
       - name: Install ffmpeg
+        timeout-minutes: 12
+        env:
+          FFMPEG_URL: https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-10-22-13-06/ffmpeg-n8.1.3-23-g5c4f5744cd-linux64-gpl-8.1.tar.xz
+          FFMPEG_SHA256: 1aa0c5526768bf4db3e62cba954169e3e0be38327c9cbbb6c5675794df6c03df
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          if [ ! -x "$HOME/ffmpeg-static/ffprobe" ]; then
+            mkdir -p "$HOME/ffmpeg-static"
+            if curl -fsSL --retry 4 --retry-delay 5 --max-time 420 -o "$RUNNER_TEMP/ffmpeg.tar.xz" "$FFMPEG_URL" &&
+               echo "$FFMPEG_SHA256  $RUNNER_TEMP/ffmpeg.tar.xz" | sha256sum -c - &&
+               tar -xJf "$RUNNER_TEMP/ffmpeg.tar.xz" -C "$RUNNER_TEMP" --strip-components=2 --wildcards '*/bin/ffmpeg' '*/bin/ffprobe'; then
+              install -m 0755 "$RUNNER_TEMP/ffmpeg" "$RUNNER_TEMP/ffprobe" "$HOME/ffmpeg-static/"
+            else
+              echo "::warning::static ffmpeg unavailable, falling back to apt"
+              rm -rf "$HOME/ffmpeg-static"
+              apt_opts="-o Acquire::Retries=3 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 -o Dpkg::Use-Pty=0"
+              timeout 150 sudo apt-get update -qq $apt_opts
+              timeout 300 sudo apt-get install -y -qq --no-install-recommends $apt_opts ffmpeg
+            fi
+          fi
+          if [ -x "$HOME/ffmpeg-static/ffprobe" ]; then echo "$HOME/ffmpeg-static" >> "$GITHUB_PATH"; export PATH="$HOME/ffmpeg-static:$PATH"; fi
           ffprobe -version | head -1
+          ffmpeg -version | head -1
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -382,7 +558,7 @@ jobs:
 
       - name: Upload JUnit report
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: phpunit-${{ matrix.shard }}
           path: |
@@ -406,7 +582,7 @@ jobs:
         working-directory: api
     services:
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default
@@ -475,6 +651,87 @@ jobs:
       - name: Course Builder apply on the fake driver, failed job recording
         run: php scripts/nodev-smoke.php
 
+  # Vulnerabilities in the lockfiles (composer.lock, yarn.lock) and misconfiguration in Dockerfiles, Compose
+  # and Kubernetes files, with Trivy from one pinned image (.github/scripts/trivy.sh). Only findings with a
+  # fix available count, and only CRITICAL and HIGH fail the job (patch policy in SECURITY.md). Accepted
+  # exceptions are in .trivyignore.yaml, each with a reason and an expiry that scripts/check-trivyignore.mjs
+  # enforces. The SARIF report goes to code scanning when that is enabled for the repository.
+  security-scan:
+    name: Security scan (Trivy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Exceptions are complete and not expired
+        run: |
+          node --test scripts/check-trivyignore.test.mjs
+          node scripts/check-trivyignore.mjs
+      - name: Shellcheck of the supply-chain scripts
+        run: docker run --rm -v "$PWD/.github/scripts:/mnt" koalaman/shellcheck:stable -e SC1091 /mnt/trivy.sh /mnt/supply-chain.sh /mnt/release-assets.sh /mnt/test-supply-chain.sh /mnt/release-channels.sh /mnt/test-release-channels.sh
+      - name: Release channel rules (stable and lts tags)
+        run: sh .github/scripts/test-release-channels.sh
+      - name: Trivy database cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/trivy-ulams
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+      - name: Report for code scanning
+        run: FORMAT=sarif OUTPUT=trivy-fs.sarif EXIT_CODE=0 sh .github/scripts/trivy.sh fs
+      # Needs code scanning enabled in the repository settings and a token that may write it (not on forks or
+      # Dependabot pull requests): never a reason to fail the build.
+      - name: Upload to code scanning
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy-fs
+      - name: Fixable critical and high findings
+        run: sh .github/scripts/trivy.sh fs
+
+  # The API image carries the PHP ini and php-fpm pool files (api/docker). Upload progress must stay off in
+  # it (CVE-2026-109619, php.net advisory 2026-10-21-5): read the setting back from the built image through
+  # php-cli ini scanning and through the php-fpm pool config. No PHP version gate here yet.
+  php-image:
+    name: PHP image settings
+    needs: changes
+    if: needs.changes.outputs.php == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build
+        run: docker build -t smoke-api api
+      - name: Trivy database cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/trivy-ulams
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+      # Fixable CRITICAL findings in the image fail the job (patch policy: SECURITY.md); HIGH ones are reported
+      # by the nightly scan. Accepted exceptions live in .trivyignore.yaml.
+      - name: Trivy (fixable critical)
+        run: IMAGE_SRC=docker sh .github/scripts/trivy.sh image smoke-api
+      - name: Upload progress is off
+        run: |
+          docker run --rm smoke-api php -v | head -1
+          test "$(docker run --rm smoke-api php -r 'echo ini_get("session.upload_progress.enabled");')" = "0"
+          docker run --rm smoke-api php-fpm -tt 2>&1 | grep -F 'php_admin_value[session.upload_progress.enabled] = 0'
+          docker run --rm smoke-api php-fpm -t
+      # The written GPL source offer (api/docker/php/NOTICE) names this package list.
+      - name: Alpine package list for the GPL source offer
+        run: |
+          docker run --rm smoke-api sh -c 'test -s /usr/share/doc/ulams/apk-packages.txt && grep -E "^ffmpeg-[0-9]" /usr/share/doc/ulams/apk-packages.txt'
+          docker run --rm smoke-api grep -F 'apk-packages.txt' /usr/local/share/doc/ulams-php/NOTICE
+
   # The static images (admin, legacy front) run as non-root on nginx-unprivileged (ADR 0056):
   # build them, start them with settings in the environment and check what they serve.
   images:
@@ -499,6 +756,14 @@ jobs:
           token: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build
         run: docker build -f ${{ matrix.name }}/Dockerfile -t smoke-${{ matrix.name }} .
+      - name: Trivy database cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/trivy-ulams
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+      - name: Trivy (fixable critical)
+        run: IMAGE_SRC=docker sh .github/scripts/trivy.sh image smoke-${{ matrix.name }}
       - name: Start, request and check
         run: |
           docker run -d --name smoke -p 8080:8080 -e ${{ matrix.prefix }}API_URL=https://api.example.com -e ${{ matrix.prefix }}NOT_ALLOWED=1 -e SECRET_TOKEN=must-not-leak smoke-${{ matrix.name }}
@@ -518,7 +783,8 @@ jobs:
         run: docker logs smoke || true
 
   # Offline checks of the production install files (deploy/vps-cloudflare): docker compose config in
-  # every mode, Caddy in both host layouts and both origin modes, cloudflared ingress and shellcheck.
+  # every mode, Caddy in both host layouts and both origin modes, cloudflared ingress and shellcheck;
+  # and of the docs example (front/docs-site/examples/production).
   deploy:
     name: Deploy files
     needs: changes
@@ -527,6 +793,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
       - uses: ./.github/actions/docker-hub-mirror
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -541,10 +810,50 @@ jobs:
             docker pull "$src" && docker tag "$src" "$img"
           done
       - run: deploy/vps-cloudflare/scripts/validate.sh
+      # The single-server example published by the docs site: compose, Caddyfile in both content-domain layouts.
+      - run: deploy/vps-cloudflare/scripts/validate-docs-example.sh
+      - name: MyDevil PHP version check
+        run: |
+          sh deploy/mydevil/test/check-host-version.sh
+          sh deploy/mydevil/test/check-images.sh
+          sh deploy/mydevil/test/set-admin-images.sh
+          node --experimental-strip-types --no-warnings --test deploy/mydevil/test/image-ops.test.mjs
+          docker run --rm -v "$PWD/deploy/mydevil:/mnt" koalaman/shellcheck:stable -e SC3045,SC2016 bin/check-host.sh bin/check-images.sh bin/set-admin-images.sh test/check-host-version.sh test/check-images.sh test/set-admin-images.sh
+
+  # The PHP client in sdk-php/ is generated from front/cli/spec/openapi.json (openapi-generator, pinned image):
+  # regenerate and fail on any difference, then run its tests against canned answers.
+  php-sdk:
+    name: PHP SDK (generated client)
+    needs: changes
+    if: needs.changes.outputs.sdk == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: curl, json, mbstring
+          coverage: none
+          tools: composer:v2
+      - name: Regenerate the client and fail on any difference
+        run: |
+          sdk-php/generate.sh
+          git add -N sdk-php
+          if ! git diff --exit-code --stat -- sdk-php; then
+            echo "::error::sdk-php is out of date with front/cli/spec/openapi.json: run sdk-php/generate.sh and commit the result"
+            exit 1
+          fi
+      - run: composer install --working-dir=sdk-php --no-interaction --prefer-dist
+      - run: sdk-php/vendor/bin/phpunit -c sdk-php/phpunit.xml
 
   ci-ok:
     name: CI OK
-    needs: [changes, js, demo-content, php, php-no-dev, images, deploy]
+    needs: [changes, js, demo-content, scorm-playback, php, php-no-dev, php-sdk, images, deploy, security-scan]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -552,6 +861,6 @@ jobs:
       - name: Fail if any job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }}"
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} scorm-playback=${{ needs.scorm-playback.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} php-sdk=${{ needs.php-sdk.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }} security-scan=${{ needs.security-scan.result }}"
           exit 1
       - run: echo "All required jobs passed or were skipped by the path filters."

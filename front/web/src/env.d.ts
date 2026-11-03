@@ -14,5 +14,9 @@ declare namespace App {
     sessionVia: "cookie" | "demo" | "password" | null;
     /** Author token for the Course Builder studio (httpOnly cookie), set on /studio routes. */
     authorToken: string | null;
+    /** Language of the learner page being rendered (`en`, `pl`, `zh`); catalogue components read it through `pageLocale`. */
+    uiLocale?: string;
+    /** The tenant's logo from its public settings (`theme.logo`), read by the catalogue's site header; null when it has none. */
+    tenantLogo?: import("./lib/tenant-logo.ts").TenantLogo | null;
   }
 }

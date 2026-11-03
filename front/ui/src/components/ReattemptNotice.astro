@@ -1,21 +1,23 @@
 ---
 import Icon from "./Icon.astro";
-import { REATTEMPT_LINK, REATTEMPT_TEXT, REATTEMPT_TITLE } from "../lib/notices.ts";
+import { pageLocale } from "../lib/i18n.ts";
+import { playerStrings } from "../lib/player-strings.ts";
 
 interface Props {
   quizHref?: string;
   linkLabel?: string;
   id?: string;
 }
-const { quizHref, linkLabel = REATTEMPT_LINK, id } = Astro.props;
+const t = playerStrings(pageLocale(Astro));
+const { quizHref, linkLabel = t.reattemptLink, id } = Astro.props;
 const titleId = `u-reattempt-${id ?? "notice"}-title`;
 ---
 
 <section class="u-notice" id={id} aria-labelledby={titleId} data-notice="reattempt">
   <Icon name="quiz" />
   <div class="u-notice__body">
-    <h2 class="u-notice__title" id={titleId}>{REATTEMPT_TITLE}</h2>
-    <p class="u-notice__text">{REATTEMPT_TEXT}</p>
+    <h2 class="u-notice__title" id={titleId}>{t.reattemptTitle}</h2>
+    <p class="u-notice__text">{t.reattemptText}</p>
     {
       quizHref && (
         <p>

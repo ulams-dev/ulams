@@ -9,7 +9,7 @@ interface AttemptAnswerApiAdminSwagger
 {
     /**
      * @OA\Patch(
-     *      path="/api/admin/quiz-answers/{id}",
+     *      path="/api/admin/quiz-answers/{id}", operationId="admin.quiz-answers.by-id.patch",
      *      summary="Update answer",
      *      tags={"Admin Gift Quiz Attempt"},
      *      description="Update answer",

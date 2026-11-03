@@ -51,10 +51,10 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0034](0034-tamper-evident-audit-trail.md) | A tamper-evident audit trail for Living Course | Accepted |
 | [0038](0038-brand-identity-orbital-folio.md) | Brand identity: Orbital Folio | Proposed |
 | [0039](0039-author-preview-of-draft-courses.md) | Author preview of draft courses runs on its own routes with the author's token | Proposed |
-| [0040](0040-postgresql-17.md) | PostgreSQL 17 with a tested dump-and-restore upgrade | Proposed |
-| [0041](0041-seaweedfs-and-per-tenant-s3-identities.md) | SeaweedFS replaces MinIO; per-tenant S3 identities; server-side reads use the internal endpoint | Proposed |
-| [0042](0042-no-websocket-server.md) | No WebSocket server: Soketi and Pusher removed, Reverb only when a feature needs push | Proposed |
-| [0043](0043-enforced-morph-map.md) | An enforced morph map with stable aliases for polymorphic types | Proposed |
+| [0040](0040-postgresql-17.md) | PostgreSQL 17 with a tested dump-and-restore upgrade | Accepted |
+| [0041](0041-seaweedfs-and-per-tenant-s3-identities.md) | SeaweedFS replaces MinIO; per-tenant S3 identities; server-side reads use the internal endpoint | Accepted |
+| [0042](0042-no-websocket-server.md) | No WebSocket server: Soketi and Pusher removed, Reverb only when a feature needs push | Accepted |
+| [0043](0043-enforced-morph-map.md) | An enforced morph map with stable aliases for polymorphic types | Proposed (data layer implemented 2026-10-21, see "Implementation") |
 | [0044](0044-content-security-policy-enforcement.md) | Content Security Policy: report collector, enforcement, tool origins from the API | Proposed |
 | [0045](0045-h5p-state-through-bff.md) | H5P learner state through the BFF; no API token in the browser | Proposed |
 | [0046](0046-cmi5-content-origin-and-launch-token.md) | cmi5 on the content origin with a one-time launch token and an LRS-only session token | Proposed |
@@ -107,5 +107,45 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0093](0093-public-showcase-endpoint-and-landing-hero-interactives.md) | A public showcase endpoint and hero interactives on the demo landings | Proposed |
 | [0094](0094-interactive-demo-courses-from-module-files.md) | Interactive demo courses are written as Markdown module files and seeded through the domain services | Proposed |
 | [0095](0095-ulam-course-facts-sources-and-images.md) | The Ulam course: every statement traced to a fact sheet, sources numbered, four licensed photographs | Proposed |
+| [0096](0096-landing-languages-polish-and-chinese.md) | The product landing in Polish and Simplified Chinese: Astro i18n routing, one document per language | Proposed |
+| [0097](0097-public-product-landing-overview-comparison.md) | Split the public product landing into Overview and Comparison | Proposed |
+| [0098](0098-policy-lifecycle-landing-story.md) | Present the policy lifecycle as one animated example workflow | Proposed |
+| [0099](0099-open-source-product-without-paid-tiers.md) | Describe ULAMS as open source without paid product tiers | Proposed |
+| [0100](0100-comparison-feature-catalogue-by-stakeholder.md) | Restore the Comparison feature catalogue by stakeholder | Proposed |
+| [0101](0101-umami-public-site-analytics.md) | Umami analytics on owned public sites | Proposed |
+| [0102](0102-one-command-docker-kubernetes-stack.md) | One-command Docker and Kubernetes stack launcher | Proposed |
+| [0103](0103-outgoing-webhooks-package.md) | Outgoing webhooks as a package with Stripe-style signatures and the shared SSRF-safe client | Proposed |
+| [0104](0104-machine-readable-docs-and-public-schemas.md) | Machine-readable documentation: llms.txt, Markdown pages and public JSON Schemas | Proposed |
+| [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
+| [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted (2026-10-21), amended 2026-10-21 (P5R-1) |
+| [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
+| [0108](0108-signed-images-and-cve-scanning.md) | Keyless-signed images, SBOM release assets and Trivy scanning with a patch policy | Accepted |
+| [0109](0109-helm-chart-next-to-the-stack-launcher.md) | A Helm chart for production Kubernetes next to the stack launcher | Proposed |
+| [0120](0120-identity-package-and-sso-libraries.md) | An identity package with onelogin/php-saml, an in-house OIDC client and an in-house SCIM server | Accepted |
+| [0121](0121-sso-login-handoff-account-linking-and-scim-tokens.md) | SSO login handoff by one-time code, strict account linking and SCIM tokens on service users | Accepted |
+| [0130](0130-entitlements-are-the-access-source-of-truth.md) | Entitlements are the access source of truth, fed by verified Sylius order events | Accepted (2026-10-22, owner-approved defaults of the Phase 6.4 plan) |
+| [0131](0131-sylius-service-and-bridge-bundle.md) | One Sylius 2.3 service with a channel per tenant and a ulams bridge bundle | Proposed |
+| [0132](0132-commerce-identity-lms-issued-shop-tokens.md) | Single login for commerce: LMS-issued shop tokens trusted by Sylius | Proposed |
+| [0140](0140-policy-lifecycle-package.md) | Policy lifecycle as a package orchestrating Living Course, Course Builder and compliance | Accepted |
+| [0141](0141-department-academies-as-host-aliases.md) | Department academies as branded host aliases inside one tenant | Proposed |
+| [0142](0142-scoped-admins-by-group.md) | Scoped admins for partner and customer portals, scoped by group | Proposed |
+| [0150](0150-pwa-offline-mode-and-progress-sync-rules.md) | PWA offline mode: saved lessons and idempotent, monotonic progress sync | Proposed |
+| [0151](0151-search-full-text-first-with-optional-embeddings.md) | Search: full text and model query rewrite first, optional pgvector embeddings | Proposed |
+| [0152](0152-first-party-ux-metrics-without-personal-data.md) | First-party UX metrics stored in the tenant, without personal data | Proposed |
+| [0160](0160-course-as-code-sync-through-blueprint-v3-import-versions.md) | Course-as-code sync through Blueprint v3 import versions | Accepted |
+| [0161](0161-cli-release-engineering.md) | CLI release engineering: release-please, npm trusted publishing, attested binaries | Proposed |
+| [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Accepted |
+| [0171](0171-extension-manifest-and-trust-model.md) | Extensions: operator-installed composer packages with an `ulams-extension.json` manifest, per-point contract versions and optional Sigstore signing | Proposed |
+| [0172](0172-hosted-mcp-gateway-on-cloudflare-workers.md) | Hosted MCP gateway on Cloudflare Workers sharing the CLI tool registry, OAuth at the gateway and scoped tokens upstream | Proposed |
+| [0180](0180-experiment-assignment-exposure-and-statistics.md) | Course experiments: salted assignment, exposure logging and fixed-horizon statistics with guard rails | Accepted |
+| [0181](0181-insights-improvement-proposals-in-living-course.md) | Improvement proposals from learner insights are Living Course proposals of their own kind | Accepted |
+| [0190](0190-tenant-isolation-route-coverage.md) | Tenant isolation for every endpoint through one route-walking test and a public-route allow-list | Accepted |
+| [0191](0191-learning-benefit-claims-register.md) | Register of learning-benefit claims, checked in CI | Proposed |
+| [0192](0192-course-releases-and-variants-as-branches-of-one-builder-session.md) | Course releases are recorded applies, and course variants are branches of one builder session applied as separate LMS courses | Accepted |
+| [0193](0193-image-service-as-a-deployment-choice.md) | The image service is a deployment choice behind one URL builder; the hosted demos and the landing use Cloudflare Image Transformations, and the PHP images API stays as an optional legacy API | Accepted (2026-10-22, owner accepted the 12 recommended defaults) |
+| [0194](0194-authoring-metrics-and-report-builder-with-odata-feed.md) | Authoring metrics come from recorded runs and opt-in anonymous review minutes; reports are saved definitions over one dataset registry, exposed to BI tools as a read-only OData feed | Accepted (2026-10-22, owner accepted the plan's recommended defaults for Q1 to Q13) |
+| [0195](0195-academy-entry-points-as-front-hosts.md) | Academy entry points: branded front hosts that target a department, a course or a role inside one tenant | Proposed |
+| [0196](0196-style-profile-shapes-generated-course-design.md) | A cited, author-approved style profile shapes the theme and the generated course design | Proposed |
+| [0197](0197-scorm-playback-regression-harness.md) | SCORM playback is pinned by a browser regression harness with original fixture packages and golden runtime traces | Proposed |
 
 <!-- END GENERATED: adr-index -->

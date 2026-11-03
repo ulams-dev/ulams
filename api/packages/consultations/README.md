@@ -1,7 +1,6 @@
 # Consultations
 One to one conversation package
 
-
 ## What does it do
 
 This package is used for creating Consultation for Ulams.
@@ -25,8 +24,6 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 ## Tests
 
 Run `./vendor/bin/phpunit --filter=Consultation` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
-
-Test details [![codecov](https://codecov.io/gh/Ulams/Consultations/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Consultations) [![phpunit](https://github.com/EscolaLMS/Consultations/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Consultations/actions/workflows/test.yml)
 
 ## Events
 

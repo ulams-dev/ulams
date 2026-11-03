@@ -13,7 +13,7 @@ interface StationaryEventAdminApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/stationary-events",
+     *      path="/api/admin/stationary-events", operationId="admin.stationary-events.get",
      *      summary="Get a listing of the Stationary events",
      *      tags={"Admin Stationary Events"},
      *      description="Get all Stationary Events",
@@ -79,9 +79,7 @@ interface StationaryEventAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -105,7 +103,7 @@ interface StationaryEventAdminApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/stationary-events",
+     *      path="/api/admin/stationary-events", operationId="admin.stationary-events.post",
      *      summary="Store a newly created Stationary event in storage",
      *      tags={"Admin Stationary Events"},
      *      description="Store Stationary Event",
@@ -122,9 +120,7 @@ interface StationaryEventAdminApiSwagger
      *      @OA\Response(
      *          response=201,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -147,7 +143,7 @@ interface StationaryEventAdminApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/stationary-events/{id}",
+     *      path="/api/admin/stationary-events/{id}", operationId="admin.stationary-events.by-id.get",
      *      summary="Display the specified Stationary Event",
      *      tags={"Admin Stationary Events"},
      *      description="Get Stationary Event",
@@ -166,9 +162,7 @@ interface StationaryEventAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -191,7 +185,7 @@ interface StationaryEventAdminApiSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/stationary-events/{id}",
+     *      path="/api/admin/stationary-events/{id}", operationId="admin.stationary-events.by-id.put",
      *      summary="Update the specified Stationary Event in storage",
      *      tags={"Admin Stationary Events"},
      *      description="Update Stationary Events",
@@ -217,9 +211,7 @@ interface StationaryEventAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -242,7 +234,7 @@ interface StationaryEventAdminApiSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/stationary-events/{id}",
+     *      path="/api/admin/stationary-events/{id}", operationId="admin.stationary-events.by-id.delete",
      *      summary="Remove the specified Stationary Event from storage",
      *      tags={"Admin Stationary Events"},
      *      description="Delete Stationary Event",
@@ -261,9 +253,7 @@ interface StationaryEventAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

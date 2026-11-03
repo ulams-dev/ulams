@@ -2,6 +2,7 @@
 
 namespace Ulams\LiaScript;
 
+use Ulams\Core\Support\MorphMap;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Courses\Facades\Topic;
 use Ulams\Courses\UlamsCourseServiceProvider;
@@ -11,6 +12,7 @@ use Ulams\LiaScript\Http\Resources\LiaScriptTopicResource;
 use Ulams\LiaScript\Import\LiaScriptTopicImportStrategy;
 use Ulams\LiaScript\Models\LiaScriptTopic;
 use Ulams\LiaScript\Services\LiaScriptPlayer;
+use Ulams\LiaScript\Services\Contracts\LiaScriptServiceContract;
 use Ulams\LiaScript\Services\LiaScriptService;
 use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
 use Ulams\Uploads\UlamsUploadsServiceProvider;
@@ -25,11 +27,16 @@ class UlamsLiaScriptServiceProvider extends ServiceProvider
 
     public $singletons = [
         LiaScriptService::class => LiaScriptService::class,
+        LiaScriptServiceContract::class => LiaScriptService::class,
         LiaScriptPlayer::class => LiaScriptPlayer::class,
     ];
 
     public function register(): void
     {
+        MorphMap::register([
+            'topic.liascript' => \Ulams\LiaScript\Models\LiaScriptTopic::class,
+        ]);
+
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
         $this->app->register(UlamsUploadsServiceProvider::class);
         $this->app->register(UlamsTopicTypesServiceProvider::class);

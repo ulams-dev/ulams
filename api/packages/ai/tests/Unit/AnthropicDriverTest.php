@@ -106,4 +106,15 @@ class AnthropicDriverTest extends TestCase
         $this->assertSame(20, $response->usage->cacheWrite5mTokens);
         $this->assertSame(50, $response->usage->cacheWrite1hTokens);
     }
+
+    public function testOnlyTextDeltasAreForwardedWhileStreaming(): void
+    {
+        $event = fn (string $type, string $deltaType, string $field, string $value) => (object) ['type' => $type, 'delta' => (object) ['type' => $deltaType, $field => $value]];
+
+        $this->assertSame('Hi', AnthropicDriver::textDelta($event('content_block_delta', 'text_delta', 'text', 'Hi')));
+        $this->assertNull(AnthropicDriver::textDelta($event('content_block_delta', 'thinking_delta', 'thinking', 'hmm')));
+        $this->assertNull(AnthropicDriver::textDelta($event('content_block_delta', 'input_json_delta', 'partial_json', '{')));
+        $this->assertNull(AnthropicDriver::textDelta($event('message_delta', 'text_delta', 'text', 'x')));
+        $this->assertNull(AnthropicDriver::textDelta($event('content_block_delta', 'text_delta', 'text', '')));
+    }
 }

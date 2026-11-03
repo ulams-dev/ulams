@@ -21,7 +21,9 @@ class TestCase extends CoreTestCase
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
             UlamsAuthServiceProvider::class,
-            UlamsBookmarksServiceProvider::class
+            UlamsBookmarksServiceProvider::class,
+            // the bookmarked models (Course, Lesson, Topic) store their morph aliases
+            \Ulams\Courses\UlamsCourseServiceProvider::class,
         ];
     }
 

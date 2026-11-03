@@ -1,0 +1,60 @@
+---
+/**
+ * Shell of one impact-page diagram: a section with a figure whose caption holds the title, the evidence label and a
+ * one-line description. The diagram itself is real text in lists, so it is its own text alternative. Animated
+ * diagrams carry `data-dg` (see diagrams.ts); their control button stays hidden until the script runs.
+ */
+import "./diagrams.css";
+import type { DiagramHead } from "../../lib/impact-diagrams.ts";
+
+interface Props {
+  id: string;
+  head: DiagramHead;
+  /** How the evidence label reads: a measured run, an illustration, an outside figure, shipped or planned. */
+  tone: "run" | "illustration" | "outside" | "available" | "coming";
+  animated?: boolean;
+  /** A replay button for one-shot animations, a pause button for loops. */
+  control?: { kind: "replay"; label: string } | { kind: "pause"; pause: string; play: string };
+}
+
+const { id, head, tone, animated = true, control } = Astro.props;
+const badgeClass = tone === "coming" ? "u-status u-status--coming" : tone === "available" ? "u-status u-status--available" : `dg__badge dg__badge--${tone}`;
+---
+
+<section class="dg" id={id} data-dg={animated ? "" : undefined}>
+  <div class="u-container">
+    <figure class="dg__figure" aria-labelledby={`${id}-title`} aria-describedby={`${id}-lede`}>
+      <figcaption class="dg__head">
+        <div class="dg__headline">
+          <h3 class="dg__title" id={`${id}-title`}>{head.title}</h3>
+          <span class={badgeClass}>{head.badge}</span>
+        </div>
+        <p class="dg__lede" id={`${id}-lede`}>{head.lede}</p>
+      </figcaption>
+      <div class="dg__body">
+        <slot />
+      </div>
+      {
+        animated && control && (
+          <div class="dg__controls">
+            {control.kind === "replay" ? (
+              <button type="button" class="dg__control" data-dg-control="replay" hidden>
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <span>{control.label}</span>
+              </button>
+            ) : (
+              <button type="button" class="dg__control" data-dg-control="pause" data-pause={control.pause} data-play={control.play} hidden>
+                {control.pause}
+              </button>
+            )}
+          </div>
+        )
+      }
+    </figure>
+  </div>
+</section>
+
+<script>
+  import { initDiagrams } from "./diagrams.ts";
+  initDiagrams();
+</script>

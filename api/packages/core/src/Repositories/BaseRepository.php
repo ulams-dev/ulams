@@ -2,6 +2,7 @@
 
 namespace Ulams\Core\Repositories;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Core\Dtos\Contracts\CompareDtoContract;
 use Ulams\Core\Dtos\Contracts\DtoContract;
 use Ulams\Core\Dtos\PaginationDto;
@@ -104,7 +105,7 @@ abstract class BaseRepository implements BaseRepositoryContract, UserableReposit
                     if (is_array($value)) {
                         $query->where($key, $value[0], $value[1]);
                     } else {
-                        $query->where($key, $value);
+                        $query->where($key, MorphMap::queryValue($query, $key, $value));
                     }
                 }
             }

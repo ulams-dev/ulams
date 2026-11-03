@@ -1,0 +1,4 @@
+format: 1
+blueprint: 3
+lint:
+  uncitedAuthorBlocks: warn

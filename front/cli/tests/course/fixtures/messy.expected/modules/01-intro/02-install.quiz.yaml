@@ -1,0 +1,11 @@
+id: m0000000000000000000000010
+questions:
+  - id: m0000000000000000000000011
+    type: single
+    stem: Which command prints the client version?
+    options:
+      - { id: m0000000000000000000000012, text: kubectl version --client, correct: true }
+      - { id: m0000000000000000000000013, text: kubectl get version }
+      - { id: m0000000000000000000000014, text: kube --v }
+    explanation: The client flag skips the server call.
+    origin: author

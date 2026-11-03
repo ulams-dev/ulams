@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 use Ulams\Templates\Facades\Template as TemplateFacade;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use Ulams\TemplatesPdf\Services\Contracts\CertificateValidityContract;
 use Ulams\TemplatesPdf\Services\Contracts\PdfGeneratorContract;
 use Ulams\TemplatesPdf\UlamsTemplatesPdfServiceProvider;
 
@@ -25,6 +26,12 @@ class PdfChannel extends AbstractTemplateChannelClass implements TemplateChannel
     {
         $varsService = TemplateFacade::getVariableClassName($event->eventClass(), PdfChannel::class);
         $vars = array_merge(SettingsVariables::getSettingsValues(), $varsService::variablesFromEvent($event));
+
+        $issuedAt = now();
+        $assignableClass = $varsService::assignableClass();
+        $assignableId = $assignableClass ? $event->extractIdForPropertyOfClass($assignableClass) : null;
+        $expiresAt = app(CertificateValidityContract::class)->expiresAt($assignableClass, $assignableId ? (int) $assignableId : null, $issuedAt);
+        $vars[PdfVariables::VAR_CERTIFICATE_EXPIRES_AT] = $expiresAt ? $expiresAt->format('d.m.Y') : '';
 
         // Store the template as designed (not the variable-substituted copy):
         // the renderer fills the fields from `vars`, so values never have to be
@@ -39,8 +46,10 @@ class PdfChannel extends AbstractTemplateChannelClass implements TemplateChannel
             'content' => $content,
             'vars' => $vars,
             'certificate_id' => $vars[PdfVariables::VAR_CERTIFICATE_ID] ?? null,
-            'assignable_type' => $varsService::assignableClass(),
-            'assignable_id' => $varsService::assignableClass() ? $event->extractIdForPropertyOfClass($varsService::assignableClass()) : null,
+            'assignable_type' => $assignableClass,
+            'assignable_id' => $assignableId,
+            'expires_at' => $expiresAt,
+            'course_version' => $varsService::versionFromEvent($event),
         ]);
 
         if (config(UlamsTemplatesPdfServiceProvider::CONFIG_KEY . '.storage.render_on_create', true)) {

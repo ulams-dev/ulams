@@ -12,7 +12,7 @@ that we do not control.
 | Base | `php:8.4-fpm-alpine3.24` (official Docker image, PHP 8.4, php-fpm on port 9000) |
 | PHP extensions added | apcu, bcmath, exif, gd (freetype, jpeg, png, webp, avif, xpm), intl, pcntl, pdo_mysql, pdo_pgsql, redis, zip |
 | PHP extensions from the base | ctype, curl, dom, fileinfo, iconv, mbstring, opcache, openssl, pdo_sqlite, posix, readline, sodium, tokenizer, xml, xmlreader, xmlwriter, zlib and the rest of the core set |
-| Tools | composer 2.10, supervisor, bash, ffmpeg/ffprobe, jpegoptim, optipng, pngquant, gifsicle, unzip, curl |
+| Tools | composer 2.10, supervisor, bash, git, ffmpeg/ffprobe, jpegoptim, optipng, pngquant, gifsicle, unzip, curl |
 | php-fpm | `conf/php-fpm.d/00-ulams-base.conf`: `pm.max_requests = 500`, `listen.backlog = 1024`, `request_terminate_timeout = 120s` (the app's `docker/conf/php/php-fpm-custom.conf` raises it to 3600s) |
 
 Why each tool is there:
@@ -24,6 +24,8 @@ Why each tool is there:
 - **jpegoptim, optipng, pngquant, gifsicle**: `spatie/image-optimizer` in `packages/images`.
   `svgo`, `cwebp` and `avifenc` are not installed (the old image did not have them either);
   the optimizer skips missing binaries.
+- **git**: the `git-cli` source connector of Living Course reads repositories on servers without a supported API
+  (shallow, read-only, sandboxed; see the Living Course settings page). The connector is off by default.
 - **exif**: used by `intervention/image` to read orientation; new compared with the old image.
 
 Not included, same as the old image: Node.js, the `mjml` binary and the PostgreSQL client.
@@ -50,6 +52,22 @@ compilers, so that step installs `$PHPIZE_DEPS` and removes them again.
 The package list lives in `install.sh` only. When you change the upstream pins (the
 `php`, `mlocati/php-extension-installer` or `composer` images), change them in all three
 Dockerfiles.
+
+## Minimum PHP version
+
+`install.sh` stops the build when the base image has a PHP below the minimum, which is **8.4.27**
+(the release that fixes the two critical unauthenticated RCE bugs of
+[php.net advisory 2026-10-21-5](https://www.php.net/archive/2026.php#2026-10-21-5)). The check runs in all
+three Dockerfiles, because they all run `install.sh`, so a stale `php` base or build cache cannot ship.
+The default lives in `install.sh` only; override it with the `MIN_PHP_VERSION` build arg:
+
+```sh
+docker build --pull --build-arg MIN_PHP_VERSION=8.4.28 api/docker/php   # fails while the image is older
+```
+
+When the build fails, pull a newer base (`--pull`); if the official image is not updated yet, wait for it.
+Raise the default in `install.sh` when a new security release is out. The `PHP freshness` workflow reports when
+the official image or our published image is behind the latest release.
 
 ## Building and publishing the base on its own
 
@@ -82,3 +100,9 @@ it to a public registry) must be able to provide the corresponding source. Alpin
 repository and the exact package versions in the image (`apk info -v`) cover that. The full
 list is in [`NOTICE`](NOTICE), copied into the image as
 `/usr/local/share/doc/ulams-php/NOTICE`.
+
+The NOTICE carries a written offer for the corresponding source (no source tarballs are
+published next to releases). The offer names `/usr/share/doc/ulams/apk-packages.txt`, the
+sorted `apk info -v` list written by `install.sh`, and the image label
+`org.ulams.alpine-release`, which `publish.yml` sets from `/etc/alpine-release` of the base
+image. `publish.yml` also prints the list in the run summary of every published image.

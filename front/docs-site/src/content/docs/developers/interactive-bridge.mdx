@@ -40,6 +40,24 @@ than 16 KB, with an unknown type, a wrong nonce or an invalid payload is dropped
 | `event` | an xAPI-like `verb` IRI, an `object` id inside the package, an optional `result` |
 | `error` | `code` (for example `webgl-unavailable`), optional `message` |
 
+### Code exercises
+
+[Code exercises](/creators/code-exercises/) use the same bridge with four more types, so the lesson page can
+hand the runner an exercise and get the result back. They are optional: a host or package that does not know
+them drops them. Because they carry files and test results, these four may be up to **640 KB** instead of 16 KB.
+
+| Direction | Type | Payload |
+|---|---|---|
+| page to runner | `loadExercise` | `language` (`javascript`, `typescript`), `tests` (1 to 10 files `{path, content}`), `timeoutMs` (500 to 30000) |
+| page to runner | `run` | `runId`, `files` (1 to 20 files) |
+| page to runner | `reset` | none: stop any run |
+| runner to page | `runResult` | `runId`, `status` (`passed`, `failed`, `error`, `timeout`), `tests` (`{name, status: pass\|fail\|error, message?}`, at most 200), `passed`, `total`, `durationMs`, optional `output` (at most 8 KB), `truncated`, `error` |
+
+The runner is `front/code-runner`: `runner.html` bundles the exercise with esbuild-wasm and opens `exec.html`
+in a second sandboxed frame for each run, which runs the bundle in a Worker. The content security policies of the
+two pages, in `api/packages/code-exercises/resources/runner-csp.json`, are the contract: `exec.html` has no
+`connect-src`, so the code has no network, and neither page allows `unsafe-eval`.
+
 `init.showcase` is for the landing hero (see [As the hero of a landing page](/creators/interactive/#as-the-hero-of-a-landing-page)):
 the package shows only its picture, with no text, no controls and nothing focusable, moves slowly on its own, and
 follows `goToStep` from the page. A package that does not know the field is unaffected.

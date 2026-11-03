@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $session_id
  * @property int $number
  * @property string|null $parent_id
- * @property string $kind outline | content | patch | author | restore | update
+ * @property string $kind outline | content | patch | author | restore | update | import (a course-as-code push, ADR 0160)
  * @property array $document
  * @property array|null $diff_from_parent
  * @property string $origin ai | author | restore
@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $status proposed | approved | rejected | superseded
  * @property string|null $element_id
  * @property array|null $ai_call_ids
+ * @property string|null $variant_group set on the proposals made together by "give me options" (L2-13)
+ * @property string|null $variant_id the variant branch this version belongs to; null for the base (ADR 0192)
  * @property array|null $source_revisions {sourceId: revisionId} this version was written from
  */
 class Version extends Model

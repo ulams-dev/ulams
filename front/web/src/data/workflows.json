@@ -1,6 +1,47 @@
 {
-  "description": "Five ways to run ulams: Claude Code, Claude with the ulams MCP server, the ulams command line, the REST API and SDK, and the studio.",
+  "description": "Six ways to run ulams: the admin panel, Claude Code, Claude with the ulams MCP server, the ulams command line, the REST API and SDK, and the studio.",
   "tabs": [
+    {
+      "key": "admin",
+      "label": "Admin panel",
+      "status": "available",
+      "window": "admin",
+      "title": "Admin panel",
+      "caption": "The admin panel is the usual way in: courses, people, enrolments and reports.",
+      "lines": [
+        {
+          "kind": "note",
+          "text": "Courses"
+        },
+        {
+          "kind": "note",
+          "text": "People"
+        },
+        {
+          "kind": "note",
+          "text": "Enrolments"
+        },
+        {
+          "kind": "note",
+          "text": "Reports"
+        },
+        {
+          "kind": "card",
+          "text": "On-Call",
+          "args": "Published | 86"
+        },
+        {
+          "kind": "card",
+          "text": "Gravity Lab",
+          "args": "Published | 42"
+        },
+        {
+          "kind": "card",
+          "text": "The Coffee Atlas",
+          "args": "Draft | 0"
+        }
+      ]
+    },
     {
       "key": "claude-code",
       "label": "Claude Code",
@@ -203,7 +244,7 @@
       "status": "available",
       "window": "studio",
       "title": "Studio · Course builder",
-      "caption": "The classic experience is still here: a chat-driven studio where every AI change is a diff you approve.",
+      "caption": "The studio is the visual course builder: every AI change is a diff you approve.",
       "lines": [
         {
           "kind": "user",

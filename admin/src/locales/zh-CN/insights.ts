@@ -1,0 +1,27 @@
+export default {
+  course_insights: '学习洞察',
+  course_insights_open: '打开完整洞察',
+  course_insights_new_tab: '（在新标签页打开作者工作室）',
+  course_insights_period: '时间范围',
+  course_insights_period_days: '最近 {days} 天',
+  course_insights_off: '此学院已关闭 Learner Insights。目前不会记录任何数据，因此暂无内容可显示。',
+  course_insights_forbidden:
+    '你可以查看自己担任作者的课程的数据，或在拥有 Learner Insights 权限时查看。',
+  course_insights_error: '无法加载数据。',
+  course_insights_retry: '重试',
+  course_insights_small_group:
+    '学员人数还不够：已报名 {enrolled} 人。报名人数达到至少 {n} 人后才会显示数据。',
+  course_insights_enrolled: '已报名',
+  course_insights_completed: '已完成课程',
+  course_insights_completion_rate: '完成率',
+  course_insights_active: '期间活跃',
+  course_insights_statuses: '谁需要支持',
+  course_insights_on_track: '进展顺利',
+  course_insights_struggling: '遇到困难',
+  course_insights_at_risk: '有流失风险',
+  course_insights_top_sections: '让人困惑的部分',
+  course_insights_no_sections: '此期间没有任何部分有学员活动。',
+  course_insights_section_line: '{active} 名活跃学员中有 {rate} 遇到困难',
+  course_insights_hidden_sections: '另有 {count} 个部分已隐藏：活跃学员少于 {n} 人。',
+  course_insights_privacy: '少于 {n} 名学员的群体会被隐藏，这些数据由服务器直接扣留。',
+};

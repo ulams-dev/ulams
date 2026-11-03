@@ -106,6 +106,37 @@ ulams builder patches approve <version>                       # an applied cours
 ulams builder patches reject <version>
 ```
 
+Structure and options:
+
+```bash
+ulams builder outline-edit <session> --action rename --id <module-or-lesson> --title "Better title"
+ulams builder outline-edit <session> --action move --id <lesson> --module <module> --index 0
+ulams builder outline-edit <session> --action add --kind lesson --module <module> --title "…" --objective "…" --citation frg_…
+ulams builder outline-edit <session> --action remove --id <lesson>
+ulams builder variants <session> <element> --instruction "Harder distractors" --count 2   # 2–3 options, one model call each
+```
+
+Each outline edit is saved as an approved author version and re-applied; `builder variants` makes proposed versions that share a group,
+which you approve one of (`builder patches approve`) or reject.
+
+Note the two meanings of "variants": `builder variants` is a few alternatives for one element. [Course variants](/creators/course-versions-and-variants/)
+are whole versions of the course for a level and a role, drafted from the same sources:
+
+```bash
+ulams course variants list <session> --json                                      # status, own course, cap, cost estimate
+ulams course variants add <session> --level expert --role developer --start      # --start drafts the outlines (the base must be applied)
+ulams course variants update <variant> --label "Expert, developer"
+ulams course variants retire <variant> --yes                                     # its course is kept; it stops counting against the cap
+```
+
+`course variants list` gives each variant's `currentVersionId`, its kind (`outline`, then `content`) and status. Approve a proposed variant outline (it starts writing
+the lessons that changed) or a generated variant (it creates the variant's own course) with `ulams builder patches approve <version>`, or in the studio; reject with
+`builder patches reject <version>`. Review one with `GET versions/{version}/diff?against=<base version>`.
+
+`ulams builder citations <session>` is the sources panel as data: per source its sections with the elements that cite them
+(`data.sources[].sections[].citedBy`), how many sections nothing cites (`data.sources[].uncovered`) and, per element, the
+fragments it cites (`data.elements`). Use it to find what the course leaves out.
+
 The proposal cites source fragments like everything else the builder writes; `ulams builder fragments get frg_…` shows the
 passage a citation points to.
 
@@ -134,6 +165,21 @@ connection cap with `Last-Event-ID`, never repeated). The last line is the norma
 `lastEventId` (pass it to `--after` to continue). `--until-run` exits 0 on that run's `RUN_FINISHED` and 9 on `RUN_ERROR`
 with the event in `error.details`. For agents, `builder events list` returns a bounded batch as ordinary JSON.
 
+## Course as code (works with AI off)
+
+`ulams course …` moves a course between the academy and a file, without the AI pipeline and **without needing AI to be enabled**
+(the commands above exit 12 when it is off; these do not). `course export <course> --out blueprint.json` writes the current
+Blueprint v3 document with its version ids, `course import --file blueprint.json` stores your edit as a proposed version and prints the
+element diff, `course diff --version <version>` shows it again, `course approve <version>` makes it the current version and
+`course apply <session>` and `course publish <session>` put it in front of learners. A push is always a proposal: **only a person can approve**
+(a login or a CLI token you created; agent tokens and MCP clients get `APPROVAL_REQUIRES_HUMAN`). The endpoints, the error codes and
+the rule for text you wrote yourself (`origin: author`, which may have no citations) are in the
+[Course Builder API](/developers/course-builder-api/#course-as-code-endpoints-work-with-ai-off). These commands work on one JSON
+document. For a course you keep in Git, the [course folder format](/developers/course-folder-format/) (Markdown lessons with block
+directives, YAML files) is checked offline with `course validate` and `course fmt`, and `course init`, `pull`, `push`, `diff`,
+`status`, `apply` and `publish` move that folder to and from an academy: see
+[Course folders from the command line](/developers/cli-course/).
+
 ## Living Course
 
 ```bash
@@ -154,6 +200,7 @@ ulams living proposals list <session>
 ulams living proposals get <proposal>               # items grouped by lesson
 ulams living proposals analyse <proposal> --confirm-estimate   # model calls; the estimate is in the error if it is high
 ulams living proposals accept <proposal> --item <item>         # reject, reset, regenerate --comment "…"
+ulams living proposals suggest-lesson <proposal> --item <item>   # a lesson for a new, uncovered source section
 ulams living proposals accept-all <proposal>        # also: reject-all, reanalyse, learner-note --note "…"
 ulams living proposals apply <proposal>             # a new course version; --overwrite replaces admin edits
 ulams living audit list <session>

@@ -6,6 +6,8 @@ use Ulams\CourseBuilder\Apply\BlueprintApplier;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\CourseBuilder\Models\Variant;
+use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\Pages\Models\Page;
 
@@ -78,6 +80,25 @@ final class PublishCheck
                 }
             }
         }
+        // publishing the base publishes its variants, so the same checks run on each of them (ADR 0192)
+        foreach (Variant::query()->where('session_id', $session->id)->where('status', Variant::APPROVED)->whereNotNull('course_id')->orderBy('position')->get() as $variant) {
+            $applied = $variant->applied_version_id !== null ? Version::query()->find($variant->applied_version_id) : null;
+            if ($applied === null || $variant->current_version_id !== $variant->applied_version_id) {
+                $blocking[] = ['code' => 'variant_not_applied', 'message' => "The latest version of the variant “{$variant->label}” has not been applied yet."];
+                continue;
+            }
+            foreach ($this->applier->drift($session, $applied->document, $variant) as $title) {
+                $blocking[] = ['code' => 'drift', 'message' => "Variant “{$variant->label}”: “{$title}” was edited in the admin after the last apply."];
+            }
+            foreach (Blueprint::lessons($applied->document) as $item) {
+                $lesson = $item['lesson'];
+                $uncited = count(array_filter((array) ($lesson['blocks'] ?? []), fn ($b) => ($b['citations'] ?? []) === []))
+                    + count(array_filter((array) ($lesson['quiz']['questions'] ?? []), fn ($q) => ($q['citations'] ?? []) === []));
+                if ($uncited > 0) {
+                    $warnings[] = ['code' => 'uncited', 'elementId' => (string) $lesson['id'], 'message' => "Variant “{$variant->label}”: “{$lesson['title']}” has {$uncited} element(s) with no source citation."];
+                }
+            }
+        }
         $adjusted = null;
         if (isset($brief['theme']['accent'], $brief['theme']['preset'])) {
             $result = AccentContrast::adjust((string) $brief['theme']['accent'], (string) $brief['theme']['preset']);
@@ -100,7 +121,7 @@ final class PublishCheck
             'facts' => [
                 'courseId' => $session->course_id,
                 'title' => $doc['course']['title'] ?? $session->title,
-                'url' => $session->course_id !== null && $front !== '' ? "{$front}/courses/{$session->course_id}" : null,
+                'url' => $session->course_id !== null && $front !== '' ? "{$front}" . \Ulams\CourseBuilder\Services\SessionState::learnerPath((int) $session->course_id) : null,
                 'published' => (bool) $session->stateValue('published', false),
                 'price' => [
                     'mode' => $pricing['mode'] ?? 'free',

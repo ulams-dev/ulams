@@ -25,6 +25,7 @@ import Placeholder from "../../../images/image.svg";
 import { Col, Row } from "react-grid-system";
 import Container from "@/components/Common/Container";
 import { formatPrice } from "@/utils/index";
+import { docsLink } from "@/config/index";
 import CartSuccess from "@/components/Cart/CartSuccess";
 import routeRoutes from "@/components/Routes/routes";
 import styles from "@/components/Cart/CartContent/styles.module.css";
@@ -163,7 +164,7 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
                         <Text size="14">
                           {t("Cart.UseTestCard")}:{" "}
                           <ComponentLink
-                            href="https://docs.ulams.app/getting-started/demo.html"
+                            href={docsLink("getting-started/demos/")}
                             target="_blank"
                             rel="noreferrer nofollow"
                           >

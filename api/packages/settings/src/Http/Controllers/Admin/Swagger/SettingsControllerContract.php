@@ -14,7 +14,7 @@ interface SettingsControllerContract
     /**
      * @OA\Get(
      *      tags={"Admin Settings"},
-     *      path="/api/admin/settings",
+     *      path="/api/admin/settings", operationId="admin.settings.get",
      *      description="Get Settings paginated",
      *      security={
      *         {"passport": {}},
@@ -50,9 +50,7 @@ interface SettingsControllerContract
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -68,7 +66,7 @@ interface SettingsControllerContract
     /**
      * @OA\Get(
      *     tags={"Admin Settings"},
-     *      path="/api/admin/settings/{id}",
+     *      path="/api/admin/settings/{id}", operationId="admin.settings.by-id.get",
      *      description="Get single settings",
      *      security={
      *         {"passport": {}},
@@ -84,9 +82,7 @@ interface SettingsControllerContract
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -102,7 +98,7 @@ interface SettingsControllerContract
     /**
      * @OA\Post(
      *     tags={"Admin Settings"},
-     *     path="/api/admin/settings",
+     *     path="/api/admin/settings", operationId="admin.settings.post",
      *     summary="Settings create",
      *     description="Create single setting",
      *     security={
@@ -111,9 +107,7 @@ interface SettingsControllerContract
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -129,18 +123,17 @@ interface SettingsControllerContract
     /**
      * @OA\Put(
      *     tags={"Admin Settings"},
-     *     path="/api/admin/settings/{id}",
+     *     path="/api/admin/settings/{id}", operationId="admin.settings.by-id.put",
      *     summary="Update setting",
      *     description="Update single setting",
      *     security={
      *         {"passport": {}},
      *     },    
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -159,15 +152,14 @@ interface SettingsControllerContract
      *     security={
      *         {"passport": {}},
      *     },
-     *     path="/api/admin/settings/{id}",
+     *     path="/api/admin/settings/{id}", operationId="admin.settings.by-id.delete",
      *     summary="Destroy setting",
      *     description="Destroy the specified setting",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -183,7 +175,7 @@ interface SettingsControllerContract
     /**
      * @OA\Get(
      *      tags={"Admin Settings"},
-     *      path="/api/admin/settings/groups",
+     *      path="/api/admin/settings/groups", operationId="admin.settings.groups.get",
      *      description="Get Settings unique groups",
      *      security={
      *         {"passport": {}},
@@ -191,9 +183,7 @@ interface SettingsControllerContract
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,

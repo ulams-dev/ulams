@@ -118,6 +118,21 @@ else
     php artisan ulams:tenant:sync-env --migrate
 fi
 
+# The bundled object store (SeaweedFS, ADR 0041): the platform bucket and every tenant bucket exist and are
+# publicly readable. The store may still be starting, so try for half a minute; never fatal.
+if [ "${LARAVEL_TENANCY_S3_IDENTITY_DRIVER:-${TENANCY_S3_IDENTITY_DRIVER:-none}}" == 'seaweedfs' ] && [ "$DISABLE_BUCKET_SETUP" != 'true' ]
+then
+    buckets_ready=false
+    for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+        if php artisan ulams:tenant:ensure-buckets; then
+            buckets_ready=true
+            break
+        fi
+        sleep 2
+    done
+    [ "$buckets_ready" == 'true' ] || echo "warning: buckets not set up; run 'php artisan ulams:tenant:ensure-buckets' once the object store is up"
+fi
+
 # APP_KEY is generated only when empty (it encrypts the tenant secrets: ADR 0007); Passport keys
 # only when storage/oauth-private.key is missing. See init-keys.sh.
 ./init-keys.sh

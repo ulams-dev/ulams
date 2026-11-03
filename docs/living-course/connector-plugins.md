@@ -48,10 +48,21 @@ pages are configured inline. `api/packages/living-course/tests/Feature/Connector
 connects a session through `POST /api/admin/living-course/sessions/{session}/sources/connect`, changes the
 pages and checks the source, which is the whole path from a plugin to an update proposal.
 
-## Designed, not built: Google Drive and Notion
+## Built on the contract: Google Drive and Notion
 
-Both need an OAuth app per installation (client id and secret, a redirect URI on the tenant host), token
-refresh and per-file permissions. As connector plugins each would take the settings `{fileId}` or
-`{pageId, includeChildren}` and the secret `{refresh_token}`; `fetch()` would export Google Docs as DOCX
-(`files.export`) and read Notion pages as blocks converted to Markdown, with `modifiedTime` or
-`last_edited_time` as the reference; webhooks (Drive push channels, Notion webhooks) come after polling.
+`Connectors\Google\GoogleDriveConnector` and `Connectors\Notion\NotionConnector` follow plan 6.6 and show what a
+connector with an account sign-in looks like. They implement `OAuthConnector` (a `oauthProvider()` on top of the
+contract), so `Oauth\OAuthService` can sign the author in and hand the connect request a one-time `grant` instead
+of a token: the settings are `{fileId}` or `{pageId, includeChildren}`, the secrets `{refresh_token}` or `{token}`.
+
+- `fetch()` asks for a fresh access token (Google) and compares the remote versions first: a Drive file or folder by
+  `version` and `modifiedTime`, a Notion page by `last_edited_time`, so an unchanged source costs one metadata
+  request. Google Docs are exported as Markdown (`text/markdown`; the plan said DOCX, the Markdown export keeps
+  headings and lists without a converter), text and Markdown files are downloaded, Word and PDF files go through the
+  shared converters. Notion blocks are converted by `BlocksToMarkdown` (text only: images, files and embeds are
+  dropped, only http(s) links survive).
+- Both talk through `Remote\RemoteApi`, a thin wrapper over `SafeHttp` that maps statuses to our own messages and never
+  repeats what the remote said.
+- Webhooks (Drive push channels, Notion webhooks) are not used; the poll schedule finds changes.
+- Both are off until listed in `LIVING_COURSE_CONNECTORS`; each needs the installation's OAuth client
+  (`living_course.oauth.google|notion`). Tests use a scripted vendor (`tests/Support/FakeVendor.php`), no network.

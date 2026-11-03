@@ -12,7 +12,7 @@ interface ScormTrackControllerContract
 {
     /**
      * @OA\Post(
-     *     path="/api/scorm/track/{uuid}",
+     *     path="/api/scorm/track/{uuid}", operationId="scorm.track.by-uuid.post",
      *     summary="Track Scorm user progress",
      *     tags={"SCORM"},
      *     security={
@@ -29,7 +29,7 @@ interface ScormTrackControllerContract
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="scorm data",
+     *         description="scorm data", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -53,7 +53,7 @@ interface ScormTrackControllerContract
 
     /**
      * @OA\Get(
-     *     path="/api/scorm/track/{scoId}/{key}",
+     *     path="/api/scorm/track/{scoId}/{key}", operationId="scorm.track.by-scoid.by-key.get",
      *     summary="Get user progress by scorm sco id and scorm data key",
      *     tags={"SCORM"},
      *     security={
@@ -62,7 +62,7 @@ interface ScormTrackControllerContract
      *     @OA\Parameter(
      *         description="Unique scorm identifier",
      *         in="path",
-     *         name="sco_id",
+     *         name="scoId",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
@@ -79,7 +79,7 @@ interface ScormTrackControllerContract
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="",
+     *         description="", @OA\JsonContent(ref="#/components/schemas/ApiJson")
      *      ),
      *     @OA\Response(
      *          response=401,

@@ -3,8 +3,8 @@
 namespace Ulams\LivingCourse\Services;
 
 use Illuminate\Support\Facades\DB;
+use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Models\Session;
-use Ulams\LivingCourse\Analysis\UpdateRequest;
 use Ulams\LivingCourse\Exceptions\ProposalException;
 use Ulams\LivingCourse\Models\Proposal;
 use Ulams\LivingCourse\Models\ProposalItem;
@@ -19,7 +19,7 @@ use Ulams\CourseBuilder\Pipeline\PromptContext;
 final class DecisionService
 {
     /** Item kinds that carry something the author decides (remaps are accepted by default, uncovered is informational). */
-    public const DECIDABLE = ['update', 'no_change', 'remove', 'manual', 'citation_remap', 'uncovered'];
+    public const DECIDABLE = ['update', 'no_change', 'remove', 'manual', 'citation_remap', 'uncovered', 'new_lesson'];
 
     public function __construct(
         private readonly AuditLog $audit,
@@ -27,6 +27,7 @@ final class DecisionService
         private readonly RevisionService $revisions,
         private readonly StalenessService $staleness,
         private readonly PromptContext $context,
+        private readonly LessonSuggester $lessons,
     ) {
     }
 
@@ -56,13 +57,43 @@ final class DecisionService
         return $item->refresh();
     }
 
+    /**
+     * Accepts one item and the same patch in the other proposals of its group (the variants, or the base): the same element, the
+     * same text before and the same replacement, still undecided. One decision for the elements the variants share (ADR 0192).
+     *
+     * @return array{accepted:int,proposals:string[]} items accepted besides the given one, and the proposals they are in
+     */
+    public function acceptInGroup(Proposal $proposal, ProposalItem $item, int $userId): array
+    {
+        $item = $this->decide($proposal, $item, 'accepted', $userId);
+        $accepted = 0;
+        $in = [];
+        if ($proposal->proposal_group === null || !in_array($item->kind, ['update', 'no_change', 'remove'], true)) {
+            return ['accepted' => 0, 'proposals' => []];
+        }
+        $after = Blueprint::fingerprint($item->after);
+        $before = Blueprint::fingerprint($item->before);
+        foreach (Proposal::query()->where('proposal_group', $proposal->proposal_group)->where('id', '!=', $proposal->id)->whereIn('status', ['ready', 'analysing', 'awaiting_analysis'])->get() as $sibling) {
+            foreach (ProposalItem::query()->where('proposal_id', $sibling->id)->where('element_id', $item->element_id)->where('kind', $item->kind)->where('status', 'pending')->get() as $twin) {
+                if (Blueprint::fingerprint($twin->after) !== $after || Blueprint::fingerprint($twin->before) !== $before) {
+                    continue;
+                }
+                $this->decide($sibling, $twin, 'accepted', $userId);
+                $accepted++;
+                $in[$sibling->id] = true;
+            }
+        }
+
+        return ['accepted' => $accepted, 'proposals' => array_keys($in)];
+    }
+
     /** @return int number of items accepted */
     public function acceptAll(Proposal $proposal, int $userId): int
     {
         $this->assertOpen($proposal);
         $count = 0;
         DB::transaction(function () use ($proposal, $userId, &$count) {
-            foreach (ProposalItem::query()->where('proposal_id', $proposal->id)->where('status', 'pending')->whereIn('kind', ['update', 'no_change', 'remove'])->get() as $item) {
+            foreach (ProposalItem::query()->where('proposal_id', $proposal->id)->where('status', 'pending')->whereIn('kind', ['update', 'no_change', 'remove', 'new_lesson'])->get() as $item) {
                 $item->forceFill(['status' => 'accepted', 'decided_by' => $userId, 'decided_at' => now()])->save();
                 $this->audit->record('item.accepted', $this->context($proposal, $item, $userId) + []);
                 $count++;
@@ -81,6 +112,16 @@ final class DecisionService
             $proposal->forceFill(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()])->save();
             ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('status', ['pending', 'accepted', 'conflict', 'stale'])->where('kind', '!=', 'citation_remap')
                 ->update(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()]);
+            if ($proposal->isInsights() || $proposal->isVariant()) {
+                // no source revision to acknowledge and no source staleness to settle (a variant proposal belongs to a revision that
+                // only the base proposal acknowledges, ADR 0192)
+                $this->audit->record('proposal.rejected', [
+                    'session_id' => $session->id, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'actor_id' => $userId,
+                    'data' => ['number' => $proposal->number, 'kind' => $proposal->kind] + ($proposal->isVariant() ? ['variantId' => $proposal->variant_id] : []),
+                ]);
+
+                return;
+            }
             $this->staleness->settleOpen($session, 'dismissed');
             $this->revisions->promote(Revision::query()->findOrFail($proposal->to_revision_id), $userId);
             $this->audit->record('proposal.rejected', [
@@ -94,6 +135,9 @@ final class DecisionService
     public function regenerate(Proposal $proposal, ProposalItem $item, string $comment, int $userId): ProposalItem
     {
         $this->assertOpen($proposal);
+        if ($item->kind === 'new_lesson') {
+            return $this->lessons->suggest($proposal, $item, $userId, mb_substr(trim($comment), 0, 1000) ?: 'Please try again.');
+        }
         if (!in_array($item->kind, ['update', 'no_change', 'remove', 'manual'], true)) {
             throw new ProposalException('This item has nothing to regenerate.', 409);
         }
@@ -101,7 +145,7 @@ final class DecisionService
             throw new ProposalException('You asked for a new version of this element three times already. Edit it by hand in the workspace.', 422);
         }
         $session = Session::query()->findOrFail($proposal->session_id);
-        $request = new UpdateRequest($proposal, $session, $this->context);
+        $request = $this->analysis->requestFor($proposal, $session);
         $item->forceFill(['regenerations' => $item->regenerations + 1])->save();
         // analyseItems writes the new answer into the item; manual items become analysed items
         $this->analysis->analyseItems($proposal, $request, $item->group_key, [$item], mb_substr(trim($comment), 0, 1000) ?: 'Please try again.');
@@ -110,6 +154,12 @@ final class DecisionService
         $this->audit->record('item.regenerated', $this->context($proposal, $item, $userId) + ['ai_call_ids' => array_slice((array) $item->ai_call_ids, -6)]);
 
         return $item->refresh();
+    }
+
+    /** A lesson for a source section no lesson covers (one call, then the author reviews it as a diff). */
+    public function suggestLesson(Proposal $proposal, ProposalItem $item, int $userId): ProposalItem
+    {
+        return $this->lessons->suggest($proposal, $item, $userId);
     }
 
     /** @return array<string,mixed> */

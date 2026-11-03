@@ -20,7 +20,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -328,10 +327,9 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     private function deleteAndClearStorage(Course $course): ?bool
     {
         if ($course->delete()) {
-            $path = Storage::path('course/' . $course->getKey());
+            // through the disk: on S3 Storage::path() is only the key, not a directory on this machine
             try {
-                File::cleanDirectory($path);
-                Storage::deleteDirectory($path);
+                Storage::deleteDirectory('course/' . $course->getKey());
             } catch (\Throwable $th) {
             }
         }

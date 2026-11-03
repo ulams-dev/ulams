@@ -2,6 +2,7 @@
 
 namespace Ulams\Tags\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +18,10 @@ use Illuminate\Database\Eloquent\Model;
 class Tag extends Model
 {
     use HasFactory;
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['morphable_type'];
     public $table = 'tags';
 
     const CREATED_AT = 'created_at';

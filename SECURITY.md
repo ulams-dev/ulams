@@ -29,15 +29,44 @@ and a maintainer will reach out.
 
 ## Supported versions
 
-ulams has no versioned releases yet. Security fixes land on the `main` branch and in the container
-images published from it (`ghcr.io/ulams-dev/*`, tag `latest` and `sha-<short>` tags from `main`).
-Run the latest images and update to new fixes. Older commits, branches and image tags are not
-patched. When versioned releases start, this section will list the supported release lines.
+The images, the CLI and (from the Helm chart on) the chart share one version, `vX.Y.Z`
+(semantic versioning). Each release is published as image tags `X.Y.Z` and `X.Y`, and two channels
+move with releases:
+
+- `stable`: the newest release.
+- `lts`: the newest patch of a long-term support line. One minor line a year is declared LTS (from
+  1.0 on), listed in `.github/release-channels.json`, and gets security fixes for 12 months.
+
+`latest` and `sha-<short>` keep meaning the `main` branch.
 
 | Version | Supported |
 |---|---|
+| The newest release (`stable`) | Yes |
+| LTS lines, for 12 months from their first release (`lts`) | Security fixes |
 | `main` and the `latest` images | Yes |
-| Anything older | No |
+| Older releases and image tags | No: upgrade to `stable` or the current `lts` |
+
+No release has been cut yet (the first one needs the owner's approval); until then only `main` and the
+`latest` images are supported.
+
+## Patch policy
+
+Container images are scanned with Trivy on every pull request, on every publish and every night
+(`.github/workflows/ci.yml`, `publish.yml`, `nightly-security.yml`). Only vulnerabilities that have a fix
+available are gated.
+
+| Finding | Target |
+|---|---|
+| CRITICAL in a published image | fixed image published within 2 days |
+| HIGH in a published image | within 14 days |
+| Lower severity, or no fix available yet | with the next regular release; tracked, not gated |
+
+The clock starts when the nightly scan opens its `security` issue or when we learn of the problem from an
+advisory, whichever is first. A fix is a rebuilt image (the publish workflow pulls fresh base layers), a
+dependency update, or a documented exception in `.trivyignore.yaml` with a reason and an expiry date.
+Published images are signed with cosign (keyless, GitHub OIDC) and carry an SBOM; how to verify them is in
+the hardening guide ([operators documentation](front/docs-site/src/content/docs/operators/hardening.mdx)). A published image that
+fails the critical gate is not signed.
 
 ## Disclosure process
 
@@ -58,7 +87,7 @@ degrade the service for others or test against deployments you do not own.
 
 - `api/h5p` bundles third-party H5P core and editor code; vulnerabilities in H5P itself are
   best reported upstream as well. We will still patch or pin our copy.
-- Infrastructure defaults in the development stack (MinIO, Soketi, MailHog, Adminer) are for local
+- Infrastructure defaults in the development stack (SeaweedFS with the admin key from the compose file, MailHog, Adminer) are for local
   development and are not meant to be exposed in production.
 
 `api/SECURITY.md` points to this file; this policy covers the whole repository.

@@ -2,7 +2,6 @@
 
 Static page management package
 
-
 ## What does it do
 
 This package allows you to create static pages in Laravel app.
@@ -20,8 +19,6 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 ## Tests
 
 Run `./vendor/bin/phpunit --filter 'Ulams\\Pages\\Tests'` to run tests. See [tests](tests) a quite good starting point for creating your own.
-
-Test details [![codecov](https://codecov.io/gh/Ulams/Files/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/pages) [![phpunit](https://github.com/EscolaLMS/pages/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/pages/actions/workflows/test.yml)
 
 ## Permissions
 

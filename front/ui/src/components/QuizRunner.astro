@@ -1,6 +1,8 @@
 ---
 import Icon from "./Icon.astro";
 import { renderMarkdown } from "../lib/markdown.ts";
+import { pageLocale } from "../lib/i18n.ts";
+import { plural, playerLocale, playerStrings } from "../lib/player-strings.ts";
 
 interface Props {
   quizId: number;
@@ -15,22 +17,25 @@ interface Props {
   id?: string;
 }
 const { quizId, title, intro, maxAttempts = 0, minutes = 0, passScore = 0, finishHref, id } = Astro.props;
+const loc = pageLocale(Astro);
+const L = playerLocale(loc);
+const t = playerStrings(loc);
 ---
 
 <ulams-quiz class="u-quiz" id={id} quiz-id={quizId} pass-score={passScore} finish-href={finishHref}>
   <div class="u-quiz__top">
     <p class="u-quiz__title"><Icon name="quiz" /> {title}</p>
-    <p class="u-quiz__clock" data-clock hidden aria-label="Time left"></p>
+    <p class="u-quiz__clock" data-clock hidden aria-label={t.quizTimeLeft}></p>
   </div>
   <div class="u-quiz__stage" data-stage>
     {intro && <div class="u-quiz__intro" set:html={renderMarkdown(intro)} />}
     <ul class="u-quiz__facts" role="list">
-      {minutes > 0 && <li><Icon name="clock" /> {minutes} minutes</li>}
-      {maxAttempts > 0 && <li><Icon name="check" /> {maxAttempts} attempts</li>}
-      {passScore > 0 && <li><Icon name="medal" /> {passScore} points to pass</li>}
+      {minutes > 0 && <li><Icon name="clock" /> {plural(L, t.quizMinutes, minutes)}</li>}
+      {maxAttempts > 0 && <li><Icon name="check" /> {plural(L, t.quizAttempts, maxAttempts)}</li>}
+      {passScore > 0 && <li><Icon name="medal" /> {plural(L, t.quizPassPoints, passScore)}</li>}
     </ul>
     <button class="u-btn" type="button" data-start>
-      Start the quiz
+      {t.quizStart}
       <Icon name="arrow" />
     </button>
   </div>

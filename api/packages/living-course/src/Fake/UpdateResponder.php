@@ -17,6 +17,57 @@ final class UpdateResponder
     public static function register(FakeResponders $responders): void
     {
         $responders->register('update', fn (DriverRequest $r) => self::respond($r));
+        $responders->register('new_lesson', fn (DriverRequest $r) => self::newLesson($r));
+        $responders->register('insights_improve', fn (DriverRequest $r) => self::improve($r));
+    }
+
+    /**
+     * A stand-in for `insights_improve` (ADR 0181): the element is kept and gets one more sentence that its own
+     * cited passages say, cited, so the proposal is a real, reviewable and grounded diff. Questions keep their
+     * correct answers. It never reads the evidence beyond the request, as the model would not.
+     *
+     * @return array<string,mixed>
+     */
+    public static function improve(DriverRequest $r): array
+    {
+        $fragments = SyntheticResponders::fragments($r);
+        $input = self::input($r);
+        $items = [];
+        foreach ($input['elements'] ?? [] as $el) {
+            $type = (string) $el['type'];
+            $element = (array) $el['element'];
+            $existing = array_values(array_filter((array) ($element['citations'] ?? []), fn ($id) => isset($fragments[$id])));
+            $base = [
+                'elementId' => $el['elementId'], 'decision' => 'no_change', 'reason' => 'The passages already say this clearly.', 'severity' => 'minor',
+                'fragmentIds' => $existing, 'answerStatus' => $type === 'question' ? 'unchanged' : 'not_a_question', 'block' => null, 'question' => null, 'objective' => null,
+            ];
+            $haystack = $type === 'block' ? (string) ($element['markdown'] ?? '') : (string) ($element['explanation'] ?? '');
+            $pick = null;
+            foreach ($existing !== [] ? $existing : array_keys($fragments) as $id) {
+                foreach (self::sentences($fragments[$id]['text']) as $sentence) {
+                    if (!str_contains($haystack, $sentence)) {
+                        $pick = [$id, $sentence];
+                        break 2;
+                    }
+                }
+            }
+            if ($pick === null || !in_array($type, ['block', 'question'], true)) {
+                $items[] = $base;
+                continue;
+            }
+            [$id, $sentence] = $pick;
+            $citations = array_values(array_unique([...$existing, $id]));
+            $patch = ['decision' => 'update', 'reason' => 'Adds what the source says right here, as many learners get stuck on this.', 'severity' => 'major', 'fragmentIds' => $citations];
+            $items[] = ($type === 'block'
+                ? $patch + ['block' => ['id' => (string) $element['id'], 'kind' => (string) ($element['kind'] ?? 'paragraph'), 'markdown' => rtrim($haystack) . "\n\nIn short: " . $sentence, 'citations' => $citations, 'objectiveIds' => array_values((array) ($element['objectiveIds'] ?? []))]]
+                : $patch + ['question' => [
+                    'id' => (string) $element['id'], 'type' => (string) $element['type'], 'stem' => (string) $element['stem'],
+                    'options' => array_map(fn ($o) => ['id' => (string) $o['id'], 'text' => (string) $o['text'], 'correct' => (bool) $o['correct']], (array) $element['options']),
+                    'explanation' => mb_substr(trim($haystack . ' The source states: ' . $sentence), 0, 1900), 'citations' => $citations, 'objectiveIds' => array_values((array) ($element['objectiveIds'] ?? [])),
+                ]]) + $base;
+        }
+
+        return ['items' => $items, 'reply' => sprintf('Reviewed %d element%s against what learners struggle with.', count($items), count($items) === 1 ? '' : 's')];
     }
 
     /** @return array<string,mixed> */
@@ -98,6 +149,43 @@ final class UpdateResponder
         }
 
         return ['items' => $items, 'reply' => sprintf('Reviewed %d element%s against the changed source.', count($items), count($items) === 1 ? '' : 's')];
+    }
+
+    /**
+     * A lesson from the passages in `task_input.fragmentIds`: the title is the section, the blocks are
+     * the passages' own first sentences, every citation is a passage of the request.
+     *
+     * @return array<string,mixed>
+     */
+    public static function newLesson(DriverRequest $r): array
+    {
+        $fragments = SyntheticResponders::fragments($r);
+        $input = self::input($r);
+        $ids = array_values(array_filter((array) ($input['fragmentIds'] ?? []), fn ($id) => isset($fragments[$id])));
+        $modules = (array) ($input['modules'] ?? []);
+        $first = $fragments[$ids[0]] ?? ['section' => 'New material', 'text' => 'New material from the source.'];
+        $title = trim((string) preg_replace('/^[\d.§\s]+/u', '', (string) $first['section'])) ?: 'New material';
+        $blocks = [];
+        foreach (array_slice($ids, 0, 4) as $id) {
+            $sentences = self::sentences($fragments[$id]['text']);
+            $blocks[] = [
+                'kind' => 'paragraph',
+                'markdown' => mb_substr(implode(' ', array_slice($sentences, 0, 4)) ?: (string) $fragments[$id]['text'], 0, 1500),
+                'citations' => [$id],
+                'objectiveIndexes' => [0],
+            ];
+        }
+
+        return [
+            'moduleId' => $modules[count($modules) - 1]['id'] ?? null,
+            'moduleTitle' => $modules === [] ? $title : null,
+            'title' => mb_substr($title, 0, 200),
+            'summary' => 'What the source now says about ' . mb_strtolower($title) . '.',
+            'minutes' => 5,
+            'objectives' => [['text' => 'Explain ' . mb_strtolower($title) . ' as the source describes it.', 'citations' => [$ids[0] ?? '']]],
+            'blocks' => $blocks,
+            'reply' => 'Suggested a lesson for the new section.',
+        ];
     }
 
     /** @return array<string,mixed> */

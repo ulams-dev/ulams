@@ -1,0 +1,107 @@
+---
+import { renderMarkdown } from "../lib/markdown.ts";
+import { uiStrings } from "../lib/i18n.ts";
+import type { UiLocale } from "../lib/i18n.ts";
+import Icon from "./Icon.astro";
+
+interface Props {
+  /** Text before the first part; always visible. */
+  intro?: string;
+  sections: Array<{ heading: string; level?: number; markdown: string }>;
+  size?: "sm" | "md" | "lg";
+  locale?: UiLocale;
+  id?: string;
+}
+const { intro, sections, size = "md", locale = "en", id = "parts" } = Astro.props;
+const t = uiStrings(locale);
+const total = sections.length;
+const status = (n: number) => t.partsStatus.replace("{n}", String(n)).replace("{total}", String(total));
+---
+
+<section class="u-parts" id={id} aria-label={t.partsGroup} lang={locale === "en" ? undefined : locale}>
+  {intro && <div class:list={["u-prose", `u-prose--${size}`]} set:html={renderMarkdown(intro)} />}
+  <ulams-parts data-total={total} data-status-text={t.partsStatus}>
+    <nav class="u-parts__nav" aria-label={t.partsGroup} data-nav hidden>
+      <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-prev disabled>
+        <Icon name="back" /> <span>{t.partsPrevious}</span>
+      </button>
+      <p class="u-parts__status" data-status role="status">{status(1)}</p>
+      <button class="u-btn u-btn--sm" type="button" data-next>
+        <span>{t.partsNext}</span> <Icon name="arrow" />
+      </button>
+    </nav>
+    {
+      sections.map((section, index) => {
+        const Heading = section.level === 3 ? "h3" : "h2";
+        return (
+          <section class="u-parts__part" data-part aria-labelledby={`${id}-h${index}`}>
+            <Heading class="u-parts__heading" id={`${id}-h${index}`} tabindex="-1">
+              {section.heading}
+            </Heading>
+            <div class:list={["u-prose", `u-prose--${size}`]} set:html={renderMarkdown(section.markdown)} />
+          </section>
+        );
+      })
+    }
+  </ulams-parts>
+</section>
+
+<script>
+  import "../elements/parts.ts";
+</script>
+
+<style>
+  .u-parts {
+    display: grid;
+    gap: var(--ulams-block-gap, 22px);
+  }
+  ulams-parts {
+    display: grid;
+    gap: var(--ulams-block-gap, 22px);
+  }
+  .u-parts__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-parts__nav[hidden] {
+    display: none;
+  }
+  .u-parts__status {
+    margin: 0;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+  .u-parts__part[hidden] {
+    display: none;
+  }
+  .u-parts__heading {
+    margin: 0 0 0.5em;
+    font-size: 1.55rem;
+    line-height: 1.2;
+    color: var(--ulams-color-header);
+  }
+  h3.u-parts__heading {
+    font-size: 1.25rem;
+  }
+  .u-parts__heading:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 4px;
+  }
+  @media (max-width: 420px) {
+    .u-parts__nav .u-btn span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+</style>

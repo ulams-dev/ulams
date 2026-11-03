@@ -1,6 +1,8 @@
 ---
 import Icon from "./Icon.astro";
 import { formatLabel, formatMinutes, toRoman } from "../lib/format.ts";
+import { pageLocale } from "../lib/i18n.ts";
+import { plural, playerLocale, playerStrings } from "../lib/player-strings.ts";
 
 interface Topic {
   title: string;
@@ -37,6 +39,9 @@ const numberOf = (lesson: Lesson, i: number) => {
   if (variant === "atlas") return String(i + 1).padStart(2, "0");
   return `${i + 1}`;
 };
+const loc = pageLocale(Astro);
+const L = playerLocale(loc);
+const t = playerStrings(loc);
 const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.preview);
 ---
 
@@ -69,8 +74,8 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
                         <a href={topic.href ?? lesson.href ?? "#"} data-status={topic.status ?? "open"}>
                           {topic.format && <Icon name={topic.format} />}
                           <span>{topic.title}</span>
-                          {topic.format && <span class="u-visually-hidden">({formatLabel(topic.format)})</span>}
-                          {topic.preview && <span class="u-folio__free">Free</span>}
+                          {topic.format && <span class="u-visually-hidden">({formatLabel(topic.format, loc)})</span>}
+                          {topic.preview && <span class="u-folio__free">{t.free}</span>}
                         </a>
                       </li>
                     ))}
@@ -78,9 +83,9 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
                 )}
               </div>
               <div class="u-folio__meta">
-                {lesson.minutes ? <span class="u-folio__time">{formatMinutes(lesson.minutes)}</span> : null}
-                <span class="u-folio__count">{(lesson.topics ?? []).length} topics</span>
-                {hasPreview(lesson) && <span class="u-tag u-folio__open">Free preview</span>}
+                {lesson.minutes ? <span class="u-folio__time">{formatMinutes(lesson.minutes, loc)}</span> : null}
+                <span class="u-folio__count">{plural(L, t.topicsCount, (lesson.topics ?? []).length)}</span>
+                {hasPreview(lesson) && <span class="u-tag u-folio__open">{t.freePreview}</span>}
               </div>
             </li>
           ))}
@@ -95,7 +100,7 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
             <li class="u-timeline__card u-card u-card--hover" data-reveal style={`--reveal-i:${i}`}>
               <div class="u-timeline__top">
                 <span>{numberOf(lesson, i)}</span>
-                {lesson.minutes ? <span>{formatMinutes(lesson.minutes)}</span> : null}
+                {lesson.minutes ? <span>{formatMinutes(lesson.minutes, loc)}</span> : null}
               </div>
               <h3>{lesson.href ? <a href={lesson.href}>{lesson.title}</a> : lesson.title}</h3>
               {lesson.summary && <p class="u-timeline__summary">{lesson.summary}</p>}
@@ -113,7 +118,7 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
               )}
               <p class="u-timeline__formats">
                 {(lesson.formats ?? []).map((f) => (
-                  <span class="u-tag">{formatLabel(f)}</span>
+                  <span class="u-tag">{formatLabel(f, loc)}</span>
                 ))}
               </p>
             </li>
@@ -132,10 +137,10 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
                   {numberOf(lesson, i)}
                 </span>
                 <span class="u-mission__label">
-                  {lesson.kicker ?? `Mission ${i + 1}`}
-                  {lesson.minutes ? ` · ${formatMinutes(lesson.minutes)}` : ""}
+                  {lesson.kicker ?? `${t.lessonNoun.nightsky} ${i + 1}`}
+                  {lesson.minutes ? ` · ${formatMinutes(lesson.minutes, loc)}` : ""}
                 </span>
-                {hasPreview(lesson) && <span class="u-mission__free">Free</span>}
+                {hasPreview(lesson) && <span class="u-mission__free">{t.free}</span>}
               </div>
               <h3>{lesson.title}</h3>
               {lesson.summary && <p>{lesson.summary}</p>}
@@ -145,14 +150,14 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
                     <li>
                       {topic.format && <Icon name={topic.format} />}
                       <span>{topic.title}</span>
-                      {topic.format && <span class="u-mission__fmt">{formatLabel(topic.format)}</span>}
+                      {topic.format && <span class="u-mission__fmt">{formatLabel(topic.format, loc)}</span>}
                     </li>
                   ))}
                 </ul>
               )}
               {lesson.href && (
                 <a class={`u-btn ${hasPreview(lesson) ? "" : "u-btn--ghost"} u-mission__go`} href={lesson.href}>
-                  {hasPreview(lesson) ? "Launch mission" : "Open mission"}
+                  {hasPreview(lesson) ? t.launchMission : t.openMission}
                   <Icon name="rocket" />
                 </a>
               )}
@@ -171,7 +176,7 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
                 {numberOf(lesson, i)}
               </span>
               <div class="u-atlas__main">
-                <p class="u-atlas__kicker">{lesson.kicker ?? `Chapter ${i + 1}`}</p>
+                <p class="u-atlas__kicker">{lesson.kicker ?? `${t.lessonNoun.poland} ${i + 1}`}</p>
                 <h3 class="u-atlas__title">{lesson.href ? <a href={lesson.href}>{lesson.title}</a> : lesson.title}</h3>
                 {lesson.summary && <p class="u-atlas__summary">{lesson.summary}</p>}
                 {showTopics && (lesson.topics ?? []).length > 0 && (
@@ -181,7 +186,7 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
                         <a href={topic.href ?? lesson.href ?? "#"} data-status={topic.status ?? "open"}>
                           {topic.format && <Icon name={topic.format} />}
                           <span>{topic.title}</span>
-                          {topic.format && <span class="u-visually-hidden">({formatLabel(topic.format)})</span>}
+                          {topic.format && <span class="u-visually-hidden">({formatLabel(topic.format, loc)})</span>}
                         </a>
                       </li>
                     ))}
@@ -189,8 +194,8 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
                 )}
               </div>
               <p class="u-atlas__meta">
-                {lesson.minutes ? <span>{formatMinutes(lesson.minutes)}</span> : null}
-                <span>{(lesson.topics ?? []).length} topics</span>
+                {lesson.minutes ? <span>{formatMinutes(lesson.minutes, loc)}</span> : null}
+                <span>{plural(L, t.topicsCount, (lesson.topics ?? []).length)}</span>
               </p>
             </li>
           ))}
@@ -208,9 +213,9 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
               </span>
               <div class="u-orbit__card u-card">
                 <p class="u-orbit__label">
-                  {lesson.kicker ?? `Module ${i + 1}`}
-                  {lesson.minutes ? ` · ${formatMinutes(lesson.minutes)}` : ""}
-                  {hasPreview(lesson) && <span class="u-tag">Free</span>}
+                  {lesson.kicker ?? `${t.lessonNoun.gravity} ${i + 1}`}
+                  {lesson.minutes ? ` · ${formatMinutes(lesson.minutes, loc)}` : ""}
+                  {hasPreview(lesson) && <span class="u-tag">{t.free}</span>}
                 </p>
                 <h3>{lesson.href ? <a href={lesson.href}>{lesson.title}</a> : lesson.title}</h3>
                 {lesson.summary && <p class="u-orbit__summary">{lesson.summary}</p>}

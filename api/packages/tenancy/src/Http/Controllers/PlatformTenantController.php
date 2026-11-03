@@ -17,6 +17,8 @@ use Ulams\Tenancy\Jobs\DeleteTenantJob;
 use Ulams\Tenancy\Jobs\ProvisionTenantJob;
 use Ulams\Tenancy\Models\Tenant;
 use Ulams\Tenancy\Models\TenantOperation;
+use Ulams\Tenancy\Models\TenantTemplate;
+use Ulams\Tenancy\Services\TenantDerivations;
 use Ulams\Tenancy\Services\TenantLifecycle;
 use Ulams\Tenancy\Services\TenantProvisioner;
 
@@ -26,7 +28,7 @@ use Ulams\Tenancy\Services\TenantProvisioner;
  */
 class PlatformTenantController extends UlamsBaseController implements PlatformTenantSwagger
 {
-    public function __construct(private TenantLifecycle $lifecycle)
+    public function __construct(private TenantLifecycle $lifecycle, private TenantDerivations $derivations)
     {
     }
 
@@ -56,19 +58,28 @@ class PlatformTenantController extends UlamsBaseController implements PlatformTe
             return $this->sendError("Tenant '{$slug}' already exists.", 409);
         }
 
+        $derivation = null;
         try {
+            if (!empty($data['derived_from'])) {
+                $derivation = $this->derivations->register($slug, (string) $data['derived_from'], (string) $data['purpose'], (string) $data['reference'], $data['template'] ?? null, (string) ($request->user()->email ?? $request->user()->getKey()));
+            }
             $tenant = $this->lifecycle->prepare($slug, [
+                'template' => $data['template'] ?? null,
                 'name' => $data['name'] ?? null,
                 'theme' => $data['theme'] ?? null,
                 'accent' => $data['accent'] ?? null,
                 'demo' => array_key_exists('demo', $data) && $data['demo'] !== null ? ($data['demo'] ? 'on' : 'off') : null,
             ]);
         } catch (InvalidArgumentException $e) {
-            return $this->sendError($e->getMessage(), 422);
+            if ($derivation?->wasRecentlyCreated) {
+                $derivation->delete();
+            }
+
+            return $this->sendError($e->getMessage(), $derivation === null && !empty($data['derived_from']) ? 409 : 422);
         }
 
-        $users = (int) ($data['users'] ?? 5);
-        $operation = TenantOperation::start(TenantOperation::CREATE, $tenant->slug, TenantProvisioner::STEPS, (int) $request->user()->getKey(), ['users' => $users]);
+        $users = (int) ($data['users'] ?? (!empty($data['template']) ? (TenantTemplate::query()->where('slug', $data['template'])->value('users') ?? 5) : 5));
+        $operation = TenantOperation::start(TenantOperation::CREATE, $tenant->slug, TenantProvisioner::STEPS, (int) $request->user()->getKey(), array_filter(['users' => $users, 'template' => $data['template'] ?? null, 'derived_from' => $data['derived_from'] ?? null, 'purpose' => $data['purpose'] ?? null, 'reference' => $data['reference'] ?? null], fn ($v) => $v !== null));
         ProvisionTenantJob::dispatch($operation->id, $users);
 
         return $this->sendResponse([
@@ -96,11 +107,26 @@ class PlatformTenantController extends UlamsBaseController implements PlatformTe
         if ($busy !== null) {
             return $this->conflict('This tenant already has an operation in progress.', $busy);
         }
+        $children = $this->derivations->activeOf($tenant->slug);
+        if ($children->isNotEmpty()) {
+            return response()->json(['success' => false, 'message' => "Tenant '{$tenant->slug}' has tenants created from it; delete them first.", 'code' => 'has_derived_tenants', 'data' => ['derived' => $children->pluck('tenant_slug')->all()]], 409);
+        }
 
         $operation = TenantOperation::start(TenantOperation::DELETE, $tenant->slug, TenantLifecycle::DELETE_STEPS, (int) $request->user()->getKey());
         DeleteTenantJob::dispatch($operation->id);
 
         return $this->sendResponse(['operation' => (new TenantOperationResource($operation))->resolve($request)], __('Tenant deletion queued'), 202);
+    }
+
+    /** The tenants created from this one for a purpose, with the record of who asked. */
+    public function derived(ListPlatformRequest $request, string $slug): JsonResponse
+    {
+        $tenant = $this->find($slug);
+
+        return $this->sendResponse($this->derivations->activeOf($tenant->slug)->map(fn ($d) => [
+            'tenant' => $d->tenant_slug, 'template' => $d->template_slug, 'purpose' => $d->purpose, 'reference' => $d->reference,
+            'requested_by' => $d->requested_by, 'created_at' => $d->created_at?->toIso8601String(),
+        ])->values()->all(), __('Derived tenants'));
     }
 
     private function find(string $slug): Tenant

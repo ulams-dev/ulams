@@ -1,3 +1,4 @@
+import { tenantFetch } from "../../lib/api-transport.ts";
 import type { APIRoute } from "astro";
 import { setSessionCookie } from "../../lib/session.ts";
 
@@ -15,7 +16,7 @@ export const GET: APIRoute = async ({ url, locals, cookies, redirect }) => {
     return new Response("This link is incomplete. Open the activity in your LMS again.", { status: 400 });
   }
 
-  const response = await fetch(`${tenant.apiUrl}/api/lti/tool/exchange`, {
+  const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/lti/tool/exchange`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ code }),

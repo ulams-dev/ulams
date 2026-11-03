@@ -62,7 +62,16 @@ class EmailChannel extends AbstractTemplateChannelClass implements TemplateChann
         return app(MjmlServiceContract::class)->render($mjml);
     }
 
-    private static function fixHtml(string $html): string
+    /**
+     * MJML source starts a `<mjml>` element, with or without attributes (`<mjml lang="en">`); anything else is
+     * treated as plain HTML.
+     */
+    public static function isMjml(string $content): bool
+    {
+        return (bool) preg_match('/<mjml[\s>]/i', $content);
+    }
+
+    public static function fixHtml(string $html): string
     {
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Cache.DefinitionImpl', null);
@@ -90,7 +99,7 @@ class EmailChannel extends AbstractTemplateChannelClass implements TemplateChann
             $content = Str::replace($key, $variable['value'], $content);
         }
 
-        if (Str::contains($content, '<mjml>')) {
+        if (self::isMjml($content)) {
             $contentHtml = self::renderMjml($content);
         } else {
             $contentHtml = self::fixHtml($content);

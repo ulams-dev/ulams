@@ -1,0 +1,65 @@
+---
+/**
+ * Body of the content-cost and reporting pages: the page document rendered as usual, with the diagrams placed after
+ * the sections they explain (lib/impact-diagrams.ts). The main landmark is the one `Main` would render.
+ */
+import Render from "@ulams/ui/Render.astro";
+import { uiStrings } from "@ulams/ui/i18n";
+import type { UiNode } from "@ulams/ui/render-core";
+import { LOCALE_META, type Locale } from "../../i18n/locales.ts";
+import type { ImpactPage } from "../../lib/impact-pages.ts";
+import { costDiagrams, planImpactBody, reportingDiagrams, type DiagramName } from "../../lib/impact-diagrams.ts";
+import BenchmarkRange from "./BenchmarkRange.astro";
+import CostPipeline from "./CostPipeline.astro";
+import LivingLoop from "./LivingLoop.astro";
+import AudienceFanout from "./AudienceFanout.astro";
+import DashboardSketch from "./DashboardSketch.astro";
+import ReportingFlow from "./ReportingFlow.astro";
+import ReportingRoles from "./ReportingRoles.astro";
+
+interface Props {
+  doc: UiNode;
+  data?: unknown;
+  page: ImpactPage;
+  locale: Locale;
+}
+
+const { doc, data, page, locale } = Astro.props;
+const plan = planImpactBody(doc, page, locale);
+const cost = costDiagrams(locale);
+const reporting = reportingDiagrams(locale);
+const coming = uiStrings(LOCALE_META[locale].lang).coming;
+const is = (name: DiagramName, part: { kind: string; name?: string }) => part.kind === "diagram" && part.name === name;
+---
+
+{
+  plan ? (
+    <>
+      {plan.before.map((node) => <Render doc={node} data={data} />)}
+      <main id="main" tabindex="-1" class="dg-main">
+        {plan.main.map((part) =>
+          part.kind === "node" ? (
+            <Render doc={part.node} data={data} />
+          ) : is("benchmark", part) ? (
+            <BenchmarkRange copy={cost.benchmark} controls={cost.controls} />
+          ) : is("pipeline", part) ? (
+            <CostPipeline copy={cost.pipeline} controls={cost.controls} />
+          ) : is("living-loop", part) ? (
+            <LivingLoop copy={cost.loop} controls={cost.controls} />
+          ) : is("audiences", part) ? (
+            <AudienceFanout copy={cost.audiences} controls={cost.controls} />
+          ) : is("dashboard", part) ? (
+            <DashboardSketch copy={reporting.dashboard} controls={reporting.controls} />
+          ) : is("dataflow", part) ? (
+            <ReportingFlow copy={reporting.flow} controls={reporting.controls} coming={coming} />
+          ) : is("roles", part) ? (
+            <ReportingRoles copy={reporting.roles} />
+          ) : null,
+        )}
+      </main>
+      {plan.after.map((node) => <Render doc={node} data={data} />)}
+    </>
+  ) : (
+    <Render doc={doc} data={data} />
+  )
+}

@@ -1,0 +1,9 @@
+{
+  "props": {
+    "title": "Working out a brew ratio",
+    "markdown": "Step 1. Pick the cup size: 300 ml of water.\n\nStep 2. A 1:16 ratio means 1 g of coffee for every 16 g of water, so divide 300 by 16.\n\nStep 3. That gives about 19 g of coffee."
+  },
+  "invalid": {
+    "title": "No steps yet"
+  }
+}

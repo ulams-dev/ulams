@@ -1,0 +1,73 @@
+---
+title: Accessibility and the European Accessibility Act
+description: The accessibility target of the learner site (WCAG 2.2 AA, EN 301 549 clause 9), what is tested automatically and by hand, the known limitations and how an operator fills in the per-tenant accessibility statement.
+sidebar:
+  order: 41
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+If you run an academy for learners in the European Union, the European Accessibility Act (Directive (EU) 2019/882) can make you the service provider of an e-learning service that has to be accessible. This page says what the reference learner site (`front/web`) is built and tested to, what it does not cover, and what you have to do as the operator. It is engineering documentation, not legal advice.
+
+## Conformance target
+
+The learner pages target **WCAG 2.2 level AA**. For web content this is the route to the harmonised standard **EN 301 549 version 3.2.1, clause 9** ("Web"), which refers to WCAG 2.1 AA; WCAG 2.2 AA is a superset of it.
+
+| EN 301 549 clause 9 | What the learner site does |
+|---|---|
+| 9.1 Perceivable (alternatives, captions, adaptable, distinguishable) | Images carry alternative text, status is written out and never colour alone, contrast is checked in every theme, text reflows at 320 CSS px and 200 % zoom, text spacing can be changed in the Lesson view |
+| 9.2 Operable (keyboard, time, seizures, navigation, input modalities) | A skip link starts every page, every control works with the keyboard, focus is visible and not obscured (2.4.11), targets are at least 24 by 24 px (2.5.8), nothing flashes, animation stops under reduced motion |
+| 9.3 Understandable (readable, predictable, input assistance) | The page language is set, forms have labels and error text, help is consistent (3.2.6), nothing asks for the same information twice |
+| 9.4 Robust (compatible) | Landmarks, names, roles and live regions are checked; one polite announcement area per surface |
+
+Clauses 10 to 12 (non-web documents, software, documentation) apply to the content you upload and to your own documentation, not to the site.
+
+## What is tested
+
+Automatically, on every change (the `web-a11y` job in CI, `yarn workspace @ulams/web test:a11y`):
+
+- axe-core with the tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa` and `wcag22aa` on every learner screen, in a light and a dark theme, on a 1440 px desktop and a 360 px phone: lesson, extra help card, reflection, tutor panel, lesson view, my training, certificates, skills, team, finish page and the accessibility statement. Every state that changes the page is scanned (empty, generating, ready, feedback given, limit, error, tutor open).
+- Keyboard journeys for each screen (`tests/a11y/gate.a11y.spec.ts`): Tab from the skip link to the last control, a visible focus indicator on every stop, controls of at least 24 by 24 px, no stop behind a sticky bar, the demo pill or the tutor sheet, and Escape returning focus to the tutor launcher.
+- Reduced motion emulated on every screen: no running animation.
+- Reflow without sideways scrolling at 360 px.
+- Component tests with axe for every catalogue component (`front/ui`), and tests of the screen reader semantics (region labels, `aria-pressed`, status in words).
+- A full-stack journey on the fake LLM driver (`tests/e2e/personalisation.spec.ts`, `PERSONALISATION_E2E=1`) that runs the whole personalisation flow with axe on each step. It needs the API and is run by hand before a release, not in CI.
+
+By hand, before a release, because automation finds only part of the problems: a pass with a screen reader (VoiceOver with Safari and NVDA with Firefox) over the lesson, the quiz, extra help, the tutor panel and the account pages, zoom to 200 % and 400 %, and a pass with the keyboard only. Record the date and the versions in your own audit file.
+
+<Aside type="caution">
+Automated tools find roughly a third to a half of the problems that exist. A green suite means the known classes of failure are absent; it is not a conformance claim for your content.
+</Aside>
+
+## Known limitations
+
+- **Content from third parties.** H5P, SCORM and cmi5 packages, LTI tools, embedded videos and documents run in a frame. Their accessibility depends on their authors; the site cannot repair it. Choose and review them before you publish.
+- **Model-generated content.** Extra help, tutor answers and generated course material are checked by validators (the remediation block manifest, citation checks) and by the Course Builder's accessibility critic. That catches many problems and guarantees none. Authors approve what they publish; learners can report a barrier.
+- **Uploaded files.** PDFs, images, audio and video are accessible only if their author made them so (alternative text, captions, transcripts, tagged PDFs).
+- **Certificate PDFs** are generated from your templates. Check the template for reading order and contrast.
+
+List the limitations that apply to your academy in the statement (see below), with what you are doing about them.
+
+## The accessibility statement
+
+Every academy has a public page at `/accessibility`, linked from the footer of the site. It is a template: the text is the same for every tenant, in English, Polish and Chinese (the tenant's default language), and the facts come from public settings of the `global` group. The operator owns those facts, and the page says so.
+
+| Setting (group `global`) | Used for |
+|---|---|
+| `companyName` | The name in the text (already used by the rest of the site) |
+| `accessibilityEmail` | The address for reporting a barrier. Must be a single plain address; anything else is ignored. Without it the page says no contact has been published |
+| `accessibilityEnforcement` | Replaces the default sentence about the national enforcement body. Name the body of your country and how to reach it |
+| `accessibilityNotes` | Known issues of your academy, plain text; a blank line starts a new paragraph |
+| `accessibilityUpdated` | Date of your last review (`2026-10-01`), shown as "Last updated" |
+
+Create each row in **Configuration → Settings → Global settings** with the type `text` and tick **Public** and **Enumerable** (see [Settings](/admin/settings/)). Nothing else is needed; the page appears on its own.
+
+Before you go live, fill in at least the contact address and the enforcement body, run the manual checks above, and set `accessibilityUpdated`. Repeat the review when you change the theme, add third-party content or after a major upgrade.
+
+## Feedback and enforcement
+
+- **Feedback.** Learners write to the address in `accessibilityEmail`. Answer them yourself; the platform does not collect or route these reports. Agree an internal reply time and keep a log.
+- **Enforcement.** Complaints that you do not resolve go to the market surveillance authority your member state named under the Act. Put its name in `accessibilityEnforcement`.
+- **Platform issues.** If the barrier is in the ulams software and not in your content, open an issue at `ulams-dev` on GitHub with the page, the browser and the assistive technology.
+
+See also [Learner Insights data flows](/operators/dpia-learner-insights/) for the AI features the statement mentions, and the learners' [Accessibility guide](/learners/accessibility/).

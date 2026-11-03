@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Http\Resources;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Cart\Contracts\Productable;
 use Ulams\Cart\Facades\Shop;
 use Ulams\Cart\Models\ProductProductable;
@@ -33,7 +34,7 @@ class ProductableGenericResource extends JsonResource
     {
         return [
             'id' => $this->getProductable()->getKey(),
-            'morph_class' => $this->getProductable()->getMorphClass(),
+            'morph_class' => MorphMap::classOf($this->getProductable()->getMorphClass()),
             'productable_id' => $this->getProductable()->getKey(),
             'productable_type' => Shop::canonicalProductableClass($this->getProductable()->getMorphClass()),
             'quantity' => $this->getProductProductable() ? $this->getProductProductable()->quantity : 1,

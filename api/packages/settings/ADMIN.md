@@ -8,7 +8,7 @@ In this section, you can:
 - Set up settings for the admin panel.
 - Set up settings for each installed package.
 
-![image](https://github.com/EscolaLMS/settings/assets/214608/0bbaac29-4182-41fe-8b24-c5f511bc296a)
+![image](docs/img/admin-01.png)
 
 ## User Settings
 

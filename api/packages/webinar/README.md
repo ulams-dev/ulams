@@ -1,7 +1,6 @@
 # Webinar
 Package enabling live video stream
 
-
 ## What does it do
 
 This package is used for creating Webinar for Ulams.
@@ -26,8 +25,6 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 ## Tests
 
 Run `./vendor/bin/phpunit --filter=Webinar` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
-
-Test details [![codecov](https://codecov.io/gh/Ulams/Webinar/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Webinar) [![phpunit](https://github.com/EscolaLMS/Webinar/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Webinar/actions/workflows/test.yml)
 
 ## Events
 
@@ -66,7 +63,6 @@ sequenceDiagram
     Student->>Web App: Watches webinar with YT GUI
 
 ```
-
 
 ## Permissions
 

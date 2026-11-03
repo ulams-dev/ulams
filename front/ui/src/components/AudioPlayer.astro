@@ -1,10 +1,13 @@
 ---
+import { pageLocale } from "../lib/i18n.ts";
+import { playerStrings } from "../lib/player-strings.ts";
 interface Props {
   src: string;
   title: string;
   seconds?: number;
 }
 const { src, title, seconds } = Astro.props;
+const t = playerStrings(pageLocale(Astro));
 const bars = Array.from({ length: 48 }, (_, i) => 20 + Math.round(70 * Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.6))));
 const length = seconds ? `${Math.floor(seconds / 60)}:${String(Math.round(seconds % 60)).padStart(2, "0")}` : null;
 ---
@@ -18,7 +21,7 @@ const length = seconds ? `${Math.floor(seconds / 60)}:${String(Math.round(second
     {length && <span>{length}</span>}
   </p>
   <audio controls preload="metadata" src={src}>
-    <a href={src}>Download the recording</a>
+    <a href={src}>{t.audioDownload}</a>
   </audio>
 </div>
 

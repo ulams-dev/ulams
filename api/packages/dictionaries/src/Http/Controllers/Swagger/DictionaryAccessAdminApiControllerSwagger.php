@@ -10,7 +10,7 @@ interface DictionaryAccessAdminApiControllerSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/dictionaries/{id}/access",
+     *      path="/api/admin/dictionaries/{id}/access", operationId="admin.dictionaries.by-id.access.get",
      *      summary="Get list of users with access to the dictionary",
      *      tags={"Admin Dictionaries"},
      *      security={
@@ -53,7 +53,7 @@ interface DictionaryAccessAdminApiControllerSwagger
 
     /**
      * @OA\Post (
-     *      path="/api/admin/dictionaries/{id}/access",
+     *      path="/api/admin/dictionaries/{id}/access", operationId="admin.dictionaries.by-id.access.post",
      *      summary="Add users with access to the dictionary",
      *      tags={"Admin Dictionaries"},
      *      security={

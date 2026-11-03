@@ -1,5 +1,5 @@
 /**
- * Display mode of the platform landing (env ULAMS_LANDING_STATUS).
+ * Display transforms for previews and tests. Public product pages always pass `actual`.
  *
  *  - `final` (default while the product is in review): every roadmap item is shown as delivered. No
  *    "Coming"/"Preview" badges, no roadmap captions, the footnote about planned interfaces is gone and

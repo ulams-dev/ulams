@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Tests\Mocks;
 
+use Ulams\Core\Support\MorphMap;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -9,6 +10,9 @@ class ExampleProductableMigration
 {
     public static function run()
     {
+        // the mock productable is stored under its own morph alias, like every real one
+        MorphMap::register(['test.productable' => ExampleProductableBase::class]);
+
         if (Schema::hasTable('test_productables_users')) {
             Schema::drop('test_productables_users');
         }

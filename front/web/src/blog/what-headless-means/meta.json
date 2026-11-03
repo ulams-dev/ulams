@@ -1,0 +1,83 @@
+{
+  "slug": "what-headless-means",
+  "date": "2026-10-14",
+  "series": true,
+  "en": {
+    "title": "What “headless LMS” means, in 30 seconds",
+    "description": "The same course as JSON from the API, as a ready-made learner interface and in the admin panel. Use ours or build your own frontend.",
+    "tags": [
+      "Headless",
+      "API"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "In the clip: the response of GET /api/courses on the On-Call academy (no token on screen), the learner's course page, and the course in the admin panel."
+    },
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "api",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The course list from the API as JSON.",
+        "caption": "The course list from the API as JSON."
+      },
+      {
+        "name": "learner",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The same course in the ready-made learner interface.",
+        "caption": "The same course in the ready-made learner interface."
+      },
+      {
+        "name": "admin",
+        "width": 1200,
+        "height": 833,
+        "alt": "And in the admin panel.",
+        "caption": "And in the admin panel."
+      }
+    ]
+  },
+  "pl": {
+    "title": "Co znaczy „headless LMS”, w 30 sekund",
+    "description": "Ten sam kurs jako JSON z API, jako gotowy interfejs ucznia i w panelu administratora. Użyj naszego albo zbuduj własny frontend.",
+    "tags": [
+      "Headless",
+      "API"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "W filmie: odpowiedź GET /api/courses na akademii On-Call (bez tokenu na ekranie), strona kursu ucznia i kurs w panelu administratora."
+    },
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "api",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Lista kursów z API jako JSON.",
+        "caption": "Lista kursów z API jako JSON."
+      },
+      {
+        "name": "learner",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Ten sam kurs w gotowym interfejsie ucznia.",
+        "caption": "Ten sam kurs w gotowym interfejsie ucznia."
+      },
+      {
+        "name": "admin",
+        "width": 1200,
+        "height": 833,
+        "alt": "I w panelu administratora.",
+        "caption": "I w panelu administratora."
+      }
+    ]
+  }
+}

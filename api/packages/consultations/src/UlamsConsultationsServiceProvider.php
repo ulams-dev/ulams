@@ -2,6 +2,7 @@
 
 namespace Ulams\Consultations;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Categories\UlamsCategoriesServiceProvider;
 use Ulams\Consultations\Console\PurgeMeetingFrames;
@@ -24,6 +25,12 @@ use Illuminate\Support\ServiceProvider;
  */
 class UlamsConsultationsServiceProvider extends ServiceProvider
 {
+    /** Morph aliases of the models of this package (see Ulams\Core\Support\MorphMap); tests of packages that only use the models register them too. */
+    public const MORPH_ALIASES = [
+        'consultation' => \Ulams\Consultations\Models\Consultation::class,
+        'consultation_user' => \Ulams\Consultations\Models\ConsultationUserPivot::class,
+    ];
+
     public const SERVICES = [
         ConsultationServiceContract::class => ConsultationService::class
     ];
@@ -40,7 +47,6 @@ class UlamsConsultationsServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'consultation');
-        $this->loadRoutesFrom(__DIR__ . '/channels.php');
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -57,6 +63,8 @@ class UlamsConsultationsServiceProvider extends ServiceProvider
 
     public function register()
     {
+        MorphMap::register(self::MORPH_ALIASES);
+
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'ulams_consultations');
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(UlamsJitsiServiceProvider::class);

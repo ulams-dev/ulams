@@ -27,7 +27,9 @@ The learner's courses as returned by `GET /api/courses/progress`, each with:
 - the course image, title (linking to the [course page](/learners/course-page/)) and summary;
 - a progress bar with the percentage and the number of completed topics, e.g. `40% · 6/15 topics`;
 - a button that opens the first topic not yet completed: "Start" at 0%, "Continue" in between
-  and "Review" at 100%.
+  and "Review" at 100%;
+- when the API returns the program with the summary, the same "Next: ... about N min left" line as
+  on the course page.
 
 With no courses the page says "No courses yet." and links to the academy. If the API does not
 answer, it says the courses could not be loaded and offers to try again.

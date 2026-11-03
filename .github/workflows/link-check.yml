@@ -1,0 +1,43 @@
+name: Link check
+
+# Daily: open the landing page links and every demo academy's course pages on production. Anything that 404s
+# (or an academy with no courses, which is what makes the landing's "Open the demo" buttons 404) opens or updates
+# ONE issue labelled `monitoring`; when everything answers again the issue is closed. Findings never fail the run
+# (the issue is the report), so the owner gets an issue, not a failure e-mail. Logic and tests:
+# .github/scripts/link-check.sh and test-link-check.sh.
+
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: link-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Check public pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Script tests
+        run: sh .github/scripts/test-link-check.sh
+      - name: Check
+        id: check
+        run: |
+          sh .github/scripts/link-check.sh check "$RUNNER_TEMP/report.md" | tee -a "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/report.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Open, update or close the issue
+        run: |
+          state=ok
+          [ "${{ steps.check.outputs.broken }}" = true ] && state=broken
+          sh .github/scripts/link-check.sh sync-issue "$state" "$RUNNER_TEMP/report.md"

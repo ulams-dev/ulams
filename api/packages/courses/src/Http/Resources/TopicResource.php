@@ -7,6 +7,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TopicResource extends JsonResource
 {
+    /** @var array<string,callable(\Ulams\Courses\Models\Topic):array<string,mixed>> */
+    private static array $extensions = [];
+
+    /**
+     * Lets another package add fields to a topic in program and preview responses (for example
+     * `ai_assisted`). The callback gets the topic and returns extra keys; it cannot replace the core ones.
+     * A name registers once: extending again under the same name replaces the earlier callback.
+     *
+     * @param callable(\Ulams\Courses\Models\Topic):array<string,mixed> $extension
+     */
+    public static function extend(string $name, callable $extension): void
+    {
+        self::$extensions[$name] = $extension;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -26,7 +41,13 @@ class TopicResource extends JsonResource
             $topicable = $resource->toArray($request);
         }
 
+        $extra = [];
+        foreach (self::$extensions as $extension) {
+            $extra = array_merge($extra, $extension($this->resource));
+        }
+
         return [
+            ...$extra,
             'id' => $this->resource->id,
             'title' => $this->resource->title,
             'lesson_id' => $this->resource->lesson_id,

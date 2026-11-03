@@ -37,6 +37,11 @@ final class CommerceManager
         return $this->resolved[$key] ??= ($this->factories[$key])($this->container);
     }
 
+    public function has(string $key): bool
+    {
+        return isset($this->factories[$key]);
+    }
+
     /** @return string[] */
     public function keys(): array
     {

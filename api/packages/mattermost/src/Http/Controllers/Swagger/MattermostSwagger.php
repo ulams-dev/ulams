@@ -9,7 +9,7 @@ interface MattermostSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/mattermost/me",
+     *      path="/api/mattermost/me", operationId="mattermost.me.get",
      *      summary="List all of the available mattermost teams and channels for a user",
      *      tags={"Mattermost"},
      *      description="ist all of the available mattermost teams and channels for a user",
@@ -19,9 +19,7 @@ interface MattermostSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      )
      * )
      */
@@ -29,7 +27,7 @@ interface MattermostSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/mattermost/generate_credentials",
+     *      path="/api/mattermost/generate_credentials", operationId="mattermost.generate-credentials.get",
      *      summary="Generates user (creates one if not exists) credentials and sets a new random password",
      *      tags={"Mattermost"},
      *      description="Generates user (creates one if not exists) credentials and sets a new random password",
@@ -39,9 +37,7 @@ interface MattermostSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      )
      * )
      */
@@ -49,7 +45,7 @@ interface MattermostSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/mattermost/reset_password",
+     *      path="/api/mattermost/reset_password", operationId="mattermost.reset-password.get",
      *      summary="Sends request for mattermost to send reset password link with email",
      *      tags={"Mattermost"},
      *      description="Sends request for mattermost to send reset password link with email",
@@ -59,9 +55,7 @@ interface MattermostSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      )
      * )
      */

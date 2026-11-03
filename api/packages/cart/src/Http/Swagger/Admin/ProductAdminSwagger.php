@@ -16,7 +16,7 @@ interface ProductAdminSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/products",
+     *      path="/api/admin/products", operationId="admin.products.get",
      *      description="Search products",
      *      tags={"Admin Products"},
      *      security={
@@ -132,9 +132,7 @@ interface ProductAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -165,7 +163,7 @@ interface ProductAdminSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/products/",
+     *      path="/api/admin/products/", operationId="admin.products.post",
      *      description="Create product",
      *      tags={"Admin Product"},
      *      security={
@@ -269,9 +267,7 @@ interface ProductAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -297,7 +293,7 @@ interface ProductAdminSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/products/{id}",
+     *      path="/api/admin/products/{id}", operationId="admin.products.by-id.get",
      *      description="Read product",
      *      tags={"Admin Products"},
      *      security={
@@ -314,9 +310,7 @@ interface ProductAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -347,7 +341,7 @@ interface ProductAdminSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/products/{id}",
+     *      path="/api/admin/products/{id}", operationId="admin.products.by-id.put",
      *      description="Create product",
      *      tags={"Admin Product"},
      *      security={
@@ -460,9 +454,7 @@ interface ProductAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -488,7 +480,7 @@ interface ProductAdminSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/products/{id}",
+     *      path="/api/admin/products/{id}", operationId="admin.products.by-id.delete",
      *      description="Delete product",
      *      tags={"Admin Products"},
      *      security={
@@ -505,9 +497,7 @@ interface ProductAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -537,7 +527,7 @@ interface ProductAdminSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/products/{id}/attach",
+     *      path="/api/admin/products/{id}/attach", operationId="admin.products.by-id.attach.post",
      *      description="Attach product to user",
      *      tags={"Admin Product"},
      *      security={
@@ -569,9 +559,7 @@ interface ProductAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -597,7 +585,7 @@ interface ProductAdminSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/products/{id}/detach",
+     *      path="/api/admin/products/{id}/detach", operationId="admin.products.by-id.detach.post",
      *      description="Detach product from user",
      *      tags={"Admin Product"},
      *      security={
@@ -629,9 +617,7 @@ interface ProductAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -657,7 +643,7 @@ interface ProductAdminSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/admin/products/{id}/trigger-event-manually/{idTemplate}",
+     *     path="/api/admin/products/{id}/trigger-event-manually/{idTemplate}", operationId="admin.products.by-id.trigger-event-manually.by-idtemplate.post",
      *     summary="Manually triggered event for users of the product",
      *     tags={"Admin Product"},
      *     security={
@@ -683,7 +669,7 @@ interface ProductAdminSwagger
      *      ),
      *     @OA\Response(
      *          response=200,
-     *          description="Event dispatched successfully",
+     *          description="Event dispatched successfully", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")
      *      ),
      *     @OA\Response(
      *          response=401,

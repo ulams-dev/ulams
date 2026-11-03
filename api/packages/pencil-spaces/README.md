@@ -1,7 +1,5 @@
 # Pencil-Spaces
 
-
-
 ## What does it do
 
 This package is used for integration with [Pencil Spaces](https://www.pencilspaces.com/).
@@ -71,7 +69,6 @@ The endpoints are defined in [![swagger](https://img.shields.io/badge/documentat
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests.
-Test details [![codecov](https://codecov.io/gh/Ulams/Pencil-Spaces/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Pencil-Spaces)
 
 You can use `PencilSpace::fake()` in your tests. Requests to the API will be mocked, and you will be able to test your feature.
 

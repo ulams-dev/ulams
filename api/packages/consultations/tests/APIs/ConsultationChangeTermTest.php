@@ -60,11 +60,14 @@ class ConsultationChangeTermTest extends TestCase
     public function testChangeTermForOneUser()
     {
         Event::fake();
+        // One fixed slot shared by both participants: the request validates 'term' against the pivot in the URL,
+        // so two now() calls straddling a second boundary used to make the lookup miss.
+        $slot = now()->startOfSecond()->format('Y-m-d H:i:s');
         /** @var ConsultationUserPivot $term */
         $term = $this->consultation->terms()->first();
 
         $userTerm = $term->userTerms()->create([
-            'executed_at' => now()->format('Y-m-d H:i:s'),
+            'executed_at' => $slot,
             'executed_status' => ConsultationTermStatusEnum::REPORTED,
         ]);
 
@@ -82,14 +85,14 @@ class ConsultationChangeTermTest extends TestCase
         $changedTerm = $this->consultation->terms()->where('user_id', '=', $user->getKey())->first();
 
         $userChangedTerm = $changedTerm->userTerms()->create([
-            'executed_at' => now()->format('Y-m-d H:i:s'),
+            'executed_at' => $slot,
             'executed_status' => ConsultationTermStatusEnum::REPORTED,
         ]);
 
         $newTerm = now()->modify('+2 hours')->format('Y-m-d H:i:s');
         $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/admin/consultations/change-term/' . $term->getKey(),
-            ['executed_at' => $newTerm, 'term' => $userChangedTerm->executed_at, 'user_id' => $user->getKey(), 'accept' => true]
+            ['executed_at' => $newTerm, 'term' => $slot, 'user_id' => $user->getKey(), 'accept' => true]
         );
         $this->response->assertOk();
         $userTerm->refresh();

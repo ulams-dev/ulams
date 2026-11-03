@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Contracts;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Core\Support\SchemaColumns;
 use Ulams\Cart\Http\Resources\ProductableGenericResource;
 use Ulams\Cart\Models\Product;
@@ -166,8 +167,9 @@ trait ProductableTrait
         return (int) ($this->duration ?? 0);
     }
 
+    /** The morph alias the productable is stored under (`productable_type`); see Ulams\Core\Support\MorphMap. */
     public static function getMorphClassStatic(): string
     {
-        return self::class;
+        return MorphMap::aliasOrClass(static::class);
     }
 }

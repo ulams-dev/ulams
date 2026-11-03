@@ -39,7 +39,8 @@ fires, the listener, for each channel:
 
 1. picks the template **assigned** to the item the event is about, if the event type supports
    assignment (for example a certificate assigned to one course), otherwise the **default**
-   template for that event and channel;
+   template for that event and channel, in the language of the course, the academy's default
+   language or English (see [Languages](#languages));
 2. skips the channel and writes an error to the log if there is no template, or if the
    template is invalid (for example it lacks a required variable);
 3. replaces the variables and hands the result to the channel, which sends the email or SMS
@@ -124,10 +125,43 @@ either the MJML API (`use_api`, `api_url`, `api_id`, `api_secret`) or a local `m
 (`MJML_BINARY_PATH` in the environment). `default_template` is the MJML wrapper into which the
 content is placed (`@VarTemplateContent`).
 
+In the editor the code is on the left, with a list of the variables of the event (choose one to
+insert it at the cursor), and a preview with sample data on the right. The preview shows your
+unsaved changes, lists MJML errors, missing required variables and accessibility warnings, and
+**Send a test e-mail** sends the current content to your own address. See
+[E-mail](/operators/email/#in-the-admin) for details.
+
+The switch above the editor also offers a **Visual** mode, an editor for the same MJML that works
+with the mouse (drag and drop) and fully with the keyboard. A template it cannot represent without losing markup stays in Code view, and conversion needs
+your confirmation after a diff. In Visual mode variables are chips, shared headers and footers from
+Settings are locked blocks (edit them in Settings), and images are uploaded to your own storage with
+required alternative text (PNG, JPEG, GIF or WebP, no SVG).
+
+How to use it without dragging: above the canvas, **Structure and keyboard tools** has a block list
+with **Add block**, the actions Move up, Move down, Remove, Edit text, Undo and Redo, the structure of
+the e-mail as a tree (arrow keys; selecting a block there selects it in the canvas) and a form with the
+properties of the selected block (link, alternative text, colours, spacing). Alt+Up and Alt+Down move a
+block, Delete removes it, Enter edits a text block or opens the image dialog, and Escape ends text
+editing. Changes are announced to screen readers. The full key list is under **Keyboard map** in the
+panel and in [Visual mode](/operators/email/#visual-mode).
+
 Email templates exist for events of most packages: account registration, verification,
 blocking and deletion, password reset and change, group membership, course access and
 deadlines, payments, tasks, webinars and consultations, video processing, users imported from
 CSV and invitations of people without an account.
+
+### Languages
+
+An e-mail template can be written for one language. On the template page, the **Languages** panel
+shows English, Polski and 中文 for the event: the ones that have a template, and the ones marked
+**Missing translation**. **Create translation** starts a new template for the missing language as a
+copy of the one you have, **Copy content from** copies another template's content into the form, and
+the **Language** field sets the language of the template. The list has **Language** and
+**Translations** columns, so you can see which events still miss a language.
+
+The language of an e-mail is the language of the course it is about, then the academy's default
+language, then English, then a template without a language. The full order, the seeded defaults and
+the API fields are in [E-mail](/operators/email/#templates-per-language).
 
 ## PDF templates
 

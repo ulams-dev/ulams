@@ -45,6 +45,10 @@ class ResponseCacheTags
         'Ulams\\Auth\\Models\\SocialAccount',
         'Ulams\\Questionnaire\\Models\\QuestionAnswer',
         'Ulams\\Tasks\\Models\\TaskNote',
+        // which variant a learner is in, their hints and placement results: no cached response shows them (ADR 0192)
+        'Ulams\\CourseVariants\\Models\\Assignment',
+        'Ulams\\CourseVariants\\Models\\Hint',
+        'Ulams\\CourseVariants\\Models\\PlacementAttempt',
     ];
 
     /** @return list<string> tags to clear after a write to a model of this class */

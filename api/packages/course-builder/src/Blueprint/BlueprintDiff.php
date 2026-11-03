@@ -13,7 +13,9 @@ final class BlueprintDiff
         'title' => 'Title', 'subtitle' => 'Subtitle', 'description' => 'Description', 'summary' => 'Summary',
         'minutes' => 'Minutes', 'text' => 'Text', 'markdown' => 'Content', 'kind' => 'Block type',
         'stem' => 'Question', 'explanation' => 'Explanation', 'type' => 'Question type', 'correct' => 'Correct answer',
-        'citations' => 'Citations',
+        'citations' => 'Citations', 'origin' => 'Written by', 'contentType' => 'Lesson format', 'asset' => 'File',
+        'library' => 'Activity type', 'data' => 'Activity content', 'caption' => 'Caption', 'packageId' => 'Interactive package',
+        'startStep' => 'Start step', 'endStep' => 'End step',
     ];
 
     /**
@@ -87,12 +89,20 @@ final class BlueprintDiff
             foreach ($module['lessons'] ?? [] as $l => $lesson) {
                 $lLabel = 'Lesson ' . ($m + 1) . '.' . ($l + 1);
                 $lAnc = [$module['id']];
-                $out[$lesson['id']] = ['type' => 'lesson', 'label' => $lLabel, 'ancestors' => $lAnc, 'fields' => self::pick($lesson, ['title', 'summary', 'minutes', 'citations'])];
+                $out[$lesson['id']] = ['type' => 'lesson', 'label' => $lLabel, 'ancestors' => $lAnc, 'fields' => self::pick($lesson, ['title', 'summary', 'minutes', 'contentType', 'citations']) + self::origin($lesson) + self::asset($lesson)];
                 foreach ($lesson['objectives'] ?? [] as $o => $objective) {
                     $out[$objective['id']] = ['type' => 'objective', 'label' => "{$lLabel} › objective " . ($o + 1), 'ancestors' => [...$lAnc, $lesson['id']], 'fields' => self::pick($objective, ['text', 'citations'])];
                 }
                 foreach ($lesson['blocks'] ?? [] as $b => $block) {
-                    $out[$block['id']] = ['type' => 'block', 'label' => "{$lLabel} › block " . ($b + 1), 'ancestors' => [...$lAnc, $lesson['id']], 'fields' => self::pick($block, ['kind', 'markdown', 'citations'])];
+                    $out[$block['id']] = ['type' => 'block', 'label' => "{$lLabel} › block " . ($b + 1), 'ancestors' => [...$lAnc, $lesson['id']], 'fields' => self::pick($block, ['kind', 'markdown', 'citations']) + self::origin($block)];
+                }
+                foreach ($lesson['selfChecks'] ?? [] as $c => $check) {
+                    self::flattenQuestion($out, $check, "{$lLabel} › check " . ($c + 1), [...$lAnc, $lesson['id']]);
+                }
+                if (is_array($lesson['interaction'] ?? null) && isset($lesson['interaction']['id'])) {
+                    $interaction = $lesson['interaction'];
+                    $out[$interaction['id']] = ['type' => 'interaction', 'label' => "{$lLabel} › activity", 'ancestors' => [...$lAnc, $lesson['id']],
+                        'fields' => self::pick($interaction, ['kind', 'library', 'title', 'data', 'packageId', 'startStep', 'endStep', 'caption', 'citations']) + self::origin($interaction)];
                 }
                 if (is_array($lesson['quiz'] ?? null)) {
                     self::flattenQuiz($out, $lesson['quiz'], "{$lLabel} › ", [...$lAnc, $lesson['id']]);
@@ -110,13 +120,29 @@ final class BlueprintDiff
     {
         $out[$quiz['id']] = ['type' => 'quiz', 'label' => rtrim($prefix, ' ›') . ($prefix === 'Final test › ' ? '' : ' › quiz'), 'ancestors' => $ancestors, 'fields' => []];
         foreach ($quiz['questions'] ?? [] as $q => $question) {
-            $qLabel = $prefix . 'Q' . ($q + 1);
-            $qAnc = [...$ancestors, $quiz['id']];
-            $out[$question['id']] = ['type' => 'question', 'label' => $qLabel, 'ancestors' => $qAnc, 'fields' => self::pick($question, ['type', 'stem', 'explanation', 'citations'])];
-            foreach ($question['options'] ?? [] as $i => $option) {
-                $out[$option['id']] = ['type' => 'option', 'label' => "{$qLabel} › option " . chr(65 + $i), 'ancestors' => [...$qAnc, $question['id']], 'fields' => self::pick($option, ['text', 'correct'])];
-            }
+            self::flattenQuestion($out, $question, $prefix . 'Q' . ($q + 1), [...$ancestors, $quiz['id']]);
         }
+    }
+
+    /** A quiz question or a lesson self-check, with its options. */
+    private static function flattenQuestion(array &$out, array $question, string $label, array $ancestors): void
+    {
+        $out[$question['id']] = ['type' => 'question', 'label' => $label, 'ancestors' => $ancestors, 'fields' => self::pick($question, ['type', 'stem', 'explanation', 'citations']) + self::origin($question)];
+        foreach ($question['options'] ?? [] as $i => $option) {
+            $out[$option['id']] = ['type' => 'option', 'label' => "{$label} › option " . chr(65 + $i), 'ancestors' => [...$ancestors, $question['id']], 'fields' => self::pick($option, ['text', 'correct'])];
+        }
+    }
+
+    /** Who wrote the element; absent means the AI did, so an `ai` to `author` change is visible. */
+    private static function origin(array $node): array
+    {
+        return ['origin' => $node['origin'] ?? 'ai'];
+    }
+
+    /** The content hash of a lesson's file, so a replaced SCORM package or video shows up as a change. */
+    private static function asset(array $lesson): array
+    {
+        return isset($lesson['asset']['sha256']) ? ['asset' => $lesson['asset']['path'] . ' (' . substr((string) $lesson['asset']['sha256'], 0, 12) . ')'] : [];
     }
 
     private static function pick(array $node, array $fields): array
@@ -124,10 +150,16 @@ final class BlueprintDiff
         $out = [];
         foreach ($fields as $f) {
             if (array_key_exists($f, $node)) {
-                $out[$f] = is_array($node[$f]) ? implode(', ', $node[$f]) : $node[$f];
+                $out[$f] = is_array($node[$f]) ? (array_is_list($node[$f]) && array_filter($node[$f], 'is_scalar') === $node[$f] ? implode(', ', $node[$f]) : self::encode($node[$f])) : $node[$f];
             }
         }
 
         return $out;
+    }
+
+    /** Nested values (an H5P activity's fields) as canonical JSON, so equal content compares equal. */
+    private static function encode(array $value): string
+    {
+        return (string) json_encode(\Ulams\Ai\Fake\CassetteStore::canonical($value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }

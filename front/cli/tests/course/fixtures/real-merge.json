@@ -1,0 +1,2742 @@
+{
+ "version": {
+  "success": true,
+  "data": {
+   "id": "01m5gvzf1s8tb79xv3q7v670e9",
+   "number": 1,
+   "kind": "content",
+   "origin": "ai",
+   "status": "approved",
+   "reason": "generated",
+   "parentId": null,
+   "elementId": null,
+   "document": {
+    "schemaVersion": 3,
+    "sources": [
+     {
+      "id": "01m5grqr6h1k7c1mz3d8mk9b6p",
+      "title": "Coffee Brewing Fundamentals",
+      "fragmentCount": 13
+     }
+    ],
+    "course": {
+     "id": "01m5grqrdzeex5a7t655p45z88",
+     "title": "Coffee Brewing Fundamentals for Home Baristas",
+     "language": "en",
+     "objectives": [
+      {
+       "id": "01m5grqre05e5wtd0nb5kty7qk",
+       "text": "Explain extraction and describe how under-extracted and over-extracted coffee taste.",
+       "citations": [
+        "frg_3vlbtwoeqwpq"
+       ]
+      },
+      {
+       "id": "01m5grqre05e5wtd0nb5kty7qm",
+       "text": "Distinguish strength (TDS) from extraction and name which variables change each.",
+       "citations": [
+        "frg_o6vvll4t3sx5"
+       ]
+      },
+      {
+       "id": "01m5grqre05e5wtd0nb5kty7qn",
+       "text": "Calculate coffee and water weights for a given brew ratio and dose.",
+       "citations": [
+        "frg_e56vczkalpt5",
+        "frg_sumksqgjdgac"
+       ]
+      },
+      {
+       "id": "01m5grqre05e5wtd0nb5kty7qp",
+       "text": "Choose a grind size and water temperature suited to a brewing method and roast.",
+       "citations": [
+        "frg_gcwhkwq2wdvm",
+        "frg_swahk5outkws",
+        "frg_k5i74h2gsf33"
+       ]
+      },
+      {
+       "id": "01m5grqre05e5wtd0nb5kty7qq",
+       "text": "Diagnose a cup by taste and adjust one variable for the next brew.",
+       "citations": [
+        "frg_zxjcy7az6ypj",
+        "frg_ordlani6gwx4"
+       ]
+      }
+     ],
+     "subtitle": "For beginner home baristas who want to brew a balanced cup by weighing, adjusting grind and temperature, and tasting with confidence.",
+     "description": "This 30-minute beginner course teaches you how extraction works and how to recognise under-extracted and over-extracted coffee by taste. You will learn to separate strength from extraction, and to weigh coffee and water at a chosen brew ratio so every cup is repeatable. The course then shows how grind size and water temperature change the cup for espresso, pour-over, French press and light or dark roasts. You finish by tasting your results and changing one variable at a time to improve the next brew.",
+     "audience": "home baristas",
+     "seo": {
+      "title": "Coffee Brewing Fundamentals for Home Baristas | Course",
+      "description": "Learn extraction, brew ratios, grind size and water temperature in this beginner home coffee course. Taste, diagnose and improve every cup."
+     },
+     "faq": [
+      {
+       "question": "Who is this course for?",
+       "answer": "It is designed for home baristas at beginner level who want to brew better coffee at home and understand why their cups taste the way they do.",
+       "citations": []
+      },
+      {
+       "question": "Do I need special equipment?",
+       "answer": "A kitchen scale is recommended, because the course teaches you to weigh coffee and water rather than measure with spoons. A thermometer is helpful for water temperature, but the course also explains a way to rest boiled water without one. Grinding with a burr grinder is recommended for more even particles.",
+       "citations": [
+        "frg_e56vczkalpt5",
+        "frg_k5i74h2gsf33",
+        "frg_swahk5outkws"
+       ]
+      },
+      {
+       "question": "How long does the course take?",
+       "answer": "The course takes about 30 minutes in total, split into three 10-minute lessons, and each lesson ends with a short quiz. A final test is also included.",
+       "citations": []
+      },
+      {
+       "question": "What will I be able to do after completing it?",
+       "answer": "You will be able to identify under- and over-extracted coffee by taste, calculate coffee and water weights for a given ratio and dose, choose a grind size and water temperature for your method and roast, and adjust one variable to improve your next brew.",
+       "citations": [
+        "frg_3vlbtwoeqwpq",
+        "frg_sumksqgjdgac",
+        "frg_ordlani6gwx4"
+       ]
+      }
+     ]
+    },
+    "modules": [
+     {
+      "id": "01m5grqre05e5wtd0nb5kty7qr",
+      "title": "How Coffee Brewing Works",
+      "summary": "Introduces extraction and the difference between extraction and strength.",
+      "lessons": [
+       {
+        "id": "01m5grqre05e5wtd0nb5kty7qs",
+        "title": "Extraction and Strength",
+        "minutes": 10,
+        "objectives": [
+         {
+          "id": "01m5grqre05e5wtd0nb5kty7qt",
+          "text": "Describe the order in which acids, sugars and bitter compounds dissolve and the target extraction range.",
+          "citations": [
+           "frg_3vlbtwoeqwpq"
+          ]
+         },
+         {
+          "id": "01m5grqre05e5wtd0nb5kty7qv",
+          "text": "Identify whether a cup is under-extracted or over-extracted from its taste.",
+          "citations": [
+           "frg_3vlbtwoeqwpq"
+          ]
+         },
+         {
+          "id": "01m5grqre05e5wtd0nb5kty7qw",
+          "text": "Explain why a strong cup can still be under-extracted, and which variables change strength versus extraction.",
+          "citations": [
+           "frg_o6vvll4t3sx5"
+          ]
+         }
+        ],
+        "citations": [
+         "frg_3vlbtwoeqwpq",
+         "frg_o6vvll4t3sx5"
+        ],
+        "contentType": "richtext",
+        "status": "generated",
+        "blocks": [
+         {
+          "id": "01m5grqrht19h0fp5trbsm1rfs",
+          "kind": "paragraph",
+          "markdown": "You already know what a good cup of coffee tastes like, and what a bad one tastes like: sharp and sour, or harsh and bitter. In this lesson you will learn what is going on in the cup. It comes down to one idea, **extraction**, and one idea that is easy to confuse with it, **strength**.",
+          "citations": [
+           "frg_3vlbtwoeqwpq",
+           "frg_o6vvll4t3sx5"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7qt",
+           "01m5grqre05e5wtd0nb5kty7qw"
+          ]
+         },
+         {
+          "id": "01m5grqrht19h0fp5trbsm1rft",
+          "kind": "paragraph",
+          "markdown": "### What extraction means\n\nBrewing coffee is extraction: hot water dissolves soluble compounds from ground coffee. Roughly 30% of the mass of a roasted bean can dissolve in water, but a pleasant cup extracts only about **18 to 22%** of the dry coffee.\n\nThe compounds do not dissolve all at once. They come out in a set order:\n\n1. **Acids** dissolve first.\n2. **Sugars** come next.\n3. **Bitter, woody compounds** come last.",
+          "citations": [
+           "frg_3vlbtwoeqwpq"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7qt"
+          ]
+         },
+         {
+          "id": "01m5grqrht19h0fp5trbsm1rfv",
+          "kind": "table",
+          "markdown": "| | What it means | How it tastes |\n|---|---|---|\n| **Under-extracted** | Too little dissolved | Sour, thin and salty |\n| **Balanced** | Sugars cover the acidity, bitterness stays in the background | Sweet and balanced |\n| **Over-extracted** | Too much dissolved | Bitter, hollow and drying |",
+          "citations": [
+           "frg_3vlbtwoeqwpq"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7qv",
+           "01m5grqre05e5wtd0nb5kty7qt"
+          ]
+         },
+         {
+          "id": "01m5grqrht19h0fp5trbsm1rfw",
+          "kind": "callout",
+          "markdown": "**Tip:** Think about the order. If you stop too early, you mostly get the acids, so the cup is sour. If you go too far, the bitter compounds that dissolve last take over. The goal is the balanced middle.",
+          "citations": [
+           "frg_3vlbtwoeqwpq"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7qv",
+           "01m5grqre05e5wtd0nb5kty7qt"
+          ]
+         },
+         {
+          "id": "01m5grqrht19h0fp5trbsm1rfx",
+          "kind": "paragraph",
+          "markdown": "### Strength is not extraction\n\n**Strength** describes how concentrated the drink is, meaning how much dissolved coffee ends up in the cup. It is measured as total dissolved solids (**TDS**). Filter coffee usually tastes best between 1.15% and 1.35% TDS.\n\nStrength and extraction are separate. A strong cup can still be under-extracted, and a weak cup can be over-extracted. So a strong cup is not automatically a well-extracted one.",
+          "citations": [
+           "frg_o6vvll4t3sx5"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7qw"
+          ]
+         },
+         {
+          "id": "01m5grqrht19h0fp5trbsm1rfy",
+          "kind": "table",
+          "markdown": "| What you want to change | Main variables |\n|---|---|\n| Strength | Ratio of coffee to water |\n| Extraction | Grind size, temperature and contact time |",
+          "citations": [
+           "frg_o6vvll4t3sx5"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7qw"
+          ]
+         },
+         {
+          "id": "01m5grqrht19h0fp5trbsm1rfz",
+          "kind": "example",
+          "markdown": "**Quick check.** A cup tastes sour, thin and salty. Is it under- or over-extracted? *Under-extracted.* The sour taste is the sign that too little has dissolved.\n\nA cup tastes bitter and drying. *Over-extracted.* To fix extraction you would look at grind size, temperature or contact time, not only the ratio. The ratio mostly changes strength.",
+          "citations": [
+           "frg_3vlbtwoeqwpq",
+           "frg_o6vvll4t3sx5"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7qv",
+           "01m5grqre05e5wtd0nb5kty7qw"
+          ]
+         }
+        ],
+        "quiz": {
+         "id": "01m5grqrwyyepmwttbpmatpqv8",
+         "questions": [
+          {
+           "id": "01m5grqrs2245j6ge3gp8bcr6k",
+           "type": "single",
+           "stem": "In which order do the compounds in ground coffee dissolve during brewing?",
+           "options": [
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6m",
+             "text": "Acids first, then sugars, then bitter and woody compounds",
+             "correct": true
+            },
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6n",
+             "text": "Sugars first, then acids, then bitter and woody compounds",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6p",
+             "text": "Bitter compounds first, then sugars, then acids",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6q",
+             "text": "All compounds dissolve at the same rate",
+             "correct": false
+            }
+           ],
+           "explanation": "Acids dissolve first, sugars come next, and the bitter, woody compounds come last. That is why stopping too early leaves a sour cup and going too far gives a bitter one.",
+           "citations": [
+            "frg_3vlbtwoeqwpq"
+           ],
+           "objectiveIds": [
+            "01m5grqre05e5wtd0nb5kty7qt"
+           ]
+          },
+          {
+           "id": "01m5grqrs2245j6ge3gp8bcr6r",
+           "type": "single",
+           "stem": "A cup of filter coffee tastes bitter, hollow and drying. What is the most likely cause?",
+           "options": [
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6s",
+             "text": "Over-extraction, because too much has dissolved",
+             "correct": true
+            },
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6t",
+             "text": "Under-extraction, because too little has dissolved",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6v",
+             "text": "A balanced extraction with a strong ratio",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6w",
+             "text": "Too few total dissolved solids in the cup",
+             "correct": false
+            }
+           ],
+           "explanation": "Bitter, hollow and drying are the signs of over-extraction, when the bitter compounds that dissolve last take over. Under-extraction would taste sour, thin and salty instead.",
+           "citations": [
+            "frg_3vlbtwoeqwpq"
+           ],
+           "objectiveIds": [
+            "01m5grqre05e5wtd0nb5kty7qv"
+           ]
+          },
+          {
+           "id": "01m5grqrs2245j6ge3gp8bcr6x",
+           "type": "single",
+           "stem": "Your coffee is very strong but tastes sour and thin. Which statement explains this?",
+           "options": [
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6y",
+             "text": "Strength and extraction are separate, so a strong cup can still be under-extracted",
+             "correct": true
+            },
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr6z",
+             "text": "A strong cup is always well extracted, so the taste must come from the water",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr70",
+             "text": "Strength is set by grind size, so the grind must have been too coarse",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrs2245j6ge3gp8bcr71",
+             "text": "Sourness only appears in weak cups with low TDS",
+             "correct": false
+            }
+           ],
+           "explanation": "Strength is how concentrated the cup is (TDS), while extraction is how much of the coffee dissolved. Strength is mostly changed by the ratio, and extraction by grind size, temperature and contact time, so a strong cup can still be under-extracted.",
+           "citations": [
+            "frg_o6vvll4t3sx5"
+           ],
+           "objectiveIds": [
+            "01m5grqre05e5wtd0nb5kty7qw"
+           ]
+          }
+         ]
+        },
+        "flags": [],
+        "summary": "Covers what extraction is, how under- and over-extraction taste, and why strength (TDS) is a separate idea."
+       }
+      ]
+     },
+     {
+      "id": "01m5grqre05e5wtd0nb5kty7qx",
+      "title": "Measuring Your Coffee",
+      "summary": "Teaches how to set the brew ratio and calculate doses by weight.",
+      "lessons": [
+       {
+        "id": "01m5grqre05e5wtd0nb5kty7qy",
+        "title": "The Brew Ratio and Dose Maths",
+        "minutes": 10,
+        "objectives": [
+         {
+          "id": "01m5grqre05e5wtd0nb5kty7qz",
+          "text": "Explain why weighing coffee and water is more reliable than measuring with spoons.",
+          "citations": [
+           "frg_e56vczkalpt5"
+          ]
+         },
+         {
+          "id": "01m5grqre05e5wtd0nb5kty7r0",
+          "text": "Choose a ratio between 1:15 and 1:17 to make a stronger or lighter cup.",
+          "citations": [
+           "frg_e56vczkalpt5"
+          ]
+         },
+         {
+          "id": "01m5grqre05e5wtd0nb5kty7r1",
+          "text": "Calculate the water for a given coffee dose, and the coffee for a given total water weight, at a chosen ratio.",
+          "citations": [
+           "frg_sumksqgjdgac"
+          ]
+         }
+        ],
+        "citations": [
+         "frg_e56vczkalpt5",
+         "frg_sumksqgjdgac"
+        ],
+        "contentType": "richtext",
+        "status": "generated",
+        "blocks": [
+         {
+          "id": "01m5grqrja7njnp151t3q4m1w4",
+          "kind": "paragraph",
+          "markdown": "You already know that a cup can taste weak or strong. In this lesson you'll learn how to control that with a simple number: the **brew ratio**. It is just the weight of coffee compared to the weight of water. A ratio of **1:16** means one gram of coffee for every sixteen grams of water.",
+          "citations": [
+           "frg_e56vczkalpt5"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r0"
+          ]
+         },
+         {
+          "id": "01m5grqrja7njnp151t3q4m1w5",
+          "kind": "paragraph",
+          "markdown": "### Why weigh instead of scoop?\n\nWeigh both the coffee and the water with a kitchen scale. Measuring by volume with spoons is unreliable, because a spoonful of a light roast weighs more than a spoonful of a dark roast. So two \"identical\" scoops can hold different amounts of coffee. A scale removes that guesswork.",
+          "citations": [
+           "frg_e56vczkalpt5"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7qz"
+          ]
+         },
+         {
+          "id": "01m5grqrja7njnp151t3q4m1w6",
+          "kind": "paragraph",
+          "markdown": "### Choosing your ratio\n\nMost filter recipes sit between **1:15 and 1:17**, and 1:16 is a good starting point. The lower the second number, the stronger the cup.",
+          "citations": [
+           "frg_e56vczkalpt5"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r0"
+          ]
+         },
+         {
+          "id": "01m5grqrja7njnp151t3q4m1w7",
+          "kind": "table",
+          "markdown": "| Ratio | Result |\n|---|---|\n| 1:15 | Stronger cup |\n| 1:16 | Good starting point |\n| 1:17 | Lighter cup |",
+          "citations": [
+           "frg_e56vczkalpt5"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r0"
+          ]
+         },
+         {
+          "id": "01m5grqrja7njnp151t3q4m1w8",
+          "kind": "steps",
+          "markdown": "### Doing the maths\n\n1. **Water for a known dose:** multiply the coffee weight by the ratio number.\n2. **Coffee for a known amount of water:** divide the water weight by the ratio number.\n3. Remember that one gram of water is one millilitre, so the scale reading in grams equals the volume in millilitres.",
+          "citations": [
+           "frg_sumksqgjdgac"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r1"
+          ]
+         },
+         {
+          "id": "01m5grqrja7njnp151t3q4m1w9",
+          "kind": "example",
+          "markdown": "**Example 1: water for a dose.** You have 20 g of coffee and want 1:16. Water = 20 × 16 = **320 g**.\n\n**Example 2: coffee for a pot.** You want a 500 g pot at 1:16. Coffee = 500 ÷ 16 ≈ **31 g**.",
+          "citations": [
+           "frg_sumksqgjdgac"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r1"
+          ]
+         },
+         {
+          "id": "01m5grqrja7njnp151t3q4m1wa",
+          "kind": "callout",
+          "markdown": "**Key takeaway:** Weigh, don't scoop. Start at 1:16, go toward 1:15 for a stronger cup or 1:17 for a lighter one. Multiply to find water, divide to find coffee.",
+          "citations": [
+           "frg_e56vczkalpt5",
+           "frg_sumksqgjdgac"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7qz",
+           "01m5grqre05e5wtd0nb5kty7r0",
+           "01m5grqre05e5wtd0nb5kty7r1"
+          ]
+         }
+        ],
+        "quiz": {
+         "id": "01m5grqrwza60xkq7rz4drz51p",
+         "questions": [
+          {
+           "id": "01m5grqrsyr6502vhtrcxjebyv",
+           "type": "single",
+           "stem": "Why is weighing coffee with a scale more reliable than measuring it with spoons?",
+           "options": [
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kfv",
+             "text": "A spoonful of light roast weighs more than a spoonful of dark roast, so scoops hold different amounts of coffee",
+             "correct": true
+            },
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kfw",
+             "text": "Spoons always hold exactly the same weight, but scales are easier to clean",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kfx",
+             "text": "Scales make the water hotter, which gives a more even extraction",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kfy",
+             "text": "Spoons cannot be used with ground coffee, only with whole beans",
+             "correct": false
+            }
+           ],
+           "explanation": "Different roasts have different densities, so the same spoonful can contain different weights of coffee. A scale measures the actual weight and removes that guesswork.",
+           "citations": [
+            "frg_e56vczkalpt5"
+           ],
+           "objectiveIds": [
+            "01m5grqre05e5wtd0nb5kty7qz"
+           ]
+          },
+          {
+           "id": "01m5grqrszjtgbbyf1r9b80kfz",
+           "type": "single",
+           "stem": "You brewed at 1:16 and the cup was a bit too weak, but otherwise balanced. Which ratio should you try next for a stronger cup?",
+           "options": [
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kg0",
+             "text": "1:15",
+             "correct": true
+            },
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kg1",
+             "text": "1:17",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kg2",
+             "text": "1:18",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kg3",
+             "text": "1:16 again with more water",
+             "correct": false
+            }
+           ],
+           "explanation": "A lower second number means more coffee relative to water, so 1:15 gives a stronger cup. 1:17 would make the cup lighter, which is the opposite of what you want.",
+           "citations": [
+            "frg_e56vczkalpt5"
+           ],
+           "objectiveIds": [
+            "01m5grqre05e5wtd0nb5kty7r0"
+           ]
+          },
+          {
+           "id": "01m5grqrszjtgbbyf1r9b80kg4",
+           "type": "single",
+           "stem": "You want to brew a 500 g pot of coffee at a ratio of 1:16. About how much coffee do you need?",
+           "options": [
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kg5",
+             "text": "About 31 g",
+             "correct": true
+            },
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kg6",
+             "text": "About 8,000 g",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kg7",
+             "text": "About 20 g",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrszjtgbbyf1r9b80kg8",
+             "text": "About 320 g",
+             "correct": false
+            }
+           ],
+           "explanation": "To find the coffee for a known total water weight, divide the water by the ratio number: 500 ÷ 16 is about 31 g. Multiplying instead is the tempting mistake, and it would give an impossible amount.",
+           "citations": [
+            "frg_sumksqgjdgac"
+           ],
+           "objectiveIds": [
+            "01m5grqre05e5wtd0nb5kty7r1"
+           ]
+          }
+         ]
+        },
+        "flags": [],
+        "summary": "Shows how to use a scale and a ratio like 1:16 to work out how much coffee and water to use."
+       }
+      ]
+     },
+     {
+      "id": "01m5grqre05e5wtd0nb5kty7r2",
+      "title": "Steering the Flavour",
+      "summary": "Uses grind size, water temperature and tasting to tune the cup.",
+      "lessons": [
+       {
+        "id": "01m5grqre05e5wtd0nb5kty7r3",
+        "title": "Grind, Temperature and Tasting Your Cup",
+        "minutes": 10,
+        "objectives": [
+         {
+          "id": "01m5grqre05e5wtd0nb5kty7r4",
+          "text": "Choose a grind size for espresso, pour-over and French press, and explain why a burr grinder helps.",
+          "citations": [
+           "frg_gcwhkwq2wdvm",
+           "frg_swahk5outkws"
+          ]
+         },
+         {
+          "id": "01m5grqre05e5wtd0nb5kty7r5",
+          "text": "Select a water temperature for light and dark roasts.",
+          "citations": [
+           "frg_k5i74h2gsf33"
+          ]
+         },
+         {
+          "id": "01m5grqre05e5wtd0nb5kty7r6",
+          "text": "Diagnose a sour or bitter cup and choose one adjustment, such as grind, temperature or ratio, for the next brew.",
+          "citations": [
+           "frg_zxjcy7az6ypj",
+           "frg_ordlani6gwx4",
+           "frg_gcwhkwq2wdvm"
+          ]
+         }
+        ],
+        "citations": [
+         "frg_gcwhkwq2wdvm",
+         "frg_swahk5outkws",
+         "frg_k5i74h2gsf33",
+         "frg_zxjcy7az6ypj",
+         "frg_ordlani6gwx4"
+        ],
+        "contentType": "richtext",
+        "status": "generated",
+        "blocks": [
+         {
+          "id": "01m5grqrjvk1tdq2gywy6srwth",
+          "kind": "paragraph",
+          "markdown": "You already know that brewing is extraction, and that a cup can taste sour or bitter depending on how much is pulled out of the grounds. In this lesson you will learn the main dials you can turn to steer that extraction: **grind size** and **water temperature**. You will also learn how to taste your cup and decide what to change next.",
+          "citations": [
+           "frg_gcwhkwq2wdvm",
+           "frg_ordlani6gwx4"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r4",
+           "01m5grqre05e5wtd0nb5kty7r6"
+          ]
+         },
+         {
+          "id": "01m5grqrjvk1tdq2gywy6srwtj",
+          "kind": "paragraph",
+          "markdown": "### Grind size\n\nGrinding exposes the inside of the bean to water. A finer grind has more surface area, so water extracts faster. A coarser grind extracts more slowly. Grind size also controls how fast water flows through a filter: fine grounds slow the flow and lengthen the contact time.",
+          "citations": [
+           "frg_gcwhkwq2wdvm"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r4"
+          ]
+         },
+         {
+          "id": "01m5grqrjvk1tdq2gywy6srwtk",
+          "kind": "table",
+          "markdown": "| Method | Grind size | Looks like |\n|---|---|---|\n| Espresso | Very fine | Flour |\n| Pour-over (e.g. V60) | Medium-fine | Table salt |\n| French press | Coarse | Sea salt |\n\nA French press steeps coffee for about four minutes and uses a metal filter, so the grind must be coarse enough for the filter to hold the grounds back.",
+          "citations": [
+           "frg_swahk5outkws"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r4"
+          ]
+         },
+         {
+          "id": "01m5grqrjvk1tdq2gywy6srwtm",
+          "kind": "callout",
+          "markdown": "**Why a burr grinder?** A burr grinder gives more even particles than a blade grinder, and even particles extract evenly.",
+          "citations": [
+           "frg_swahk5outkws"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r4"
+          ]
+         },
+         {
+          "id": "01m5grqrjvk1tdq2gywy6srwtn",
+          "kind": "paragraph",
+          "markdown": "### Water temperature\n\nWater between 90 and 96 °C extracts coffee well. **Light roasts** are dense and harder to extract, so water just off the boil, around 96 °C, suits them. **Dark roasts** extract easily and can taste harsh with very hot water, so 90 to 92 °C works better. Without a thermometer, let boiled water rest for about 30 seconds before pouring.",
+          "citations": [
+           "frg_k5i74h2gsf33"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r5"
+          ]
+         },
+         {
+          "id": "01m5grqrjvk1tdq2gywy6srwtp",
+          "kind": "paragraph",
+          "markdown": "### Taste, then adjust\n\nLet the coffee cool a little before tasting, because flavours are easier to notice when the cup is warm rather than hot. Notice three things: acidity (bright, sour or flat), sweetness and bitterness, and body (how heavy the coffee feels in your mouth). Write down the recipe and what you taste so you can repeat a good cup.",
+          "citations": [
+           "frg_zxjcy7az6ypj"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r6"
+          ]
+         },
+         {
+          "id": "01m5grqrjvk1tdq2gywy6srwtq",
+          "kind": "table",
+          "markdown": "| What you taste | Likely cause | One change to try |\n|---|---|---|\n| Sour and thin | Under-extraction | Grind finer, or use hotter water |\n| Bitter and drying | Over-extraction | Grind coarser, or use cooler water |\n| Balanced but too weak or too strong | Strength, not extraction | Change the ratio, not the grind |",
+          "citations": [
+           "frg_ordlani6gwx4"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r6"
+          ]
+         },
+         {
+          "id": "01m5grqrjvk1tdq2gywy6srwtr",
+          "kind": "callout",
+          "markdown": "**Change one thing at a time.** Adjust grind size first when a cup tastes off: sour means grind finer, bitter means grind coarser. Changing just one variable lets you taste its effect.",
+          "citations": [
+           "frg_gcwhkwq2wdvm",
+           "frg_ordlani6gwx4"
+          ],
+          "objectiveIds": [
+           "01m5grqre05e5wtd0nb5kty7r6"
+          ]
+         }
+        ],
+        "quiz": {
+         "id": "01m5grqrwza60xkq7rz4drz51q",
+         "questions": [
+          {
+           "id": "01m5grqrtx2tywj0s0qdbjjypw",
+           "type": "single",
+           "stem": "You are brewing in a French press with a four-minute steep. Which grind size should you choose, and why?",
+           "options": [
+            {
+             "id": "01m5grqrtx2tywj0s0qdbjjypx",
+             "text": "Coarse, like sea salt, so the metal filter can hold the grounds back",
+             "correct": true
+            },
+            {
+             "id": "01m5grqrtx2tywj0s0qdbjjypy",
+             "text": "Very fine, like flour, so the coffee extracts as quickly as possible",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrtx2tywj0s0qdbjjypz",
+             "text": "Medium-fine, like table salt, so the water flows through at the same speed as a V60",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrtx2tywj0s0qdbjjyq0",
+             "text": "Very fine, so the metal filter can strain out more of the flavour",
+             "correct": false
+            }
+           ],
+           "explanation": "A French press steeps coffee for about four minutes and uses a metal filter, so the grind must be coarse enough for the filter to hold the grounds back. Very fine grounds would pass through the filter and over-extract.",
+           "citations": [
+            "frg_swahk5outkws"
+           ],
+           "objectiveIds": [
+            "01m5grqre05e5wtd0nb5kty7r4"
+           ]
+          },
+          {
+           "id": "01m5grqrtx2tywj0s0qdbjjyq1",
+           "type": "single",
+           "stem": "You are brewing a dense light roast. Which water temperature suits it best?",
+           "options": [
+            {
+             "id": "01m5grqrtx2tywj0s0qdbjjyq2",
+             "text": "Just off the boil, around 96 °C",
+             "correct": true
+            },
+            {
+             "id": "01m5grqrtx2tywj0s0qdbjjyq3",
+             "text": "90 to 92 °C, the same as for a dark roast",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrtyf5bzgk1drbm3vpb1",
+             "text": "About 80 °C, so the coffee does not taste harsh",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrtyf5bzgk1drbm3vpb2",
+             "text": "Any temperature, as long as the water is clean",
+             "correct": false
+            }
+           ],
+           "explanation": "Light roasts are dense and harder to extract, so they need hotter water of around 96 °C. The cooler 90 to 92 °C range is better for dark roasts, which extract easily and can taste harsh with very hot water.",
+           "citations": [
+            "frg_k5i74h2gsf33"
+           ],
+           "objectiveIds": [
+            "01m5grqre05e5wtd0nb5kty7r5"
+           ]
+          },
+          {
+           "id": "01m5grqrtyf5bzgk1drbm3vpb3",
+           "type": "single",
+           "stem": "Your pour-over tastes sour and thin. What is the best single change to try for the next brew?",
+           "options": [
+            {
+             "id": "01m5grqrtyf5bzgk1drbm3vpb4",
+             "text": "Grind finer",
+             "correct": true
+            },
+            {
+             "id": "01m5grqrtyf5bzgk1drbm3vpb5",
+             "text": "Grind coarser",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrtyf5bzgk1drbm3vpb6",
+             "text": "Use cooler water",
+             "correct": false
+            },
+            {
+             "id": "01m5grqrtyf5bzgk1drbm3vpb7",
+             "text": "Change the ratio and the grind together",
+             "correct": false
+            }
+           ],
+           "explanation": "Sour and thin points to under-extraction, so you want to extract more by grinding finer or using hotter water. Grinding coarser or using cooler water would extract even less. Change only one variable so you can taste its effect.",
+           "citations": [
+            "frg_ordlani6gwx4",
+            "frg_gcwhkwq2wdvm"
+           ],
+           "objectiveIds": [
+            "01m5grqre05e5wtd0nb5kty7r6"
+           ]
+          }
+         ]
+        },
+        "flags": [],
+        "summary": "Explains how grind size and water temperature shape extraction and how to taste and adjust one variable at a time."
+       }
+      ]
+     }
+    ],
+    "finalTest": {
+     "id": "01m5grqrwza60xkq7rz4drz51r",
+     "passScore": 70,
+     "questions": [
+      {
+       "id": "01m5grqrqe6gyrzbj84f7j8baw",
+       "type": "single",
+       "stem": "In what order do the compounds in ground coffee dissolve during a brew?",
+       "options": [
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bax",
+         "text": "Acids first, then sugars, then bitter and woody compounds",
+         "correct": true
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bay",
+         "text": "Sugars first, then acids, then bitter and woody compounds",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8baz",
+         "text": "Bitter compounds first, then sugars, then acids",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bb0",
+         "text": "All compounds dissolve at the same rate",
+         "correct": false
+        }
+       ],
+       "explanation": "Acids dissolve first, sugars come next, and the bitter, woody compounds come last. That is why a cup stopped too early tastes sour and one that runs too long tastes bitter.",
+       "citations": [
+        "frg_3vlbtwoeqwpq"
+       ],
+       "objectiveIds": [
+        "01m5grqre05e5wtd0nb5kty7qt"
+       ]
+      },
+      {
+       "id": "01m5grqrqe6gyrzbj84f7j8bb1",
+       "type": "single",
+       "stem": "Your cup tastes bitter, hollow and drying. What does this most likely mean?",
+       "options": [
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bb2",
+         "text": "It is over-extracted",
+         "correct": true
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bb3",
+         "text": "It is under-extracted",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bb4",
+         "text": "The water was too soft",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bb5",
+         "text": "The cup is perfectly balanced",
+         "correct": false
+        }
+       ],
+       "explanation": "Bitter, hollow and drying flavours point to over-extraction. Under-extraction would taste sour, thin and salty instead.",
+       "citations": [
+        "frg_3vlbtwoeqwpq"
+       ],
+       "objectiveIds": [
+        "01m5grqre05e5wtd0nb5kty7qv"
+       ]
+      },
+      {
+       "id": "01m5grqrqe6gyrzbj84f7j8bb6",
+       "type": "single",
+       "stem": "Why can a strong cup of coffee still be under-extracted?",
+       "options": [
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bb7",
+         "text": "Strength (TDS) and extraction are separate, and the ratio mainly sets strength while grind, temperature and contact time set extraction",
+         "correct": true
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bb8",
+         "text": "Strength and extraction are the same thing, so this cannot happen",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bb9",
+         "text": "Strength is set by grind size, and extraction is set by the ratio",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bba",
+         "text": "A strong cup always has more than 22% extraction",
+         "correct": false
+        }
+       ],
+       "explanation": "Strength is how concentrated the drink is, while extraction is how much of the coffee dissolved. You change strength mostly with the ratio, and extraction mostly with grind, temperature and contact time.",
+       "citations": [
+        "frg_o6vvll4t3sx5"
+       ],
+       "objectiveIds": [
+        "01m5grqre05e5wtd0nb5kty7qw"
+       ]
+      },
+      {
+       "id": "01m5grqrqe6gyrzbj84f7j8bbb",
+       "type": "single",
+       "stem": "You want a slightly lighter filter cup than your 1:16 starting point. Which ratio fits best?",
+       "options": [
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bbc",
+         "text": "1:17",
+         "correct": true
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bbd",
+         "text": "1:15",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bbe",
+         "text": "1:10",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bbf",
+         "text": "1:16 with a finer grind",
+         "correct": false
+        }
+       ],
+       "explanation": "A higher ratio number means more water per gram of coffee, giving a lighter cup. 1:15 would make the cup stronger.",
+       "citations": [
+        "frg_e56vczkalpt5"
+       ],
+       "objectiveIds": [
+        "01m5grqre05e5wtd0nb5kty7r0"
+       ]
+      },
+      {
+       "id": "01m5grqrqe6gyrzbj84f7j8bbg",
+       "type": "single",
+       "stem": "You want to brew a 500 g pot at 1:16. About how much coffee do you need?",
+       "options": [
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bbh",
+         "text": "About 31 g",
+         "correct": true
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bbj",
+         "text": "About 8 g",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bbk",
+         "text": "About 80 g",
+         "correct": false
+        },
+        {
+         "id": "01m5grqrqe6gyrzbj84f7j8bbm",
+         "text": "About 320 g",
+         "correct": false
+        }
+       ],
+       "explanation": "When you know the total water, divide by the ratio: 500 ÷ 16 is about 31 g. Multiplying is only for finding water from a coffee dose.",
+       "citations": [
+        "frg_sumksqgjdgac"
+       ],
+       "objectiveIds": [
+        "01m5grqre05e5wtd0nb5kty7r1"
+       ]
+      }
+     ]
+    },
+    "pages": {
+     "landing": {
+      "component": "Page",
+      "props": {
+       "theme": {
+        "$data": "/site/theme",
+        "$default": "platform"
+       },
+       "title": "Coffee Brewing Fundamentals for Home Baristas | Course",
+       "description": "Learn extraction, brew ratios, grind size and water temperature in this beginner home coffee course. Taste, diagnose and improve every cup."
+      },
+      "children": [
+       {
+        "component": "SiteHeader",
+        "props": {
+         "brand": {
+          "$data": "/site/brand",
+          "$default": "Coffee Brewing Fundamentals for Home Baristas"
+         }
+        }
+       },
+       {
+        "component": "Main",
+        "children": [
+         {
+          "component": "Hero",
+          "props": {
+           "variant": "editorial",
+           "eyebrow": "Course",
+           "title": "Coffee Brewing Fundamentals for Home Baristas",
+           "subtitle": "For beginner home baristas who want to brew a balanced cup by weighing, adjusting grind and temperature, and tasting with confidence.",
+           "body": "This 30-minute beginner course teaches you how extraction works and how to recognise under-extracted and over-extracted coffee by taste. You will learn to separate strength from extraction, and to weigh coffee and water at a chosen brew ratio so every cup is repeatable. The course then shows how grind size and water temperature change the cup for espresso, pour-over, French press and light or dark roasts. You finish by tasting your results and changing one variable at a time to improve the next…",
+           "primaryCta": {
+            "label": "Start learning",
+            "href": {
+             "$data": "/course/startHref",
+             "$default": "/"
+            }
+           },
+           "facts": [
+            {
+             "label": "Length",
+             "value": "30 min"
+            },
+            {
+             "label": "Lessons",
+             "value": "3"
+            },
+            {
+             "label": "Level",
+             "value": "Beginner"
+            },
+            {
+             "label": "Quiz questions",
+             "value": "14"
+            }
+           ]
+          }
+         },
+         {
+          "component": "FeatureList",
+          "props": {
+           "variant": "checks",
+           "title": "What you will be able to do",
+           "items": [
+            {
+             "icon": "check",
+             "title": "Explain extraction and describe how under-extracted and over-extracted coffee t…",
+             "text": "Explain extraction and describe how under-extracted and over-extracted coffee taste."
+            },
+            {
+             "icon": "check",
+             "title": "Distinguish strength (TDS) from extraction and name which variables change each.",
+             "text": "Distinguish strength (TDS) from extraction and name which variables change each."
+            },
+            {
+             "icon": "check",
+             "title": "Calculate coffee and water weights for a given brew ratio and dose.",
+             "text": "Calculate coffee and water weights for a given brew ratio and dose."
+            },
+            {
+             "icon": "check",
+             "title": "Choose a grind size and water temperature suited to a brewing method and roast.",
+             "text": "Choose a grind size and water temperature suited to a brewing method and roast."
+            },
+            {
+             "icon": "check",
+             "title": "Diagnose a cup by taste and adjust one variable for the next brew.",
+             "text": "Diagnose a cup by taste and adjust one variable for the next brew."
+            }
+           ]
+          }
+         },
+         {
+          "component": "Syllabus",
+          "props": {
+           "variant": "folio",
+           "title": "Syllabus",
+           "intro": "For home baristas.",
+           "totalLabel": "3 modules · 3 lessons · 30 min",
+           "lessons": [
+            {
+             "title": "How Coffee Brewing Works",
+             "summary": "Introduces extraction and the difference between extraction and strength.",
+             "minutes": 10,
+             "topics": [
+              {
+               "title": "Extraction and Strength",
+               "format": "reading",
+               "minutes": 10
+              }
+             ]
+            },
+            {
+             "title": "Measuring Your Coffee",
+             "summary": "Teaches how to set the brew ratio and calculate doses by weight.",
+             "minutes": 10,
+             "topics": [
+              {
+               "title": "The Brew Ratio and Dose Maths",
+               "format": "reading",
+               "minutes": 10
+              }
+             ]
+            },
+            {
+             "title": "Steering the Flavour",
+             "summary": "Uses grind size, water temperature and tasting to tune the cup.",
+             "minutes": 10,
+             "topics": [
+              {
+               "title": "Grind, Temperature and Tasting Your Cup",
+               "format": "reading",
+               "minutes": 10
+              }
+             ]
+            }
+           ]
+          }
+         },
+         {
+          "component": "Faq",
+          "props": {
+           "title": "Questions",
+           "items": [
+            {
+             "q": "Who is this course for?",
+             "a": "It is designed for home baristas at beginner level who want to brew better coffee at home and understand why their cups taste the way they do."
+            },
+            {
+             "q": "Do I need special equipment?",
+             "a": "A kitchen scale is recommended, because the course teaches you to weigh coffee and water rather than measure with spoons. A thermometer is helpful for water temperature, but the course also explains a way to rest boiled water without one. Grinding with a burr grinder is recommended for more even particles."
+            },
+            {
+             "q": "How long does the course take?",
+             "a": "The course takes about 30 minutes in total, split into three 10-minute lessons, and each lesson ends with a short quiz. A final test is also included."
+            },
+            {
+             "q": "What will I be able to do after completing it?",
+             "a": "You will be able to identify under- and over-extracted coffee by taste, calculate coffee and water weights for a given ratio and dose, choose a grind size and water temperature for your method and roast, and adjust one variable to improve your next brew."
+            }
+           ]
+          }
+         }
+        ]
+       },
+       {
+        "component": "SiteFooter",
+        "props": {
+         "brand": {
+          "$data": "/site/brand",
+          "$default": "Coffee Brewing Fundamentals for Home Baristas"
+         }
+        }
+       }
+      ]
+     },
+     "header": {
+      "component": "CourseHeader",
+      "props": {
+       "variant": "editorial",
+       "eyebrow": "Course",
+       "title": "Coffee Brewing Fundamentals for Home Baristas",
+       "subtitle": "For beginner home baristas who want to brew a balanced cup by weighing, adjusting grind and temperature, and tasting with confidence.",
+       "summary": "This 30-minute beginner course teaches you how extraction works and how to recognise under-extracted and over-extracted coffee by taste. You will learn to separate strength from extraction, and to weigh coffee and water at a chosen brew ratio so every cup is repeatable. The course then shows how grind size and water temperature change the cup for espresso, pour-over, French press and light or dark roasts. You finish by tasting your results and changing one variable at a time to improve the next brew.",
+       "facts": [
+        {
+         "label": "Length",
+         "value": "30 min"
+        },
+        {
+         "label": "Level",
+         "value": "Beginner"
+        },
+        {
+         "label": "Language",
+         "value": "EN"
+        }
+       ]
+      }
+     }
+    }
+   },
+   "fragments": {
+    "frg_3vlbtwoeqwpq": "§1 Coffee",
+    "frg_o6vvll4t3sx5": "§1 Coffee",
+    "frg_e56vczkalpt5": "§1 Coffee",
+    "frg_sumksqgjdgac": "§1 Coffee",
+    "frg_gcwhkwq2wdvm": "§1 Coffee",
+    "frg_swahk5outkws": "§1 Coffee",
+    "frg_k5i74h2gsf33": "§1 Coffee",
+    "frg_zxjcy7az6ypj": "§1 Coffee",
+    "frg_ordlani6gwx4": "§1 Coffee"
+   },
+   "createdAt": "2026-10-22T03:55:17+00:00"
+  },
+  "message": "OK"
+ },
+ "pushes": {
+  "plain": {
+   "status": 201,
+   "response": {
+    "success": true,
+    "data": {
+     "unchanged": false,
+     "version": {
+      "id": "01m5gvzfbb9snyztwfdwxbpzhw",
+      "number": 2,
+      "kind": "import",
+      "status": "proposed",
+      "parentId": "01m5gvzf1s8tb79xv3q7v670e9"
+     },
+     "counts": {
+      "added": 0,
+      "changed": 1,
+      "removed": 0
+     },
+     "changes": [
+      {
+       "id": "01m5grqrht19h0fp5trbsm1rfs",
+       "type": "block",
+       "label": "Lesson 1.1 › block 1",
+       "kind": "changed",
+       "ancestors": [
+        "01m5grqre05e5wtd0nb5kty7qr",
+        "01m5grqre05e5wtd0nb5kty7qs"
+       ],
+       "fields": [
+        {
+         "field": "markdown",
+         "label": "Content",
+         "before": "You already know what a good cup of coffee tastes like, and what a bad one tastes like: sharp and sour, or harsh and bitter. In this lesson you will learn what is going on in the cup. It comes down to one idea, **extraction**, and one idea that is easy to confuse with it, **strength**.",
+         "after": "You already know what a good cup of coffee tastes like, and what a bad one tastes like: sharp and sour, or harsh and bitter. In this lesson you will learn what is going on in the cup. It comes down to one idea, **extraction**, and one idea that is easy to confuse with it, **strength**. An added sentence."
+        }
+       ]
+      }
+     ],
+     "warnings": [],
+     "handEdited": [
+      "Lesson 1.1 › block 1"
+     ],
+     "merged": null
+    },
+    "message": "OK"
+   },
+   "baseVersionId": "01m5gvzf1s8tb79xv3q7v670e9",
+   "studioVersionId": null,
+   "sessionId": "01m5gvzf17hg7n65zyxxtjetmv"
+  },
+  "disjoint": {
+   "status": 201,
+   "response": {
+    "success": true,
+    "data": {
+     "unchanged": false,
+     "version": {
+      "id": "01m5gvzfj3w10qcpa2qcp94e4t",
+      "number": 3,
+      "kind": "import",
+      "status": "proposed",
+      "parentId": "01m5gvzfgtvyb0t0z6jrk2n2x6"
+     },
+     "counts": {
+      "added": 0,
+      "changed": 1,
+      "removed": 0
+     },
+     "changes": [
+      {
+       "id": "01m5grqrht19h0fp5trbsm1rfs",
+       "type": "block",
+       "label": "Lesson 1.1 › block 1",
+       "kind": "changed",
+       "ancestors": [
+        "01m5grqre05e5wtd0nb5kty7qr",
+        "01m5grqre05e5wtd0nb5kty7qs"
+       ],
+       "fields": [
+        {
+         "field": "markdown",
+         "label": "Content",
+         "before": "You already know what a good cup of coffee tastes like, and what a bad one tastes like: sharp and sour, or harsh and bitter. In this lesson you will learn what is going on in the cup. It comes down to one idea, **extraction**, and one idea that is easy to confuse with it, **strength**.",
+         "after": "You already know what a good cup of coffee tastes like, and what a bad one tastes like: sharp and sour, or harsh and bitter. In this lesson you will learn what is going on in the cup. It comes down to one idea, **extraction**, and one idea that is easy to confuse with it, **strength**. An added sentence."
+        }
+       ]
+      }
+     ],
+     "warnings": [],
+     "handEdited": [
+      "Lesson 1.1 › block 1"
+     ],
+     "merged": {
+      "baseVersionId": "01m5gvzfgman01a3eda8d0fngw",
+      "baseVersionNumber": 1,
+      "currentVersionId": "01m5gvzfgtvyb0t0z6jrk2n2x6",
+      "currentVersionNumber": 2,
+      "fromPush": [
+       {
+        "id": "01m5grqrht19h0fp5trbsm1rfs",
+        "kind": "changed"
+       }
+      ],
+      "fromServer": [
+       {
+        "id": "01m5grqre05e5wtd0nb5kty7qy",
+        "kind": "changed"
+       }
+      ],
+      "notes": []
+     }
+    },
+    "message": "OK"
+   },
+   "baseVersionId": "01m5gvzfgman01a3eda8d0fngw",
+   "studioVersionId": "01m5gvzfgtvyb0t0z6jrk2n2x6",
+   "sessionId": "01m5gvzfg81a7gygh8a9xswhjd"
+  },
+  "conflict": {
+   "status": 409,
+   "response": {
+    "success": false,
+    "message": "Your folder and the server changed the same elements since your base version; pull and resolve the conflicts first.",
+    "code": "BASE_OUTDATED",
+    "data": {
+     "currentVersionId": "01m5gvzfn5vrcv0zag93w2tbpv",
+     "currentVersionNumber": 2,
+     "remote": [
+      {
+       "id": "01m5grqrht19h0fp5trbsm1rfs",
+       "type": "block",
+       "label": "Lesson 1.1 › block 1",
+       "kind": "changed",
+       "ancestors": [
+        "01m5grqre05e5wtd0nb5kty7qr",
+        "01m5grqre05e5wtd0nb5kty7qs"
+       ],
+       "fields": [
+        {
+         "field": "markdown",
+         "label": "Content",
+         "before": "You already know what a good cup of coffee tastes like, and what a bad one tastes like: sharp and sour, or harsh and bitter. In this lesson you will learn what is going on in the cup. It comes down to one idea, **extraction**, and one idea that is easy to confuse with it, **strength**.",
+         "after": "The studio rewrote this paragraph."
+        }
+       ]
+      }
+     ],
+     "conflicts": [
+      {
+       "elementId": "01m5grqrht19h0fp5trbsm1rfs",
+       "type": "block",
+       "label": "Lesson 1.1 › block 1",
+       "kind": "edit-edit",
+       "field": "markdown",
+       "fields": [
+        {
+         "field": "markdown",
+         "base": "You already know what a good cup of coffee tastes like, and what a bad one tastes like: sharp and sour, or harsh and bitter. In this lesson you will learn what is going on in the cup. It comes down to one idea, **extraction**, and one idea that is easy to confuse with it, **strength**.",
+         "ours": "The author rewrote this paragraph.",
+         "theirs": "The studio rewrote this paragraph."
+        }
+       ],
+       "held": 0
+      }
+     ]
+    }
+   },
+   "baseVersionId": "01m5gvzfmykj1gmsydqddz0tbz",
+   "studioVersionId": "01m5gvzfn5vrcv0zag93w2tbpv",
+   "sessionId": "01m5gvzfmew3dtjv3xpq9gh1vd"
+  },
+  "delete against edit": {
+   "status": 409,
+   "response": {
+    "success": false,
+    "message": "Your folder and the server changed the same elements since your base version; pull and resolve the conflicts first.",
+    "code": "BASE_OUTDATED",
+    "data": {
+     "currentVersionId": "01m5gvzfrz2gyty2wm70za8n32",
+     "currentVersionNumber": 2,
+     "remote": [
+      {
+       "id": "01m5grqrht19h0fp5trbsm1rft",
+       "type": "block",
+       "label": "Lesson 1.1 › block 2",
+       "kind": "changed",
+       "ancestors": [
+        "01m5grqre05e5wtd0nb5kty7qr",
+        "01m5grqre05e5wtd0nb5kty7qs"
+       ],
+       "fields": [
+        {
+         "field": "markdown",
+         "label": "Content",
+         "before": "### What extraction means\n\nBrewing coffee is extraction: hot water dissolves soluble compounds from ground coffee. Roughly 30% of the mass of a roasted bean can dissolve in water, but a pleasant cup extracts only about **18 to 22%** of the dry coffee.\n\nThe compounds do not dissolve all at once. They come out in a set order:\n\n1. **Acids** dissolve first.\n2. **Sugars** come next.\n3. **Bitter, woody compounds** come last.",
+         "after": "The studio rewrote the second paragraph."
+        }
+       ]
+      }
+     ],
+     "conflicts": [
+      {
+       "elementId": "01m5grqrht19h0fp5trbsm1rft",
+       "type": "block",
+       "label": "Lesson 1.1 › block 2",
+       "kind": "removed-ours",
+       "field": "citations",
+       "fields": [
+        {
+         "field": "citations",
+         "base": [
+          "frg_3vlbtwoeqwpq"
+         ],
+         "ours": null,
+         "theirs": [
+          "frg_3vlbtwoeqwpq"
+         ]
+        },
+        {
+         "field": "id",
+         "base": "01m5grqrht19h0fp5trbsm1rft",
+         "ours": null,
+         "theirs": "01m5grqrht19h0fp5trbsm1rft"
+        },
+        {
+         "field": "kind",
+         "base": "paragraph",
+         "ours": null,
+         "theirs": "paragraph"
+        },
+        {
+         "field": "markdown",
+         "base": "### What extraction means\n\nBrewing coffee is extraction: hot water dissolves soluble compounds from ground coffee. Roughly 30% of the mass of a roasted bean can dissolve in water, but a pleasant cup extracts only about **18 to 22%** of the dry coffee.\n\nThe compounds do not dissolve all at once. They come out in a set order:\n\n1. **Acids** dissolve first.\n2. **Sugars** come next.\n3. **Bitter, woo...",
+         "ours": null,
+         "theirs": "The studio rewrote the second paragraph."
+        },
+        {
+         "field": "objectiveIds",
+         "base": [
+          "01m5grqre05e5wtd0nb5kty7qt"
+         ],
+         "ours": null,
+         "theirs": [
+          "01m5grqre05e5wtd0nb5kty7qt"
+         ]
+        }
+       ],
+       "held": 0
+      }
+     ]
+    }
+   },
+   "baseVersionId": "01m5gvzfrrpebpcm2hgj9j29c6",
+   "studioVersionId": "01m5gvzfrz2gyty2wm70za8n32",
+   "sessionId": "01m5gvzfraakr986raekes0ywg"
+  }
+ },
+ "absorb": {
+  "export": {
+   "success": true,
+   "data": {
+    "courseId": 189,
+    "sessionId": "01m5gvzg4dg2d2xf20nd7z775a",
+    "versionId": "01m5gvzhjzney6qwbp85dhcf39",
+    "versionNumber": 2,
+    "kind": "content",
+    "status": "approved",
+    "appliedVersionId": "01m5gvzhjzney6qwbp85dhcf39",
+    "schemaVersion": 3,
+    "document": {
+     "schemaVersion": 3,
+     "sources": [
+      {
+       "id": "01m5gvzg5a1de7yp1gs59fkvny",
+       "title": "Coffee Brewing Fundamentals",
+       "fragmentCount": 13
+      }
+     ],
+     "course": {
+      "id": "01m5gvzgebmj2kzt0da3v9msam",
+      "title": "Coffee Brewing Fundamentals",
+      "language": "en",
+      "objectives": [
+       {
+        "id": "01m5gvzgec21441y6zpkk0a7jb",
+        "text": "Apply what Introduction covers",
+        "citations": [
+         "frg_7wtduuffo4jg"
+        ]
+       },
+       {
+        "id": "01m5gvzgec21441y6zpkk0a7jc",
+        "text": "Apply what The brew ratio covers",
+        "citations": [
+         "frg_a7xhfuqod5oj"
+        ]
+       },
+       {
+        "id": "01m5gvzgec21441y6zpkk0a7jd",
+        "text": "Apply what Why grind size matters covers",
+        "citations": [
+         "frg_77aislvmhmbi"
+        ]
+       },
+       {
+        "id": "01m5gvzgec21441y6zpkk0a7je",
+        "text": "Apply what Temperature covers",
+        "citations": [
+         "frg_dqhfpgi3c66t"
+        ]
+       }
+      ],
+      "subtitle": "Learn coffee brewing fundamentals step by step, from the source",
+      "description": "A practical course built from your own material. Each lesson explains one part of the source and cites the passage it comes from. Short quizzes help you check what you learned.",
+      "audience": "home baristas",
+      "seo": {
+       "title": "Coffee Brewing Fundamentals",
+       "description": "A practical course on coffee brewing fundamentals, built from cited source material."
+      },
+      "faq": [
+       {
+        "question": "Who is this course for?",
+        "answer": "Anyone who wants to learn the topic from the ground up.",
+        "citations": []
+       },
+       {
+        "question": "How long does it take?",
+        "answer": "The lessons are short; most learners finish in one sitting.",
+        "citations": []
+       },
+       {
+        "question": "Where does the content come from?",
+        "answer": "Every lesson cites the section of the source it is based on.",
+        "citations": []
+       }
+      ]
+     },
+     "modules": [
+      {
+       "id": "01m5gvzgec21441y6zpkk0a7jf",
+       "title": "Introduction",
+       "summary": "Lessons drawn from section 1 of the source.",
+       "lessons": [
+        {
+         "id": "01m5gvzgec21441y6zpkk0a7jg",
+         "title": "What extraction means",
+         "minutes": 3,
+         "objectives": [
+          {
+           "id": "01m5gvzgec21441y6zpkk0a7jh",
+           "text": "Explain the main points of what extraction means",
+           "citations": [
+            "frg_7wtduuffo4jg"
+           ]
+          }
+         ],
+         "citations": [
+          "frg_7wtduuffo4jg"
+         ],
+         "contentType": "richtext",
+         "status": "generated",
+         "blocks": [
+          {
+           "id": "01m5gvzgm6vd586amz058fmved",
+           "kind": "paragraph",
+           "markdown": "Brewing coffee is extraction: hot water dissolves soluble compounds from ground coffee. Roughly 30% of the mass of a roasted bean can dissolve in water, but a pleasant cup extracts only about 18 to 22% of the dry coffee. Acids dissolve first, then sugars, and the bitter, woody compounds come last.",
+           "citations": [
+            "frg_7wtduuffo4jg"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jh"
+           ]
+          },
+          {
+           "id": "01m5gvzgm6vd586amz058fmvee",
+           "kind": "callout",
+           "markdown": "**Key takeaway:** Brewing coffee is extraction: hot water dissolves soluble compounds from ground coffee.",
+           "citations": [
+            "frg_7wtduuffo4jg"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jh"
+           ]
+          }
+         ],
+         "quiz": {
+          "id": "01m5gvzhjpy4mxvs25fpk63gfp",
+          "questions": [
+           {
+            "id": "01m5gvzh76n03g87t3790vyyam",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §1.1 What extraction means?",
+            "options": [
+             {
+              "id": "01m5gvzh76n03g87t3790vyyan",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzh76n03g87t3790vyyap",
+              "text": "Brewing coffee is extraction: hot water dissolves soluble compounds from ground coffee.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzh76n03g87t3790vyyaq",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: Brewing coffee is extraction: hot water dissolves soluble compounds from ground coffee.",
+            "citations": [
+             "frg_7wtduuffo4jg"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jh"
+            ]
+           },
+           {
+            "id": "01m5gvzh76n03g87t3790vyyar",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §1.1 What extraction means?",
+            "options": [
+             {
+              "id": "01m5gvzh76n03g87t3790vyyas",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzh76n03g87t3790vyyat",
+              "text": "Roughly 30% of the mass of a roasted bean can dissolve in water, but a pleasant cup extracts only about 18 to 22% of the dry coffee.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzh76n03g87t3790vyyav",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: Roughly 30% of the mass of a roasted bean can dissolve in water, but a pleasant cup extracts only about 18 to 22% of the dry coffee.",
+            "citations": [
+             "frg_7wtduuffo4jg"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jh"
+            ]
+           }
+          ]
+         },
+         "flags": [],
+         "summary": "What the source says about what extraction means."
+        },
+        {
+         "id": "01m5gvzgec21441y6zpkk0a7jj",
+         "title": "Strength is not extraction",
+         "minutes": 3,
+         "objectives": [
+          {
+           "id": "01m5gvzgec21441y6zpkk0a7jk",
+           "text": "Explain the main points of strength is not extraction",
+           "citations": [
+            "frg_6hosicrtlpaj"
+           ]
+          }
+         ],
+         "citations": [
+          "frg_6hosicrtlpaj"
+         ],
+         "contentType": "richtext",
+         "status": "generated",
+         "blocks": [
+          {
+           "id": "01m5gvzgqvewss7n4z3829x1rj",
+           "kind": "paragraph",
+           "markdown": "Strength describes how concentrated the drink is: how much dissolved coffee ends up in the cup. It is measured as total dissolved solids (TDS). Filter coffee usually tastes best between 1.15% and 35% TDS.",
+           "citations": [
+            "frg_6hosicrtlpaj"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jk"
+           ]
+          },
+          {
+           "id": "01m5gvzgqvewss7n4z3829x1rk",
+           "kind": "callout",
+           "markdown": "**Key takeaway:** Strength describes how concentrated the drink is: how much dissolved coffee ends up in the cup.",
+           "citations": [
+            "frg_6hosicrtlpaj"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jk"
+           ]
+          }
+         ],
+         "quiz": {
+          "id": "01m5gvzhjqk8c5ka65xm5pkhja",
+          "questions": [
+           {
+            "id": "01m5gvzhensa3snvd77nkk6gx6",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §1.2 Strength is not extraction?",
+            "options": [
+             {
+              "id": "01m5gvzhensa3snvd77nkk6gx7",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhensa3snvd77nkk6gx8",
+              "text": "Strength describes how concentrated the drink is: how much dissolved coffee ends up in the cup.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhensa3snvd77nkk6gx9",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: Strength describes how concentrated the drink is: how much dissolved coffee ends up in the cup.",
+            "citations": [
+             "frg_6hosicrtlpaj"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jk"
+            ]
+           },
+           {
+            "id": "01m5gvzhensa3snvd77nkk6gxa",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §1.2 Strength is not extraction?",
+            "options": [
+             {
+              "id": "01m5gvzhensa3snvd77nkk6gxb",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhensa3snvd77nkk6gxc",
+              "text": "It is measured as total dissolved solids (TDS).",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhensa3snvd77nkk6gxd",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: It is measured as total dissolved solids (TDS).",
+            "citations": [
+             "frg_6hosicrtlpaj"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jk"
+            ]
+           }
+          ]
+         },
+         "flags": [],
+         "summary": "What the source says about strength is not extraction."
+        }
+       ]
+      },
+      {
+       "id": "01m5gvzgec21441y6zpkk0a7jm",
+       "title": "The brew ratio",
+       "summary": "Lessons drawn from section 2 of the source.",
+       "lessons": [
+        {
+         "id": "01m5gvzgec21441y6zpkk0a7jn",
+         "title": "The brew ratio",
+         "minutes": 3,
+         "objectives": [
+          {
+           "id": "01m5gvzgec21441y6zpkk0a7jp",
+           "text": "Explain the main points of the brew ratio",
+           "citations": [
+            "frg_a7xhfuqod5oj"
+           ]
+          }
+         ],
+         "citations": [
+          "frg_a7xhfuqod5oj"
+         ],
+         "contentType": "richtext",
+         "status": "generated",
+         "blocks": [
+          {
+           "id": "01m5gvzgrjxj37h04pk00sn63k",
+           "kind": "paragraph",
+           "markdown": "The brew ratio is the weight of coffee compared to the weight of water. A ratio of 1:16 means one gram of coffee for every sixteen grams of water. Most filter recipes sit between 1:15 and 1:17; 1:16 is a good starting point.",
+           "citations": [
+            "frg_a7xhfuqod5oj"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jp"
+           ]
+          },
+          {
+           "id": "01m5gvzgrjxj37h04pk00sn63m",
+           "kind": "callout",
+           "markdown": "**Key takeaway:** The brew ratio is the weight of coffee compared to the weight of water.",
+           "citations": [
+            "frg_a7xhfuqod5oj"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jp"
+           ]
+          }
+         ],
+         "quiz": {
+          "id": "01m5gvzhjry2nekx6a49y6hwxc",
+          "questions": [
+           {
+            "id": "01m5gvzhfnxbqnw6tbk6qzkk7m",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §2.1 The brew ratio?",
+            "options": [
+             {
+              "id": "01m5gvzhfnxbqnw6tbk6qzkk7n",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhfnxbqnw6tbk6qzkk7p",
+              "text": "The brew ratio is the weight of coffee compared to the weight of water.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhfnxbqnw6tbk6qzkk7q",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: The brew ratio is the weight of coffee compared to the weight of water.",
+            "citations": [
+             "frg_a7xhfuqod5oj"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jp"
+            ]
+           },
+           {
+            "id": "01m5gvzhfnxbqnw6tbk6qzkk7r",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §2.1 The brew ratio?",
+            "options": [
+             {
+              "id": "01m5gvzhfnxbqnw6tbk6qzkk7s",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhfnxbqnw6tbk6qzkk7t",
+              "text": "A ratio of 1:16 means one gram of coffee for every sixteen grams of water.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhfnxbqnw6tbk6qzkk7v",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: A ratio of 1:16 means one gram of coffee for every sixteen grams of water.",
+            "citations": [
+             "frg_a7xhfuqod5oj"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jp"
+            ]
+           }
+          ]
+         },
+         "flags": [],
+         "summary": "What the source says about the brew ratio."
+        },
+        {
+         "id": "01m5gvzgec21441y6zpkk0a7jq",
+         "title": "Calculating a dose",
+         "minutes": 3,
+         "objectives": [
+          {
+           "id": "01m5gvzgec21441y6zpkk0a7jr",
+           "text": "Explain the main points of calculating a dose",
+           "citations": [
+            "frg_yhidequja3rc"
+           ]
+          }
+         ],
+         "citations": [
+          "frg_yhidequja3rc"
+         ],
+         "contentType": "richtext",
+         "status": "generated",
+         "blocks": [
+          {
+           "id": "01m5gvzgs9xr4h3g67r3j533qn",
+           "kind": "paragraph",
+           "markdown": "To find the water for a dose, multiply the coffee weight by the ratio. For 20 g of coffee at 1:16 you need 320 g of water (20 × 16). To brew a 500 g pot at 1:16, divide instead: 500 ÷ 16 gives about 31 g of coffee.",
+           "citations": [
+            "frg_yhidequja3rc"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jr"
+           ]
+          },
+          {
+           "id": "01m5gvzgs9xr4h3g67r3j533qp",
+           "kind": "callout",
+           "markdown": "**Key takeaway:** To find the water for a dose, multiply the coffee weight by the ratio.",
+           "citations": [
+            "frg_yhidequja3rc"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jr"
+           ]
+          }
+         ],
+         "quiz": {
+          "id": "01m5gvzhjsxqg7wfd7k114n6wk",
+          "questions": [
+           {
+            "id": "01m5gvzhgnpf7dh5ss6hsk67np",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §2.2 Calculating a dose?",
+            "options": [
+             {
+              "id": "01m5gvzhgnpf7dh5ss6hsk67nq",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhgnpf7dh5ss6hsk67nr",
+              "text": "To find the water for a dose, multiply the coffee weight by the ratio.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhgnpf7dh5ss6hsk67ns",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: To find the water for a dose, multiply the coffee weight by the ratio.",
+            "citations": [
+             "frg_yhidequja3rc"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jr"
+            ]
+           },
+           {
+            "id": "01m5gvzhgnpf7dh5ss6hsk67nt",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §2.2 Calculating a dose?",
+            "options": [
+             {
+              "id": "01m5gvzhgnpf7dh5ss6hsk67nv",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhgnpf7dh5ss6hsk67nw",
+              "text": "For 20 g of coffee at 1:16 you need 320 g of water (20 × 16).",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhgnpf7dh5ss6hsk67nx",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: For 20 g of coffee at 1:16 you need 320 g of water (20 × 16).",
+            "citations": [
+             "frg_yhidequja3rc"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jr"
+            ]
+           }
+          ]
+         },
+         "flags": [],
+         "summary": "What the source says about calculating a dose."
+        }
+       ]
+      },
+      {
+       "id": "01m5gvzgec21441y6zpkk0a7js",
+       "title": "Why grind size matters",
+       "summary": "Lessons drawn from section 3 of the source.",
+       "lessons": [
+        {
+         "id": "01m5gvzgec21441y6zpkk0a7jt",
+         "title": "Why grind size matters",
+         "minutes": 3,
+         "objectives": [
+          {
+           "id": "01m5gvzgec21441y6zpkk0a7jv",
+           "text": "Explain the main points of why grind size matters",
+           "citations": [
+            "frg_77aislvmhmbi"
+           ]
+          }
+         ],
+         "citations": [
+          "frg_77aislvmhmbi"
+         ],
+         "contentType": "richtext",
+         "status": "generated",
+         "blocks": [
+          {
+           "id": "01m5gvzgmwbggphjn05s20c2z0",
+           "kind": "paragraph",
+           "markdown": "Grinding exposes the inside of the bean to water. A finer grind has more surface area, so water extracts faster; a coarser grind extracts more slowly. Grind size also controls how fast water flows through a filter: fine grounds slow the flow and lengthen the contact time.",
+           "citations": [
+            "frg_77aislvmhmbi"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jv"
+           ]
+          },
+          {
+           "id": "01m5gvzgmwbggphjn05s20c2z1",
+           "kind": "callout",
+           "markdown": "**Key takeaway:** Grinding exposes the inside of the bean to water.",
+           "citations": [
+            "frg_77aislvmhmbi"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jv"
+           ]
+          }
+         ],
+         "quiz": {
+          "id": "01m5gvzhjt068srm3qswqhncv6",
+          "questions": [
+           {
+            "id": "01m5gvzh9874tvadw12z8ykt57",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §3.1 Why grind size matters?",
+            "options": [
+             {
+              "id": "01m5gvzh9874tvadw12z8ykt58",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzh9874tvadw12z8ykt59",
+              "text": "Grinding exposes the inside of the bean to water.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzh9874tvadw12z8ykt5a",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: Grinding exposes the inside of the bean to water.",
+            "citations": [
+             "frg_77aislvmhmbi"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jv"
+            ]
+           },
+           {
+            "id": "01m5gvzh9874tvadw12z8ykt5b",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §3.1 Why grind size matters?",
+            "options": [
+             {
+              "id": "01m5gvzh9874tvadw12z8ykt5c",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzh9874tvadw12z8ykt5d",
+              "text": "A finer grind has more surface area, so water extracts faster; a coarser grind extracts more slowly.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzh9874tvadw12z8ykt5e",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: A finer grind has more surface area, so water extracts faster; a coarser grind extracts more slowly.",
+            "citations": [
+             "frg_77aislvmhmbi"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jv"
+            ]
+           }
+          ]
+         },
+         "flags": [],
+         "summary": "What the source says about why grind size matters."
+        },
+        {
+         "id": "01m5gvzgec21441y6zpkk0a7jw",
+         "title": "Matching grind to method",
+         "minutes": 3,
+         "objectives": [
+          {
+           "id": "01m5gvzgec21441y6zpkk0a7jx",
+           "text": "Explain the main points of matching grind to method",
+           "citations": [
+            "frg_xkmayn6qes3j"
+           ]
+          }
+         ],
+         "citations": [
+          "frg_xkmayn6qes3j"
+         ],
+         "contentType": "richtext",
+         "status": "generated",
+         "blocks": [
+          {
+           "id": "01m5gvzgnhmt015v8pjz7z34wk",
+           "kind": "paragraph",
+           "markdown": "Each brewing method suits a range of grind sizes. Espresso needs a very fine grind, like flour. A pour-over cone such as a V60 works with a medium-fine grind, similar to table salt.",
+           "citations": [
+            "frg_xkmayn6qes3j"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jx"
+           ]
+          },
+          {
+           "id": "01m5gvzgnhmt015v8pjz7z34wm",
+           "kind": "callout",
+           "markdown": "**Key takeaway:** Each brewing method suits a range of grind sizes.",
+           "citations": [
+            "frg_xkmayn6qes3j"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7jx"
+           ]
+          }
+         ],
+         "quiz": {
+          "id": "01m5gvzhjt068srm3qswqhncv7",
+          "questions": [
+           {
+            "id": "01m5gvzhap331sa94687w6j716",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §3.2 Matching grind to method?",
+            "options": [
+             {
+              "id": "01m5gvzhap331sa94687w6j717",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhap331sa94687w6j718",
+              "text": "Each brewing method suits a range of grind sizes.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhap331sa94687w6j719",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: Each brewing method suits a range of grind sizes.",
+            "citations": [
+             "frg_xkmayn6qes3j"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jx"
+            ]
+           },
+           {
+            "id": "01m5gvzhap331sa94687w6j71a",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §3.2 Matching grind to method?",
+            "options": [
+             {
+              "id": "01m5gvzhap331sa94687w6j71b",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhap331sa94687w6j71c",
+              "text": "Espresso needs a very fine grind, like flour.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhap331sa94687w6j71d",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: Espresso needs a very fine grind, like flour.",
+            "citations": [
+             "frg_xkmayn6qes3j"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7jx"
+            ]
+           }
+          ]
+         },
+         "flags": [],
+         "summary": "What the source says about matching grind to method."
+        }
+       ]
+      },
+      {
+       "id": "01m5gvzgec21441y6zpkk0a7jy",
+       "title": "Temperature",
+       "summary": "Lessons drawn from section 4 of the source.",
+       "lessons": [
+        {
+         "id": "01m5gvzgec21441y6zpkk0a7jz",
+         "title": "Temperature",
+         "minutes": 3,
+         "objectives": [
+          {
+           "id": "01m5gvzgec21441y6zpkk0a7k0",
+           "text": "Explain the main points of temperature",
+           "citations": [
+            "frg_dqhfpgi3c66t"
+           ]
+          }
+         ],
+         "citations": [
+          "frg_dqhfpgi3c66t"
+         ],
+         "contentType": "richtext",
+         "status": "generated",
+         "blocks": [
+          {
+           "id": "01m5gvzgp6e9fczyrbkq8dv28s",
+           "kind": "paragraph",
+           "markdown": "Water between 90 and 96 °C extracts coffee well. Water just off the boil, around 96 °C, suits light roasts, which are dense and harder to extract. Dark roasts extract easily and can taste harsh with very hot water, so 90 to 92 °C works better for them.",
+           "citations": [
+            "frg_dqhfpgi3c66t"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7k0"
+           ]
+          },
+          {
+           "id": "01m5gvzgp6e9fczyrbkq8dv28t",
+           "kind": "callout",
+           "markdown": "**Key takeaway:** Water between 90 and 96 °C extracts coffee well.",
+           "citations": [
+            "frg_dqhfpgi3c66t"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7k0"
+           ]
+          }
+         ],
+         "quiz": {
+          "id": "01m5gvzhjt068srm3qswqhncv8",
+          "questions": [
+           {
+            "id": "01m5gvzhbx42751apvfn8ngvhh",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §4.1 Temperature?",
+            "options": [
+             {
+              "id": "01m5gvzhbx42751apvfn8ngvhj",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhbx42751apvfn8ngvhk",
+              "text": "Water between 90 and 96 °C extracts coffee well.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhbx42751apvfn8ngvhm",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: Water between 90 and 96 °C extracts coffee well.",
+            "citations": [
+             "frg_dqhfpgi3c66t"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7k0"
+            ]
+           },
+           {
+            "id": "01m5gvzhbx42751apvfn8ngvhn",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §4.1 Temperature?",
+            "options": [
+             {
+              "id": "01m5gvzhbx42751apvfn8ngvhp",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhbx42751apvfn8ngvhq",
+              "text": "Water just off the boil, around 96 °C, suits light roasts, which are dense and harder to extract.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhbx42751apvfn8ngvhr",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: Water just off the boil, around 96 °C, suits light roasts, which are dense and harder to extract.",
+            "citations": [
+             "frg_dqhfpgi3c66t"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7k0"
+            ]
+           }
+          ]
+         },
+         "flags": [],
+         "summary": "What the source says about temperature."
+        },
+        {
+         "id": "01m5gvzgec21441y6zpkk0a7k1",
+         "title": "Water quality",
+         "minutes": 9,
+         "objectives": [
+          {
+           "id": "01m5gvzgec21441y6zpkk0a7k2",
+           "text": "Explain the main points of water quality",
+           "citations": [
+            "frg_w6u2536423xc"
+           ]
+          }
+         ],
+         "citations": [
+          "frg_w6u2536423xc"
+         ],
+         "contentType": "richtext",
+         "status": "generated",
+         "blocks": [
+          {
+           "id": "01m5gvzgpw9gz04y407gkpxwm4",
+           "kind": "paragraph",
+           "markdown": "A cup of filter coffee is about 98% water, so the water itself matters. Very soft water can make coffee taste flat, while very hard water dulls acidity and leaves scale in kettles. Filtered tap water is a good choice in most places.",
+           "citations": [
+            "frg_w6u2536423xc"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7k2"
+           ]
+          },
+          {
+           "id": "01m5gvzgpw9gz04y407gkpxwm5",
+           "kind": "callout",
+           "markdown": "**Key takeaway:** A cup of filter coffee is about 98% water, so the water itself matters.",
+           "citations": [
+            "frg_w6u2536423xc"
+           ],
+           "objectiveIds": [
+            "01m5gvzgec21441y6zpkk0a7k2"
+           ]
+          }
+         ],
+         "quiz": {
+          "id": "01m5gvzhjva0tzmfc4sravhgje",
+          "questions": [
+           {
+            "id": "01m5gvzhd38e5gtcnjhj6w309w",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §4.2 Water quality?",
+            "options": [
+             {
+              "id": "01m5gvzhd38e5gtcnjhj6w309x",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhd38e5gtcnjhj6w309y",
+              "text": "A cup of filter coffee is about 98% water, so the water itself matters.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhd38e5gtcnjhj6w309z",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: A cup of filter coffee is about 98% water, so the water itself matters.",
+            "citations": [
+             "frg_w6u2536423xc"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7k2"
+            ]
+           },
+           {
+            "id": "01m5gvzhd38e5gtcnjhj6w30a0",
+            "type": "single",
+            "stem": "Which statement matches what the source says in §4.2 Water quality?",
+            "options": [
+             {
+              "id": "01m5gvzhd38e5gtcnjhj6w30a1",
+              "text": "A short handbook for people who want to brew better coffee at home.",
+              "correct": false
+             },
+             {
+              "id": "01m5gvzhd38e5gtcnjhj6w30a2",
+              "text": "Very soft water can make coffee taste flat, while very hard water dulls acidity and leaves scale in kettles.",
+              "correct": true
+             },
+             {
+              "id": "01m5gvzhd38e5gtcnjhj6w30a3",
+              "text": "It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.",
+              "correct": false
+             }
+            ],
+            "explanation": "The source states: Very soft water can make coffee taste flat, while very hard water dulls acidity and leaves scale in kettles.",
+            "citations": [
+             "frg_w6u2536423xc"
+            ],
+            "objectiveIds": [
+             "01m5gvzgec21441y6zpkk0a7k2"
+            ]
+           }
+          ]
+         },
+         "flags": [],
+         "summary": "What the source says about water quality."
+        }
+       ]
+      }
+     ],
+     "finalTest": null,
+     "pages": {
+      "landing": {
+       "component": "Page",
+       "props": {
+        "theme": {
+         "$data": "/site/theme",
+         "$default": "platform"
+        },
+        "title": "Coffee Brewing Fundamentals",
+        "description": "A practical course on coffee brewing fundamentals, built from cited source material."
+       },
+       "children": [
+        {
+         "component": "SiteHeader",
+         "props": {
+          "brand": {
+           "$data": "/site/brand",
+           "$default": "Coffee Brewing Fundamentals"
+          }
+         }
+        },
+        {
+         "component": "Main",
+         "children": [
+          {
+           "component": "Hero",
+           "props": {
+            "variant": "editorial",
+            "eyebrow": "Course",
+            "title": "Coffee Brewing Fundamentals",
+            "subtitle": "Learn coffee brewing fundamentals step by step, from the source",
+            "body": "A practical course built from your own material. Each lesson explains one part of the source and cites the passage it comes from. Short quizzes help you check what you learned.",
+            "primaryCta": {
+             "label": "Start learning",
+             "href": {
+              "$data": "/course/startHref",
+              "$default": "/"
+             }
+            },
+            "facts": [
+             {
+              "label": "Length",
+              "value": "30 min"
+             },
+             {
+              "label": "Lessons",
+              "value": "8"
+             },
+             {
+              "label": "Level",
+              "value": "Beginner"
+             },
+             {
+              "label": "Quiz questions",
+              "value": "16"
+             }
+            ]
+           }
+          },
+          {
+           "component": "FeatureList",
+           "props": {
+            "variant": "checks",
+            "title": "What you will be able to do",
+            "items": [
+             {
+              "icon": "check",
+              "title": "Apply what Introduction covers",
+              "text": "Apply what Introduction covers"
+             },
+             {
+              "icon": "check",
+              "title": "Apply what The brew ratio covers",
+              "text": "Apply what The brew ratio covers"
+             },
+             {
+              "icon": "check",
+              "title": "Apply what Why grind size matters covers",
+              "text": "Apply what Why grind size matters covers"
+             },
+             {
+              "icon": "check",
+              "title": "Apply what Temperature covers",
+              "text": "Apply what Temperature covers"
+             }
+            ]
+           }
+          },
+          {
+           "component": "Syllabus",
+           "props": {
+            "variant": "folio",
+            "title": "Syllabus",
+            "intro": "For home baristas.",
+            "totalLabel": "4 modules · 8 lessons · 30 min",
+            "lessons": [
+             {
+              "title": "Introduction",
+              "summary": "Lessons drawn from section 1 of the source.",
+              "minutes": 6,
+              "topics": [
+               {
+                "title": "What extraction means",
+                "format": "reading",
+                "minutes": 3
+               },
+               {
+                "title": "Strength is not extraction",
+                "format": "reading",
+                "minutes": 3
+               }
+              ]
+             },
+             {
+              "title": "The brew ratio",
+              "summary": "Lessons drawn from section 2 of the source.",
+              "minutes": 6,
+              "topics": [
+               {
+                "title": "The brew ratio",
+                "format": "reading",
+                "minutes": 3
+               },
+               {
+                "title": "Calculating a dose",
+                "format": "reading",
+                "minutes": 3
+               }
+              ]
+             },
+             {
+              "title": "Why grind size matters",
+              "summary": "Lessons drawn from section 3 of the source.",
+              "minutes": 6,
+              "topics": [
+               {
+                "title": "Why grind size matters",
+                "format": "reading",
+                "minutes": 3
+               },
+               {
+                "title": "Matching grind to method",
+                "format": "reading",
+                "minutes": 3
+               }
+              ]
+             },
+             {
+              "title": "Temperature",
+              "summary": "Lessons drawn from section 4 of the source.",
+              "minutes": 12,
+              "topics": [
+               {
+                "title": "Temperature",
+                "format": "reading",
+                "minutes": 3
+               },
+               {
+                "title": "Water quality",
+                "format": "reading",
+                "minutes": 9
+               }
+              ]
+             }
+            ]
+           }
+          },
+          {
+           "component": "Faq",
+           "props": {
+            "title": "Questions",
+            "items": [
+             {
+              "q": "Who is this course for?",
+              "a": "Anyone who wants to learn the topic from the ground up."
+             },
+             {
+              "q": "How long does it take?",
+              "a": "The lessons are short; most learners finish in one sitting."
+             },
+             {
+              "q": "Where does the content come from?",
+              "a": "Every lesson cites the section of the source it is based on."
+             }
+            ]
+           }
+          }
+         ]
+        },
+        {
+         "component": "SiteFooter",
+         "props": {
+          "brand": {
+           "$data": "/site/brand",
+           "$default": "Coffee Brewing Fundamentals"
+          }
+         }
+        }
+       ]
+      },
+      "header": {
+       "component": "CourseHeader",
+       "props": {
+        "variant": "editorial",
+        "eyebrow": "Course",
+        "title": "Coffee Brewing Fundamentals",
+        "subtitle": "Learn coffee brewing fundamentals step by step, from the source",
+        "summary": "A practical course built from your own material. Each lesson explains one part of the source and cites the passage it comes from. Short quizzes help you check what you learned.",
+        "facts": [
+         {
+          "label": "Length",
+          "value": "30 min"
+         },
+         {
+          "label": "Level",
+          "value": "Beginner"
+         },
+         {
+          "label": "Language",
+          "value": "EN"
+         }
+        ]
+       }
+      }
+     }
+    },
+    "drift": [],
+    "edits": {
+     "absorbable": [
+      {
+       "element": "course:01m5gvzgebmj2kzt0da3v9msam",
+       "title": "Coffee Brewing Fundamentals",
+       "fields": [
+        "title"
+       ]
+      }
+     ],
+     "unmapped": []
+    }
+   },
+   "message": "OK"
+  },
+  "response": {
+   "success": true,
+   "data": {
+    "version": {
+     "id": "01m5gvzhwzxhk41mnc0zfq1bqw",
+     "number": 3,
+     "kind": "author",
+     "status": "proposed",
+     "parentId": "01m5gvzhjzney6qwbp85dhcf39"
+    },
+    "unchanged": false,
+    "counts": {
+     "added": 0,
+     "changed": 1,
+     "removed": 0
+    },
+    "changes": [
+     {
+      "id": "01m5gvzgebmj2kzt0da3v9msam",
+      "type": "course",
+      "label": "Course",
+      "kind": "changed",
+      "ancestors": [],
+      "fields": [
+       {
+        "field": "title",
+        "label": "Title",
+        "before": "Coffee Brewing Fundamentals",
+        "after": "A title from the admin"
+       }
+      ]
+     }
+    ],
+    "absorbed": [
+     {
+      "key": "course:01m5gvzgebmj2kzt0da3v9msam",
+      "element": "01m5gvzgebmj2kzt0da3v9msam",
+      "title": "Coffee Brewing Fundamentals",
+      "fields": [
+       "title"
+      ]
+     }
+    ],
+    "unmapped": [],
+    "dryRun": false
+   },
+   "message": "OK"
+  }
+ }
+}

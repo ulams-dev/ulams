@@ -74,8 +74,14 @@ class VideoTest extends TestCase
         $video->save();
         $video->topic()->save($topic);
 
+        $before = $this->ffmpegTempDirectories();
+
         $job = new ProcessVideo($video, $this->user, $disk);
         $job->handle();
+
+        // laravel-ffmpeg's working folders must not outlive the job: a queue worker never ends a request,
+        // so without an explicit cleanup every run leaked several MB of HLS segments into the temp directory.
+        $this->assertSame([], array_values(array_diff($this->ffmpegTempDirectories(), $before)));
 
         $video->refresh();
         $json = $video->topic->json;
@@ -181,5 +187,14 @@ class VideoTest extends TestCase
         $video->topic()->save($topic);
 
         return $video;
+    }
+
+    /** @return string[] names of laravel-ffmpeg temporary folders (16 hex characters) in the system temp directory */
+    private function ffmpegTempDirectories(): array
+    {
+        return array_values(array_filter(
+            scandir(sys_get_temp_dir()) ?: [],
+            fn (string $name) => preg_match('/^[0-9a-f]{16}$/', $name) === 1 && is_dir(sys_get_temp_dir() . '/' . $name)
+        ));
     }
 }

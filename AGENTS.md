@@ -28,6 +28,22 @@ practical map.
 - `admin/`, `front/`: React SPAs. Shared libraries are in `front/src/lib` (`@ulams/*`).
 - `docs/`: spec, tracker, plans, ADRs, reports, design briefs.
 
+## Using a ulams instance from an agent
+
+- **CLI**: `ulams` (built from `front/cli`, `corepack yarn workspace ulams build`) prints a JSON
+  envelope with `--json`, exits with a code per error class, describes any command with
+  `ulams schema` (every command as JSON) and `ulams describe <command>` (one command) and signs in with `ulams login`. Writes accept `--dry-run`. Guide:
+  `front/docs-site/src/content/docs/developers/cli.mdx`.
+- **MCP**: `ulams mcp` serves the same commands as MCP tools (toolsets, read-only mode, confirmation
+  for destructive tools): `front/docs-site/src/content/docs/developers/agents.mdx`.
+- **Tokens**: use a scoped token (`ulams tokens create --scopes @author --kind agent --agent-name <you>`),
+  never an admin's password. Scopes only narrow the user's own permissions; every write lands in the
+  agent audit log.
+- **Documentation for machines**: the published docs site serves `/llms.txt` (index), `/llms-full.txt`,
+  a Markdown version of every page (`<page>/index.md`), the OpenAPI document (`/openapi.json`) and the
+  public JSON Schemas (`/schemas/index.json`: course blueprint, webhook events, UI catalogue). They are
+  written by `front/docs-site/scripts/agent-files.mjs` after `astro build`.
+
 ## Rules of thumb
 
 - Styling: CSS Modules and `var(--ulams-*)` only (`front/src/lib/components/theme/README.md`).

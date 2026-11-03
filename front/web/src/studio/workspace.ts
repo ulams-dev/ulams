@@ -2,13 +2,14 @@
  * Workspace (/studio/s/:id/workspace): course tree, live preview of the selected element,
  * element-scoped chat with diff approve/reject, undo/redo and version history.
  */
-import { ApiError, isApplied, type Blueprint, type BlueprintQuestion, type BuilderState, type BlueprintVersion, type StaleElement, type StalenessSummary } from "@ulams/sdk";
+import { ApiError, isApplied, type Blueprint, type CitationIndex, type OutlineEdit, type BlueprintQuestion, type BuilderState, type BlueprintVersion, type StaleElement, type StalenessSummary } from "@ulams/sdk";
 import { renderSurface } from "@ulams/ui/builder/renderer.ts";
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h } from "@ulams/ui/builder/dom.ts";
 import { announce, connectionStatus, livingClient, settleApplied, showCitation, studioClient, updateTopBar } from "./common.ts";
 import { bannerModel, lessonMarker, markerFor, reviewHref, staleMap, staleNote, type Marker } from "./staleness.ts";
 import { Timeline } from "./timeline.ts";
+import { lessonExtras } from "./formats.ts";
 
 type Selection = { id: string; label: string; type: "lesson" | "question" | "block" | "module" | "course" };
 
@@ -27,6 +28,13 @@ export function mountWorkspace(root: HTMLElement): void {
   const history = root.querySelector<HTMLElement>("[data-history]")!;
   const applyBar = root.querySelector<HTMLElement>("[data-apply]")!;
   const banner = root.querySelector<HTMLElement>("[data-stale-banner]");
+  const sourcesPanel = root.querySelector<HTMLElement>("[data-sources-panel]");
+  let citationIndex: CitationIndex | null = null;
+  const outlineHost = root.querySelector<HTMLElement>("[data-outline-editor]");
+  const optionsButton = root.querySelector<HTMLButtonElement>("[data-options]");
+  let outlineMessage = "";
+  let outlineFocus = "";
+  let outlineBusy = false;
   let stale = new Map<string, StaleElement>();
   let freshness: StalenessSummary | null = null;
   let version: BlueprintVersion | null = null;
@@ -48,7 +56,7 @@ export function mountWorkspace(root: HTMLElement): void {
   const timeline = new Timeline({
     container: chat,
     dispatch,
-    kinds: ["patch", "apply"],
+    kinds: ["patch", "apply", "variants", "variant_outline", "variant_progress", "variant"],
     startAfterKind: "apply",
     onCitation,
     onState: (state) => void onState(state),
@@ -125,10 +133,95 @@ export function mountWorkspace(root: HTMLElement): void {
       return;
     }
     renderTree(version.document);
+    renderOutlineEditor();
     void loadStaleness();
+    void loadCitations();
     if (selection && !findLabel(version.document, selection.id)) selection = null;
     renderPreview();
     void renderHistory();
+  }
+
+  /** The structure editor: available on approved, generated content; every change is a new author version. */
+  function renderOutlineEditor(): void {
+    if (!outlineHost || !version) return;
+    if (!["content", "patch", "author", "restore", "update"].includes(version.kind) || version.status === "proposed") {
+      outlineHost.replaceChildren(h("p", { class: "cb-muted" }, "Available once the lessons are generated and approved."));
+      return;
+    }
+    const sections = (citationIndex?.sources ?? []).flatMap((source) => source.sections.filter((s) => s.level <= 2).map((s) => ({ fragmentId: s.fragmentId, label: s.label })));
+    const modules = version.document.modules.map((m) => ({ id: m.id, title: m.title, lessons: m.lessons.map((l) => ({ id: l.id, title: l.title, minutes: l.minutes, written: l.status === "generated" })) }));
+    outlineHost.replaceChildren(
+      renderSurface([{ id: "root", component: "OutlineEditor", modules, sections, focusId: outlineFocus, message: outlineMessage, busy: outlineBusy } as never], {
+        surfaceId: "outline-editor",
+        dispatch: (action) => void editOutline(action),
+      })
+    );
+    outlineFocus = "";
+  }
+
+  async function editOutline(action: A2uiActionOut): Promise<void> {
+    if (action.name !== "outline_edit" || outlineBusy) return;
+    const { focus, ...edit } = action.context as Record<string, unknown>;
+    outlineBusy = true;
+    renderOutlineEditor();
+    try {
+      const result = await cb.editOutline(sessionId, edit as unknown as OutlineEdit);
+      outlineFocus = typeof focus === "string" ? focus : "";
+      await loadVersion(result.currentVersionId, true);
+      outlineMessage = version?.reason ?? "Saved.";
+      announce(outlineMessage);
+    } catch (error) {
+      outlineMessage = error instanceof ApiError ? error.message.replace(/^API \d+: /, "") : "The change could not be saved.";
+      announce(outlineMessage);
+    } finally {
+      outlineBusy = false;
+      renderOutlineEditor();
+    }
+  }
+
+  /** The sources panel: sections with the elements citing them; the selected element's sections are marked. */
+  async function loadCitations(): Promise<void> {
+    if (!sourcesPanel) return;
+    try {
+      citationIndex = await cb.citations(sessionId);
+      renderOutlineEditor();
+    } catch {
+      sourcesPanel.replaceChildren(h("p", { class: "cb-muted" }, "The sources could not be loaded."));
+      return;
+    }
+    renderSources();
+  }
+
+  function renderSources(): void {
+    if (!sourcesPanel || !citationIndex) return;
+    const highlighted = selection ? (citationIndex.elements[selection.id] ?? []) : [];
+    sourcesPanel.replaceChildren(
+      renderSurface([{ id: "root", component: "SourcesPanel", sources: citationIndex.sources, highlighted } as never], {
+        surfaceId: "sources",
+        dispatch: () => undefined,
+        onCitation,
+        onSelect: (id, label) => {
+          const target = findSelection(id, label);
+          if (target) select(target);
+        },
+      })
+    );
+  }
+
+  /** What the workspace can select for an element id: a lesson, block or question of the current version. */
+  function findSelection(id: string, label: string): Selection | null {
+    const doc = version?.document;
+    if (!doc) return null;
+    if (doc.course.id === id) return { id, label: "Course", type: "course" };
+    for (const m of doc.modules) {
+      for (const l of m.lessons) {
+        if (l.id === id) return { id, label: label.slice(0, 80), type: "lesson" };
+        if (l.blocks.some((b) => b.id === id)) return { id, label: label.slice(0, 80), type: "block" };
+        if ((l.quiz?.questions ?? []).some((q) => q.id === id)) return { id, label: label.slice(0, 80), type: "question" };
+      }
+    }
+    if ((doc.finalTest?.questions ?? []).some((q) => q.id === id)) return { id, label: label.slice(0, 80), type: "question" };
+    return null;
   }
 
   function findLabel(doc: Blueprint, id: string): boolean {
@@ -194,11 +287,13 @@ export function mountWorkspace(root: HTMLElement): void {
       const clear = h("button", { type: "button", class: "cb-link", "aria-label": "Clear the selection" }, "×");
       clear.addEventListener("click", () => {
         selection = null;
+        renderSources();
         scope.replaceChildren(h("span", { class: "cb-muted" }, "Select an element in the tree to edit it in chat."));
       });
       return clear;
     })());
     renderPreview();
+    renderSources();
     textarea.focus();
   }
 
@@ -211,6 +306,7 @@ export function mountWorkspace(root: HTMLElement): void {
     const lessonCard = (l: (typeof lessons)[number]) => ({
       id: "root", component: "LessonPreviewCard", lessonId: l.id, title: l.title, minutes: l.minutes, flags: l.flags,
       blocks: l.blocks.map((b) => ({ id: b.id, kind: b.kind, markdown: b.markdown, citations: cite(b.citations) })),
+      ...lessonExtras(l, cite),
     });
     if (selection?.type === "question") {
       const q = [...lessons.flatMap((l) => l.quiz?.questions ?? []), ...(doc.finalTest?.questions ?? [])].find((x) => x.id === selection!.id);
@@ -247,6 +343,21 @@ export function mountWorkspace(root: HTMLElement): void {
       history.replaceChildren(h("p", { class: "cb-muted" }, "History unavailable."));
     }
   }
+
+  optionsButton?.addEventListener("click", async () => {
+    if (!selection) {
+      announce("Select an element in the course tree first.");
+      return;
+    }
+    const text = textarea.value.trim() || "Give me different options for this.";
+    try {
+      await cb.variants(sessionId, selection.id, text, 2);
+      textarea.value = "";
+      announce("Making two options…");
+    } catch (error) {
+      announce(error instanceof ApiError ? error.message.replace(/^API \d+: /, "") : "The options could not be started.");
+    }
+  });
 
   const move = async (direction: "undo" | "redo") => {
     try {

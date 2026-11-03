@@ -14,7 +14,9 @@
         "living-course",
         "learner",
         "tokens",
-        "platform"
+        "webhooks",
+        "platform",
+        "identity"
     ],
     "scopes": [
         "courses:read",
@@ -43,8 +45,12 @@
         "learner:write",
         "tokens:read",
         "tokens:write",
+        "webhooks:read",
+        "webhooks:write",
         "platform:read",
         "platform:write",
+        "identity:read",
+        "identity:write",
         "*"
     ],
     "presets": {
@@ -61,7 +67,8 @@
             "builder:read",
             "living-course:read",
             "learner:read",
-            "tokens:read"
+            "tokens:read",
+            "webhooks:read"
         ],
         "author": [
             "courses:write",
@@ -165,11 +172,19 @@
             "area": "public"
         },
         {
+            "pattern": "api/identity/*",
+            "area": "public"
+        },
+        {
             "pattern": "api/auth/email/*",
             "area": "public"
         },
         {
             "pattern": "api/health*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/certificates/verify/*",
             "area": "public"
         },
         {
@@ -195,6 +210,10 @@
         {
             "pattern": "api/csp-report",
             "area": "public"
+        },
+        {
+            "pattern": "api/contact",
+            "area": "none"
         },
         {
             "pattern": "api/jitsi/*",
@@ -233,12 +252,47 @@
             "area": "tokens"
         },
         {
+            "pattern": "api/admin/webhooks*",
+            "area": "webhooks"
+        },
+        {
+            "pattern": "api/admin/identity*",
+            "area": "identity"
+        },
+        {
+            "pattern": "api/admin/knowledge*",
+            "area": "courses",
+            "options": {
+                "level": "read"
+            }
+        },
+        {
             "pattern": "api/admin/course-builder*",
+            "area": "builder"
+        },
+        {
+            "pattern": "api/admin/course-as-code*",
+            "area": "builder"
+        },
+        {
+            "pattern": "api/admin/course-versions*",
+            "area": "builder"
+        },
+        {
+            "pattern": "api/admin/authoring-metrics*",
             "area": "builder"
         },
         {
             "pattern": "api/admin/living-course*",
             "area": "living-course"
+        },
+        {
+            "pattern": "api/admin/policies/*/dashboard*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/policies*",
+            "area": "builder"
         },
         {
             "pattern": "api/living-course/courses/*/notices",
@@ -255,6 +309,26 @@
         {
             "pattern": "api/living-course/webhooks/*",
             "area": "public"
+        },
+        {
+            "pattern": "api/living-course/oauth/*/callback",
+            "area": "public"
+        },
+        {
+            "pattern": "api/admin/learner-insights*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/learner-insights*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/admin/tutor*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/tutor*",
+            "area": "learner"
         },
         {
             "pattern": "api/admin/courses/*/access*",
@@ -278,6 +352,10 @@
         },
         {
             "pattern": "api/admin/tutors/*",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/course-variant-groups*",
             "area": "enrolments"
         },
         {
@@ -325,6 +403,14 @@
         },
         {
             "pattern": "api/admin/interactive*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/code-exercises/topics/*/attempts",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/code-exercises*",
             "area": "courses"
         },
         {
@@ -416,6 +502,10 @@
             "area": "settings"
         },
         {
+            "pattern": "api/admin/theme*",
+            "area": "settings"
+        },
+        {
             "pattern": "api/admin/config*",
             "area": "settings"
         },
@@ -484,6 +574,18 @@
             "area": "certificates"
         },
         {
+            "pattern": "api/admin/compliance/report*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/compliance/schedules*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/compliance*",
+            "area": "certificates"
+        },
+        {
             "pattern": "api/admin/orders*",
             "area": "commerce"
         },
@@ -508,8 +610,58 @@
             "area": "commerce"
         },
         {
+            "pattern": "api/commerce/webhooks/*",
+            "area": "public"
+        },
+        {
             "pattern": "api/admin/reports*",
             "area": "reports"
+        },
+        {
+            "pattern": "api/admin/reporting/query",
+            "area": "reports",
+            "options": {
+                "level": "read"
+            }
+        },
+        {
+            "pattern": "api/admin/reporting/saved/*/run",
+            "area": "reports",
+            "options": {
+                "methods": [
+                    "GET"
+                ],
+                "resource": {
+                    "param": "id"
+                }
+            }
+        },
+        {
+            "pattern": "api/admin/reporting/saved/*",
+            "area": "reports",
+            "options": {
+                "methods": [
+                    "GET"
+                ],
+                "resource": {
+                    "param": "id"
+                }
+            }
+        },
+        {
+            "pattern": "api/admin/reporting*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/reporting/odata*",
+            "area": "reports",
+            "options": {
+                "resource": {
+                    "param": "entity",
+                    "prefix": "Report_",
+                    "optional": true
+                }
+            }
         },
         {
             "pattern": "api/admin/stats*",
@@ -690,6 +842,14 @@
             "area": "learner"
         },
         {
+            "pattern": "api/compliance/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/policies/*",
+            "area": "learner"
+        },
+        {
             "pattern": "api/questionnaire/*",
             "area": "learner"
         },
@@ -710,6 +870,10 @@
             "area": "learner"
         },
         {
+            "pattern": "api/code-exercises/*",
+            "area": "learner"
+        },
+        {
             "pattern": "api/lti/*",
             "area": "learner"
         },
@@ -719,10 +883,6 @@
         },
         {
             "pattern": "api/core/packages",
-            "area": "learner"
-        },
-        {
-            "pattern": "broadcasting/auth",
             "area": "learner"
         }
     ]

@@ -1,6 +1,5 @@
 # Vouchers
 
-
 ## Purpose
 
 This package lets you define Coupons that can be applied to User Cart before placing an Order, calculating a discount depending on multiple different, configurable rules.
@@ -67,8 +66,6 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests. See [tests](tests) directory.
-
-Test details [![codecov](https://codecov.io/gh/Ulams/Vouchers/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/vouchers) [![phpunit](https://github.com/EscolaLMS/Vouchers/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/vouchers/actions/workflows/test.yml)
 
 ## Events
 

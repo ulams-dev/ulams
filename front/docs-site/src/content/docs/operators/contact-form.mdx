@@ -1,0 +1,12 @@
+---
+title: Landing contact form
+description: How the ULAMS public contact form sends enquiries to the private inbox.
+---
+
+The contact form on the Overview page sends a message to `POST /api/contact` on the platform API. The API validates the fields, applies a limit of five submissions per minute per client, filters a hidden honeypot field, and sends a plain contact notification to the configured private inbox. The message uses the visitor's validated email as `Reply-To` so the owner can answer directly.
+
+The public form does not expose an inbox or a message listing endpoint. Submitted messages are retained in the receiving mailbox. The API does not write a second copy of contact messages into the LMS database. Avoid sending passwords, access tokens or sensitive personal information through the form.
+
+Configure `CONTACT_RECIPIENT` in the API environment. Configure the API's existing `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_ENCRYPTION`, `MAIL_FROM_ADDRESS` and `MAIL_FROM_NAME` settings for an authenticated SMTP account. Keep those values out of the repository and use TLS.
+
+If delivery is unavailable, the API responds with `503`; the form shows an error and keeps the entered values so the visitor can retry. Invalid fields receive `422`, and excess submissions receive `429`.

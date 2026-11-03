@@ -3,6 +3,7 @@
 namespace Ulams\TopicTypes\Models\TopicContent;
 
 use Exception;
+use Ulams\Core\Support\FfmpegTemporaryFiles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
@@ -65,6 +66,8 @@ class Audio extends AbstractTopicFileContent
         } catch (Exception $exception) {
             $this->length = 0;
             Log::error($exception->getMessage());
+        } finally {
+            FfmpegTemporaryFiles::clean();
         }
     }
 
@@ -76,10 +79,5 @@ class Audio extends AbstractTopicFileContent
     public function getStoragePathFinalSegment(): string
     {
         return 'audio';
-    }
-
-    public function getMorphClass()
-    {
-        return self::class;
     }
 }

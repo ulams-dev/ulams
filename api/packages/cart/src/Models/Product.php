@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Cart\Contracts\Productable;
 use Ulams\Cart\Database\Factories\ProductFactory;
 use Ulams\Cart\Enums\ProductType;
@@ -125,6 +126,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class Product extends Model implements ProductInterface
 {
+    use HasMorphAlias;
     use ProductTrait;
     use HasFactory;
 

@@ -2,6 +2,7 @@
 
 namespace Ulams\Reports\Stats\Course;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Cart\Enums\OrderStatus;
 use Ulams\Cart\Models\OrderItem;
 use Ulams\Cart\Models\Product;
@@ -30,7 +31,7 @@ class PeopleBought extends AbstractCourseStat
             ->where('buyable_type', Product::class)
             ->whereHas(
                 'buyable',
-                fn (Builder $query) => $query->getModel()->getMorphClass() !== Product::class
+                fn (Builder $query) => $query->getModel()->getMorphClass() !== MorphMap::aliasOrClass(Product::class)
                     ? $query
                     : $query->whereHas(
                         'productables',

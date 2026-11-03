@@ -13,7 +13,7 @@ interface QuizAttemptApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/quiz-attempts",
+     *      path="/api/quiz-attempts", operationId="quiz-attempts.get",
      *      summary="Get my quiz attempts",
      *      tags={"Gift Quiz Attempt"},
      *      security={
@@ -72,7 +72,7 @@ interface QuizAttemptApiSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/quiz-attempts/{id}",
+     *     path="/api/quiz-attempts/{id}", operationId="quiz-attempts.by-id.get",
      *     summary="Get my quiz attempt by id",
      *      tags={"Gift Quiz Attempt"},
      *     security={
@@ -114,7 +114,7 @@ interface QuizAttemptApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/quiz-attempts",
+     *      path="/api/quiz-attempts", operationId="quiz-attempts.post",
      *      summary="Create a new attempt or return an active attempt",
      *      tags={"Gift Quiz Attempt"},
      *      description="Store Gift Quiz Attempt",
@@ -156,7 +156,7 @@ interface QuizAttemptApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/quiz-attempts/{id}/end",
+     *      path="/api/quiz-attempts/{id}/end", operationId="quiz-attempts.by-id.end.post",
      *      summary="Finish quiz attempt",
      *      tags={"Gift Quiz Attempt"},
      *      security={

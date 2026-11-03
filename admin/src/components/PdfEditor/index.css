@@ -14,3 +14,33 @@
   margin-bottom: 4px;
   cursor: pointer;
 }
+
+/* WCAG 2.2 AA: the antd defaults for these colours are below 4.5:1 (checked by axe in the mocked Playwright suite). */
+.pdf-editor__variables .ant-typography.ant-typography-secondary {
+  color: #595959;
+}
+
+.pdf-editor__variables .ant-tag-green {
+  color: #135200;
+}
+
+.pdf-editor__variables .ant-tag-orange {
+  color: #873800;
+}
+
+.pdf-editor__variables .ant-tag-red {
+  color: #820014;
+}
+
+.pdf-editor__variables .ant-btn-primary:not(:disabled) {
+  background: #0958d9;
+}
+
+.pdf-editor__variables .ant-btn-primary:not(:disabled):hover {
+  background: #003eb3;
+}
+
+.pdf-editor__variables .ant-tag[role='button']:focus-visible {
+  outline: 2px solid #0958d9;
+  outline-offset: 2px;
+}

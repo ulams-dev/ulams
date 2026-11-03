@@ -14,6 +14,8 @@ Route::group(['prefix' => 'api'], function () {
         Route::delete('/vouchers/{id}', [VouchersAdminApiController::class, 'delete']);
     });
 
-    Route::post('/cart/voucher/', [VouchersApiController::class, 'apply']);
-    Route::delete('/cart/voucher/', [VouchersApiController::class, 'unapply']);
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/cart/voucher/', [VouchersApiController::class, 'apply']);
+        Route::delete('/cart/voucher/', [VouchersApiController::class, 'unapply']);
+    });
 });

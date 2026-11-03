@@ -35,6 +35,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, history, useAccess, useIntl, useModel, useParams } from 'umi';
 import CourseAccess from './components/CourseAccess';
 import CourseCertificateForm from './components/CourseCertificateForm';
+import InsightsTab from './components/InsightsTab';
 
 enum TabNames {
   ATTRIBUTES = 'attributes',
@@ -48,6 +49,7 @@ enum TabNames {
   CERTIFICATES = 'certificates',
   QUESTIONNAIRES = 'questionnaires',
   STATISTICS = 'statistics',
+  INSIGHTS = 'insights',
   USER_PROJECTS = 'user_projects',
 }
 
@@ -720,6 +722,15 @@ export default () => {
             disabled={manageCourseEdit.disableEdit}
           >
             {course && <CourseStatistics courseId={course} />}
+          </ProCard.TabPane>
+        )}
+        {!isNew && !tabsToHide.insights && (
+          <ProCard.TabPane
+            key={TabNames.INSIGHTS}
+            tab={<FormattedMessage id="course_insights" />}
+            disabled={manageCourseEdit.disableEdit}
+          >
+            {course && <InsightsTab courseId={course} />}
           </ProCard.TabPane>
         )}
         {!isNew && !tabsToHide.user_submission && (

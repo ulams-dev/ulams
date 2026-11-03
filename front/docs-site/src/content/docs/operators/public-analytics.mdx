@@ -1,0 +1,47 @@
+---
+title: Public-site analytics
+description: Umami pageviews, CTA events and developer exclusions on ULAMS-owned public sites.
+---
+
+The ULAMS landing, documentation and six production demos use Umami Cloud with website ID
+`3579de4c-ad8a-40ed-ba03-271286fb335e`. Customer deployments, localhost, staging and author
+previews are excluded. Shared configuration lives in `front/ui/src/lib/analytics.ts`.
+
+The deferred script loads from `https://cloud.umami.is/script.js` and sends pageviews and events
+to `https://gateway.umami.is/api/send`. The web CSP permits those exact script and connection
+origins only on owned hosts. If a documentation reverse proxy adds its own CSP, allow the same
+origins in `script-src` and `connect-src`. Automatic pageviews include history navigation.
+
+## CTA events
+
+- `demo_open`: opens an actual production demo URL (six academy cards).
+- `demos_scroll`: scrolls to the demo section; does not count as a demo opening.
+- `demo_admin_open`: opens a demo administration interface.
+- `github_open`: opens GitHub from a CTA or navigation link.
+- `docs_open`: opens the documentation from a CTA or navigation link.
+
+The attributes are rendered into HTML as `data-umami-event`. A `data-event` label alone
+collects nothing. Do not add a second manual click tracker to the same link.
+
+Query strings and hashes are excluded, Do Not Track is honoured, and no learner IDs,
+certificates, exam answers or uploaded source content are included in event properties.
+
+## Verify and exclude development visits
+
+1. On the published landing, check that the script loads and that an initial POST to
+   `gateway.umami.is/api/send` succeeds for this website ID.
+2. Click an academy card that opens a real demo. Confirm a successful event named `demo_open`.
+   Its payload URL is the landing where the click happened. A hero scroll CTA sends
+   `demos_scroll` instead. The Umami dashboard Events page shows received events.
+3. After verification, run this in the developer console **on each tracked origin**:
+
+   ```js
+   localStorage.setItem('umami.disabled', '1');
+   ```
+
+4. Reload and confirm there are no collector requests. The flag persists for that browser
+   profile and origin; it does not exclude other browsers. Remove it only for an intentional
+   verification visit with `localStorage.removeItem('umami.disabled')`.
+
+Umami's official guides cover [event tracking](https://docs.umami.is/docs/track-events) and
+[excluding your own visits](https://docs.umami.is/docs/exclude-my-own-visits).

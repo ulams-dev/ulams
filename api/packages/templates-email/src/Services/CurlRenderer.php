@@ -28,6 +28,18 @@ class CurlRenderer implements RendererInterface
     }
 
     /**
+     * @return array{html: string, errors: string[]}
+     */
+    public function renderWithErrors(string $content): array
+    {
+        if ($this->client instanceof CurlApi) {
+            return $this->client->renderWithErrors($content);
+        }
+
+        return ['html' => $this->client->getHtml($content), 'errors' => []];
+    }
+
+    /**
      * @inheritDoc
      */
     public function render(string $content): string

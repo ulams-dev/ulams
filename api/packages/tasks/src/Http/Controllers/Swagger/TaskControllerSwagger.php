@@ -16,7 +16,7 @@ interface TaskControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/tasks",
+     *      path="/api/tasks", operationId="tasks.post",
      *      summary="Store a newly created task",
      *      tags={"Tasks"},
      *      description="Store Task",
@@ -58,7 +58,7 @@ interface TaskControllerSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/tasks/{id}",
+     *      path="/api/tasks/{id}", operationId="tasks.by-id.patch",
      *      summary="Update task",
      *      tags={"Tasks"},
      *      description="Store Task",
@@ -72,7 +72,8 @@ interface TaskControllerSwagger
      *              @OA\Schema(ref="#/components/schemas/TaskCreateRequest")
      *          ),
      *      ),
-     *      @OA\Response(
+     *      @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(
      *          response=201,
      *          description="Successfull operation",
      *          @OA\MediaType(
@@ -100,7 +101,7 @@ interface TaskControllerSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/tasks/{id}",
+     *      path="/api/tasks/{id}", operationId="tasks.by-id.delete",
      *      summary="Remove the specified task",
      *      tags={"Tasks"},
      *      description="Delete Task",
@@ -119,9 +120,7 @@ interface TaskControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -144,7 +143,7 @@ interface TaskControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/tasks/complete/{id}",
+     *      path="/api/tasks/complete/{id}", operationId="tasks.complete.by-id.post",
      *      summary="Complete task",
      *      tags={"Tasks"},
      *      description="Complete Task",
@@ -188,7 +187,7 @@ interface TaskControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/tasks/incomplete/{id}",
+     *      path="/api/tasks/incomplete/{id}", operationId="tasks.incomplete.by-id.post",
      *      summary="Incomplete task",
      *      tags={"Tasks"},
      *      description="Incomplete Task",
@@ -232,7 +231,7 @@ interface TaskControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/tasks",
+     *      path="/api/tasks", operationId="tasks.get",
      *      summary="Get a listing of the tasks",
      *      tags={"Tasks"},
      *      description="Get all Tasks",
@@ -343,9 +342,7 @@ interface TaskControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -369,7 +366,7 @@ interface TaskControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/tasks/{id}",
+     *      path="/api/tasks/{id}", operationId="tasks.by-id.get",
      *      summary="Task details",
      *      tags={"Tasks"},
      *      description="Get task details by ID",

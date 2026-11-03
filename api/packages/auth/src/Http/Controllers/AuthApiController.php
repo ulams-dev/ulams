@@ -13,6 +13,10 @@ use Ulams\Auth\Http\Requests\RefreshTokenRequest;
 use Ulams\Auth\Http\Requests\ResendVerificationEmailRequest;
 use Ulams\Auth\Http\Requests\ResetPasswordRequest;
 use Ulams\Auth\Http\Requests\SocialAuthRequest;
+use Ulams\Auth\Http\Requests\SocialCallbackRequest;
+use Ulams\Auth\Http\Requests\SocialExchangeRequest;
+use Ulams\Auth\Exceptions\InvalidReturnUrlException;
+use Ulams\Auth\Exceptions\LoginHandoffException;
 use Ulams\Auth\Http\Resources\LoginResource;
 use Ulams\Auth\Http\Resources\UserGroupResource;
 use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
@@ -80,32 +84,71 @@ class AuthApiController extends UlamsBaseController implements AuthSwagger
         return $this->sendResponse(LoginResource::make($token), __('Token refreshed'));
     }
 
-    public function socialRedirect(SocialAuthRequest $request): RedirectResponse
+    public function socialRedirect(SocialAuthRequest $request): RedirectResponse|JsonResponse
     {
+        $provider = $request->route('provider');
+
+        try {
+            $state = $this->socialAccountService->startLogin(
+                $provider,
+                $request->getHost(),
+                $request->input('return_url'),
+                $request->input('challenge')
+            );
+        } catch (InvalidReturnUrlException $e) {
+            return $this->sendError($e->getMessage(), 422);
+        }
+
         /** @var \Laravel\Socialite\SocialiteManager|\Laravel\Socialite\Two\AbstractProvider $socialite */
-        $socialite = Socialite::driver($request->route('provider'));
+        $socialite = Socialite::driver($provider);
+
+        // stateless: the state is ours (signed, single use, kept server-side), not the session's
         return $socialite
             ->stateless()
-            ->with([
-                'return_url' => $request->input('return_url'),
-                'state' => base64_encode(
-                    json_encode([
-                        'return_url' => $request->input('return_url')
-                    ])
-                )
-            ])
+            ->with(['state' => $state])
             ->redirect();
     }
 
-    public function socialCallback(SocialAuthRequest $request): RedirectResponse
+    public function socialCallback(SocialCallbackRequest $request): RedirectResponse|JsonResponse
     {
-        $returnUrl = $this->socialAccountService->getReturnUrl(
-            $request->route('provider'),
-            $request->input('return_url'),
-            $request->input('state')
-        );
+        try {
+            $url = $this->socialAccountService->handleCallback(
+                $request->route('provider'),
+                $request->input('state'),
+                $request->getHost(),
+                $request->filled('error') ? (string) $request->input('error') : null
+            );
+        } catch (LoginHandoffException $e) {
+            // without a valid state there is no trusted place to send the browser to
+            return $this->sendError(__('The login attempt is invalid or has expired. Start again.'), 400);
+        }
 
-        return redirect($returnUrl);
+        return redirect()->away($url)->withHeaders(['Cache-Control' => 'no-store', 'Referrer-Policy' => 'no-referrer']);
+    }
+
+    public function socialExchange(SocialExchangeRequest $request): JsonResponse
+    {
+        try {
+            $result = $this->socialAccountService->exchange(
+                $request->input('code'),
+                $request->input('verifier'),
+                $request->getHost()
+            );
+        } catch (LoginHandoffException $e) {
+            return $this->sendError(__('The login code is invalid or has expired. Start again.'), 400);
+        }
+
+        if (!$result['complete']) {
+            return $this->sendResponse(
+                ['complete' => false, 'pre_user_token' => $result['pre_user_token']],
+                __('More details are needed to finish signing up')
+            );
+        }
+
+        return $this->sendResponse(
+            ['complete' => true] + LoginResource::make($result['token'])->toArray($request),
+            __('Login successful')
+        )->withHeaders(['Cache-Control' => 'no-store']);
     }
 
     public function completeSocialData(CompleteSocialDataRequest $request): JsonResponse

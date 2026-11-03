@@ -1,0 +1,105 @@
+---
+title: Code exercises
+description: Give learners files to edit and tests to run in JavaScript or TypeScript, right in the lesson, in an isolated browser sandbox, with practice attempts recorded for you.
+sidebar:
+  order: 20
+modules:
+  - code-exercises
+topicTypes:
+  - CodeExerciseTopic
+adminRoutes:
+  - /courses/list
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+A **code exercise** topic gives the learner a few files to change and a set of tests to run. The learner
+edits the code in the lesson, presses **Run tests** and sees which tests pass and why the others fail. The
+code runs in the learner's browser, in a sandbox that has no network and cannot reach the lesson page or
+the learner's account. JavaScript and TypeScript are supported.
+
+<Aside type="note" title="A run is practice, not a grade">
+  The learner's browser runs the tests and reports the result, so the result is stored as an **unverified
+  practice attempt**. It moves the learner's progress (the topic completes by the rule you choose) and shows
+  up in the teacher report, but it **never counts towards a certificate or a compliance path**. Hidden tests
+  and verified grading arrive with the server runner; for now every test is visible to the learner.
+</Aside>
+
+## Create an exercise
+
+<Steps>
+
+1. In the course editor, add a topic and choose **Code exercise**.
+2. Pick the **language**, write the **task** in Markdown and add the **starter files** the learner will edit.
+3. Add the **visible tests**. A test file imports the learner's files with relative paths and uses the tiny
+   built-in test API (see below). The editor lists problems with your files while you type.
+4. Choose when the topic completes and how long a run may take, then save. **Preview in the learner site**
+   opens the lesson without recording anything.
+
+</Steps>
+
+## Writing tests
+
+There is nothing to install. Test files get these globals:
+
+```js
+import { sum } from "./sum.js";
+
+describe("sum", () => {
+  test("adds two numbers", () => expect(sum(1, 2)).toBe(3));
+  test("adds negative numbers", () => expect(sum(-1, -2)).toBe(-3));
+});
+```
+
+- `test(name, fn)` (or `it`), `describe(name, fn)`, `beforeEach(fn)`, `afterEach(fn)`; a test may be `async`.
+- `expect(value)` with `toBe`, `toEqual`, `toStrictEqual`, `toBeTruthy`, `toBeFalsy`, `toBeNull`, `toBeUndefined`,
+  `toBeDefined`, `toBeNaN`, `toBeGreaterThan(OrEqual)`, `toBeLessThan(OrEqual)`, `toBeCloseTo`, `toContain`,
+  `toContainEqual`, `toHaveLength`, `toMatch`, `toBeInstanceOf`, `toHaveProperty`, `toThrow`, and `.not`,
+  `.resolves`, `.rejects`.
+- A failed `expect` shows as **Failed** with its message ("Expected 3, received 0"); any other thrown error
+  shows as **Error**. `console.log` output is shown to the learner (cut at 8 KB).
+- Files can import each other with relative paths (`./sum.js`, `./lib/util`, `./math` for `math.ts` or
+  `math/index.ts`). TypeScript is compiled by esbuild and **not type-checked**. A package name, a URL or a path
+  outside the exercise is a build error: an exercise can only import its own files.
+
+## Settings
+
+| Setting | What it does |
+|---|---|
+| Stop a run after | 500 ms to 30 s, default 5 s. A run that takes longer is stopped and the learner is told to look for a loop that never ends. |
+| The topic completes | after a **passing run**, with the percentage of passing tests that counts (default 100), or after **any run**. |
+
+## Limits
+
+At most 20 starter files and 10 test files, 64 KB each and 256 KB together. Paths are relative, made of
+letters, digits, `_`, `-` and `.` with `/` between folders; no `..`, hidden names or absolute paths.
+JavaScript exercises may contain `.js`, `.mjs`, `.json`, `.txt` and `.md` files, TypeScript ones also `.ts`;
+test files are `.js`/`.mjs`, or `.ts` in TypeScript exercises. Everything is checked when you save, by the API,
+because exercises can also arrive through imports and the command line.
+
+## From the command line
+
+```sh
+ulams topics create-code-exercise --lesson 12 --title "Make sum add" \
+  --files @starter.json --tests @tests.json --text @task.md --json
+```
+
+`starter.json` and `tests.json` are lists of `{ "path": "...", "content": "..." }`. The same command is an MCP
+tool for agents. Course exports (`.ulam`) carry exercises as plain JSON and the import validates them again.
+
+## What learners and teachers see
+
+Learners edit the files in plain text areas (nothing traps the keyboard), run the tests with a button or
+Ctrl+Enter, and see each test's result and message. Their earlier attempts are listed in the lesson. Teachers
+get every learner's attempts for an exercise from `GET /api/admin/code-exercises/topics/{topic}/attempts`,
+and the learner-insights module records a `code.attempt_finished` signal for each run, so repeated failures
+show up as "struggling" like repeated failed quiz attempts do.
+
+## How it is kept safe
+
+The code never runs on your server or in the lesson page. It is bundled and run inside two nested frames on
+the academy's content origin, with an isolated origin, a content security policy without network access or
+`eval`, and a time limit; a hostile or broken exercise cannot reach the learner's session, the lesson page
+or the network, and an endless loop is stopped. Runs start only when the learner presses the button.
+Details for developers are in [the interactive bridge](/developers/interactive-bridge/#code-exercises) and
+[ADR 0170](/decisions/0170-code-exercise-runners/).

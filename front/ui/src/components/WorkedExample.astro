@@ -1,0 +1,57 @@
+---
+import { renderMarkdown } from "../lib/markdown.ts";
+
+interface Props {
+  title: string;
+  markdown: string;
+  id?: string;
+}
+const { title, markdown, id } = Astro.props;
+const hash = [...`${title}|${markdown}`].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0, 7).toString(36);
+const titleId = `u-we-${id ?? hash}-title`;
+const html = renderMarkdown(markdown);
+---
+
+<article class="u-we" id={id} aria-labelledby={titleId}>
+  <h3 class="u-we__title" id={titleId}>{title}</h3>
+  <div class="u-we__body" set:html={html} />
+</article>
+
+<style>
+  .u-we {
+    display: grid;
+    gap: 0.6em;
+    padding: 14px 16px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-secondary, var(--ulams-color-primary));
+    background: var(--ulams-color-card-bg);
+  }
+  .u-we__title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    color: var(--ulams-color-header);
+  }
+  .u-we__body {
+    max-width: 70ch;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+  .u-we__body :global(> * + *) {
+    margin-top: 0.8em;
+  }
+  .u-we__body :global(ol),
+  .u-we__body :global(ul) {
+    padding-left: 1.4em;
+  }
+  .u-we__body :global(code) {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.9em;
+  }
+  .u-we__body :global(pre) {
+    overflow-x: auto;
+    padding: 0.8em;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+  }
+</style>

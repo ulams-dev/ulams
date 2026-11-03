@@ -8,7 +8,7 @@
  * patterns above general ones.
  *
  * Areas: courses, users, enrolments, settings, events, certificates, commerce, reports, lti,
- * builder, living-course, learner, tokens, platform, plus two pseudo areas:
+ * builder, living-course, learner, tokens, webhooks, platform, identity, plus two pseudo areas:
  *   public  any valid scoped token may call it (identity, health, anonymous endpoints);
  *   none    never callable with a scoped token (it would mint unscoped credentials, change the
  *           account's credentials or let a scoped token widen its own rights).
@@ -44,14 +44,18 @@ return [
     ['api/auth/register*', 'public'],
     ['api/auth/password/*', 'public'],
     ['api/auth/social/*', 'public'],
+    // single sign-on: providers list, start, callback, code exchange (an access token is the result, never the input)
+    ['api/identity/*', 'public'],
     ['api/auth/email/*', 'public'],
     ['api/health*', 'public'],
+    ['api/certificates/verify/*', 'public'],
     ['api/core/health-check', 'public'],
     ['api/name', 'public'],
     ['api/documentation', 'public'],
     ['api/oauth2-callback', 'public'],
     ['api/lti/jwks', 'public'],
     ['api/csp-report', 'public'],
+    ['api/contact', 'none'],
     ['api/jitsi/*', 'public'],
     ['api/payments-gateways/*', 'public'],
     ['api/demo/*', 'public'],
@@ -64,14 +68,39 @@ return [
     ['api/admin/tokens*', 'tokens'],
     ['api/admin/agent-audit*', 'tokens'],
 
+    // ---- webhooks ------------------------------------------------------------------------------
+    // test sends and replays are POSTs, so they need webhooks:write
+    ['api/admin/webhooks*', 'webhooks'],
+
+    // ---- identity providers and their audit trail (read = list and verify, write = change) -----
+    ['api/admin/identity*', 'identity'],
+
+    // ---- knowledge export ----------------------------------------------------------------------
+    // reads course content and writes only the pack files, so starting an export needs courses:read
+    ['api/admin/knowledge*', 'courses', ['level' => 'read']],
+
     // ---- builder and living course -------------------------------------------------------------
     ['api/admin/course-builder*', 'builder'],
+    ['api/admin/course-as-code*', 'builder'],
+    ['api/admin/course-versions*', 'builder'],
+    ['api/admin/authoring-metrics*', 'builder'],
     ['api/admin/living-course*', 'living-course'],
+    // policy lifecycle (ADR 0140): the owner dashboard and its export are reports, everything else prepares and approves training
+    ['api/admin/policies/*/dashboard*', 'reports'],
+    ['api/admin/policies*', 'builder'],
     // the learner's own update notices; the webhook is verified by its signature, not a token
     ['api/living-course/courses/*/notices', 'learner'],
     ['api/living-course/courses/*/freshness', 'learner'],
     ['api/living-course/notices/*/dismiss', 'learner'],
     ['api/living-course/webhooks/*', 'public'],
+    // the vendor's browser redirect after "Connect your account": no token, the encrypted expiring state is the credential
+    ['api/living-course/oauth/*/callback', 'public'],
+    // Learner Insights: thresholds are tenant settings; everything else acts on the signed-in learner only
+    ['api/admin/learner-insights*', 'settings'],
+    ['api/learner-insights*', 'learner'],
+    // the course tutor: the learner's questions and conversations; the analytics are an admin area
+    ['api/admin/tutor*', 'settings'],
+    ['api/tutor*', 'learner'],
 
     // ---- enrolments (before the broader courses and users prefixes) ----------------------------
     ['api/admin/courses/*/access*', 'enrolments'],
@@ -80,6 +109,8 @@ return [
     ['api/admin/course-access-enquiries*', 'enrolments'],
     ['api/admin/consultation-access-enquiries*', 'enrolments'],
     ['api/admin/tutors/*', 'enrolments'],
+    // who is in which variant of a course, assignment rules and the family's settings (ADR 0192): a kind of enrolment
+    ['api/admin/course-variant-groups*', 'enrolments'],
 
     // ---- courses -------------------------------------------------------------------------------
     ['api/admin/courses/*/clone', 'courses', ['level' => 'write']],
@@ -93,6 +124,9 @@ return [
     ['api/admin/cmi5*', 'courses'],
     ['api/admin/liascript*', 'courses'],
     ['api/admin/interactive*', 'courses'],
+    // every learner's attempts at a code exercise are a report; the preview is course content (ADR 0170)
+    ['api/admin/code-exercises/topics/*/attempts', 'reports'],
+    ['api/admin/code-exercises*', 'courses'],
     ['api/admin/h5p*', 'courses'],
     ['api/admin/adapt*', 'courses'],
     ['api/admin/gift-*', 'courses'],
@@ -119,6 +153,8 @@ return [
 
     // ---- settings ------------------------------------------------------------------------------
     ['api/admin/settings*', 'settings'],
+    // the tenant logo upload (writes the theme settings)
+    ['api/admin/theme*', 'settings'],
     ['api/admin/config*', 'settings'],
 ['api/admin/csp-reports*', 'settings'],
     ['api/admin/pages*', 'settings'],
@@ -140,6 +176,10 @@ return [
 
     // ---- certificates --------------------------------------------------------------------------
     ['api/admin/pdfs*', 'certificates'],
+    // the report and the scheduled reports are analytics: reports:read (ADR 0194, Q10); the rest of compliance stays with certificates
+    ['api/admin/compliance/report*', 'reports'],
+    ['api/admin/compliance/schedules*', 'reports'],
+    ['api/admin/compliance*', 'certificates'],
 
     // ---- commerce ------------------------------------------------------------------------------
     ['api/admin/orders*', 'commerce'],
@@ -148,9 +188,20 @@ return [
     ['api/admin/vouchers*', 'commerce'],
     ['api/admin/payments*', 'commerce'],
     ['api/admin/invoices*', 'commerce'],
+    // the provider's signed order events: verified by HMAC, timestamp and tenant channel, not by a token (ADR 0130)
+    ['api/commerce/webhooks/*', 'public'],
 
     // ---- reports -------------------------------------------------------------------------------
     ['api/admin/reports*', 'reports'],
+    // report builder: datasets, queries, saved reports (the prefix avoids the legacy api/admin/reports* routes)
+    // a preview reads data through a POST, so it is a read for a reports:read token
+    ['api/admin/reporting/query', 'reports', ['level' => 'read']],
+    // a token limited to one saved report may read that report and run it, nothing else of the builder
+    ['api/admin/reporting/saved/*/run', 'reports', ['methods' => ['GET'], 'resource' => ['param' => 'id']]],
+    ['api/admin/reporting/saved/*', 'reports', ['methods' => ['GET'], 'resource' => ['param' => 'id']]],
+    ['api/admin/reporting*', 'reports'],
+    // the read-only OData feed of a saved report (BI tools): reports:read; a limited token names its report in the entity set
+    ['api/reporting/odata*', 'reports', ['resource' => ['param' => 'entity', 'prefix' => 'Report_', 'optional' => true]]],
     ['api/admin/stats*', 'reports'],
     ['api/admin/questionnaire*', 'reports'],
     ['api/admin/tasks*', 'reports'],
@@ -197,13 +248,16 @@ return [
     ['api/tutors*', 'learner'],
     ['api/content/*', 'learner'],
     ['api/pdfs*', 'learner'],
+    ['api/compliance/*', 'learner'],
+    // the learner's own policy change notices (policy lifecycle)
+    ['api/policies/*', 'learner'],
     ['api/questionnaire/*', 'learner'],
     ['api/scorm/*', 'learner'],
     ['api/cmi5/*', 'learner'],
     ['api/liascript/*', 'learner'],
     ['api/interactive/*', 'learner'],
+    ['api/code-exercises/*', 'learner'],
     ['api/lti/*', 'learner'],
     ['api/pencil-spaces/*', 'learner'],
     ['api/core/packages', 'learner'],
-    ['broadcasting/auth', 'learner'],
 ];

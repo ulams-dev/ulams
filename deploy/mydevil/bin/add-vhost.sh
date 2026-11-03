@@ -18,7 +18,8 @@ HOST="${1:-}"
 need devil
 SITE="$HOME/domains/$HOST"
 
-if devil www list 2>/dev/null | grep -qF "$HOST"; then
+# match the whole first column: api.example.com must not match staging-api.example.com
+if devil www list 2>/dev/null | awk -v h="$HOST" '$1 == h { found = 1 } END { exit !found }'; then
   say "vhost $HOST exists"
 else
   devil www add "$HOST" php

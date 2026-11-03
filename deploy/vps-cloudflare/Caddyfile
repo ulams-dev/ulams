@@ -16,6 +16,7 @@
 {
 	auto_https off
 	servers {
+		metrics
 		# Cloudflare (and cloudflared, which connects from a private address) set these headers
 		trusted_proxies static private_ranges 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
 		client_ip_headers CF-Connecting-IP X-Forwarded-For
@@ -40,7 +41,10 @@
 # cookies. Arguments: <API host> <API origin> <frame ancestors>
 (content_origin) {
 	header {
-		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
+		# `?`: only when the API did not set one. The API sets the CSP of interactive packages itself,
+		# per version (ADR 0086), and of the code exercises runner under /runtime/ (ADR 0170); every
+		# other package type gets this one.
+		?Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
 		Reporting-Endpoints `csp-endpoint="{args[1]}/api/csp-report"`
 		>X-Content-Type-Options nosniff
 		# Own browsing-context group (no window.opener link to the app); public package files
@@ -56,7 +60,7 @@
 
 	@package {
 		method GET HEAD
-		path /scorm/* /cmi5/* /adapt/* /liascript/*
+		path /scorm/* /cmi5/* /adapt/* /liascript/* /interactive/* /runtime/*
 	}
 	handle @package {
 		request_header -Cookie
@@ -95,6 +99,13 @@
 # Laravel API and the H5P service on one host
 (api) {
 	encode zstd gzip
+
+	# Never serve Prometheus metrics on a public host: the API's /metrics is for the internal listener below
+	# (docs/operators/monitoring). The PHP side also refuses requests that carry forwarding headers.
+	@metrics path /metrics
+	handle @metrics {
+		respond "Not found" 404
+	}
 
 	# Progress tracking of the package players, called from the content origin or from a
 	# sandboxed frame (`Origin: null`). They authenticate with the scoped X-Ulams-Tracking-Token
@@ -335,5 +346,28 @@ http://:8081 {
 			env SCRIPT_FILENAME /var/www/html/index.php
 			env HTTPS {$ULAMS_FCGI_HTTPS}
 		}
+	}
+}
+
+# Prometheus scrape targets (internal listener, not published; never add a `ports:` entry for it).
+# /metrics: Caddy's own request, latency and status metrics (enabled by `servers { metrics }`).
+# /php-metrics: the platform API's gauges (queues, failed jobs, heartbeats, tenants, AI usage), served only
+# to private addresses or with METRICS_TOKEN. Other services expose their own /metrics (h5p:8080, pdf:3000).
+http://:9180 {
+	handle /metrics {
+		metrics
+	}
+	handle /php-metrics {
+		rewrite * /metrics
+		reverse_proxy api:9000 {
+			header_up Host api.{$ULAMS_DOMAIN}
+			transport fastcgi {
+				env SCRIPT_FILENAME /var/www/html/index.php
+				env HTTPS {$ULAMS_FCGI_HTTPS}
+			}
+		}
+	}
+	handle {
+		respond "Not found" 404
 	}
 }

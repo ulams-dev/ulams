@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Ulams\Core\Support\MorphMap;
 
 /**
  * @property string $current_timezone
@@ -80,8 +81,9 @@ class User extends Authenticatable implements MustVerifyEmail, OAuthenticatable
         return 'api';
     }
 
+    /** Every user class is the same table, so all of them are stored as the one `user` alias (see MorphMap). */
     public function getMorphClass()
     {
-        return config('auth.providers.users.model', self::class);
+        return MorphMap::USER;
     }
 }

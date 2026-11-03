@@ -5,6 +5,8 @@
  */
 import type { AnalysisStep, ElementNode, ProposalDetail, ProposalGroup, ProposalItem, ProposalStatus, ProposalSummary } from "@ulams/sdk";
 import { compact } from "./living.ts";
+import { groupItemProps } from "./variants-model.ts";
+import type { VariantStrings } from "./variants-i18n.ts";
 
 type Props = Record<string, unknown>;
 
@@ -12,9 +14,9 @@ const cut = (value: string | null | undefined, max: number): string | undefined 
 
 export const MAX_REGENERATIONS = 3;
 /** Kinds that change the course when accepted; the others are acknowledged only. */
-export const APPLIED_KINDS = ["update", "remove", "citation_remap"] as const;
+export const APPLIED_KINDS = ["update", "remove", "citation_remap", "new_lesson"] as const;
 /** Kinds the author has to decide on (remaps start accepted, uncovered is informational). */
-export const DECISION_KINDS = ["update", "no_change", "remove", "manual"] as const;
+export const DECISION_KINDS = ["update", "no_change", "remove", "manual", "new_lesson"] as const;
 
 export const usdText = (micro: number | null | undefined): string => {
   const value = Number(micro ?? 0) / 1_000_000;
@@ -53,6 +55,19 @@ function textFields(type: string, node: ElementNode): Array<[string, string, str
   }
 }
 
+/** A suggested lesson as added fields: where it goes, its title, objectives and text blocks. */
+function newLessonFields(after: ElementNode): Field[] {
+  const out: Field[] = [];
+  const module = after.module as { id?: string | null; title?: string } | undefined;
+  const lesson = (after.lesson ?? {}) as { title?: string; summary?: string; objectives?: Array<{ text?: string }>; blocks?: Array<{ markdown?: string }> };
+  if (module?.title) out.push({ path: "module", label: module.id ? "Goes into module" : "New module", after: module.title });
+  if (lesson.title) out.push({ path: "lesson.title", label: "Lesson title", after: lesson.title });
+  if (lesson.summary) out.push({ path: "lesson.summary", label: "Summary", after: lesson.summary });
+  (lesson.objectives ?? []).forEach((o, i) => o.text && out.push({ path: `lesson.objectives.${i}`, label: `Learning objective ${i + 1}`, after: o.text }));
+  (lesson.blocks ?? []).forEach((b, i) => b.markdown && out.push({ path: `lesson.blocks.${i}`, label: `Text ${i + 1}`, after: b.markdown }));
+  return out;
+}
+
 /**
  * Before/after text per field. Updates list only what differs; removals list what goes away.
  * Question options are paired by id (new options by position) and marked "(correct)".
@@ -65,6 +80,7 @@ export function fieldsFor(item: Pick<ProposalItem, "type" | "kind" | "before" | 
     optionsOf(before).forEach((o, i) => out.push({ path: `options.${i}`, label: `Option ${letter(i)}${o.correct ? " (correct)" : ""}`, before: str(o.text) ?? "" }));
     return out;
   }
+  if (kind === "new_lesson" && after) return newLessonFields(after);
   if (kind !== "update" || !before || !after) return out;
   const afterByPath = new Map(textFields(type, after).map(([path, , text]) => [path, text]));
   for (const [path, label, was] of textFields(type, before)) {
@@ -103,6 +119,12 @@ export interface ItemContext {
   sessionId: string;
   canDecide: boolean;
   canRegenerate: boolean;
+  /** "Suggest a lesson" is offered on uncovered sections (AI enabled, proposal open or just closed as no impact). */
+  canSuggest?: boolean;
+  /** Courses with variants (ADR 0192): the words of "Accept in all versions" and the reused note; absent outside a group. */
+  variants?: VariantStrings;
+  /** The proposal has siblings, so a shared patch can be accepted in all of them. */
+  hasSiblings?: boolean;
 }
 
 export function sourcesText(item: ProposalItem): string | undefined {
@@ -111,7 +133,8 @@ export function sourcesText(item: ProposalItem): string | undefined {
 }
 
 export function itemProps(item: ProposalItem, ctx: ItemContext): Props {
-  const grounding = item.flags?.grounding ?? [];
+  // claims the passages do not support, and what the AI could not ground for an improvement (ADR 0181)
+  const grounding = [...(item.flags?.grounding ?? []), ...(item.flags?.ungrounded ?? [])];
   const fields = fieldsFor(item);
   return compact({
     itemId: item.id,
@@ -133,6 +156,8 @@ export function itemProps(item: ProposalItem, ctx: ItemContext): Props {
     maxRegenerations: MAX_REGENERATIONS,
     canDecide: ctx.canDecide,
     canRegenerate: ctx.canRegenerate,
+    canSuggest: ctx.canSuggest,
+    ...groupItemProps(ctx.variants, item, ctx.hasSiblings ?? false),
     href: `/studio/s/${ctx.sessionId}/workspace`,
   });
 }

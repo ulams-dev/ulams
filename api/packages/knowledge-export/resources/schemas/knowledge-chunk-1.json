@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/knowledge/1/chunk.json",
+  "title": "ulams knowledge pack chunk, format 1",
+  "description": "One line of chunks.jsonl in a knowledge pack. `citations` lists the source fragments the text was written from; `uncited` is true when there are none (hand-written or edited text). Later versions only add fields; readers must ignore fields they do not know.",
+  "type": "object",
+  "required": ["id", "course_id", "course_title", "topic_type", "ordinal", "heading_path", "text", "tokens", "url", "citations", "uncited", "content_hash"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^kch_[0-9a-f]{16}$", "description": "Stable for the same course, topic and position" },
+    "course_id": { "type": "integer" },
+    "course_title": { "type": "string" },
+    "lesson_id": { "type": ["integer", "null"] },
+    "lesson_title": { "type": ["string", "null"] },
+    "topic_id": { "type": ["integer", "null"] },
+    "topic_title": { "type": ["string", "null"] },
+    "topic_type": { "enum": ["course", "richtext"] },
+    "ordinal": { "type": "integer", "minimum": 0 },
+    "heading_path": { "type": "array", "items": { "type": "string" } },
+    "text": { "type": "string", "minLength": 1 },
+    "tokens": { "type": "integer", "minimum": 0 },
+    "url": { "type": "string" },
+    "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } },
+    "uncited": { "type": "boolean" },
+    "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of text" },
+    "updated_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "$defs": {
+    "citation": {
+      "type": "object",
+      "required": ["fragment_id"],
+      "properties": {
+        "fragment_id": { "type": "string", "pattern": "^frg_[a-z2-7]{12}$" },
+        "label": { "type": ["string", "null"], "description": "For example \"§2.3 Brewing ratios\"" },
+        "source_id": { "type": ["string", "null"] },
+        "source_name": { "type": ["string", "null"] },
+        "page_start": { "type": ["integer", "null"] },
+        "page_end": { "type": ["integer", "null"] },
+        "content_hash": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

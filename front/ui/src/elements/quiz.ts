@@ -1,5 +1,7 @@
 import type { QuizAnswerValue, QuizAttempt, QuizQuestion } from "@ulams/sdk";
+import { fill, playerLocale, playerStrings, plural, type PlayerStrings } from "../lib/player-strings.ts";
 import { announceComplete, bff } from "./bff.ts";
+import { elementLang } from "./lang.ts";
 
 /**
  * <ulams-quiz quiz-id="1" pass-score="5" finish-href="/learn/1/17"> [data-start] … </ulams-quiz>
@@ -26,17 +28,6 @@ function h<K extends keyof HTMLElementTagNameMap>(
   return el;
 }
 
-const TYPE_LABEL: Record<string, string> = {
-  multiple_choice: "Choose one answer",
-  multiple_choice_with_multiple_right_answers: "Choose all that apply",
-  true_false: "True or false?",
-  short_answers: "Type a short answer",
-  matching: "Match each item",
-  numerical_question: "Enter a number",
-  essay: "Write your answer",
-  description: "Take a breath",
-};
-
 const answers = (q: QuizQuestion): string[] => (Array.isArray(q.options) ? [] : (q.options.answers ?? []));
 
 class UlamsQuiz extends HTMLElement {
@@ -48,6 +39,15 @@ class UlamsQuiz extends HTMLElement {
   private stage!: El;
   private live!: El;
   private tick: number | undefined;
+
+  /** The strings in the language of the closest `lang` (a page or a card). */
+  private get t(): PlayerStrings {
+    return playerStrings(elementLang(this));
+  }
+
+  private get locale() {
+    return playerLocale(elementLang(this));
+  }
 
   connectedCallback(): void {
     this.stage = this.querySelector<El>("[data-stage]") ?? this;
@@ -78,7 +78,7 @@ class UlamsQuiz extends HTMLElement {
       this.renderQuestion();
     } catch (error) {
       this.setAttribute("state", "error");
-      const message = (error as { status?: number }).status === 403 ? "No attempts left for this quiz." : "The quiz could not start. Try again in a moment.";
+      const message = (error as { status?: number }).status === 403 ? this.t.quizNoAttempts : this.t.quizStartFailed;
       this.stage.replaceChildren(h("p", { class: "u-quiz__error", role: "alert" }, message), this.retryButton());
     }
   }
@@ -96,7 +96,7 @@ class UlamsQuiz extends HTMLElement {
   }
 
   private retryButton(): El {
-    const b = h("button", { class: "u-btn", type: "button" }, "Try again");
+    const b = h("button", { class: "u-btn", type: "button" }, this.t.quizTryAgain);
     b.addEventListener("click", () => void this.start());
     return b;
   }
@@ -132,11 +132,11 @@ class UlamsQuiz extends HTMLElement {
 
     const dots = h(
       "ol",
-      { class: "u-quiz__dots", "aria-label": "Questions" },
+      { class: "u-quiz__dots", "aria-label": this.t.quizQuestions },
       ...attempt.questions.map((x, i) => {
         const b = h(
           "button",
-          { type: "button", "aria-label": `Question ${i + 1}`, "aria-current": i === this.index ? "step" : undefined, "data-answered": this.values.has(x.id) ? "true" : undefined },
+          { type: "button", "aria-label": fill(this.t.quizQuestionN, { n: i + 1 }), "aria-current": i === this.index ? "step" : undefined, "data-answered": this.values.has(x.id) ? "true" : undefined },
           String(i + 1)
         );
         b.addEventListener("click", () => this.go(i));
@@ -148,18 +148,18 @@ class UlamsQuiz extends HTMLElement {
       "fieldset",
       { class: "u-quiz__q", "aria-describedby": `q-${q.id}-hint` },
       h("legend", { id: legendId, tabindex: -1 }, q.question),
-      h("p", { class: "u-quiz__hint", id: `q-${q.id}-hint` }, TYPE_LABEL[q.type] ?? "", q.score ? ` · ${q.score} pt${q.score > 1 ? "s" : ""}` : ""),
+      h("p", { class: "u-quiz__hint", id: `q-${q.id}-hint` }, (this.t.quizTypes as Record<string, string>)[q.type] ?? "", q.score ? ` · ${plural(this.locale, this.t.quizPoints, q.score)}` : ""),
       this.input(q)
     );
 
-    const prev = h("button", { type: "button", class: "u-btn u-btn--ghost", disabled: this.index === 0 }, "Previous");
+    const prev = h("button", { type: "button", class: "u-btn u-btn--ghost", disabled: this.index === 0 }, this.t.quizPrevious);
     prev.addEventListener("click", () => this.go(this.index - 1));
     const last = this.index === total - 1;
-    const next = h("button", { type: "button", class: "u-btn" }, last ? "Finish quiz" : "Next");
+    const next = h("button", { type: "button", class: "u-btn" }, last ? this.t.quizFinish : this.t.quizNext);
     next.addEventListener("click", () => (last ? void this.finish() : this.go(this.index + 1)));
 
     this.stage.replaceChildren(
-      h("div", { class: "u-quiz__progress" }, h("span", {}, `Question ${this.index + 1} of ${total}`), h("span", { class: "u-quiz__bar", style: `--p:${((this.index + 1) / total) * 100}%` })),
+      h("div", { class: "u-quiz__progress" }, h("span", {}, fill(this.t.quizQuestionOf, { n: this.index + 1, total })), h("span", { class: "u-quiz__bar", style: `--p:${((this.index + 1) / total) * 100}%` })),
       dots,
       fieldset,
       h("div", { class: "u-quiz__nav" }, prev, next)
@@ -201,7 +201,7 @@ class UlamsQuiz extends HTMLElement {
         ...[true, false].map((b) => {
           const input = h("input", { type: "radio", name, id: `${name}-${b}`, checked: value === b });
           input.addEventListener("change", () => set({ bool: b }));
-          return h("label", { class: "u-quiz__option", for: `${name}-${b}` }, input, h("span", {}, b ? "True" : "False"));
+          return h("label", { class: "u-quiz__option", for: `${name}-${b}` }, input, h("span", {}, b ? this.t.quizTrue : this.t.quizFalse));
         })
       );
     }
@@ -221,7 +221,7 @@ class UlamsQuiz extends HTMLElement {
       const area = h("textarea", { class: "u-quiz__field", id: name, rows: 6, "aria-labelledby": `q-${q.id}-legend` });
       area.value = String(current?.text ?? "");
       const counter = h("p", { class: "u-quiz__count", "aria-live": "polite" });
-      const count = () => (counter.textContent = `${area.value.trim().split(/\s+/).filter(Boolean).length} words`);
+      const count = () => (counter.textContent = plural(this.locale, this.t.quizWords, area.value.trim().split(/\s+/).filter(Boolean).length));
       area.addEventListener("input", () => {
         set({ text: area.value });
         count();
@@ -237,7 +237,7 @@ class UlamsQuiz extends HTMLElement {
         "div",
         { class: "u-quiz__matching" },
         ...subs.map((sub, i) => {
-          const select = h("select", { id: `${name}-${i}`, class: "u-quiz__field" }, h("option", { value: "" }, "Choose…"), ...options.map((o) => h("option", { value: o, selected: chosen[sub] === o }, o)));
+          const select = h("select", { id: `${name}-${i}`, class: "u-quiz__field" }, h("option", { value: "" }, this.t.quizChoose), ...options.map((o) => h("option", { value: o, selected: chosen[sub] === o }, o)));
           select.addEventListener("change", () => {
             chosen[sub] = select.value;
             set({ matching: { ...chosen } });
@@ -247,7 +247,7 @@ class UlamsQuiz extends HTMLElement {
       );
     }
     // description: nothing to answer
-    return h("p", { class: "u-quiz__note" }, "No answer needed. Continue when you are ready.");
+    return h("p", { class: "u-quiz__note" }, this.t.quizNoAnswer);
   }
 
   private async save(q: QuizQuestion | undefined): Promise<void> {
@@ -259,7 +259,7 @@ class UlamsQuiz extends HTMLElement {
       await bff.quiz.answer(this.attempt.id, q.id, value);
     } catch {
       this.dirty.add(q.id);
-      this.say("Your last answer could not be saved.");
+      this.say(this.t.quizSaveFailed);
     }
   }
 
@@ -275,7 +275,7 @@ class UlamsQuiz extends HTMLElement {
     if (!this.attempt || this.getAttribute("state") === "finishing") return;
     this.setAttribute("state", "finishing");
     window.clearInterval(this.tick);
-    this.stage.replaceChildren(h("div", { class: "u-quiz__scoring" }, h("span", { class: "u-quiz__spinner", "aria-hidden": "true" }), h("p", {}, "Scoring your answers…")));
+    this.stage.replaceChildren(h("div", { class: "u-quiz__scoring" }, h("span", { class: "u-quiz__spinner", "aria-hidden": "true" }), h("p", {}, this.t.quizScoring)));
     try {
       // the API scores answers as they are saved; ending closes the attempt
       await Promise.all(this.attempt.questions.map((q) => this.save(q)));
@@ -284,7 +284,7 @@ class UlamsQuiz extends HTMLElement {
       this.renderResult(result);
     } catch {
       this.setAttribute("state", "running");
-      this.say("Finishing failed. Try again.");
+      this.say(this.t.quizFinishFailed);
       this.renderQuestion();
     }
   }
@@ -314,7 +314,7 @@ class UlamsQuiz extends HTMLElement {
             "li",
             { "data-result": state },
             h("span", { class: "u-quiz__mark", "aria-hidden": "true" }, pending ? "…" : ok ? "✓" : "✗"),
-            h("span", {}, q.question, h("small", {}, pending ? "Reviewed by your tutor" : ok ? "Correct" : a ? "Not quite" : "Not answered")),
+            h("span", {}, q.question, h("small", {}, pending ? this.t.quizTutorReview : ok ? this.t.quizCorrect : a ? this.t.quizNotQuite : this.t.quizNotAnswered)),
             a?.feedback ? h("em", {}, a.feedback) : null
           );
         })
@@ -325,15 +325,15 @@ class UlamsQuiz extends HTMLElement {
       h(
         "div",
         { class: "u-quiz__result", "data-passed": String(passed) },
-        h("div", { class: "u-quiz__ring", style: `--p:${percent}`, role: "img", "aria-label": `Score ${score} of ${max}` }, h("strong", {}, `${score}/${max}`)),
-        h("h3", {}, passed ? "Passed. Well done!" : "Not passed yet"),
-        h("p", {}, passed ? `You scored ${percent}%. Answers that need a tutor are reviewed separately.` : `You need ${pass} points to pass. Review the answers and try again.`),
+        h("div", { class: "u-quiz__ring", style: `--p:${percent}`, role: "img", "aria-label": fill(this.t.quizScoreLabel, { score, max }) }, h("strong", {}, `${score}/${max}`)),
+        h("h3", {}, passed ? this.t.quizPassed : this.t.quizNotPassed),
+        h("p", {}, passed ? fill(this.t.quizPassedText, { percent }) : fill(this.t.quizNotPassedText, { pass })),
         review,
         h(
           "div",
           { class: "u-quiz__nav" },
           (() => {
-            const again = h("button", { type: "button", class: "u-btn u-btn--ghost" }, "New attempt");
+            const again = h("button", { type: "button", class: "u-btn u-btn--ghost" }, this.t.quizNewAttempt);
             again.addEventListener("click", () => {
               this.values.clear();
               this.dirty.clear();
@@ -341,11 +341,11 @@ class UlamsQuiz extends HTMLElement {
             });
             return again;
           })(),
-          continueHref ? h("a", { class: "u-btn", href: continueHref }, "Continue") : null
+          continueHref ? h("a", { class: "u-btn", href: continueHref }, this.t.quizContinue) : null
         )
       )
     );
-    this.say(`Quiz finished. Score ${score} of ${max}.`);
+    this.say(fill(this.t.quizFinishedLive, { score, max }));
     if (passed) announceComplete("quiz");
     this.querySelector<El>(".u-quiz__result h3")?.setAttribute("tabindex", "-1");
     this.querySelector<El>(".u-quiz__result h3")?.focus();

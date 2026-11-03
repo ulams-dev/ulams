@@ -1,11 +1,14 @@
 ---
 import Icon from "./Icon.astro";
+import { pageLocale } from "../lib/i18n.ts";
+import { playerStrings } from "../lib/player-strings.ts";
 
 interface Props {
   src: string;
   title: string;
 }
 const { src, title } = Astro.props;
+const t = playerStrings(pageLocale(Astro));
 ---
 
 <!-- No sandbox attribute (documented exception, front/ui/tests/frames.test.ts): the browser's built-in PDF
@@ -15,8 +18,8 @@ const { src, title } = Astro.props;
   <div class="u-pdf__bar">
     <span><Icon name="pdf" /> {title}</span>
     <span class="u-actions">
-      <a class="u-btn u-btn--ghost u-btn--sm" href={src} target="_blank" rel="noopener"><Icon name="external" /> Open</a>
-      <a class="u-btn u-btn--sm" href={src} download><Icon name="download" /> Download</a>
+      <a class="u-btn u-btn--ghost u-btn--sm" href={src} target="_blank" rel="noopener"><Icon name="external" /> {t.pdfOpen}</a>
+      <a class="u-btn u-btn--sm" href={src} download><Icon name="download" /> {t.pdfDownload}</a>
     </span>
   </div>
   <iframe src={`${src}#view=FitH`} title={title} loading="lazy"></iframe>

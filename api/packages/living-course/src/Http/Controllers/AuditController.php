@@ -16,14 +16,14 @@ use Ulams\LivingCourse\Services\AuditLog;
  * The audit trail (ADR 0034): who decided what and when, tied to the source revision and the
  * blueprint versions. Per session for its author and admins; tenant-wide for admins.
  *
- * @OA\Get(path="/api/admin/living-course/sessions/{session}/audit", summary="Audit entries of a session (filters: action, actorType, from, to, source)", tags={"Admin Living Course"}, security={{"passport": {}}},
- *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="entries"), @OA\Response(response=403, description="not allowed"))
- * @OA\Get(path="/api/admin/living-course/sessions/{session}/audit/export", summary="Export the audit entries of a session as CSV or JSON", tags={"Admin Living Course"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/living-course/sessions/{session}/audit", operationId="admin.living-course.sessions.by-session.audit.get", summary="Audit entries of a session (filters: action, actorType, from, to, source)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="entries", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="not allowed"))
+ * @OA\Get(path="/api/admin/living-course/sessions/{session}/audit/export", operationId="admin.living-course.sessions.by-session.audit.export.get", summary="Export the audit entries of a session as CSV or JSON", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="format", in="query", @OA\Schema(type="string", enum={"csv","json"})), @OA\Response(response=200, description="file"))
- * @OA\Get(path="/api/admin/living-course/sessions/{session}/audit/verify", summary="Verify the hash chain of the audit trail", tags={"Admin Living Course"}, security={{"passport": {}}},
- *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="verdict"))
- * @OA\Get(path="/api/admin/living-course/audit/export", summary="Tenant-wide audit export (admins)", tags={"Admin Living Course"}, security={{"passport": {}}}, @OA\Response(response=200, description="file"), @OA\Response(response=403, description="admins only"))
- * @OA\Get(path="/api/admin/living-course/audit/verify", summary="Tenant-wide chain verification (admins)", tags={"Admin Living Course"}, security={{"passport": {}}}, @OA\Response(response=200, description="verdict"), @OA\Response(response=403, description="admins only"))
+ * @OA\Get(path="/api/admin/living-course/sessions/{session}/audit/verify", operationId="admin.living-course.sessions.by-session.audit.verify.get", summary="Verify the hash chain of the audit trail", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="verdict", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Get(path="/api/admin/living-course/audit/export", operationId="admin.living-course.audit.export.get", summary="Tenant-wide audit export (admins)", tags={"Admin Living Course"}, security={{"passport": {}}}, @OA\Response(response=200, description="file"), @OA\Response(response=403, description="admins only"))
+ * @OA\Get(path="/api/admin/living-course/audit/verify", operationId="admin.living-course.audit.verify.get", summary="Tenant-wide chain verification (admins)", tags={"Admin Living Course"}, security={{"passport": {}}}, @OA\Response(response=200, description="verdict", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="admins only"))
  */
 class AuditController extends Controller
 {

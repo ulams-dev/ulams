@@ -26,7 +26,7 @@ COPY api/h5p/package.json api/h5p/package.json
 
 # ---- deps: full install for the build -------------------------------------
 FROM manifests AS deps
-RUN yarn install --frozen-lockfile --ignore-scripts --non-interactive --network-timeout 600000 \
+RUN n=1; until yarn install --frozen-lockfile --ignore-scripts --non-interactive --network-timeout 600000; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying yarn install ($n/3)" >&2; sleep 5; done \
     && yarn cache clean
 
 # ---- build -----------------------------------------------------------------
@@ -36,11 +36,11 @@ COPY api/h5p/scripts/build-embed.mjs api/h5p/scripts/build-embed.mjs
 COPY api/h5p/embed-client api/h5p/embed-client
 COPY api/h5p/src api/h5p/src
 # tsc (server) + esbuild (embed pages: Lumi web components, bundled here only)
-RUN yarn --cwd api/h5p build
+RUN n=1; until yarn --cwd api/h5p build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn --cwd api/h5p build" >&2; sleep 5; done
 
 # ---- prod-deps: runtime node_modules only -----------------------------------
 FROM manifests AS prod-deps
-RUN yarn install --frozen-lockfile --production --ignore-scripts --non-interactive --network-timeout 600000 \
+RUN n=1; until yarn install --frozen-lockfile --production --ignore-scripts --non-interactive --network-timeout 600000; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying yarn install ($n/3)" >&2; sleep 5; done \
     && yarn cache clean \
     && mkdir -p api/h5p/node_modules
 

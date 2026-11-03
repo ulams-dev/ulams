@@ -2,9 +2,9 @@
 
 The SCORM module is a library of SCORM packages. We add the existing package with multimedia presentation to the library, or directly within the created lesson. This section contains information about all multimedia presentations embedded within the platform.
 
-![image](https://github.com/EscolaLMS/Scorm/assets/108077902/9cf708f4-d7db-4a9a-887f-bdef053d2b3f)
+![image](docs/img/admin-01.png)
 
-New SCORM ![image](https://github.com/EscolaLMS/Scorm/assets/108077902/87da63a3-b0f4-40e1-8fc6-43c798f35732) It allows adding a SCORM package from the disk.
+New SCORM ![image](docs/img/admin-02.png) It allows adding a SCORM package from the disk.
 
 The sorting of the SCORM list can be done based on:
 
@@ -13,19 +13,19 @@ The sorting of the SCORM list can be done based on:
 * Sharable Content Objects - The title of the shared SCORM package saved from the developer file. Additionally, clicking on the package name provides access to the preview of the included SCORM.
 * In the case of this library, the options are limited to removing the package from the platform.
 
-![image](https://github.com/EscolaLMS/Scorm/assets/108077902/bfb9b3ee-2d1f-4081-b666-5e1e3bdb212c)
+![image](docs/img/admin-03.png)
 
 Sharable Content Objects:
 
-![image](https://github.com/EscolaLMS/Scorm/assets/108077902/d2b3bd1d-dbd3-41b1-95b4-0e519aac5176)
+![image](docs/img/admin-04.png)
 
 An example preview of one of the embedded SCORMs in the library:
 
-![image](https://github.com/EscolaLMS/Scorm/assets/108077902/cdaa3914-a8ec-439e-b194-01c279385e66)
+![image](docs/img/admin-05.jpg)
 
 The platform is responsive and supports SCORM formats, including those specifically designed for mobile phone displays.
 
-![image](https://github.com/EscolaLMS/Scorm/assets/108077902/054d55ef-c216-47dc-b0ad-7ee07af02b87)
+![image](docs/img/admin-06.png)
 
 As a reminder, on the Ulams platform, we can add SCORM multimedia presentations in two ways:
 
@@ -34,12 +34,12 @@ As a reminder, on the Ulams platform, we can add SCORM multimedia presentations 
 
 We choose the first option instead of the Program tab, meaning that we add the uploaded SCORM to the library, and it becomes a ready-to-publish course.
 
-![image](https://github.com/EscolaLMS/Scorm/assets/108077902/147c27a4-b430-4ab2-b008-757db5451cbb)
+![image](docs/img/admin-07.png)
 
 In the case of the second option, we choose to add SCORM from within the topic of the lesson we are creating:
-![image](https://github.com/EscolaLMS/Scorm/assets/108077902/e92c9edc-c536-4069-a5da-a9a3e33909c3)
+![image](docs/img/admin-08.png)
 
 The selection from the library is identical in both cases.
 
-![image](https://github.com/EscolaLMS/Scorm/assets/108077902/7d7e9cd8-89e4-40ae-a338-cf37c7e0f246)
+![image](docs/img/admin-09.png)
 

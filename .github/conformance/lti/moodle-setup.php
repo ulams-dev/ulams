@@ -97,6 +97,30 @@ if ($command === 'setup') {
         ]);
         $student = $DB->get_record('user', ['id' => $id], '*', MUST_EXIST);
     }
+    // Make the credentials deterministic whatever state the user was in (a reused or half-created
+    // account, a suspended flag, a lockout counter), then prove them server-side so a bad fixture
+    // fails here with a clear message instead of in the browser step.
+    $student->auth = 'manual';
+    $student->confirmed = 1;
+    $student->suspended = 0;
+    $student->deleted = 0;
+    $DB->update_record('user', (object) ['id' => $student->id, 'auth' => 'manual', 'confirmed' => 1, 'suspended' => 0, 'deleted' => 0]);
+    update_internal_user_password($student, 'Student-1234!', false);
+    unset_user_preference('login_failed_count', $student);
+    unset_user_preference('login_failed_count_since_success', $student);
+    unset_user_preference('login_lockout', $student);
+    unset_user_preference('login_lockout_ignored', $student);
+    $student = $DB->get_record('user', ['id' => $student->id], '*', MUST_EXIST);
+    if (!validate_internal_user_password($student, 'Student-1234!')) {
+        fwrite(STDERR, "fixture error: the stored password hash of 'student' does not validate\n");
+        exit(3);
+    }
+    $authenticated = authenticate_user_login('student', 'Student-1234!', false, $failurereason);
+    if (!$authenticated) {
+        fwrite(STDERR, "fixture error: authenticate_user_login('student') failed (reason code " . var_export($failurereason, true) . ")\n");
+        exit(3);
+    }
+    \core\session\manager::set_user(get_admin());
     enrol_try_internal_enrol($course->id, $student->id, $DB->get_field('role', 'id', ['shortname' => 'student']));
 
     $moduleinfo = (object) [

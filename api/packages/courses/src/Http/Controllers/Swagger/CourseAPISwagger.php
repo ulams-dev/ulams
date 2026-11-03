@@ -19,7 +19,7 @@ interface CourseAPISwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/courses",
+     *      path="/api/courses", operationId="courses.get",
      *      summary="Get a listing of the Courses.",
      *      tags={"Courses"},
      *      description="Get all Courses",
@@ -135,9 +135,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -157,7 +155,7 @@ interface CourseAPISwagger
      *      )
      * ),
      * @OA\Get(
-     *      path="/api/admin/courses",
+     *      path="/api/admin/courses", operationId="admin.courses.get",
      *      summary="Get a listing of the Courses.",
      *      tags={"Admin Courses"},
      *      description="Get all Courses",
@@ -269,9 +267,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -296,7 +292,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/courses/authored",
+     *      path="/api/courses/authored", operationId="courses.authored.get",
      *      summary="Get a listing of the authored Courses.",
      *      tags={"Courses"},
      *      description="Get all Courses",
@@ -346,9 +342,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -373,7 +367,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/courses",
+     *      path="/api/admin/courses", operationId="admin.courses.post",
      *      summary="Store a newly created Course in storage",
      *      tags={"Admin Courses"},
      *      description="Store Course",
@@ -394,9 +388,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -463,7 +455,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/courses/{id}",
+     *      path="/api/courses/{id}", operationId="courses.by-id.get",
      *      summary="Display the specified Course",
      *      tags={"Courses"},
      *      description="Get Course",
@@ -479,9 +471,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -548,7 +538,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/courses/{id}/program",
+     *      path="/api/courses/{id}/program", operationId="courses.by-id.program.get",
      *      summary="Display the specified Course program/curriculum/syllabus. No token required when course is free",
      *      tags={"Courses"},
      *      description="Get Course",
@@ -567,9 +557,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -593,7 +581,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/courses/{id}/scorm",
+     *      path="/api/courses/{id}/scorm", operationId="courses.by-id.scorm.get",
      *      summary="Display the specified Course scorm View to be embeede with iframe",
      *      tags={"Courses"},
      *      description="Get Course",
@@ -688,7 +676,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/courses/{id}",
+     *      path="/api/admin/courses/{id}", operationId="admin.courses.by-id.post",
      *      summary="Update the specified Course in storage",
      *      tags={"Admin Courses"},
      *      description="Update Course",
@@ -714,9 +702,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -740,7 +726,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/courses/{id}",
+     *      path="/api/admin/courses/{id}", operationId="admin.courses.by-id.delete",
      *      summary="Remove the specified Course from storage",
      *      tags={"Admin Courses"},
      *      description="Delete Course",
@@ -759,9 +745,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -785,7 +769,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/courses/sort",
+     *      path="/api/admin/courses/sort", operationId="admin.courses.sort.post",
      *      summary="Sorts Lessons or Topics",
      *      tags={"Admin Courses"},
      *      description="Sorts Lessons or Topics by sending course_id, class (Topic or Lesson) and array of tuple [class_id, order]. Example
@@ -818,9 +802,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      )
      * )
      */
@@ -829,7 +811,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/tags/uniqueTags",
+     *      path="/api/tags/uniqueTags", operationId="tags.uniquetags.get",
      *      summary="Endpoints get unique tags from active courses",
      *      tags={"Courses"},
      *      description="Get unique tags",
@@ -839,9 +821,7 @@ interface CourseAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="text/html"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -865,7 +845,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/courses/{id}/preview/{topic_id}",
+     *      path="/api/courses/{id}/preview/{topic_id}", operationId="courses.by-id.preview.by-topic-id.get",
      *      summary="Preview the specified Course Topic is set to preview",
      *      tags={"Courses"},
      *      description="Get Topic with Topicable",

@@ -20,7 +20,7 @@ interface FileApiSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/file/list",
+     *     path="/api/admin/file/list", operationId="admin.file.list.get",
      *     summary="Lists files prefixed by given directory name",
      *     tags={"Files"},
      *     security={
@@ -111,7 +111,7 @@ interface FileApiSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/file/find",
+     *     path="/api/admin/file/find", operationId="admin.file.find.get",
      *     summary="Lists files found by name",
      *     tags={"Files"},
      *     security={
@@ -210,7 +210,7 @@ interface FileApiSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/admin/file/upload",
+     *     path="/api/admin/file/upload", operationId="admin.file.upload.post",
      *     summary="Upload files using multipart form-data",
      *     tags={"Files"},
      *     security={
@@ -241,7 +241,12 @@ interface FileApiSwagger
      *     ),
      *     @OA\Response(
      *          response=200,
-     *          description="successful operation",
+     *          description="Paths of the stored files",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="success", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string"),
+     *              @OA\Property(property="data", type="array", @OA\Items(type="string", example="/uploads/photo.jpg"))
+     *          ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -250,10 +255,6 @@ interface FileApiSwagger
      *     @OA\Response(
      *          response=403,
      *          description="user doesn't have required access rights",
-     *      ),
-     *     @OA\Response(
-     *          response=409,
-     *          description="one of the uploaded files already exists",
      *      ),
      *     @OA\Response(
      *          response=422,
@@ -268,7 +269,7 @@ interface FileApiSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/admin/file/move",
+     *     path="/api/admin/file/move", operationId="admin.file.move.post",
      *     summary="Move the file from one path to another",
      *     tags={"Files"},
      *     security={
@@ -288,7 +289,12 @@ interface FileApiSwagger
      *     ),
      *     @OA\Response(
      *          response=200,
-     *          description="successful operation",
+     *          description="The file was moved",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="success", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string"),
+     *              @OA\Property(property="data", type="boolean", example=true)
+     *          ),
      *      ),
      *     @OA\Response(
      *          response=302,
@@ -319,7 +325,7 @@ interface FileApiSwagger
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/file/delete",
+     *     path="/api/admin/file/delete", operationId="admin.file.delete.delete",
      *     summary="Delete given file",
      *     tags={"Files"},
      *     security={
@@ -335,7 +341,12 @@ interface FileApiSwagger
      *     ),
      *     @OA\Response(
      *          response=200,
-     *          description="successful operation",
+     *          description="The file was deleted",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="success", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string"),
+     *              @OA\Property(property="data", type="boolean", example=true)
+     *          ),
      *      ),
      *     @OA\Response(
      *          response=400,

@@ -224,7 +224,7 @@ class UserSubmissionAdminTest extends TestCase
         $this->assertDatabaseHas('user_submissions', [
             'email' => $email,
             'morphable_id' => $product->getKey(),
-            'morphable_type' => Product::class,
+            'morphable_type' => 'product', // stored as the morph alias
             'status' => UserSubmissionStatusEnum::SENT
         ]);
 
@@ -258,7 +258,7 @@ class UserSubmissionAdminTest extends TestCase
         $this->assertDatabaseHas('user_submissions', [
             'email' => $email,
             'morphable_id' => $exampleProductable->getKey(),
-            'morphable_type' => ExampleProductable::class,
+            'morphable_type' => 'test.productable', // stored as the morph alias
             'status' => UserSubmissionStatusEnum::SENT
         ]);
 
@@ -410,6 +410,7 @@ class UserSubmissionAdminTest extends TestCase
     public function testDeleteUserSubmissionWithEvent(): void
     {
         Event::fake();
+        Shop::registerProductableClass(ExampleProductable::class);
         $admin = $this->makeAdmin();
         $productable = ExampleProductable::factory()->create();
         $userSubmission = UserSubmission::factory()->create([

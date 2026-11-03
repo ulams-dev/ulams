@@ -13,7 +13,7 @@ interface OrderAdminSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/orders",
+     *      path="/api/admin/orders", operationId="admin.orders.get",
      *      description="Search orders",
      *      tags={"Admin Orders"},
      *      security={
@@ -105,9 +105,7 @@ interface OrderAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -138,7 +136,7 @@ interface OrderAdminSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/orders/{id}",
+     *      path="/api/admin/orders/{id}", operationId="admin.orders.by-id.get",
      *      summary="Display the specified Order",
      *      tags={"Admin Orders"},
      *      description="Get Order",
@@ -157,9 +155,7 @@ interface OrderAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -182,7 +178,7 @@ interface OrderAdminSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/orders/export",
+     *      path="/api/admin/orders/export", operationId="admin.orders.export.get",
      *      description="Export orders to file",
      *      tags={"Admin Orders"},
      *      security={

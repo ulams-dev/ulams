@@ -17,6 +17,8 @@ use Ulams\Ai\Fake\FakeResponders;
  */
 final class FakeDriver implements LlmDriver
 {
+    public const STREAM_CHUNK = 12;
+
     /** @var array<string,array<int,DriverResponse|Closure(DriverRequest):DriverResponse>> */
     private array $queued = [];
 
@@ -33,6 +35,17 @@ final class FakeDriver implements LlmDriver
     public function name(): string
     {
         return 'fake';
+    }
+
+    /** Replays the response of send() in small chunks, so streaming code is tested without a model. */
+    public function stream(DriverRequest $request, callable $onText): DriverResponse
+    {
+        $response = $this->send($request);
+        foreach (mb_str_split($response->text, self::STREAM_CHUNK) as $chunk) {
+            $onText($chunk);
+        }
+
+        return $response;
     }
 
     public function send(DriverRequest $request): DriverResponse

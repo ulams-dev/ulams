@@ -15,6 +15,7 @@ interface PersonalAccessTokenServiceContract
      *
      * @param  list<string>  $scopes   validated by TokenScopes::normalize
      * @param  list<string>|null  $callerScopes  scopes of the token making the call; the new token may not exceed them
+     * @param  list<string>|null  $resourceIds  limit the token to these resources (saved report ids); it can then call only the endpoints that name one of them
      */
     public function issue(
         User $user,
@@ -26,6 +27,7 @@ interface PersonalAccessTokenServiceContract
         string $createdVia = 'admin',
         ?int $rateLimitPerMinute = null,
         ?array $callerScopes = null,
+        ?array $resourceIds = null,
     ): IssuedToken;
 
     /** @return Collection<int,ApiTokenMeta> the user's scoped tokens, newest first (token relation loaded) */
@@ -36,4 +38,7 @@ interface PersonalAccessTokenServiceContract
     public function find(string $tokenId): ?ApiTokenMeta;
 
     public function revoke(ApiTokenMeta $meta): void;
+
+    /** Set (or with null remove) the per-minute request limit of a scoped token. */
+    public function setRateLimit(ApiTokenMeta $meta, ?int $perMinute): ApiTokenMeta;
 }

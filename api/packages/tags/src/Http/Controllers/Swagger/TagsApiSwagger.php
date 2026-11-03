@@ -13,14 +13,12 @@ interface TagsApiSwagger
     /**
      * @OA\Get(
      *      tags={"Tags"},
-     *      path="/api/tags",
+     *      path="/api/tags", operationId="tags.get",
      *      description="Display a listing of the Tag",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -36,14 +34,12 @@ interface TagsApiSwagger
     /**
      * @OA\Get(
      *      tags={"Tags"},
-     *      path="/api/tags/unique",
+     *      path="/api/tags/unique", operationId="tags.unique.get",
      *      description="Display the unique Tags",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -62,7 +58,7 @@ interface TagsApiSwagger
      *      security={
      *          {"passport": {}},
      *      },
-     *      path="/api/admin/tags",
+     *      path="/api/admin/tags", operationId="admin.tags.post",
      *      description="Create multiple Tags",
      *      @OA\RequestBody(
      *          required=true,
@@ -108,9 +104,7 @@ interface TagsApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -129,7 +123,7 @@ interface TagsApiSwagger
      *     security={
      *         {"passport": {}},
      *     },
-     *     path="/api/admin/tags",
+     *     path="/api/admin/tags", operationId="admin.tags.delete",
      *     summary="Destroy Tags",
      *     description="Destroy Tags",
      *     @OA\RequestBody(
@@ -162,9 +156,7 @@ interface TagsApiSwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -183,7 +175,7 @@ interface TagsApiSwagger
      *      security={
      *          {"passport": {}},
      *      },
-     *      path="/api/admin/tags/{tag}",
+     *      path="/api/admin/tags/{tag}", operationId="admin.tags.by-tag.get",
      *      description="Display the specified Tag",
      *      @OA\Parameter(
      *          name="tag",
@@ -210,9 +202,7 @@ interface TagsApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=404,
@@ -231,7 +221,7 @@ interface TagsApiSwagger
      *      security={
      *          {"passport": {}},
      *      },
-     *      path="/api/admin/tags/unique",
+     *      path="/api/admin/tags/unique", operationId="admin.tags.unique.get",
      *      description="Display the unique Tags (admin)",
      *      @OA\Response(
      *          response=401,
@@ -250,9 +240,7 @@ interface TagsApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      )
      *   )
      */

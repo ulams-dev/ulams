@@ -4,13 +4,19 @@
  * renders from what the API returns; decisions are saved one by one, and nothing changes in the
  * course until the author applies.
  */
-import { apiErrorInfo, type AgUiEvent, type ProposalDetail, type ProposalItem, type RevisionChanges } from "@ulams/sdk";
+import { apiErrorInfo, type AgUiEvent, type ProposalDetail, type SourceChange, type ProposalItem, type RevisionChanges } from "@ulams/sdk";
 import { renderSurface, type FlatComponent } from "@ulams/ui/builder/renderer.ts";
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h, uid } from "@ulams/ui/builder/dom.ts";
 import { announce, livingClient, message, showCitation, studioClient } from "./common.ts";
 import { changeProps, cosmeticToggleLabel, countsSentence, splitChanges } from "./living.ts";
 import { createLearnerPanel, learnerSettings, learnerSwitches, type LearnerSettings } from "./learners.ts";
+import { evidenceCard } from "@ulams/ui/builder/insights-view.ts";
+import { evidenceCardOptions, improveStrings } from "./improve-model.ts";
+import { fill, type InsightsLocale } from "./insights-i18n.ts";
+import { formatterFor } from "./insights-model.ts";
+import { VARIANT_STRINGS } from "./variants-i18n.ts";
+import { acceptedInGroupText, courseName, groupEntries } from "./variants-model.ts";
 import {
   analyseLabel,
   applyLabel,
@@ -43,6 +49,12 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
   const sessionId = root.dataset.session!;
   const proposalId = root.dataset.proposal!;
   const pollMs = options.pollMs ?? 3000;
+  // improvements from learner insights (ADR 0181) speak the language the page was opened in; the rest of the screen is English
+  const locale = (root.dataset.locale ?? "en") as InsightsLocale;
+  const im = improveStrings(locale);
+  const formatter = formatterFor(locale);
+  // the variant parts (badge, "Versions of this update", "Accept in all versions") are in the page's language too
+  const vt = VARIANT_STRINGS[locale];
 
   const header = h("div", { "data-header": "" });
   const learnerPanel = createLearnerPanel(lc, proposalId);
@@ -80,6 +92,10 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     announce(text);
   };
   const clearNotice = (): void => notices.replaceChildren();
+  /** A polite status line in the page's language; the live region itself announces it, so nothing is announced twice. */
+  const notifyLocalised = (text: string, kind: "error" | "info" = "info"): void => {
+    notices.replaceChildren(h("p", { class: kind === "error" ? "cb-error" : "cb-muted", role: kind === "error" ? "alert" : "status", lang: vt.htmlLang, "data-group-status": "" }, text));
+  };
 
   const retryButton = (label: string, run: () => void): HTMLElement => {
     const button = h("button", { type: "button", class: "cb-btn cb-btn-small" }, label);
@@ -193,6 +209,7 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
 
   function render(): void {
     if (!detail) return;
+    changesCol.hidden = detail.kind === "insights";
     renderHeader();
     learnerPanel.update(detail, settings);
     renderState();
@@ -201,24 +218,69 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     renderChanges();
   }
 
+  function renderInsightsHeader(p: ProposalDetail): void {
+    header.replaceChildren(
+      h("div", { class: "st-review-head" },
+        h("h2", { class: "cb-serif cb-h2", lang: im.htmlLang }, im.reviewHeading),
+        h("span", { class: "st-status", "data-proposal-status": p.status }, PROPOSAL_STATUS_LABEL[p.status] ?? p.status)),
+      h("p", { class: "cb-muted", lang: im.htmlLang },
+        fill(im.reviewSub, { number: p.number }),
+        p.counts?.targetLabel ? ` · ${p.counts.targetLabel}` : ""),
+      h("p", { class: "cb-muted", lang: im.htmlLang }, im.reviewIntro),
+      ...(p.evidence ? [evidenceCard(evidenceCardOptions(formatter, im, p.evidence, { level: 3 }))] : []),
+      learnerPanel.el,
+      switchesHost
+    );
+  }
+
+  /** "From PR #123: Rename the flag": the Git change behind the revision, as plain text (a commit message is untrusted). */
+  function gitChangeLine(c: SourceChange): HTMLElement {
+    const what = c.pullRequest !== null ? `PR #${c.pullRequest}` : c.commit ? `commit ${c.commit.slice(0, 7)}` : "a Git change";
+    const link = [c.pullRequestUrl, c.url].find((u) => typeof u === "string" && /^https:\/\//i.test(u));
+    return h("p", { class: "cb-muted", "data-git-change": "" },
+      "From ",
+      link ? h("a", { href: link, rel: "noopener noreferrer", target: "_blank" }, what) : what,
+      c.subject ? `: ${c.subject}` : "");
+  }
+
   function renderHeader(): void {
     const p = detail!;
+    if (p.kind === "insights") return renderInsightsHeader(p);
     const from = p.fromRevision?.number;
     const to = p.toRevision?.number;
     const source = countsSentence(p.counts?.source);
     const d = p.decisions;
+    const course = courseName(vt, p);
     header.replaceChildren(
       h("div", { class: "st-review-head" },
         h("h2", { class: "cb-serif cb-h2" }, from && to ? `Source update: revision ${from} → ${to}` : `Source update #${p.number}`),
+        ...(course ? [h("span", { class: "st-badge st-course-badge", "data-course-badge": "", lang: p.variant?.label ? undefined : vt.htmlLang }, course)] : []),
         h("span", { class: "st-status", "data-proposal-status": p.status }, PROPOSAL_STATUS_LABEL[p.status] ?? p.status)),
+      ...groupNav(p),
       h("p", { class: "cb-muted" },
         source ? `What changed in the source: ${source}.` : "The source changed.",
         ` Proposal ${p.number}`,
         p.status === "ready" || p.status === "applied" ? ` · ${d.accepted ?? 0} accepted · ${d.rejected ?? 0} rejected · ${d.pending ?? 0} undecided` : ""),
+      ...(p.change ? [gitChangeLine(p.change)] : []),
       surface("ImpactSummary", impactProps(p)),
       learnerPanel.el,
       switchesHost
     );
+  }
+
+  /** "Versions of this update": one link per proposal of the group; the open one has aria-current="page". */
+  function groupNav(p: ProposalDetail): HTMLElement[] {
+    const entries = groupEntries(vt, p);
+    if (entries.length === 0) return [];
+    const query = locale === "en" ? "" : `?lang=${locale}`;
+    return [h("nav", { class: "st-vg", "aria-label": vt.navLabel, lang: vt.htmlLang, "data-group-nav": "" },
+      h("ul", { class: "st-vg-list" }, entries.map((e) =>
+        h("li", { "data-group-entry": e.id },
+          h("a", { class: "st-vg-link", href: `/studio/s/${sessionId}/updates/${e.id}${query}`, ...(e.isCurrent ? { "aria-current": "page" } : {}) },
+            h("span", { class: "st-vg-name" }, e.name),
+            h("span", { class: "st-vg-status", "data-entry-status": e.status }, e.statusText),
+            e.counts ? h("span", { class: "st-vg-counts cb-small" }, e.counts) : null,
+            e.isCurrent ? h("span", { class: "cb-sr" }, ` (${vt.navCurrent})`) : null)))))];
   }
 
   function renderState(): void {
@@ -261,15 +323,17 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
         break;
       case "applied":
         nodes.push(h("section", { class: "cb-card st-state st-done", "data-done": "" },
-          h("h2", { class: "cb-h3" }, "The update is applied"),
-          h("p", {}, `Your course now reflects source revision ${p.toRevision?.number ?? ""}. Learners keep their progress.`.replace("revision .", "the new revision.")),
+          h("h2", { class: "cb-h3", lang: p.kind === "insights" ? im.htmlLang : undefined }, p.kind === "insights" ? im.appliedTitle : "The update is applied"),
+          h("p", { lang: p.kind === "insights" ? im.htmlLang : undefined }, p.kind === "insights" ? im.appliedText : `Your course now reflects source revision ${p.toRevision?.number ?? ""}. Learners keep their progress.`.replace("revision .", "the new revision.")),
           h("div", { class: "cb-actions" }, h("a", { class: "cb-btn cb-btn-primary", href: `/studio/s/${sessionId}/workspace` }, "Back to the workspace"), h("a", { class: "cb-btn", href: `/studio/s/${sessionId}/updates` }, "All updates"))));
         break;
       case "no_impact":
         nodes.push(h("section", { class: "cb-card st-state" }, h("h2", { class: "cb-h3" }, "This change does not affect your course"), h("p", {}, "No lesson, question or objective relies on the passages that changed.")));
         break;
       case "rejected":
-        nodes.push(h("section", { class: "cb-card st-state" }, h("h2", { class: "cb-h3" }, "You kept the earlier version"), h("p", {}, "Your course was not changed, and the source revision is marked as reviewed.")));
+        nodes.push(p.kind === "insights"
+          ? h("section", { class: "cb-card st-state", lang: im.htmlLang }, h("h2", { class: "cb-h3" }, im.rejectedTitle), h("p", {}, im.rejectedText))
+          : h("section", { class: "cb-card st-state" }, h("h2", { class: "cb-h3" }, "You kept the earlier version"), h("p", {}, "Your course was not changed, and the source revision is marked as reviewed.")));
         break;
       case "superseded":
         nodes.push(h("section", { class: "cb-card st-state" }, h("h2", { class: "cb-h3" }, "A newer proposal replaced this one"), h("p", {}, h("a", { href: `/studio/s/${sessionId}/updates` }, "Open the list of updates"), " to review it.")));
@@ -352,6 +416,7 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     }
     const decidable = canDecide(p.status, aiEnabled);
     const regenerate = aiEnabled && p.status === "ready";
+    const suggest = aiEnabled && (p.status === "ready" || p.status === "no_impact");
     const toolbar = p.status === "ready" ? bulkToolbar() : null;
     itemsCol.replaceChildren(
       ...(toolbar ? [toolbar] : []),
@@ -362,15 +427,19 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
           h("ul", { class: "st-items" }, g.items.map((item) => {
             const host = h("li", { "data-item-host": item.id });
             itemHosts.set(item.id, host);
-            host.replaceChildren(itemSurface(item, decidable, regenerate));
+            host.replaceChildren(itemSurface(item, decidable, regenerate, suggest));
             return host;
           })));
       })
     );
   }
 
-  const itemSurface = (item: ProposalItem, decidable: boolean, regenerate: boolean): HTMLElement =>
-    surface("UpdateItem", itemProps(item, { sessionId, canDecide: decidable, canRegenerate: regenerate }), (action) => void onItemAction(action));
+  const itemSurface = (item: ProposalItem, decidable: boolean, regenerate: boolean, suggest = false): HTMLElement => {
+    const el = surface("UpdateItem", itemProps(item, { sessionId, canDecide: decidable, canRegenerate: regenerate, canSuggest: suggest, variants: vt, hasSiblings: (detail?.siblings?.length ?? 0) > 0 }), (action) => void onItemAction(action));
+    // the words of the group action come in the page's language, inside an English item
+    for (const part of el.querySelectorAll<HTMLElement>("[data-accept-in-group], [data-reused-note]")) part.lang = vt.htmlLang;
+    return el;
+  };
 
   function bulkToolbar(): HTMLElement {
     const slot = h("div", { "data-reject-slot": "" });
@@ -379,7 +448,8 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     all.addEventListener("click", () => void acceptAll());
     reject.addEventListener("click", () => {
       reject.disabled = true;
-      slot.replaceChildren(confirmPanel("Reject the whole update?", rejectAllText(detail?.toRevision?.number), "Reject and keep my course", () => void rejectAll(), () => {
+      const insights = detail?.kind === "insights";
+      slot.replaceChildren(confirmPanel(insights ? im.rejectTitle : "Reject the whole update?", insights ? im.rejectText : rejectAllText(detail?.toRevision?.number), "Reject and keep my course", () => void rejectAll(), () => {
         slot.replaceChildren();
         reject.disabled = false;
         reject.focus();
@@ -387,7 +457,9 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     });
     return h("div", { class: "st-bulk" },
       h("div", { class: "cb-actions" }, all, reject),
-      h("p", { class: "cb-muted cb-small" }, "Accept all accepts every undecided update, removal and no-change item. Reject all keeps your course as it is and acknowledges this source revision."),
+      h("p", { class: "cb-muted cb-small" }, detail?.kind === "insights"
+        ? "Accept all accepts every undecided change. Reject all keeps your course as it is."
+        : "Accept all accepts every undecided update, removal and no-change item. Reject all keeps your course as it is and acknowledges this source revision."),
       slot);
   }
 
@@ -456,6 +528,33 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
       } catch (error) {
         notify(message(error, "The decision could not be saved."), "error");
         host(itemId)?.replaceChildren(itemSurface(item, true, aiEnabled && detail.status === "ready"));
+      }
+    } else if (action.name === "accept_in_group") {
+      try {
+        const result = await lc.proposals.acceptInGroup(proposalId, itemId);
+        notifyLocalised(acceptedInGroupText(vt, result.accepted));
+        // the other proposals changed too: reload for their counts, then put the focus back on the item
+        await load();
+        host(itemId)?.querySelector<HTMLElement>("[data-focus-target]")?.focus();
+      } catch (error) {
+        notifyLocalised(message(error, vt.acceptInGroupFailed), "error");
+        host(itemId)?.replaceChildren(itemSurface(item, canDecide(detail.status, aiEnabled), aiEnabled && detail.status === "ready", aiEnabled && (detail.status === "ready" || detail.status === "no_impact")));
+      }
+    } else if (action.name === "suggest_lesson") {
+      try {
+        const result = await lc.proposals.suggestLesson(proposalId, itemId);
+        replaceItem(result.item, { ...detail, ...result.proposal });
+        itemsKey = "";
+        renderHeader();
+        renderItemsIfChanged();
+        renderApplyBar();
+        updateGroupProgress();
+        host(itemId)?.querySelector<HTMLElement>("[data-focus-target]")?.focus();
+        announce(`A lesson is suggested for ${result.item.label}. Review it and decide.`);
+      } catch (error) {
+        const info = apiErrorInfo(error);
+        notify(info.code === "ai_disabled" ? "AI is disabled on this installation. Add the lesson by hand in the workspace." : message(error, "A lesson could not be suggested."), "error");
+        host(itemId)?.replaceChildren(itemSurface(item, canDecide(detail.status, aiEnabled), false, info.code !== "ai_disabled" && aiEnabled));
       }
     } else if (action.name === "regenerate_item") {
       const comment = String(action.context.comment ?? "");

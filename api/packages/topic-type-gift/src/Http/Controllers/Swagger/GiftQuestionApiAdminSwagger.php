@@ -15,7 +15,7 @@ interface GiftQuestionApiAdminSwagger
 {
     /**
      * @OA\Post(
-     *      path="/api/admin/gift-questions",
+     *      path="/api/admin/gift-questions", operationId="admin.gift-questions.post",
      *      summary="Store a newly Gift Question",
      *      tags={"Admin Gift Question"},
      *      description="Store Gift Question",
@@ -57,7 +57,7 @@ interface GiftQuestionApiAdminSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/gift-questions/{id}",
+     *      path="/api/admin/gift-questions/{id}", operationId="admin.gift-questions.by-id.put",
      *      summary="Update Gift Question",
      *      tags={"Admin Gift Question"},
      *      description="Update Gift Question",
@@ -108,7 +108,7 @@ interface GiftQuestionApiAdminSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/gift-questions/{id}",
+     *      path="/api/admin/gift-questions/{id}", operationId="admin.gift-questions.by-id.delete",
      *      summary="Remove the specified Gift Question",
      *      tags={"Admin Gift Question"},
      *      description="Delete Gift Question",
@@ -127,9 +127,7 @@ interface GiftQuestionApiAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -152,7 +150,7 @@ interface GiftQuestionApiAdminSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/gift-questions/sort",
+     *      path="/api/admin/gift-questions/sort", operationId="admin.gift-questions.sort.post",
      *      summary="Sort Gift Questions",
      *      tags={"Admin Gift Question"},
      *      description="Sort Gift Questions",
@@ -190,7 +188,7 @@ interface GiftQuestionApiAdminSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/gift-questions/export",
+     *     path="/api/admin/gift-questions/export", operationId="admin.gift-questions.export.get",
      *     summary="Export Gift Questions",
      *     tags={"Admin Gift Question"},
      *     description="Export Gift Questions",
@@ -251,7 +249,7 @@ interface GiftQuestionApiAdminSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/admin/gift-questions/import",
+     *     path="/api/admin/gift-questions/import", operationId="admin.gift-questions.import.post",
      *     summary="Import Gift Questions",
      *     tags={"Admin Gift Question"},
      *     description="Import Gift Questions",
@@ -267,7 +265,7 @@ interface GiftQuestionApiAdminSwagger
      *      ),
      *     @OA\Response(
      *          response=200,
-     *          description="successful operation",
+     *          description="successful operation", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")
      *      ),
      *      @OA\Response(
      *          response=422,

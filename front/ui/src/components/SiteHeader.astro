@@ -1,6 +1,11 @@
 ---
+import { ctaEvent } from "../lib/analytics.ts";
+import { uiStrings, pageLocale, fill } from "../lib/i18n.ts";
 import Icon from "./Icon.astro";
+import NewTabMark from "./NewTabMark.astro";
+import { linkTarget } from "../lib/links.ts";
 import Logo from "../brand/Logo.astro";
+import { imageSrc } from "../lib/images.ts";
 
 interface Link {
   label: string;
@@ -13,21 +18,44 @@ interface Props {
   links?: Link[];
   cta?: Link;
   signIn?: Link;
+  /** Where the brand links to (the language home of a translated landing). */
+  homeHref?: string;
+  /** Language switcher, a control of its own (not one of the six links). */
+  languages?: Array<{ code: string; label: string; href: string; current?: boolean }>;
 }
-const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.props;
+const { brand, tagline, mark = "wordmark", links = [], cta, signIn, homeHref = "/", languages = [] } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
+// The tenant's own logo (the settings `theme.logo`, set by the learner site's middleware), shown instead of the
+// mark and the name; its alt text is the one the admin chose, else the company name. The platform's lockup stays.
+const tenantLogo = (Astro.locals as { tenantLogo?: { src?: unknown; alt?: unknown } | null } | undefined)?.tenantLogo;
+const logo = mark !== "logo" && typeof tenantLogo?.src === "string" && /^https?:\/\//.test(tenantLogo.src) ? { src: tenantLogo.src, alt: typeof tenantLogo.alt === "string" && tenantLogo.alt.trim() ? tenantLogo.alt.trim() : brand } : null;
+const normalizedPath = (path: string) => {
+  const clean = path.replace(/\/+$/, "") || "/";
+  return clean === "/platform" ? "/" : clean;
+};
+const isCurrent = (href: string): boolean => {
+  if (href.startsWith("#")) return false;
+  try {
+    const target = new URL(href, Astro.url);
+    return !target.hash && target.origin === Astro.url.origin && normalizedPath(target.pathname) === normalizedPath(Astro.url.pathname);
+  } catch {
+    return false;
+  }
+};
 ---
 
 <header class={`u-header u-header--${mark}`}>
   <div class="u-container u-header__bar">
-    <a class="u-brand" href="/" aria-label={`${brand}, home`}>
-      {mark === "terminal" && <span class="u-brand__mark" aria-hidden="true"><Icon name="terminal" /></span>}
-      {mark === "rocket" && <span class="u-brand__mark" aria-hidden="true"><Icon name="rocket" /></span>}
-      {mark === "orbit" && <span class="u-brand__mark" aria-hidden="true"><Icon name="planet" /></span>}
-      {mark === "compass" && <span class="u-brand__mark" aria-hidden="true"><Icon name="compass" /></span>}
-      {mark === "sigma" && <span class="u-brand__mark" aria-hidden="true"><Icon name="sigma" /></span>}
+    <a class={logo ? "u-brand u-brand--logo" : "u-brand"} href={homeHref} aria-label={logo ? undefined : fill(t.home, { brand })}>
+      {logo && <img class="u-brand__img" src={imageSrc(logo.src, "logo", 320)} alt={logo.alt} height="40" decoding="async" />}
+      {!logo && mark === "terminal" && <span class="u-brand__mark" aria-hidden="true"><Icon name="terminal" /></span>}
+      {!logo && mark === "rocket" && <span class="u-brand__mark" aria-hidden="true"><Icon name="rocket" /></span>}
+      {!logo && mark === "orbit" && <span class="u-brand__mark" aria-hidden="true"><Icon name="planet" /></span>}
+      {!logo && mark === "compass" && <span class="u-brand__mark" aria-hidden="true"><Icon name="compass" /></span>}
+      {!logo && mark === "sigma" && <span class="u-brand__mark" aria-hidden="true"><Icon name="sigma" /></span>}
       {mark === "logo" && <Logo class="u-brand__logo" variant="horizontal" />}
       {
-        mark !== "logo" && (
+        mark !== "logo" && !logo && (
           <span class="u-brand__text">
             <span class="u-brand__name">{brand}</span>
             {tagline && <span class="u-brand__tagline">{tagline}</span>}
@@ -37,11 +65,11 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
     </a>
     {
       links.length > 0 && (
-        <nav class="u-nav" aria-label="Main">
+        <nav class="u-nav" aria-label={t.navMain}>
           <ul>
             {links.map((link) => (
               <li>
-                <a href={link.href}>{link.label}</a>
+                <a href={link.href} {...linkTarget(link.href)} data-umami-event={ctaEvent(link.href)} aria-current={isCurrent(link.href) ? "page" : undefined}>{link.label}<NewTabMark href={link.href} /></a>
               </li>
             ))}
           </ul>
@@ -49,31 +77,47 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
       )
     }
     <div class="u-header__actions">
-      {signIn && <a class="u-header__signin" href={signIn.href}>{signIn.label}</a>}
+      {
+        languages.length > 1 && (
+          <nav class="u-lang" aria-label={t.language}>
+            <ul role="list">
+              {languages.map((l) => (
+                <li>
+                  <a href={l.href} data-lang-switch data-base={l.href} lang={l.code} hreflang={l.code} aria-current={l.current ? "true" : undefined}>
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+      {signIn && <a class="u-header__signin" href={signIn.href} {...linkTarget(signIn.href)}>{signIn.label}<NewTabMark href={signIn.href} /></a>}
       {
         cta && (
-          <a class="u-btn u-btn--sm" href={cta.href}>
+          <a class="u-btn u-btn--sm" href={cta.href} {...linkTarget(cta.href)} data-umami-event={ctaEvent(cta.href)}>
             {cta.label}
+            <NewTabMark href={cta.href} />
           </a>
         )
       }
       {
         links.length > 0 && (
           <details class="u-menu">
-            <summary aria-label="Menu">
+            <summary aria-label={t.menu}>
               <Icon name="menu" class="u-menu__open" />
               <Icon name="close" class="u-menu__close" />
             </summary>
-            <nav class="u-menu__panel" aria-label="Mobile">
+            <nav class="u-menu__panel" aria-label={t.navMobile}>
               <ul>
                 {links.map((link) => (
                   <li>
-                    <a href={link.href}>{link.label}</a>
+                    <a href={link.href} {...linkTarget(link.href)} data-umami-event={ctaEvent(link.href)} aria-current={isCurrent(link.href) ? "page" : undefined}>{link.label}<NewTabMark href={link.href} /></a>
                   </li>
                 ))}
                 {signIn && (
                   <li>
-                    <a href={signIn.href}>{signIn.label}</a>
+                    <a href={signIn.href} {...linkTarget(signIn.href)}>{signIn.label}<NewTabMark href={signIn.href} /></a>
                   </li>
                 )}
               </ul>
@@ -84,6 +128,10 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
     </div>
   </div>
 </header>
+
+<script>
+  import "../elements/lang-switch.ts";
+</script>
 
 <style>
   .u-header {
@@ -117,6 +165,13 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
     text-decoration: none;
     margin-right: auto;
     min-width: 0;
+  }
+  .u-brand__img {
+    display: block;
+    height: 40px;
+    width: auto;
+    max-width: min(240px, 60vw);
+    object-fit: contain;
   }
   .u-brand__mark {
     display: grid;
@@ -182,6 +237,9 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
     transform: scaleX(1);
     transform-origin: left;
   }
+  .u-nav a[aria-current="page"] { color:var(--ulams-color-primary); font-weight:700; }
+  .u-nav a[aria-current="page"]::after { transform:scaleX(1); height:2px; background:var(--ulams-color-accent); }
+  .u-menu__panel a[aria-current="page"] { color:var(--ulams-color-primary); font-weight:700; background:color-mix(in srgb,var(--ulams-color-primary) 7%,var(--ulams-color-bg)); border-left:2px solid var(--ulams-color-accent); }
   .u-header__actions {
     display: flex;
     align-items: center;
@@ -196,6 +254,37 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
   .u-header__signin:hover {
     text-decoration: underline;
     text-underline-offset: 4px;
+  }
+  .u-lang ul {
+    list-style: none;
+    display: flex;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+  }
+  .u-lang a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--ulams-color-muted);
+    border-radius: var(--ulams-radius);
+  }
+  .u-lang a:hover {
+    color: var(--ulams-color-text);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .u-lang a[aria-current="true"] {
+    color: var(--ulams-color-text);
+    font-weight: 700;
+    box-shadow: inset 0 -2px 0 currentColor;
+    border-radius: 0;
   }
   .u-menu {
     display: none;
@@ -248,7 +337,7 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
   .u-menu__panel a:hover {
     background: var(--ulams-color-card-bg);
   }
-  @media (max-width: 900px) {
+  @media (max-width: 1080px) {
     .u-nav,
     .u-header__signin {
       display: none;

@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 /**
  * "Build a course from a document in minutes": a looping story of the Course Builder in the studio.
  * A document drops in, three interview answers appear, an outline grows with a source chip on every
@@ -32,7 +33,7 @@ const {
   intro,
   valueLine,
   description,
-  windowTitle = "Studio · Course builder",
+  windowTitle,
   file,
   interview,
   outline,
@@ -42,6 +43,8 @@ const {
   apply,
 } = Astro.props;
 
+const t = uiStrings(pageLocale(Astro));
+const winTitle = windowTitle ?? t.studioWindow;
 // schedule (ms)
 const nodes = outline.flatMap((m) => [{ kind: "module" as const, title: m.title, source: "" }, ...m.lessons.map((l) => ({ kind: "lesson" as const, title: l.title, source: l.source }))]);
 const outlineAt = 3000;
@@ -65,16 +68,16 @@ const costEnd = quizAt + 900;
     <ulams-story class="u-stage u-bs__stage" data-total={total} data-hold="3500" loop>
       <p class="u-visually-hidden">{description}</p>
       <div class="u-win u-bs__win" aria-hidden="true">
-        <div class="u-win__bar"><span class="u-win__dots"><i></i><i></i><i></i></span><span>{windowTitle}</span></div>
+        <div class="u-win__bar"><span class="u-win__dots"><i></i><i></i><i></i></span><span>{winTitle}</span></div>
         <div class="u-bs__cols">
           <div class="u-bs__col">
-            <p class="u-bs__cap">Source</p>
+            <p class="u-bs__cap">{t.source}</p>
             <div class="u-bs__file" data-at="200">
               <Icon name="book" />
               <span>{file.name}</span>
               {file.label && <em>{file.label}</em>}
             </div>
-            <p class="u-bs__cap">Interview</p>
+            <p class="u-bs__cap">{t.interview}</p>
             <ul class="u-bs__qa">
               {
                 interview.map((qa, i) => (
@@ -92,7 +95,7 @@ const costEnd = quizAt + 900;
             </div>
           </div>
           <div class="u-bs__col">
-            <p class="u-bs__cap">Outline</p>
+            <p class="u-bs__cap">{t.outline}</p>
             <ul class="u-bs__tree">
               {
                 nodes.map((n, i) => (
@@ -105,7 +108,7 @@ const costEnd = quizAt + 900;
             </ul>
           </div>
           <div class="u-bs__col">
-            <p class="u-bs__cap">Lesson draft</p>
+            <p class="u-bs__cap">{t.lessonDraft}</p>
             <div class="u-bs__lesson">
               <p class="u-bs__lt" data-at={lessonAt - 200}>{lesson.title}</p>
               <p class="u-bs__text" data-at={lessonAt} data-type={typeDur}>{lesson.text}</p>
@@ -113,7 +116,7 @@ const costEnd = quizAt + 900;
                 {lesson.citations.map((c, i) => <span class="u-chip2" data-at={lessonAt + typeDur + 100 + i * 250}>{c}</span>)}
               </p>
               <div class="u-bs__quiz" data-at={quizAt}>
-                <span class="u-bs__qlabel">Quiz</span>
+                <span class="u-bs__qlabel">{t.quiz}</span>
                 <span data-at={quizAt} data-type="900">{quiz.question}</span>
                 <span class="u-chip2" data-at={quizAt + 1000}>{quiz.source}</span>
               </div>
@@ -129,8 +132,8 @@ const costEnd = quizAt + 900;
         </div>
       </div>
       <div class="u-stage__controls">
-        <button type="button" data-pause aria-pressed="false">Pause</button>
-        <button type="button" data-replay>Replay</button>
+        <button type="button" data-pause aria-pressed="false" data-label-pause={t.pause} data-label-play={t.play}>{t.pause}</button>
+        <button type="button" data-replay>{t.replay}</button>
       </div>
     </ulams-story>
     {valueLine && <p class="u-bs__value">{valueLine}</p>}

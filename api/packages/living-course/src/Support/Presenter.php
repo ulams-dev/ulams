@@ -32,6 +32,7 @@ final class Presenter
             'name' => $meta['name'] ?? null,
             'files' => $meta['files'] ?? null,
             'counts' => $meta['counts'] ?? null,
+            'change' => $meta['change'] ?? null,
             'error' => $r->error,
             'detectedAt' => ($r->detected_at ?? $r->created_at)?->toIso8601String(),
             'synced' => $connection !== null ? $connection->synced_revision_id === $r->id : null,
@@ -117,19 +118,25 @@ final class Presenter
     /** @return array<string,mixed> */
     public static function proposalSummary(Proposal $p): array
     {
-        $from = Revision::query()->find($p->from_revision_id);
-        $to = Revision::query()->find($p->to_revision_id);
+        $from = $p->from_revision_id !== null ? Revision::query()->find($p->from_revision_id) : null;
+        $to = $p->to_revision_id !== null ? Revision::query()->find($p->to_revision_id) : null;
 
         return [
             'id' => $p->id,
             'number' => $p->number,
             'sessionId' => $p->session_id,
             'sourceId' => $p->source_id,
+            'kind' => $p->kind,
+            // the course variant this proposal is for (null: the base course) and the group of proposals made together (ADR 0192)
+            'variant' => $p->variant_id !== null ? ($p->counts['variant'] ?? ['id' => $p->variant_id]) : null,
+            'proposalGroup' => $p->proposal_group,
             'status' => $p->status,
             'trigger' => $p->trigger,
             'counts' => $p->counts,
+            'evidence' => $p->evidence,
             'fromRevision' => $from ? ['id' => $from->id, 'number' => $from->number] : null,
             'toRevision' => $to ? ['id' => $to->id, 'number' => $to->number, 'detectedAt' => $to->detected_at?->toIso8601String()] : null,
+            'change' => $to !== null ? ((array) $to->metadata)['change'] ?? null : null,
             'runId' => $p->run_id,
             'baseVersionId' => $p->base_version_id,
             'resultVersionId' => $p->result_version_id,

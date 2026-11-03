@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/knowledge/1/manifest.json",
+  "title": "ulams knowledge pack manifest, format 1",
+  "description": "manifest.json of a course pack. `pack_hash` is the same for unchanged content, so a consumer can skip a re-import. Later versions only add fields.",
+  "type": "object",
+  "required": ["format", "course", "generated_at", "pack_hash", "chunks", "uncited_chunks", "topics", "sources", "files"],
+  "properties": {
+    "format": { "const": "ulams-knowledge-pack/1" },
+    "course": {
+      "type": "object",
+      "required": ["id", "title", "url"],
+      "properties": {
+        "id": { "type": "integer" },
+        "title": { "type": "string" },
+        "language": { "type": ["string", "null"] },
+        "url": { "type": "string" }
+      }
+    },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "pack_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "chunks": { "type": "integer", "minimum": 0 },
+    "uncited_chunks": { "type": "integer", "minimum": 0 },
+    "topics": {
+      "type": "object",
+      "required": ["exported", "skipped"],
+      "properties": { "exported": { "type": "integer", "minimum": 0 }, "skipped": { "type": "integer", "minimum": 0 } }
+    },
+    "sources": {
+      "type": "array",
+      "items": { "type": "object", "required": ["id", "name"], "properties": { "id": { "type": "string" }, "name": { "type": ["string", "null"] } } }
+    },
+    "files": { "type": "object", "required": ["chunks"], "properties": { "chunks": { "const": "chunks.jsonl" } } }
+  }
+}

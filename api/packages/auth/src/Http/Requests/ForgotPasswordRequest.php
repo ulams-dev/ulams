@@ -2,6 +2,8 @@
 
 namespace Ulams\Auth\Http\Requests;
 
+use Ulams\Auth\Rules\AllowedReturnUrl;
+
 class ForgotPasswordRequest extends ExtendableRequest
 {
     /**
@@ -23,7 +25,7 @@ class ForgotPasswordRequest extends ExtendableRequest
     {
         return [
             'email' => ['required', 'email'],
-            'return_url' => ['required', 'string'],
+            'return_url' => ['required', 'string', 'max:2048', new AllowedReturnUrl()],
         ];
     }
 }

@@ -55,6 +55,14 @@ class ImagesTest extends TestCase
         Storage::exists($output_path);
     }
 
+    public function test_image_get_without_path_is_a_validation_error(): void
+    {
+        $response = $this->call('GET', '/api/images/img');
+
+        $response->assertStatus(422);
+        $this->assertStringNotContainsString('vendor/', (string) $response->getContent());
+    }
+
     public function test_image_post_results(): void
     {
         $filename = 'test.jpg';

@@ -2,6 +2,7 @@
 
 namespace Ulams\Courses\Repositories;
 
+use Ulams\Core\Support\MorphMap;
 use Error;
 use Ulams\Courses\Exceptions\TopicException;
 use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
@@ -9,7 +10,6 @@ use Ulams\Courses\Http\Requests\UpdateTopicAPIRequest;
 use Ulams\Courses\Models\Contracts\TopicContentContract;
 use Ulams\Courses\Models\Contracts\TopicFileContentContract;
 use Ulams\Courses\Models\Topic;
-use Ulams\Courses\Models\TopicContent\AbstractTopicFileContent;
 use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
 use Ulams\Courses\Services\Contracts\TopicContentDeleter;
 use Ulams\Files\Helpers\FileHelper;
@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -244,7 +243,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         $replaced = null;
 
         if ($request->has('topicable_type')) {
-            $class = $request->input('topicable_type');
+            $class = MorphMap::classOf($request->input('topicable_type'));
 
             if (!in_array($class, $this->contentClasses)) {
                 throw new Error("Type '$class' is not allowed");
@@ -278,7 +277,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
      */
     private function createTopicContentModelFromRequest(FormRequest $request, Topic $topic): Model
     {
-        $class = $request->input('topicable_type');
+        $class = MorphMap::classOf($request->input('topicable_type'));
 
         if (!in_array($class, $this->contentClasses)) {
             throw new Error("Type '$class' is not allowed");
@@ -373,15 +372,21 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
 
     public function deleteModel(Topic $topic): ?bool
     {
+        // The storage directory comes from the topic, so it is worked out before the topic is gone. Content
+        // that keeps files (the topic types' file contents) says where; the courses package does not depend
+        // on those classes (the import this replaced named a namespace that no longer exists, so no file
+        // was ever removed).
+        $topicableForFiles = $topic->topicable;
+        $filesDirectory = $topicableForFiles !== null && method_exists($topicableForFiles, 'generateStoragePath')
+            ? $topicableForFiles->generateStoragePath()
+            : null;
+
         if ($topic->delete()) {
             $topicable = $topic->topicable;
             $this->deleteTopicContent($topicable);
-            if (is_a($topicable, AbstractTopicFileContent::class)) {
-                /** @var AbstractTopicFileContent $topicable */
-                $path = Storage::path($topicable->generateStoragePath());
+            if ($filesDirectory !== null) {
                 try {
-                    File::cleanDirectory($path);
-                    Storage::deleteDirectory($path);
+                    Storage::deleteDirectory($filesDirectory);
                 } catch (\Throwable $th) {
                 }
             }

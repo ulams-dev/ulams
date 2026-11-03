@@ -2,11 +2,11 @@
 
 After logging in to the Admin Panel, you should navigate to the "Sales" tab in the left sidebar menu and click on "Vouchers" from the dropdown menu.
 
-![image](https://github.com/EscolaLMS/Vouchers/assets/108077902/56666a74-dc8f-4e24-a082-1075ddfaab8a)
+![image](docs/img/admin-01.png)
 
 Vouchers have three filters. The first one is the traditional Name filter, which filters vouchers based on their names. Next to it, there is a Code filter used for cases where voucher names are very similar. The last filter is based on the date range when the vouchers are valid.
 
-![image](https://github.com/EscolaLMS/Vouchers/assets/108077902/0dd07d8e-37bc-4586-8b29-9778032e4b01)
+![image](docs/img/admin-02.png)
 
 Our vouchers have the following categories:
 * ID, Name - as already mentioned, self-explanatory.
@@ -19,11 +19,11 @@ Our vouchers have the following categories:
 * Active From, Active To - as discussed earlier, choosing the start and end dates for the voucher.
 * Options - editing vouchers and deleting them.
 
-![image](https://github.com/EscolaLMS/Vouchers/assets/108077902/6fb1c56e-1818-4662-9f62-a7addda03aa8)
+![image](docs/img/admin-03.png)
 
 To add a new voucher, simply click on the blue "+ New" button.
 
-![image](https://github.com/EscolaLMS/Vouchers/assets/108077902/75de7a07-85f6-413c-a65d-f738ee85efc6)
+![image](docs/img/admin-04.png)
 
 The Voucher creator looks as follows:
 
@@ -41,7 +41,7 @@ The Voucher creator looks as follows:
 * Min and Max cart value - Sets the range in which the Voucher will be applicable.
 * Voucher value - (when using a percentage-based voucher, no need to add % - the system automatically knows when to use which denomination).
 
-  ![image](https://github.com/EscolaLMS/Vouchers/assets/108077902/fa9d1e81-3988-46b6-8f1e-9239910d2fb3)
+  ![image](docs/img/admin-05.png)
 
 **Excluded Products** - for which purchased products the discount will not apply (names appear after clicking, and you can choose items from the dropdown list with the mouse).
 

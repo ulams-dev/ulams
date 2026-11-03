@@ -1072,6 +1072,8 @@ class CourseProgressApiTest extends TestCase
 
     public function test_deadline(): void
     {
+        // Frozen clock: the deadline is derived from "now", which must not tick between the reads.
+        $this->travelTo(Carbon::parse('2026-06-15 12:00:30'));
         $user = User::factory()->create();
 
         $now = CarbonImmutable::now()->roundSeconds();
@@ -1128,6 +1130,8 @@ class CourseProgressApiTest extends TestCase
 
     public function test_deadline_after_reassigned(): void
     {
+        // Frozen clock: the deadline is compared to minute resolution, which a minute rollover would break.
+        $this->travelTo(Carbon::parse('2026-06-15 12:00:30'));
         $hoursToComplete = rand(1, 10);
 
         $user = User::factory()->create();

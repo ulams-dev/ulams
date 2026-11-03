@@ -159,6 +159,12 @@ export interface BlueprintQuestion {
   citations: string[];
   objectiveIds: string[];
 }
+export type LessonFormat = "richtext" | "liascript" | "h5p" | "interactive";
+export type H5pLibrary = "H5P.Blanks" | "H5P.DragText" | "H5P.Dialogcards";
+/** The activity after the text of an h5p or interactive lesson (ADR 0050). */
+export type BlueprintInteraction =
+  | { id: string; kind: "h5p"; library: H5pLibrary; title: string; data: Record<string, unknown>; citations: string[]; objectiveIds: string[] }
+  | { id: string; kind: "interactive"; packageId: number; title: string; startStep?: string; endStep?: string; caption: string; citations: string[]; objectiveIds: string[] };
 export interface BlueprintLesson {
   id: string;
   title: string;
@@ -166,14 +172,18 @@ export interface BlueprintLesson {
   minutes: number;
   objectives: BlueprintObjective[];
   citations: string[];
-  contentType: "richtext";
+  contentType: LessonFormat;
   status: "planned" | "generated" | "failed";
   blocks: BlueprintBlock[];
+  /** LiaScript lessons: the questions inside the text. */
+  selfChecks?: BlueprintQuestion[];
+  interaction?: BlueprintInteraction | null;
   quiz: { id: string; questions: BlueprintQuestion[] } | null;
   flags: string[];
 }
 export interface Blueprint {
-  schemaVersion: 1;
+  /** v1 documents read as v2: only the number differs. */
+  schemaVersion: 1 | 2;
   sources: Array<{ id: string; title: string; fragmentCount: number }>;
   course: {
     id: string;
@@ -216,6 +226,37 @@ export interface Fragment {
   pageEnd: number | null;
   source: { id: string; name: string };
 }
+
+/** One citing element in the sources panel; `target` is the element the workspace selects for it. */
+export interface CitationRef {
+  id: string;
+  target: string;
+  type: "course" | "objective" | "lesson" | "block" | "question";
+  label: string;
+}
+export interface CitationSection {
+  fragmentId: string;
+  label: string;
+  level: number;
+  tokens: number;
+  citedBy: CitationRef[];
+  citedByCount: number;
+}
+/** The reverse of citations for the current version: sections with the elements that cite them. */
+export interface CitationIndex {
+  versionId: string | null;
+  sources: Array<{ id: string; name: string; total: number; uncovered: number; sections: CitationSection[] }>;
+  /** element id → fragment ids it cites (selecting an element highlights these sections) */
+  elements: Record<string, string[]>;
+}
+
+/** A direct edit of the course structure (L2-14). */
+export type OutlineEdit =
+  | { action: "rename"; id: string; title: string }
+  | { action: "move"; id: string; index: number; moduleId?: string }
+  | { action: "add"; kind: "lesson" | "module"; moduleId?: string; title: string; objective: string; citations: string[]; minutes?: number }
+  | { action: "remove"; id: string }
+  | { action: "set_format"; id: string; contentType: LessonFormat };
 
 /** A2UI action sent back from a surface. */
 export interface A2uiAction {
@@ -371,6 +412,14 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
     newSite: (sessionId: string, slug?: string, name?: string) => call<NonNullable<BuilderState["newSite"]>>("POST", `/sessions/${id(sessionId)}/new-site`, { ...(slug ? { slug } : {}), ...(name ? { name } : {}) }),
     /** Blocking items and warnings before publishing (the publish summary). */
     publishCheck: (sessionId: string) => call<PublishCheck>("GET", `/sessions/${id(sessionId)}/publish-check`),
+    /** Sources panel data: per source its sections, who cites each, and the sections nobody cites. */
+    citations: (sessionId: string) => call<CitationIndex>("GET", `/sessions/${id(sessionId)}/citations`),
+    /** Saves a structure edit as an approved author version and re-applies the course. */
+    editOutline: (sessionId: string, edit: OutlineEdit) =>
+      call<{ currentVersionId: string; runId: string | null; state: BuilderState }>("POST", `/sessions/${id(sessionId)}/outline`, edit),
+    /** "Give me options": 2 or 3 proposals for one element, shown side by side (one model call each). */
+    variants: (sessionId: string, elementId: string, instruction: string, count: 2 | 3 = 2) =>
+      call<{ runId: string }>("POST", `/sessions/${id(sessionId)}/elements/${id(elementId)}/variants`, { count, instruction }),
     usage: (sessionId: string) => call<{ total: BuilderCost; byTask: UsageRow[] }>("GET", `/sessions/${id(sessionId)}/usage`),
     /** AG-UI event stream with resume; resolves when `signal` aborts or access is refused. */
     events: (

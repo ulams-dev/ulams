@@ -11,7 +11,10 @@ return [
     | framework when an event needs to be broadcast. You may set this to
     | any of the connections defined in the "connections" array below.
     |
-    | Supported: "pusher", "redis", "log", "null"
+    | Supported: "log", "null". Nothing broadcasts today (ADR 0042): the studio and
+    | tutor stream over SSE. To add WebSockets later, install laravel/reverb with
+    | `php artisan install:broadcasting --reverb`, which adds the `reverb` connection
+    | here, and record the decision in a new ADR.
     |
     */
 
@@ -29,26 +32,6 @@ return [
     */
 
     'connections' => [
-
-        'pusher' => [
-            'driver' => 'pusher',
-            'key' => env('PUSHER_APP_KEY'),
-            'secret' => env('PUSHER_APP_SECRET'),
-            'app_id' => env('PUSHER_APP_ID'),
-            'options' => [
-                'cluster' => env('PUSHER_APP_CLUSTER', 'mt1'),
-                'encrypted' => env('PUSHER_APP_ENCRYPTED', true),
-                'host' => env('PUSHER_APP_HOST', '127.0.0.1'),
-                'port' => env('PUSHER_APP_PORT', 6001),
-                'scheme' => env('PUSHER_APP_SCHEME', 'http'),
-                'useTLS' => env('PUSHER_APP_SCHEME') === 'https',
-            ],
-        ],
-
-        'redis' => [
-            'driver' => 'redis',
-            'connection' => 'default',
-        ],
 
         'log' => [
             'driver' => 'log',

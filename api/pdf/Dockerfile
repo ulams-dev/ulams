@@ -20,18 +20,18 @@ COPY api/pdf/package.json api/pdf/package.json
 
 # ---- deps: full install for the build -------------------------------------
 FROM manifests AS deps
-RUN yarn install --frozen-lockfile --ignore-scripts --non-interactive --network-timeout 600000 \
+RUN n=1; until yarn install --frozen-lockfile --ignore-scripts --non-interactive --network-timeout 600000; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying yarn install ($n/3)" >&2; sleep 5; done \
     && yarn cache clean
 
 # ---- build -----------------------------------------------------------------
 FROM deps AS build
 COPY api/pdf/tsconfig.json api/pdf/tsconfig.build.json api/pdf/
 COPY api/pdf/src api/pdf/src
-RUN yarn --cwd api/pdf build
+RUN n=1; until yarn --cwd api/pdf build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn --cwd api/pdf build" >&2; sleep 5; done
 
 # ---- prod-deps: runtime node_modules only -----------------------------------
 FROM manifests AS prod-deps
-RUN yarn install --frozen-lockfile --production --ignore-scripts --non-interactive --network-timeout 600000 \
+RUN n=1; until yarn install --frozen-lockfile --production --ignore-scripts --non-interactive --network-timeout 600000; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying yarn install ($n/3)" >&2; sleep 5; done \
     && yarn cache clean \
     && mkdir -p api/pdf/node_modules
 

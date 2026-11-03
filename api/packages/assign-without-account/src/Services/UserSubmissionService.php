@@ -2,6 +2,7 @@
 
 namespace Ulams\AssignWithoutAccount\Services;
 
+use Ulams\Cart\Facades\Shop;
 use Ulams\AssignWithoutAccount\Dto\UserSubmissionDto;
 use Ulams\AssignWithoutAccount\Dto\UserSubmissionSearchDto;
 use Ulams\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
@@ -71,9 +72,10 @@ class UserSubmissionService implements UserSubmissionServiceContract
         $user = new User();
         $user->email = $userSubmission->email;
 
-        if (is_a($userSubmission->morphable_type, Productable::class, true)) {
-            UnassignProductable::dispatch($user, $userSubmission->morphable);
-        } elseif (is_a($userSubmission->morphable_type, Product::class, true)) {
+        $type = StrategyContext::resolve($userSubmission->morphable_type);
+        if (is_a($type, Productable::class, true)) {
+            UnassignProductable::dispatch($user, Shop::findProductable($type, $userSubmission->morphable_id));
+        } elseif (is_a($type, Product::class, true)) {
             UnassignProduct::dispatch($user, $userSubmission->morphable);
         }
     }

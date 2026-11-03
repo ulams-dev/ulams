@@ -286,7 +286,22 @@ export const PdfEditor: React.FC<PdfEditorProps> = ({
                     ? 'red'
                     : 'orange'
                 }
+                role="button"
+                tabIndex={0}
+                aria-label={intl.formatMessage(
+                  {
+                    id: 'pdf_editor.variable_add_aria',
+                    defaultMessage: 'Add a field for {variable}',
+                  },
+                  { variable },
+                )}
                 onClick={() => addVariable(variable)}
+                onKeyDown={(keyEvent) => {
+                  if (keyEvent.key === 'Enter' || keyEvent.key === ' ') {
+                    keyEvent.preventDefault();
+                    addVariable(variable);
+                  }
+                }}
               >
                 {variable}
               </Tag>

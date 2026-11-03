@@ -1,0 +1,1118 @@
+import { existsSync, mkdirSync, readdirSync, realpathSync, statSync, writeFileSync } from "node:fs";
+import { dirname, join, relative, resolve, sep } from "node:path";
+import { z } from "zod";
+import { compareCourse, diffLines } from "./course.ts";
+import { conflictFileName, parseElement, readConflict } from "../course/conflicts.ts";
+import { readFolder, type DiskFolder } from "../course/disk.ts";
+import { githubWorkflow, WORKFLOW_FILE } from "../course/ci-github.ts";
+import { gitOrigin, gitTopLevel, repoFromRemote, type GitHost } from "../course/repo.ts";
+import { folderFromBlueprint } from "../course/from-blueprint.ts";
+import { summarize } from "../course/issues.ts";
+import { ULAMS_FILE } from "../course/layout.ts";
+import { loadCourse } from "../course/load.ts";
+import { buildDocument, ResolveError, takeFile, takeRemote, treeOf, type Conflict } from "../course/merge.ts";
+import { toText } from "../course/sarif.ts";
+import {
+  changesSinceBase,
+  compareDocuments,
+  countChanges,
+  documentHash,
+  folderForm,
+  makeBase,
+  type BaseFile,
+  type Change,
+  type Counts,
+} from "../course/sync.ts";
+import {
+  clearProposal,
+  filesAfterChange,
+  hasBase,
+  keepAuthorNames,
+  listConflicts,
+  materialise,
+  planMaterialise,
+  readBase,
+  readConflictText,
+  readProposal,
+  removeConflict,
+  writeBase,
+  writeConflict,
+  writeProposal,
+  BASE_FILE,
+  type Proposal,
+} from "../course/sync-disk.ts";
+import { mergeFolder, takenLines } from "../course/sync-merge.ts";
+import { isObj, type Files, type Issue, type Obj } from "../course/types.ts";
+import { validateFiles } from "../course/validate.ts";
+import { CliError } from "../errors.ts";
+import type { AnyCommand, Ctx, Plan, Result, Warning } from "../registry/types.ts";
+import { runHandle } from "./builder-lib.ts";
+import { call, COURSE_AS_CODE, out, planOf, wantsJson } from "./course-io.ts";
+import { defineCommand } from "./define.ts";
+
+/* Course-as-code, the sync half (ADR 0160, plan 7.5, milestone CAC-3): a course folder bound to a course on the server.
+ * `init` and `pull` write the folder from the server's current version and remember it in `.ulams/base.json`;
+ * `push` sends the folder as a PROPOSED version (nothing reaches learners); `apply` approves (a person only) and applies;
+ * `publish` publishes. Everything works with AI switched off. When both sides changed, `pull` merges element by element
+ * (CAC-4, plan 7.5): what only one side changed is taken, an element both changed differently becomes a conflict file in
+ * `.ulams/conflicts/` that `resolve` settles, and `push` refuses to run while one is open. `absorb-drift` reads edits made
+ * in the LMS after an apply back into a proposed version the author approves. */
+
+const READ = ["builder:read"];
+const WRITE = ["builder:write"];
+const SINCE = "0.2.0";
+const folderCommand = { audience: ["author" as const], mcp: { expose: false }, since: SINCE };
+const builderCommand = { audience: ["author" as const], mcp: { toolset: "builder" }, since: SINCE };
+
+const dirInput = z.string().optional().describe("Course folder (the one holding ulams.yaml). Default: the current directory.");
+const sessionInput = z.string().optional().describe("Builder session id. Default: the one in .ulams/base.json of the course folder.");
+
+interface ExportPayload {
+  courseId: number | null;
+  sessionId: string;
+  versionId: string;
+  versionNumber: number;
+  appliedVersionId: string | null;
+  document: Obj;
+  drift?: Array<{ element: string; title: string }>;
+  edits?: { absorbable: Array<{ element: string; title: string; fields: string[] }>; unmapped: Array<{ element: string; title: string; reason: string }> };
+}
+
+interface VersionPayload {
+  id: string;
+  number: number;
+  document: Obj;
+}
+
+interface MergedInfo {
+  baseVersionId: string;
+  baseVersionNumber: number;
+  currentVersionId: string;
+  currentVersionNumber: number;
+  fromPush: Array<{ id: string; kind: string }>;
+  fromServer: Array<{ id: string; kind: string }>;
+  notes: Array<{ code: string; id: string; message: string }>;
+}
+
+interface AbsorbResponse {
+  unchanged: boolean;
+  dryRun?: boolean;
+  version: { id: string; number: number; kind: string; status: string; parentId: string | null } | null;
+  counts: Counts;
+  changes: ImportResponse["changes"];
+  absorbed: Array<{ key: string; element: string; title: string; fields: string[] }>;
+  unmapped: Array<{ key: string; element: string; title: string; reason: string }>;
+}
+
+interface ImportResponse {
+  unchanged: boolean;
+  version: { id: string; number: number; kind: string; status: string; parentId: string | null } | null;
+  counts: Counts;
+  changes: Array<Pick<Change, "id" | "type" | "label" | "kind" | "fields"> & { summary?: string }>;
+  warnings: string[];
+  handEdited: string[];
+  merged?: MergedInfo | null;
+}
+
+/* ---------------------------------------------------------------- errors from the server */
+
+function serverBody(e: CliError): { code: string | null; data: Obj } {
+  const body = isObj(e.details.body) ? e.details.body : e.details;
+  return { code: typeof body.code === "string" ? body.code : null, data: isObj(body.data) ? body.data : {} };
+}
+
+/** Gives the server's course-as-code refusals the CLI's own codes, messages and next steps. */
+function translate(e: unknown): unknown {
+  if (!(e instanceof CliError)) return e;
+  const { code, data } = serverBody(e);
+  const keep = { status: e.status, requestId: e.requestId };
+  switch (code) {
+    case "BASE_OUTDATED": {
+      const conflicts = Array.isArray(data.conflicts) ? data.conflicts : [];
+      const names = conflicts.slice(0, 3).map((c) => (isObj(c) ? String(c.label ?? c.elementId) : String(c)));
+      return new CliError("SYNC_CONFLICT", `The course changed on the server after the version this folder is based on (the current version is ${String(data.currentVersionNumber ?? "newer")}), and ${conflicts.length > 0 ? `the same elements changed on both sides (${names.join(", ")}${conflicts.length > 3 ? ", ..." : ""})` : "the two sides overlap"}.`, {
+        ...keep,
+        hint: "Run `ulams course pull`: it merges what only one side changed, writes a file for each element both changed to .ulams/conflicts/, and `ulams course resolve <element> --take local|remote|file` settles them. Then push again.",
+        details: { code, currentVersionId: data.currentVersionId ?? null, currentVersionNumber: data.currentVersionNumber ?? null, conflicts, remote: Array.isArray(data.remote) ? data.remote : [] },
+      });
+    }
+    case "PROPOSAL_PENDING": {
+      const proposals = Array.isArray(data.proposals) ? data.proposals.filter(isObj) : [];
+      const names = proposals.slice(0, 3).map((p) => `#${String(p.number)} (${(Array.isArray(p.elements) ? p.elements : []).slice(0, 2).map((x) => (isObj(x) ? String(x.label ?? x.elementId) : String(x))).join(", ")})`);
+      return new CliError("SYNC_CONFLICT", `An update proposal that is still open changes elements this push changes too: ${names.join("; ")}${proposals.length > 3 ? "; ..." : ""}.`, {
+        ...keep,
+        hint: "Review the proposal in the studio (Living Course) or with `ulams living proposals get <proposal>` and accept, reject or apply it, then push again. `ulams course push --allow-pending` stores the push anyway; the proposal's items for those elements then become conflicts.",
+        details: { code, proposals },
+      });
+    }
+    case "STALE_PROPOSAL":
+      return new CliError("SYNC_CONFLICT", "The course changed after this version was proposed, so it cannot be approved any more.", {
+        ...keep,
+        hint: "Run `ulams course pull`, then push again to propose a version built on the current one.",
+        details: { code, currentVersionId: data.currentVersionId ?? null },
+      });
+    case "INVALID_BLUEPRINT": {
+      const errors = Array.isArray(data.errors) ? data.errors.map(String) : [];
+      return new CliError("VALIDATION_FAILED", `The server rejected the course: ${errors[0] ?? e.message}`, {
+        ...keep,
+        hint: "`ulams course validate` checks most of this offline; the server also checks that cited fragments exist. error.details.errors lists every problem.",
+        details: { code, errors },
+      });
+    }
+    case "APPROVAL_REQUIRES_HUMAN":
+      return new CliError("FORBIDDEN", e.message, {
+        ...keep,
+        hint: "The proposal is saved. A person approves it in the studio, or runs `ulams course apply --approve` logged in (`ulams login`) or with a CLI token they created. Agent tokens and MCP clients can only propose.",
+        details: { code },
+      });
+    case "NOT_ADOPTED":
+      return new CliError("CONFLICT", e.message, {
+        ...keep,
+        hint: "Only courses made with the course builder can be synced for now; adopting a hand-made course arrives in a later milestone.",
+        details: { code },
+      });
+    case "NO_BLUEPRINT":
+      return new CliError("CONFLICT", e.message, { ...keep, hint: "Finish the course in the builder (outline, generate) first.", details: { code } });
+    default:
+      return e;
+  }
+}
+
+async function server<T>(run: () => Promise<T>): Promise<T> {
+  try {
+    return await run();
+  } catch (e) {
+    throw translate(e);
+  }
+}
+
+const fetchExport = (ctx: Ctx, courseId: number | string): Promise<ExportPayload> =>
+  server(() => call<ExportPayload>(ctx, "GET", "/courses/{course}/blueprint", { params: { course: courseId } }));
+
+const fetchVersion = (ctx: Ctx, versionId: string): Promise<VersionPayload> => server(() => call<VersionPayload>(ctx, "GET", "/versions/{version}", { params: { version: versionId } }));
+
+/** Refuses to continue while a conflict file is open: an unresolved element would be pushed or merged over silently. */
+function assertNoOpenConflicts(root: string, what: string): void {
+  const open = listConflicts(root);
+  if (open.length === 0) return;
+  throw new CliError("SYNC_CONFLICT", `${open.length} conflict${open.length === 1 ? " is" : "s are"} still open in .ulams/conflicts/ (${open.slice(0, 3).join(", ")}${open.length > 3 ? ", ..." : ""}), so ${what} would act on content nobody has decided.`, {
+    hint: "Open each file, then `ulams course resolve <element> --take local|remote|file`. `ulams course status` lists them.",
+    details: { code: "OPEN_CONFLICTS", conflicts: open },
+  });
+}
+
+/* ---------------------------------------------------------------- the folder */
+
+function openFolder(dir: string | undefined): DiskFolder {
+  const folder = readFolder(dir ?? ".");
+  if (!folder.files.has(ULAMS_FILE)) {
+    throw new CliError("INPUT_INVALID", `${dir ?? "."} is not a course folder: there is no ulams.yaml.`, { hint: "Run the command inside the course folder, pass its path, or create one with `ulams course init --from-course <id>`." });
+  }
+  return folder;
+}
+
+const textFiles = (files: Files): number => [...files.keys()].filter((p) => /\.(md|yaml)$/.test(p)).length;
+
+function failWith(ctx: Ctx, issues: Issue[], files: number): never {
+  const summary = summarize(issues);
+  if (!wantsJson(ctx)) out(ctx, toText(issues, files));
+  throw new CliError("VALIDATION_FAILED", `${summary.errors} error${summary.errors === 1 ? "" : "s"}, ${summary.warnings} warning${summary.warnings === 1 ? "" : "s"} in the course folder.`, {
+    hint: "Fix the issues (`ulams course validate` lists them with file, line and column; `ulams course validate --fix` does the mechanical ones), then run the command again.",
+    details: { valid: false, summary, files, issues },
+  });
+}
+
+/** The folder as a Blueprint v3 document, refusing a folder with errors. */
+function localDocument(ctx: Ctx, folder: DiskFolder): { doc: Obj; hash: string; issues: Issue[] } {
+  const { issues, doc } = validateFiles(folder.files, folder.assets);
+  if (summarize(issues).errors > 0) failWith(ctx, issues, textFiles(folder.files));
+  return { doc, hash: documentHash(doc), issues };
+}
+
+function requireAuth(ctx: Ctx): void {
+  if (!ctx.profile.url) throw new CliError("AUTH_REQUIRED", "No instance configured.", { hint: "Run `ulams login --url <origin>` or set ULAMS_URL and ULAMS_TOKEN." });
+  if (!ctx.profile.token) throw new CliError("AUTH_REQUIRED", `Not logged in to ${ctx.profile.url}.`, { hint: `Run \`ulams login --url ${ctx.profile.url}\` or set ULAMS_TOKEN.` });
+}
+
+function needCourseId(base: BaseFile): number {
+  if (base.courseId === null) throw new CliError("INPUT_INVALID", "This folder is bound to a builder session that has not created its course yet.", { hint: "Apply the course once in the studio, then run `ulams course init --from-course <id>` again." });
+  return base.courseId;
+}
+
+/* ---------------------------------------------------------------- output */
+
+const MARK: Record<Change["kind"], string> = { added: "+", changed: "~", removed: "-" };
+const clip = (v: unknown, n = 70): string => {
+  const text = typeof v === "string" ? v : JSON.stringify(v);
+  const one = (text ?? "null").replace(/\s+/g, " ");
+  return one.length > n ? `${one.slice(0, n - 3)}...` : one;
+};
+
+type ChangeLike = Pick<Change, "kind" | "label" | "type" | "id" | "fields"> & { summary?: string | undefined };
+
+function changeLines(changes: ChangeLike[], limit = 40): string[] {
+  const lines: string[] = [];
+  for (const c of changes.slice(0, limit)) {
+    lines.push(`  ${MARK[c.kind]} ${c.label}${c.summary ? ` "${c.summary}"` : ""}  (${c.type} ${c.id})`);
+    if (c.kind === "changed") for (const f of c.fields.slice(0, 4)) lines.push(`      ${f.field}: ${clip(f.before, 48)} -> ${clip(f.after, 48)}`);
+  }
+  if (changes.length > limit) lines.push(`  ... and ${changes.length - limit} more (use --json for the full list)`);
+  return lines;
+}
+
+const countsText = (c: Counts): string => `${c.changed} changed, ${c.added} added, ${c.removed} removed`;
+
+/** JSON gets the envelope; a terminal gets the text lines (warnings on stderr). */
+function present(ctx: Ctx, data: unknown, lines: string[], extra: { exitCode?: number; meta?: Result["meta"]; warnings?: Warning[] } = {}): Result {
+  if (wantsJson(ctx)) return { data, ...(extra.exitCode ? { exitCode: extra.exitCode } : {}), ...(extra.meta ? { meta: extra.meta } : {}), ...(extra.warnings?.length ? { warnings: extra.warnings } : {}) };
+  for (const w of extra.warnings ?? []) ctx.io.stderr(`warning ${w.code}: ${w.message}`);
+  out(ctx, lines.join("\n"));
+  return { data, handled: true, ...(extra.exitCode ? { exitCode: extra.exitCode } : {}) };
+}
+
+function driftWarnings(payload: ExportPayload): Warning[] {
+  const drift = payload.drift ?? [];
+  if (drift.length === 0) return [];
+  return [
+    {
+      code: "DRIFT",
+      message: `${drift.length} element${drift.length === 1 ? " was" : "s were"} edited in the LMS since the last apply (${drift
+        .slice(0, 3)
+        .map((d) => d.title)
+        .join(", ")}${drift.length > 3 ? ", ..." : ""}). The next apply overwrites those edits unless they are copied into the folder first.`,
+      hint: "Review them in the admin, copy what you want to keep into the Markdown, then push.",
+    },
+  ];
+}
+
+function assertRepresentable(doc: Obj): Obj {
+  const form = folderForm(doc);
+  if (form.errors.length > 0) {
+    throw new CliError("INTERNAL", `The course holds content the folder format cannot represent yet (${form.errors[0]?.message ?? "unknown"}), so writing it to files would lose data.`, {
+      hint: "Nothing was written. Report it with `error.details.issues`; use `ulams course export` and `import` (JSON) for this course meanwhile.",
+      details: { issues: form.errors.slice(0, 10) },
+    });
+  }
+  return form.doc;
+}
+
+/* ---------------------------------------------------------------- init */
+
+const INIT_ALLOWED = /^(\.|README|LICENSE|LICENCE|CHANGELOG)/i;
+
+function checkTargetIsEmpty(root: string): void {
+  if (!existsSync(root)) return;
+  if (!statSync(root).isDirectory()) throw new CliError("INPUT_INVALID", `${root} is not a folder.`);
+  const entries = readdirSync(root).filter((n) => !INIT_ALLOWED.test(n));
+  if (entries.length > 0) {
+    throw new CliError("INPUT_INVALID", `${root} is not empty (${entries.slice(0, 3).join(", ")}${entries.length > 3 ? ", ..." : ""}), so init would mix a course into other files.`, {
+      hint: "Pass an empty folder (`ulams course init ./my-course --from-course 12`). Use `ulams course pull` inside a folder that is already bound to a course.",
+    });
+  }
+}
+
+const init = defineCommand({
+  ...folderCommand,
+  id: "course.init",
+  summary: "Create a course folder from a course made with the builder (Markdown and YAML, bound to the course)",
+  description:
+    "Reads the course's current version from the server and writes it as a course folder (ulams.yaml, course.yaml, modules/...), then records where it stands in .ulams/base.json (commit it). The folder must be empty (a README, a LICENSE and dot files may be there). Only courses made with the course builder have a blueprint (a hand-made one is refused with NOT_ADOPTED). Works with AI switched off. With --dry-run it lists the files and writes nothing.",
+  kind: "read",
+  scopes: READ,
+  endpoints: ["GET /api/admin/course-as-code/courses/{course}/blueprint"],
+  positionals: ["dir"],
+  input: z.object({
+    dir: dirInput,
+    fromCourse: z.string().regex(/^\d+$/, "A numeric course id.").optional().describe("Course id on the server (required: scaffolding an empty course folder comes with course creation)."),
+    ci: z.enum(["github"]).optional().describe("Also write the CI workflow for this host (.github/workflows/ulams.yml at the repository root): validate and preview on pull requests, push on merge, hourly sync pull request."),
+  }),
+  output: z.unknown(),
+  examples: [
+    { title: "Pull a course into a new folder", argv: "course init ./kubernetes-101 --from-course 12" },
+    { title: "See what would be written", argv: "course init ./kubernetes-101 --from-course 12 --dry-run --json" },
+  ],
+  async run(ctx, i) {
+    if (!i.fromCourse) {
+      throw new CliError("INPUT_INVALID", "Pass --from-course <id>: creating a course from an empty folder is not available yet.", { hint: "Create the course in the builder, then `ulams course init --from-course <id>`." });
+    }
+    const root = resolve(i.dir ?? ".");
+    checkTargetIsEmpty(root);
+    const workflow = i.ci === "github" ? ciWorkflow(root) : null;
+    if (workflow && existsSync(workflow.file)) {
+      throw new CliError("INPUT_INVALID", `${workflow.file} already exists, so init would overwrite it.`, { hint: "Rename or remove it, or run init without --ci." });
+    }
+    const payload = await fetchExport(ctx, i.fromCourse);
+    const doc = assertRepresentable(payload.document);
+    const files = folderFromBlueprint(payload.document, {
+      course: { ...(payload.courseId !== null ? { id: payload.courseId } : {}), session: payload.sessionId },
+      ...(ctx.flags.profile ? { profile: ctx.flags.profile } : {}),
+    });
+    const names = [...files.keys()].sort();
+    const data = { dir: root, ...(workflow ? { workflow: workflow.file } : {}), courseId: payload.courseId, sessionId: payload.sessionId, versionId: payload.versionId, versionNumber: payload.versionNumber, files: names, ...(ctx.flags.dryRun ? { dryRun: true } : {}) };
+    if (!ctx.flags.dryRun) {
+      materialise(root, new Map(), files);
+      writeBase(root, makeBase(doc, { sessionId: payload.sessionId, courseId: payload.courseId, versionId: payload.versionId, versionNumber: payload.versionNumber }));
+      if (workflow) {
+        mkdirSync(dirname(workflow.file), { recursive: true });
+        writeFileSync(workflow.file, workflow.text);
+      }
+    }
+    return present(
+      ctx,
+      data,
+      [
+        `${ctx.flags.dryRun ? "Would write" : "Wrote"} ${names.length} files to ${root} (course ${payload.courseId ?? "?"}, version ${payload.versionNumber}).`,
+        ...(workflow ? [`${ctx.flags.dryRun ? "Would write" : "Wrote"} ${workflow.file}: set the repository secrets ULAMS_URL and ULAMS_TOKEN (a ci token).`] : []),
+        ...(ctx.flags.dryRun ? names.map((n) => `  ${n}`) : [`Commit ${BASE_FILE}: it records the version this folder is based on.`, "Next: edit the Markdown, `ulams course diff`, then `ulams course push`.", "To have Living Course watch this repository's sources/ folder: `ulams course sources-connect`."]),
+      ],
+      { warnings: driftWarnings(payload) }
+    );
+  },
+});
+
+/** The workflow file at the root of the repository around the folder (or in the folder itself outside a repository). */
+function ciWorkflow(root: string): { file: string; text: string } {
+  let existing = root;
+  while (!existsSync(existing) && dirname(existing) !== existing) existing = dirname(existing);
+  const real = join(realpathSync(existing), relative(existing, root));
+  const top = gitTopLevel(realpathSync(existing)) ?? real;
+  const path = relative(top, real).split(sep).join("/");
+  return { file: join(top, WORKFLOW_FILE), text: githubWorkflow({ path: path === "" ? "." : path, branch: gitOrigin(realpathSync(existing))?.branch ?? "main" }) };
+}
+
+/* ---------------------------------------------------------------- sources-connect */
+
+const LIVING = "/api/admin/living-course";
+
+const sourcesConnect = defineCommand({
+  ...folderCommand,
+  id: "course.sources-connect",
+  summary: "Let Living Course watch this repository's sources/ folder, so a merged change to the sources proposes updates to the course",
+  description:
+    "Reads the origin remote and the default branch of the Git repository around the course folder and connects it to the course's builder session as a Living Course `git` source that follows `sources/**` (override with --paths). A merged change to a file in sources/ then reaches Living Course through the host's push webhook (or `ulams living connections check <connection> --commit $GITHUB_SHA` from CI) and becomes an update proposal that names the pull request it came from; a merged change to modules/ never does (the Action pushes those as course versions). github.com and gitlab.com are recognised; for any other host pass --host gitlab or --host gitea (Forgejo too). For a private repository pass --token (or set ULAMS_SOURCES_TOKEN): a read-only access token, stored encrypted on the server. The answer shows the webhook address and the webhook secret once; add both to the repository's webhook settings (content type JSON, push events). Needs a folder created with `ulams course init`, and the repository must already hold at least one file under sources/ on that branch.",
+  kind: "write",
+  idempotent: false,
+  scopes: ["living-course:write"],
+  endpoints: [`POST ${LIVING}/sessions/{session}/sources/connect`],
+  positionals: ["dir"],
+  input: z.object({
+    dir: dirInput,
+    host: z.enum(["github", "gitlab", "gitea"]).optional().describe("Git host software for a host other than github.com and gitlab.com (gitea also means Forgejo)."),
+    branch: z.string().min(1).max(255).optional().describe("Branch to follow. Default: the remote's default branch."),
+    paths: z.array(z.string().min(1).max(255)).max(20).optional().describe("Globs of the source files. Default: sources/**."),
+    token: z.string().min(1).optional().describe("Read-only access token for a private repository (write-only; ULAMS_SOURCES_TOKEN also works)."),
+    schedule: z.enum(["hourly", "daily", "weekly", "manual"]).optional().describe("Polling schedule besides the webhook (default: daily)."),
+  }),
+  output: z.unknown(),
+  examples: [
+    { title: "Watch sources/ of the repository the folder is in", argv: "course sources-connect" },
+    { title: "A self-hosted Forgejo", argv: "course sources-connect --host gitea --token $FORGEJO_TOKEN" },
+  ],
+  plan: async (ctx, i) => {
+    const t = sourcesTarget(ctx, i);
+    return { request: { method: "POST", path: `${LIVING}/sessions/${t.sessionId}/sources/connect`, body: { ...t.body, ...(t.body.secrets ? { secrets: "«write-only»" } : {}) } } };
+  },
+  async run(ctx, i) {
+    const t = sourcesTarget(ctx, i);
+    const res = await ctx.client.call<{ connection: { id: string; webhookUrl: string | null }; source: unknown; webhookSecret: string | null }>("POST", `${LIVING}/sessions/{session}/sources/connect`, {
+      params: { session: t.sessionId },
+      body: t.body,
+      idempotent: false,
+      signal: ctx.signal,
+    });
+    const { connection, webhookSecret } = res.data;
+    return present(
+      ctx,
+      { ...res.data, repository: t.repo },
+      [
+        `Living Course now watches ${t.repo.repository} (${t.repo.branch}), ${t.paths.join(", ")}.`,
+        ...(connection.webhookUrl ? [`Webhook address: ${connection.webhookUrl}`] : []),
+        ...(webhookSecret ? [`Webhook secret (shown once): ${webhookSecret}`, "Add both to the repository's webhook settings (content type JSON, push events), or run `ulams living connections check " + connection.id + " --commit \"$GITHUB_SHA\"` from CI after a merge."] : []),
+      ]
+    );
+  },
+});
+
+/** The session of the folder, the repository around it and the request body for the connection. */
+function sourcesTarget(ctx: Ctx, i: { dir?: string | undefined; host?: GitHost | undefined; branch?: string | undefined; paths?: string[] | undefined; token?: string | undefined; schedule?: string | undefined }) {
+  const root = resolve(i.dir ?? ".");
+  const base = readBase(root);
+  const origin = gitOrigin(root);
+  if (!origin) {
+    throw new CliError("INPUT_INVALID", `${root} is not inside a Git repository with an origin remote.`, { hint: "Run it in the clone of the course repository (`git remote add origin <url>` first)." });
+  }
+  const repo = repoFromRemote(origin.remote, i.branch ?? origin.branch, i.host);
+  if (!repo) {
+    throw new CliError("INPUT_INVALID", `Cannot tell which Git host ${origin.remote.replace(/\/\/[^@/]*@/, "//")} is.`, { hint: "github.com and gitlab.com are recognised. For another host pass --host gitlab or --host gitea (Forgejo too)." });
+  }
+  const paths = i.paths ?? ["sources/**"];
+  const token = i.token ?? ctx.env.ULAMS_SOURCES_TOKEN;
+  const config = { host: repo.host, ...(repo.baseUrl ? { base_url: repo.baseUrl } : {}), repository: repo.repository, branch: repo.branch, paths };
+  const body: { connector: string; config: Obj; secrets?: Obj; schedule?: string } = { connector: "git", config, ...(token ? { secrets: { token } } : {}), ...(i.schedule ? { schedule: i.schedule } : {}) };
+  return { sessionId: base.sessionId, repo, paths, body };
+}
+
+/* ---------------------------------------------------------------- pull */
+
+const pull = defineCommand({
+  ...folderCommand,
+  id: "course.pull",
+  summary: "Bring the folder up to date with the server's current version (merging your edits with theirs)",
+  description:
+    "Fetches the course's current version. A folder without local edits is rewritten to match it (files you renamed keep their names, files for removed lessons are deleted, assets and your own files are never touched) and the base moves forward. A folder that already equals the server's version only moves the base. A folder with local edits is left alone when the server did not change. When both changed, pull merges element by element (three-way, against the version the folder is based on): what only one side changed is taken, and an element both sides changed differently stays as you have it and gets a conflict file in .ulams/conflicts/ (base, yours, the server's, a diff and a Resolution section) that `ulams course resolve` settles; pull then exits 6 (SYNC_CONFLICT) with the list. Files the merge does not touch keep your formatting. The base moves to the server's version, so `diff` afterwards shows what a push would send. While conflicts are open, pull and push refuse. --dry-run reports what would be merged and written.",
+  kind: "read",
+  scopes: READ,
+  endpoints: ["GET /api/admin/course-as-code/courses/{course}/blueprint"],
+  positionals: ["dir"],
+  input: z.object({ dir: dirInput }),
+  output: z.unknown(),
+  examples: [
+    { title: "Update the folder", argv: "course pull" },
+    { title: "Preview", argv: "course pull --dry-run --json" },
+  ],
+  async run(ctx, i) {
+    const folder = openFolder(i.dir);
+    const base = readBase(folder.root);
+    const local = localDocument(ctx, folder);
+    const modified = local.hash !== base.documentHash;
+    const payload = await fetchExport(ctx, needCourseId(base));
+    const warnings = driftWarnings(payload);
+    const version = { id: payload.versionId, number: payload.versionNumber };
+    const done = (state: string, extra: Record<string, unknown>, line: string) => present(ctx, { state, version, localChanges: modified, ...extra }, [line], { warnings });
+
+    if (payload.versionId === base.baseVersionId) {
+      const open = listConflicts(folder.root);
+      return done("up-to-date", { conflicts: open }, `Already up to date (version ${version.number}).${modified ? " You have local edits: `ulams course diff` shows them." : ""}${open.length > 0 ? ` ${open.length} conflict${open.length === 1 ? " is" : "s are"} still open: \`ulams course status\`.` : ""}`);
+    }
+    assertNoOpenConflicts(folder.root, "a pull");
+    const remote = assertRepresentable(payload.document);
+    const rebase = (): BaseFile => makeBase(remote, { sessionId: payload.sessionId, courseId: payload.courseId, versionId: payload.versionId, versionNumber: payload.versionNumber });
+    const proposal = readProposal(folder.root);
+    const settle = () => {
+      if (!ctx.flags.dryRun) {
+        writeBase(folder.root, rebase());
+        if (proposal && (proposal.versionId === payload.versionId || proposal.baseVersionId !== payload.versionId)) clearProposal(folder.root);
+      }
+    };
+
+    if (documentHash(remote) === local.hash) {
+      settle();
+      return done("base-moved", { dryRun: Boolean(ctx.flags.dryRun) }, `The folder already equals version ${version.number} (for example the version you pushed was approved); the base now points at it.`);
+    }
+    if (modified) {
+      // both sides changed: three-way merge against the version the folder started from
+      const baseVersion = await fetchVersion(ctx, base.baseVersionId);
+      const baseDoc = assertRepresentable(baseVersion.document);
+      const merge = mergeFolder(baseDoc, local.doc, remote, { versionId: base.baseVersionId, versionNumber: base.baseVersionNumber }, { versionId: payload.versionId, versionNumber: payload.versionNumber });
+      const files = filesAfterChange(folder.files, local.doc, merge.doc);
+      const plan = ctx.flags.dryRun ? planMaterialise(folder.files, files) : materialise(folder.root, folder.files, files);
+      if (!ctx.flags.dryRun) {
+        for (const [name, text] of merge.conflictFiles) writeConflict(folder.root, name, text);
+      }
+      settle();
+      const conflicted = merge.reports.length > 0;
+      const fromServer = merge.result.fromTheirs;
+      const data = {
+        state: conflicted ? "conflicts" : ctx.flags.dryRun ? "would-merge" : "merged",
+        version,
+        base: { versionId: base.baseVersionId, versionNumber: base.baseVersionNumber },
+        files: { written: plan.written, updated: plan.updated, removed: plan.removed },
+        fromServer,
+        fromFolder: merge.result.fromOurs,
+        conflicts: merge.reports,
+        notes: merge.result.notes,
+        dryRun: Boolean(ctx.flags.dryRun),
+      };
+      const lines = [
+        `${ctx.flags.dryRun ? "Would merge" : "Merged"} the server's version ${version.number} into your folder (based on version ${base.baseVersionNumber}): ${fromServer.length} element${fromServer.length === 1 ? "" : "s"} from the server, ${merge.result.fromOurs.length} of yours kept. Files: ${plan.written.length} new, ${plan.updated.length} changed, ${plan.removed.length} removed.`,
+        ...takenLines(fromServer, merge.doc, remote),
+        ...merge.result.notes.map((n) => `note: ${n.message}`),
+        ...(conflicted
+          ? [
+              `${merge.reports.length} conflict${merge.reports.length === 1 ? "" : "s"}: both sides changed the same element${merge.reports.length === 1 ? "" : "s"} differently. Your version is in the folder meanwhile; push is blocked until each is resolved.`,
+              ...merge.reports.map((r) => `  ! ${r.label} (${r.type} ${r.element}, ${r.kind})  ->  ${r.file}`),
+              "Resolve each: `ulams course resolve <element> --take local|remote|file`.",
+            ]
+          : ["No conflicts. `ulams course diff` shows what a push would send."]),
+      ];
+      return present(ctx, data, lines, { warnings, ...(conflicted ? { exitCode: 6 } : {}) });
+    }
+    const generated = folderFromBlueprint(payload.document);
+    generated.delete(ULAMS_FILE);
+    const files = keepAuthorNames(generated, folder.files);
+    const plan = ctx.flags.dryRun ? planMaterialise(folder.files, files) : materialise(folder.root, folder.files, files);
+    settle();
+    const changes = changesSinceBase(base, remote);
+    return present(
+      ctx,
+      { state: ctx.flags.dryRun ? "would-update" : "updated", version, files: { written: plan.written, updated: plan.updated, removed: plan.removed }, counts: changes.counts, dryRun: Boolean(ctx.flags.dryRun) },
+      [
+        `${ctx.flags.dryRun ? "Would update" : "Updated"} to version ${version.number}: ${countsText(changes.counts)}. Files: ${plan.written.length} new, ${plan.updated.length} changed, ${plan.removed.length} removed.`,
+        ...changeLines(changes.changes),
+      ],
+      { warnings }
+    );
+  },
+});
+
+/* ---------------------------------------------------------------- diff */
+
+const diff = defineCommand({
+  ...folderCommand,
+  id: "course.diff",
+  summary: "Show what changed: the folder against its base (offline), against the server (--remote), a version on the server (--version), or any two versions or releases (--from, --to)",
+  description:
+    "By default compares the folder with the version it is based on (.ulams/base.json): which elements were added, changed or removed, with no network. --remote fetches the server's current version and shows, field by field, what a push would change. --version <id> shows what a version on the server changes against its parent (or --against another version). --from <id> --to <id> compares any two versions or releases of the course in full (moved elements, citations, quiz answer keys, a plain summary; the same as `course compare`); the course is the folder's, or pass --course <id>. --exit-code exits 13 (DIFF_FOUND) when there are differences, for CI.",
+  kind: "read",
+  anonymous: true,
+  scopes: READ,
+  endpoints: ["GET /api/admin/course-as-code/versions/{version}/diff", "GET /api/admin/course-versions/courses/{course}/compare"],
+  positionals: ["dir"],
+  input: z.object({
+    dir: dirInput,
+    from: z.string().regex(/^[0-9a-z]{26}$/i, "A version id or release id.").optional().describe("With --to: the older side, a version id or a release id."),
+    to: z.string().regex(/^[0-9a-z]{26}$/i, "A version id or release id.").optional().describe("With --from: the newer side, a version id or a release id."),
+    course: z.string().regex(/^\d+$/, "A numeric course id.").optional().describe("With --from and --to: the course (default: the course of the folder)."),
+    remote: z.boolean().optional().describe("Compare with the server's current version instead of the base."),
+    version: z.string().optional().describe("Show what this version on the server changes against its parent."),
+    against: z.string().optional().describe("With --version: another version id to compare with."),
+    exitCode: z.boolean().optional().describe("Exit 13 when there are differences."),
+  }),
+  output: z.unknown(),
+  examples: [
+    { title: "What did I change since the last pull", argv: "course diff" },
+    { title: "What would a push change on the server", argv: "course diff --remote" },
+    { title: "Fail CI when the folder drifted", argv: "course diff --exit-code --json" },
+    { title: "Review a proposed version", argv: "course diff --version <version id>" },
+    { title: "What changed between two releases", argv: "course diff --course 12 --from 01jb0000000000000000000001 --to 01jb0000000000000000000002" },
+  ],
+  async run(ctx, i) {
+    const exit = (n: number): { exitCode?: number } => (i.exitCode && n > 0 ? { exitCode: 13 } : {});
+    if (i.from || i.to) {
+      if (!i.from || !i.to) throw new CliError("INPUT_INVALID", "Pass both --from and --to (version ids or release ids).", { hint: "`ulams course releases <course>` lists release ids." });
+      if (i.version) throw new CliError("INPUT_INVALID", "Use either --version (one version against its parent) or --from and --to.");
+      requireAuth(ctx);
+      const courseId = i.course ?? String(needCourseId(readBase(openFolder(i.dir).root)));
+      const payload = await server(() => compareCourse(ctx, courseId, i.from as string, i.to as string));
+      return present(ctx, payload, diffLines(payload), exit(payload.changes.length));
+    }
+    if (i.version) {
+      requireAuth(ctx);
+      const res = await server(() => call<{ against: string | null; changes: ChangeLike[] }>(ctx, "GET", "/versions/{version}/diff", { params: { version: i.version as string }, query: { against: i.against } }));
+      const counts = countChanges(res.changes);
+      return present(ctx, { against: res.against, counts, changes: res.changes }, [`Version ${i.version} against ${res.against ?? "its parent"}: ${countsText(counts)}.`, ...changeLines(res.changes)], exit(res.changes.length));
+    }
+    const folder = openFolder(i.dir);
+    const base = readBase(folder.root);
+    const local = localDocument(ctx, folder);
+    if (i.remote) {
+      requireAuth(ctx);
+      const payload = await fetchExport(ctx, needCourseId(base));
+      const remote = assertRepresentable(payload.document);
+      const changes = compareDocuments(remote, local.doc);
+      const counts = countChanges(changes);
+      const behind = payload.versionId !== base.baseVersionId;
+      return present(
+        ctx,
+        { against: "remote", remote: { versionId: payload.versionId, versionNumber: payload.versionNumber }, behind, counts, changes, unchanged: changes.length === 0 },
+        [
+          `Folder against the server's version ${payload.versionNumber}${behind ? ` (the folder is based on version ${base.baseVersionNumber}: pull first)` : ""}: ${countsText(counts)}.`,
+          ...changeLines(changes),
+        ],
+        exit(changes.length)
+      );
+    }
+    const since = changesSinceBase(base, local.doc);
+    return present(
+      ctx,
+      { against: "base", base: { versionId: base.baseVersionId, versionNumber: base.baseVersionNumber }, counts: since.counts, changes: since.changes, orderChanged: since.orderChanged, unchanged: !since.modified },
+      since.modified
+        ? [`Folder against its base (version ${base.baseVersionNumber}): ${countsText(since.counts)}.${since.orderChanged ? " Only the order of elements changed." : ""}`, ...changeLines(since.changes)]
+        : [`No changes since version ${base.baseVersionNumber}.`],
+      exit(since.modified ? 1 : 0)
+    );
+  },
+});
+
+/* ---------------------------------------------------------------- status */
+
+const status = defineCommand({
+  ...folderCommand,
+  id: "course.status",
+  summary: "Where the folder stands: local edits, the server's version, what is applied, a proposal waiting for approval",
+  description:
+    "One request to the server plus the folder. Reports local edits since the base, whether the server moved on (behind), a proposal you pushed and nobody has approved, whether the current version is applied, drift (elements edited in the LMS since the last apply) and open conflicts, and suggests the next command. Always exits 0.",
+  kind: "read",
+  scopes: READ,
+  endpoints: ["GET /api/admin/course-as-code/courses/{course}/blueprint"],
+  positionals: ["dir"],
+  input: z.object({ dir: dirInput }),
+  output: z.unknown(),
+  examples: [{ title: "Check before pushing", argv: "course status --json" }],
+  async run(ctx, i) {
+    const folder = openFolder(i.dir);
+    const base = readBase(folder.root);
+    const { issues, doc } = validateFiles(folder.files, folder.assets);
+    const errors = summarize(issues).errors;
+    const since = errors === 0 ? changesSinceBase(base, doc) : null;
+    const payload = await fetchExport(ctx, needCourseId(base));
+    const remoteDoc = assertRepresentable(payload.document);
+    const behind = payload.versionId !== base.baseVersionId;
+    const theirs = behind ? changesSinceBase(base, remoteDoc) : null;
+    const proposal = readProposal(folder.root);
+    const pending = proposal && payload.versionId !== proposal.versionId ? (proposal.baseVersionId === payload.versionId ? "waiting" : "stale") : proposal ? "approved" : null;
+    const applied = payload.appliedVersionId === payload.versionId;
+    const conflicts = listConflicts(folder.root);
+    const equal = since && documentHash(remoteDoc) === documentHash(doc);
+
+    const next: string[] = [];
+    if (errors > 0) next.push("`ulams course validate` and fix the errors");
+    else if (conflicts.length > 0) next.push("`ulams course resolve <element> --take local|remote|file` for each open conflict");
+    else if (behind && since?.modified && !equal) next.push("both sides changed: `ulams course pull` merges them (conflicts are written to .ulams/conflicts/)");
+    else if (behind) next.push("`ulams course pull`");
+    else if (since?.modified && pending !== "waiting") next.push("`ulams course push`");
+    const edits = payload.edits ?? { absorbable: [], unmapped: [] };
+    if (edits.absorbable.length > 0 && !behind && conflicts.length === 0) next.push("`ulams course absorb-drift` to read the edits made in the LMS back into a proposed version");
+    if (pending === "waiting") next.push("`ulams course apply --approve` (a person), or approve the proposal in the studio");
+    else if (!behind && !applied && !pending) next.push("`ulams course apply`");
+
+    const data = {
+      course: { id: base.courseId, session: base.sessionId },
+      base: { versionId: base.baseVersionId, versionNumber: base.baseVersionNumber },
+      local: errors > 0 ? { state: "invalid", errors } : { state: since?.modified ? "modified" : "clean", counts: since?.counts ?? null, orderChanged: since?.orderChanged ?? false },
+      remote: {
+        versionId: payload.versionId,
+        versionNumber: payload.versionNumber,
+        state: behind ? "behind" : "in-sync",
+        counts: theirs?.counts ?? null,
+        sameAsFolder: Boolean(behind && equal),
+        applied,
+        appliedVersionId: payload.appliedVersionId,
+        drift: payload.drift ?? [],
+        edits,
+      },
+      proposal: proposal ? { versionId: proposal.versionId, versionNumber: proposal.versionNumber, state: pending, pushedAt: proposal.pushedAt } : null,
+      conflicts,
+      next,
+    };
+    const lines = [
+      `Course ${base.courseId} (session ${base.sessionId}), folder based on version ${base.baseVersionNumber}.`,
+      `Local:    ${errors > 0 ? `${errors} error${errors === 1 ? "" : "s"} in the files (run \`ulams course validate\`)` : since?.modified ? `modified, ${countsText(since.counts)}${since.orderChanged ? " (order only)" : ""}` : "clean"}`,
+      `Server:   ${behind ? `version ${payload.versionNumber} is current, ${theirs ? countsText(theirs.counts) : ""} since the base${equal ? " (equal to this folder: pull moves the base)" : ""}` : `in sync (version ${payload.versionNumber})`}`,
+      `Applied:  ${applied ? "yes, learners see the current version" : `no (applied version: ${payload.appliedVersionId ?? "none"})`}`,
+      ...(proposal ? [`Proposal: version ${proposal.versionNumber} pushed ${proposal.pushedAt}, ${pending === "waiting" ? "waiting for approval" : pending === "approved" ? "approved" : "out of date (the course changed after it)"}`] : []),
+      ...((payload.drift ?? []).length > 0 ? [`Drift:    ${(payload.drift ?? []).length} element(s) edited in the LMS since the last apply`] : []),
+      ...(edits.absorbable.length + edits.unmapped.length > 0 ? [`LMS edits: ${edits.absorbable.length} can be read back into the course (${edits.absorbable.slice(0, 3).map((e) => e.title).join(", ")}${edits.absorbable.length > 3 ? ", ..." : ""})${edits.unmapped.length > 0 ? `, ${edits.unmapped.length} cannot (${edits.unmapped[0]?.reason})` : ""}`] : []),
+      ...(conflicts.length > 0 ? [`Conflicts: ${conflicts.join(", ")}`] : []),
+      ...(next.length > 0 ? [`Next:     ${next.join("; ")}`] : []),
+    ];
+    return present(ctx, data, lines);
+  },
+});
+
+/* ---------------------------------------------------------------- push */
+
+const unapproved = (versionId: string, number?: number): CliError =>
+  new CliError("CONFIRMATION_REQUIRED", `Version ${number ?? versionId} is a proposal: nobody has approved it, so applying changes nothing for learners.`, {
+    hint: "Approve it in the studio, or run `ulams course apply --approve` as a person (a login, or a CLI token you created). Agent tokens and MCP clients cannot approve.",
+    details: { versionId, status: "proposed" },
+  });
+
+/** After a human approved a version equal to the folder, the base moves to it; a version that is not this folder's leaves the base alone. */
+function advanceBase(root: string, base: BaseFile, proposal: Proposal): boolean {
+  if (proposal.merged || proposal.kind === "absorb") return false;
+  const folder = readFolder(root);
+  const loaded = loadCourse(folder.files, folder.assets);
+  if (documentHash(loaded.doc) !== proposal.documentHash) return false;
+  writeBase(root, makeBase(loaded.doc, { sessionId: base.sessionId, courseId: base.courseId, versionId: proposal.versionId, versionNumber: proposal.versionNumber }));
+  clearProposal(root);
+  return true;
+}
+
+async function approveVersion(ctx: Ctx, versionId: string): Promise<{ versionId: string; number: number; status: string; currentVersionId: string }> {
+  return server(() => call(ctx, "POST", "/versions/{version}/approve", { params: { version: versionId } }));
+}
+
+async function waitApplied(ctx: Ctx, courseId: number, expected: string | null): Promise<ExportPayload> {
+  const deadline = Date.now() + ctx.flags.timeout * 1000;
+  let delay = Number(ctx.env.ULAMS_POLL_MS) || 500;
+  let version = expected;
+  for (;;) {
+    const p = await fetchExport(ctx, courseId);
+    version ??= p.versionId;
+    if (p.versionId !== version) throw new CliError("CONFLICT", "The course changed while the apply was running.", { hint: "Run `ulams course status`." });
+    if (p.appliedVersionId === version) return p;
+    if (Date.now() + delay > deadline) {
+      throw new CliError("TIMEOUT", `The apply of version ${p.versionNumber} is still running after ${ctx.flags.timeout}s.`, { hint: "Check `ulams course status`; the apply continues on the server." });
+    }
+    ctx.io.stderr("waiting for the apply ...");
+    await new Promise<void>((r) => setTimeout(r, delay));
+    delay = Math.min(delay * 2, 5000);
+  }
+}
+
+async function startApply(ctx: Ctx, sessionId: string, courseId: number | null, overwrite: boolean | undefined, expected: string | null) {
+  const res = await server(() => call<{ runId: string | null }>(ctx, "POST", "/sessions/{session}/apply", { params: { session: sessionId }, body: overwrite ? { overwrite: true } : {} }));
+  if (ctx.flags.wait && courseId !== null) {
+    const done = await waitApplied(ctx, courseId, expected);
+    return { runId: res.runId, applied: true, versionId: done.versionId, versionNumber: done.versionNumber, meta: undefined };
+  }
+  return { runId: res.runId, applied: false, versionId: expected, versionNumber: null, meta: res.runId ? { operation: runHandle(res.runId) } : undefined };
+}
+
+interface Prepared {
+  folder: DiskFolder;
+  base: BaseFile;
+  doc: Obj;
+  hash: string;
+  since: ReturnType<typeof changesSinceBase>;
+}
+
+function prepare(ctx: Ctx, dir: string | undefined): Prepared {
+  const folder = openFolder(dir);
+  const base = readBase(folder.root);
+  assertNoOpenConflicts(folder.root, "a push");
+  const local = localDocument(ctx, folder);
+  return { folder, base, doc: local.doc, hash: local.hash, since: changesSinceBase(base, local.doc) };
+}
+
+const push = defineCommand({
+  ...folderCommand,
+  id: "course.push",
+  summary: "Propose the folder as a new version of the course (nothing changes for learners until it is approved and applied)",
+  description:
+    "Validates the folder, sends it as a proposed version of kind `import` based on the version in .ulams/base.json, and prints what it changes. Nothing reaches learners: a person approves the version (in the studio, or --approve / --apply here) and it is applied. --approve approves it; --apply approves and applies it (waiting for the apply unless --no-wait). Agent tokens and MCP clients can only propose: approving is refused with APPROVAL_REQUIRES_HUMAN and the proposal stays (see `ulams course apply`). A push also waits (SYNC_CONFLICT, exit 6) while an open Living Course update proposal changes elements the push changes too; decide the proposal, or pass --allow-pending. If the server moved on since the base, the server merges what the two sides changed separately and proposes the merged version; when both changed the same element it stops with SYNC_CONFLICT (exit 6) and lists the elements: run `ulams course pull` to merge them into the folder and settle them with `ulams course resolve`. Push also refuses while a conflict file is open. A folder equal to its base sends nothing. --dry-run validates and shows what would be sent.",
+  kind: "write",
+  idempotent: false,
+  scopes: WRITE,
+  endpoints: ["POST /api/admin/course-as-code/sessions/{session}/imports"],
+  positionals: ["dir"],
+  input: z.object({
+    dir: dirInput,
+    message: z.string().max(500).optional().describe("Why, shown in the version history."),
+    approve: z.boolean().optional().describe("Approve the proposal after pushing it (people and CLI tokens only)."),
+    apply: z.boolean().optional().describe("Approve and apply it; waits for the apply unless --no-wait."),
+    overwrite: z.boolean().optional().describe("With --apply: overwrite edits an admin made in the LMS since the last apply."),
+    allowPending: z.boolean().optional().describe("Store the push although an open Living Course update proposal changes the same elements (the proposal's items for them become conflicts)."),
+  }),
+  output: z.unknown(),
+  examples: [
+    { title: "Propose a change for review", argv: "course push --message 'Fix the install step'" },
+    { title: "Push although an update proposal is open on the same elements", argv: "course push --allow-pending" },
+    { title: "Propose, approve and apply as yourself", argv: "course push --apply" },
+    { title: "Validate and preview without sending", argv: "course push --dry-run --json" },
+  ],
+  plan: async (ctx, i) => {
+    const p = prepare(ctx, i.dir);
+    const request = planOf("POST", `/sessions/${p.base.sessionId}/imports`, { document: "<document>", baseVersionId: p.base.baseVersionId, ...(i.message ? { message: i.message } : {}), ...(i.allowPending ? { allowPending: true } : {}) }).request;
+    const then = [...(i.approve || i.apply ? ["POST /versions/<proposed version>/approve"] : []), ...(i.apply ? [`POST /sessions/${p.base.sessionId}/apply`] : [])];
+    const plan: Plan = {
+      request,
+      ...(then.length > 0 ? { then } : {}),
+      diff: { against: "base", unchanged: !p.since.modified, counts: p.since.counts, changes: p.since.changes },
+      note: p.since.modified ? "Nothing is sent. The server computes the final diff and checks the citations." : "The folder equals its base: a push would send nothing.",
+    };
+    return plan;
+  },
+  async run(ctx, i) {
+    const p = prepare(ctx, i.dir);
+    const { base, folder } = p;
+    if (!p.since.modified) {
+      return present(ctx, { unchanged: true, base: { versionId: base.baseVersionId, versionNumber: base.baseVersionNumber }, pushed: false }, [`Nothing to push: the folder equals version ${base.baseVersionNumber}.`]);
+    }
+    const res = await server(() =>
+      call<ImportResponse>(ctx, "POST", "/sessions/{session}/imports", { params: { session: base.sessionId }, body: { document: p.doc, baseVersionId: base.baseVersionId, ...(i.message ? { message: i.message } : {}), ...(i.allowPending ? { allowPending: true } : {}) } })
+    );
+    if (res.unchanged || !res.version) {
+      if (res.merged) {
+        return present(ctx, { ...res, pushed: false, approved: false, applied: false }, [`The server (version ${res.merged.currentVersionNumber}) already has all of your changes; nothing was proposed. Run \`ulams course pull\` to move the folder's base.`], {});
+      }
+      writeBase(folder.root, { ...base, documentHash: p.hash });
+      return present(ctx, { ...res, pushed: false, approved: false, applied: false }, [`The server already has this content (version ${base.baseVersionNumber}); nothing was proposed.`], {});
+    }
+    const proposal: Proposal = {
+      versionId: res.version.id,
+      versionNumber: res.version.number,
+      // the version it sits on: the server's current one when it merged a push that was behind
+      baseVersionId: res.version.parentId ?? base.baseVersionId,
+      documentHash: p.hash,
+      ...(res.merged ? { merged: true } : {}),
+      message: i.message ?? null,
+      counts: res.counts,
+      pushedAt: new Date().toISOString(),
+    };
+    writeProposal(folder.root, proposal);
+    const lines = [
+      `Proposed version ${res.version.number} (from version ${base.baseVersionNumber}): ${countsText(res.counts)}.`,
+      ...(res.merged
+        ? [
+            `The server was at version ${res.merged.currentVersionNumber}: your push was merged with ${res.merged.fromServer.length} element${res.merged.fromServer.length === 1 ? "" : "s"} changed there (${res.merged.fromPush.length} of yours).`,
+            ...res.merged.notes.map((n) => `note: ${n.message}`),
+            "Run `ulams course pull` after approving to bring those changes into the folder.",
+          ]
+        : []),
+      ...changeLines(res.changes),
+      ...(res.handEdited.length > 0 ? [`Hand-edited text that the AI wrote: ${res.handEdited.slice(0, 5).join(", ")}${res.handEdited.length > 5 ? ", ..." : ""}`] : []),
+      ...res.warnings.slice(0, 5).map((w) => `warning: ${w}`),
+    ];
+    const data: Record<string, unknown> = { ...res, pushed: true, approved: false, applied: false };
+    let meta: Result["meta"] | undefined;
+
+    if (i.approve || i.apply) {
+      let approved;
+      try {
+        approved = await approveVersion(ctx, res.version.id);
+      } catch (e) {
+        if (e instanceof CliError) throw new CliError(e.code, e.message, { hint: e.hint, status: e.status, requestId: e.requestId, details: { ...e.details, proposed: { versionId: res.version.id, versionNumber: res.version.number } } });
+        throw e;
+      }
+      const moved = advanceBase(folder.root, base, proposal);
+      data.approved = true;
+      data.approval = approved;
+      data.baseMoved = moved;
+      lines.push(`Approved version ${approved.number}.`);
+      if (i.apply) {
+        const applied = await startApply(ctx, base.sessionId, base.courseId, i.overwrite, approved.versionId);
+        data.applied = applied.applied;
+        data.apply = { runId: applied.runId, versionId: applied.versionId, versionNumber: applied.versionNumber };
+        meta = applied.meta;
+        lines.push(applied.applied ? `Applied: learners see version ${approved.number}. Publish with \`ulams course publish\`.` : `Apply started${applied.runId ? ` (run ${applied.runId})` : ""}.`);
+      } else lines.push("Next: `ulams course apply` to apply it.");
+    } else {
+      lines.push("Nothing changes for learners until the version is approved and applied.", "Review: `ulams course diff --version " + res.version.id + "`. Approve and apply as a person: `ulams course apply --approve`, or in the studio.");
+    }
+    return present(ctx, data, lines, { ...(meta ? { meta } : {}) });
+  },
+});
+
+/* ---------------------------------------------------------------- apply, publish */
+
+function target(i: { session?: string | undefined; dir?: string | undefined }): { root: string | null; base: BaseFile | null; sessionId: string } {
+  const root = resolve(i.dir ?? ".");
+  const bound = existsSync(root) && hasBase(root);
+  if (!bound && i.dir) readBase(root); // an explicit folder must be a bound one: say why it is not
+  const base = bound ? readBase(root) : null;
+  const usable = base && (!i.session || i.session === base.sessionId) ? base : null;
+  const sessionId = i.session ?? usable?.sessionId;
+  if (!sessionId) {
+    throw new CliError("INPUT_INVALID", "Pass the builder session (`course apply <session>`) or run inside a course folder created with `ulams course init`.", { hint: "`ulams course status` shows the session of the folder." });
+  }
+  return { root: usable ? root : null, base: usable, sessionId };
+}
+
+const apply = defineCommand({
+  ...builderCommand,
+  id: "course.apply",
+  summary: "Apply the course's current version to the live course; with --approve, approve the proposed version first",
+  description:
+    "Writes the course through the course services as an unpublished draft (publish with `course publish`). Run it in the course folder, or pass the session. When the folder has a proposal from `course push` that nobody approved, apply refuses with CONFIRMATION_REQUIRED (exit 11) unless you pass --approve, which approves it first: only a person can (a login, or a CLI token you created). Agent tokens and MCP clients are refused with APPROVAL_REQUIRES_HUMAN. --version <id> approves a specific proposed version. Waits for the apply to finish unless --no-wait (the folder's course id is needed to wait).",
+  kind: "write",
+  idempotent: false,
+  scopes: WRITE,
+  endpoints: ["POST /api/admin/course-as-code/sessions/{session}/apply"],
+  positionals: ["session"],
+  input: z.object({
+    session: sessionInput,
+    dir: dirInput,
+    version: z.string().optional().describe("The proposed version to approve (default: the one `course push` proposed)."),
+    approve: z.boolean().optional().describe("Approve the proposed version before applying (people and CLI tokens only)."),
+    overwrite: z.boolean().optional().describe("Overwrite edits an admin made in the course since the last apply."),
+  }),
+  output: z.unknown(),
+  examples: [
+    { title: "Approve what you pushed and apply it", argv: "course apply --approve" },
+    { title: "Apply a version someone approved in the studio", argv: "course apply" },
+    { title: "Apply a session without a folder", argv: "course apply <session> --json" },
+  ],
+  plan: async (ctx, i) => {
+    const t = target(i);
+    const proposal = t.root ? readProposal(t.root) : null;
+    const versionId = i.version ?? proposal?.versionId;
+    const then = [...(versionId && i.approve ? [`POST /versions/${versionId}/approve`] : []), `POST /sessions/${t.sessionId}/apply`];
+    return { request: { method: "POST", path: `${COURSE_AS_CODE}/sessions/${t.sessionId}/apply`, ...(i.overwrite ? { body: { overwrite: true } } : {}) }, steps: then, ...(versionId && !i.approve ? { note: `Version ${versionId} is an unapproved proposal: a real run needs --approve.` } : {}) };
+  },
+  async run(ctx, i) {
+    const t = target(i);
+    const proposal = t.root ? readProposal(t.root) : null;
+    let versionId = i.version ?? proposal?.versionId ?? null;
+    let approved: Awaited<ReturnType<typeof approveVersion>> | null = null;
+    const lines: string[] = [];
+
+    if (versionId && !i.approve) {
+      // approved elsewhere (the studio)? then it is already the current version and applying is right
+      const courseId = t.base?.courseId ?? null;
+      const current = courseId !== null ? (await fetchExport(ctx, courseId)).versionId : null;
+      if (current !== versionId) throw unapproved(versionId, proposal?.versionId === versionId ? proposal.versionNumber : undefined);
+      if (t.root && proposal?.versionId === versionId) clearProposal(t.root);
+      versionId = null;
+    }
+    if (versionId && i.approve) {
+      approved = await approveVersion(ctx, versionId);
+      lines.push(`Approved version ${approved.number}.`);
+      if (t.root && t.base && proposal && proposal.versionId === versionId) advanceBase(t.root, t.base, proposal);
+    }
+    let overwrite = i.overwrite;
+    if (!overwrite && approved && proposal?.kind === "absorb" && proposal.versionId === versionId && t.base?.courseId != null) {
+      // the approved version holds the LMS edits, so the apply would write the same values back: allowed only while every
+      // element the server calls drifted is one the absorption took its edits from (anything else stays refused)
+      const drift = ((await fetchExport(ctx, t.base.courseId)).drift ?? []).map((d) => d.element);
+      const covered = new Set(proposal.absorbed ?? []);
+      if (drift.length > 0 && drift.every((k) => covered.has(k))) overwrite = true;
+    }
+    const res = await startApply(ctx, t.sessionId, t.base?.courseId ?? null, overwrite, approved?.currentVersionId ?? null);
+    lines.push(res.applied ? `Applied version ${res.versionNumber}: learners see it once the course is published (\`ulams course publish\`).` : `Apply started${res.runId ? ` (run ${res.runId})` : ""}.`);
+    return present(ctx, { sessionId: t.sessionId, runId: res.runId, approved: approved !== null, ...(approved ? { approval: approved } : {}), applied: res.applied, versionId: res.versionId }, lines, { ...(res.meta ? { meta: res.meta } : {}) });
+  },
+});
+
+const publish = defineCommand({
+  ...builderCommand,
+  id: "course.publish",
+  summary: "Publish the applied course so learners can enrol",
+  description:
+    "Runs the publish check and publishes. Blocking items stop it (CONFLICT, error.details.blocking); warnings stop it until you have read them and pass --acknowledge-warnings (CONFIRMATION_REQUIRED, error.details.warnings). The course must be applied first. Run it in the course folder, or pass the session.",
+  kind: "write",
+  idempotent: true,
+  scopes: WRITE,
+  endpoints: ["POST /api/admin/course-as-code/sessions/{session}/publish"],
+  positionals: ["session"],
+  input: z.object({ session: sessionInput, dir: dirInput, acknowledgeWarnings: z.boolean().optional().describe("Acknowledge the publish warnings after reviewing them.") }),
+  output: z.unknown(),
+  examples: [
+    { title: "Publish from the course folder", argv: "course publish" },
+    { title: "Publish after reading the warnings", argv: "course publish --acknowledge-warnings --json" },
+  ],
+  plan: async (ctx, i) => planOf("POST", `/sessions/${target(i).sessionId}/publish`, { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) }),
+  async run(ctx, i) {
+    const t = target(i);
+    try {
+      const res = await call<{ courseId: number; published: boolean }>(ctx, "POST", "/sessions/{session}/publish", { params: { session: t.sessionId }, body: { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) } });
+      return present(ctx, res, [`Published course ${res.courseId}. Learners can enrol.`]);
+    } catch (e) {
+      if (!(e instanceof CliError) || e.status !== 409) throw translate(e);
+      const data = serverBody(e).data;
+      const blocking = Array.isArray(data.blocking) ? data.blocking : [];
+      const warnings = Array.isArray(data.warnings) ? data.warnings : [];
+      if (blocking.length > 0) throw new CliError("CONFLICT", e.message, { status: 409, requestId: e.requestId, hint: "Fix the blocking items in the course, push and apply again, then publish.", details: { blocking, warnings } });
+      if (warnings.length > 0) throw new CliError("CONFIRMATION_REQUIRED", e.message, { status: 409, requestId: e.requestId, hint: "Read error.details.warnings, then re-run with --acknowledge-warnings.", details: { warnings } });
+      throw new CliError("CONFLICT", e.message, { status: 409, requestId: e.requestId, hint: /apply the course/i.test(e.message) ? "Run `ulams course apply` first." : e.hint });
+    }
+  },
+});
+
+
+/* ---------------------------------------------------------------- resolve */
+
+const resolveCmd = defineCommand({
+  ...folderCommand,
+  id: "course.resolve",
+  summary: "Settle one conflict that `course pull` left in .ulams/conflicts/",
+  description:
+    "Each conflict is an element both you and the server changed differently. --take local keeps your version (the folder already has it), --take remote replaces the element (and what is inside it) with the server's version, --take file reads the Resolution section of .ulams/conflicts/<element>.md, which you edit first: a block as a directive, any other element as YAML, or the word (removed). The conflict file is deleted when the element is settled; when none are left, validate and push. The server's version comes from the version the folder is based on (GET versions/{version}); --take local needs no request. --dry-run shows the files that would change.",
+  kind: "read",
+  scopes: READ,
+  endpoints: ["GET /api/admin/course-as-code/versions/{version}"],
+  positionals: ["element"],
+  input: z.object({
+    element: z.string().min(1).describe("The element id (the file name in .ulams/conflicts/ without .md)."),
+    take: z.enum(["local", "remote", "file"]).describe("local: keep yours. remote: take the server's. file: use the edited Resolution section."),
+    dir: dirInput,
+  }),
+  output: z.unknown(),
+  examples: [
+    { title: "Keep your version of a block", argv: "course resolve 01j9z8aaaaaaaaaaaaaaaaaaaa --take local" },
+    { title: "Take the server's version", argv: "course resolve 01j9z8aaaaaaaaaaaaaaaaaaaa --take remote" },
+    { title: "Use the text you edited in the conflict file", argv: "course resolve 01j9z8aaaaaaaaaaaaaaaaaaaa --take file" },
+  ],
+  async run(ctx, i) {
+    const folder = openFolder(i.dir);
+    readBase(folder.root);
+    const name = conflictFileName(i.element);
+    const text = readConflictText(folder.root, name);
+    if (text === null) {
+      const open = listConflicts(folder.root);
+      throw new CliError("INPUT_INVALID", `There is no open conflict for ${i.element}.`, { hint: open.length > 0 ? `Open conflicts: ${open.join(", ")}.` : "Nothing is open: `ulams course status` shows where the folder stands." });
+    }
+    let parsed: ReturnType<typeof readConflict>;
+    try {
+      parsed = readConflict(text);
+    } catch (e) {
+      throw new CliError("INPUT_INVALID", (e as Error).message, { hint: `Restore .ulams/conflicts/${name}.md or run \`ulams course pull\` again from the base.` });
+    }
+    const left = () => listConflicts(folder.root).filter((n) => n !== name);
+    const finish = (take: string, files: { written: string[]; updated: string[]; removed: string[] }) => {
+      if (!ctx.flags.dryRun) removeConflict(folder.root, name);
+      const remaining = left();
+      return present(ctx, { element: i.element, take, files, remaining, dryRun: Boolean(ctx.flags.dryRun) }, [
+        `${ctx.flags.dryRun ? "Would settle" : "Settled"} ${i.element} (${take}). Files: ${files.written.length} new, ${files.updated.length} changed, ${files.removed.length} removed.`,
+        remaining.length > 0 ? `${remaining.length} conflict${remaining.length === 1 ? "" : "s"} left: ${remaining.join(", ")}.` : "No conflicts left. Next: `ulams course validate`, then `ulams course push`.",
+      ]);
+    };
+    if (i.take === "local") return finish("local", { written: [], updated: [], removed: [] });
+
+    const local = localDocument(ctx, folder);
+    const meta = parsed.meta;
+    const remote = assertRepresentable((await fetchVersion(ctx, meta.remote.versionId)).document);
+    const conflict: Conflict = { id: meta.element, kind: meta.kind, type: meta.type, base: null, ours: null, theirs: null, fields: [], held: [] };
+    let doc: Obj;
+    try {
+      const input = { conflict, tree: treeOf(local.doc), remote: treeOf(remote) };
+      const tree = i.take === "remote" ? takeRemote(input) : takeFile(input, parseElement(meta.type, meta.element, parsed.resolution));
+      doc = { ...buildDocument(tree), ...(local.doc.sources !== undefined ? { sources: local.doc.sources } : {}) };
+    } catch (e) {
+      if (e instanceof ResolveError || e instanceof Error) throw new CliError("INPUT_INVALID", e.message, { hint: i.take === "file" ? `Fix the Resolution section of .ulams/conflicts/${name}.md and run the command again.` : "Resolve the conflict it names first, or take your own version." });
+      throw e;
+    }
+    const files = filesAfterChange(folder.files, local.doc, doc);
+    // the validator wants the whole folder: the binding file is not part of what a resolution rewrites
+    const whole = new Map(files).set(ULAMS_FILE, folder.files.get(ULAMS_FILE) as string);
+    const issues = validateFiles(whole, folder.assets).issues;
+    if (summarize(issues).errors > 0) failWith(ctx, issues, textFiles(whole));
+    const plan = ctx.flags.dryRun ? planMaterialise(folder.files, files) : materialise(folder.root, folder.files, files);
+    return finish(i.take, { written: plan.written, updated: plan.updated, removed: plan.removed });
+  },
+});
+
+/* ---------------------------------------------------------------- absorb-drift */
+
+const absorbDrift = defineCommand({
+  ...builderCommand,
+  id: "course.absorb-drift",
+  summary: "Read edits made in the LMS after the last apply back into a proposed version of the course",
+  description:
+    "An admin who edits a lesson, a question or the course details in the LMS after an apply changes the live course but not the blueprint. This asks the server to read those edits back into a proposed version (kind author), for titles, summaries, lesson text (block by block) and question wording. Nothing is applied and nothing is approved: review it with `course diff --version <id>`, approve it (a person only: `course apply --approve`, or the studio), then `course pull` brings it into the folder. Edits that cannot be expressed in the blueprint (HTML from the visual editor, added paragraphs, changed correct answers, the landing page) are listed as unmapped and the blueprint keeps its value; where the blueprint changed too, the studio is the place to resolve it. --preview lists what would be read back and stores nothing.",
+  kind: "write",
+  idempotent: false,
+  scopes: WRITE,
+  endpoints: ["POST /api/admin/course-as-code/sessions/{session}/drift"],
+  positionals: ["session"],
+  input: z.object({ session: sessionInput, dir: dirInput, preview: z.boolean().optional().describe("List what would be read back; store no version.") }),
+  output: z.unknown(),
+  examples: [
+    { title: "See what admins changed in the LMS", argv: "course absorb-drift --preview" },
+    { title: "Read the edits back into a proposed version", argv: "course absorb-drift" },
+  ],
+  plan: async (ctx, i) => planOf("POST", `/sessions/${target(i).sessionId}/drift`, { dryRun: Boolean(i.preview) }),
+  async run(ctx, i) {
+    const t = target(i);
+    const res = await server(() => call<AbsorbResponse>(ctx, "POST", "/sessions/{session}/drift", { params: { session: t.sessionId }, body: { dryRun: Boolean(i.preview) } }));
+    const lines: string[] = [];
+    if (res.absorbed.length === 0) lines.push("No edits made in the LMS can be read back into the course.");
+    else {
+      lines.push(`${i.preview ? "Would read back" : "Read back"} ${res.absorbed.length} edited element${res.absorbed.length === 1 ? "" : "s"}: ${countsText(res.counts)}.`);
+      for (const a of res.absorbed.slice(0, 20)) lines.push(`  ~ ${a.title} (${a.fields.join(", ")})`);
+      lines.push(...changeLines(res.changes, 20));
+    }
+    for (const u of res.unmapped.slice(0, 10)) lines.push(`  ! ${u.title}: ${u.reason}`);
+    if (res.version) {
+      if (t.root) {
+        const p: Proposal = { kind: "absorb", absorbed: res.absorbed.map((a) => a.key), versionId: res.version.id, versionNumber: res.version.number, baseVersionId: res.version.parentId ?? "", documentHash: "", message: "Admin edits read back from the LMS", counts: res.counts, pushedAt: new Date().toISOString() };
+        writeProposal(t.root, p);
+      }
+      lines.push(`Proposed version ${res.version.number}. Review: \`ulams course diff --version ${res.version.id}\`. Approve and apply as a person: \`ulams course apply --approve\`, then \`ulams course pull\` to bring it into the folder.`);
+    } else if (res.absorbed.length > 0 && i.preview) lines.push("Run without --preview to store them as a proposed version.");
+    return present(ctx, res, lines);
+  },
+});
+
+export const courseSyncCommands: AnyCommand[] = [init, sourcesConnect, pull, diff, status, push, apply, publish, resolveCmd, absorbDrift];

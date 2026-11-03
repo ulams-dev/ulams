@@ -1,0 +1,52 @@
+---
+/**
+ * Content cost: the Chapman range (49 to 716 hours of work per finished hour) on a scale of its own. Deliberately
+ * nothing of ULAMS is drawn on it: no bar, ratio or marker that could read as "times faster".
+ */
+import DiagramFrame from "./DiagramFrame.astro";
+import type { BenchmarkCopy, Controls } from "../../lib/impact-diagrams.ts";
+
+interface Props {
+  copy: BenchmarkCopy;
+  controls: Controls;
+}
+const { copy, controls } = Astro.props;
+const MAX = 800;
+const LOW = 49;
+const HIGH = 716;
+const pct = (v: number) => `${((v / MAX) * 100).toFixed(3)}%`;
+const TICKS = [0, 200, 400, 600, 800];
+---
+
+<DiagramFrame id="dg-benchmark" head={copy} tone="outside" control={{ kind: "replay", label: controls.replay }}>
+  <div class="dg-bench">
+    <div class="dg-bench__row">
+    <div class="dg-bench__unit" data-dg-step style="--dg-i:0">
+      <span class="dg-bench__square" aria-hidden="true"></span>
+      <span>{copy.unit}</span>
+    </div>
+    <span class="dg-bench__arrow" aria-hidden="true"></span>
+    <div class="dg-bench__scale">
+      <p class="dg-bench__axis">{copy.axis}</p>
+      <ul class="dg-bench__ends" role="list" style={`--low:${pct(LOW)};--high:${pct(MAX - HIGH)}`}>
+        <li data-dg-step style="--dg-i:1"><strong>{copy.low.value}</strong><span>{copy.low.label}</span></li>
+        <li data-dg-step style="--dg-i:4"><strong>{copy.high.value}</strong><span>{copy.high.label}</span></li>
+      </ul>
+      <div class="dg-bench__track" aria-hidden="true">
+        <span class="dg-bench__band" data-dg-grow="x" style={`left:${pct(LOW)};width:${pct(HIGH - LOW)};--dg-i:2`}></span>
+      </div>
+      <ol class="dg-bench__ticks" aria-hidden="true">
+        {TICKS.map((t) => <li style={`left:${pct(t)}`}>{t}</li>)}
+      </ol>
+      <p class="u-visually-hidden">{copy.summary}</p>
+    </div>
+    </div>
+    <div class="dg-bench__note" data-dg-step style="--dg-i:5">
+      <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4 8h12M4 12h12M13 4l-6 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none" /></svg>
+      <div>
+        <h4 class="dg-sub">{copy.noteTitle}</h4>
+        <p>{copy.note}</p>
+      </div>
+    </div>
+  </div>
+</DiagramFrame>

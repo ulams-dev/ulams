@@ -13,7 +13,7 @@ interface DictionaryAdminApiControllerSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/dictionaries",
+     *      path="/api/admin/dictionaries", operationId="admin.dictionaries.get",
      *      summary="Get a listing of the Dictionaries",
      *      tags={"Admin Dictionaries"},
      *      security={
@@ -95,7 +95,7 @@ interface DictionaryAdminApiControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/dictionaries",
+     *      path="/api/admin/dictionaries", operationId="admin.dictionaries.post",
      *      summary="Store a newly created dictionary in storage",
      *      tags={"Admin Dictionaries"},
      *      security={
@@ -136,7 +136,7 @@ interface DictionaryAdminApiControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/dictionaries/{id}",
+     *      path="/api/admin/dictionaries/{id}", operationId="admin.dictionaries.by-id.get",
      *      summary="Display the specified Dictionary",
      *      tags={"Admin Dictionaries"},
      *      security={
@@ -179,7 +179,7 @@ interface DictionaryAdminApiControllerSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/dictionaries/{id}",
+     *      path="/api/admin/dictionaries/{id}", operationId="admin.dictionaries.by-id.put",
      *      summary="Update the specified Dictionary in storage",
      *      tags={"Admin Dictionaries"},
      *      security={
@@ -229,7 +229,7 @@ interface DictionaryAdminApiControllerSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/dictionaries/{id}",
+     *      path="/api/admin/dictionaries/{id}", operationId="admin.dictionaries.by-id.delete",
      *      summary="Remove the specified Dictionary from storage",
      *      tags={"Admin Dictionaries"},
      *      security={

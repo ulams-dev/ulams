@@ -88,6 +88,11 @@ class Markdown
             Storage::move($filepath, $destination);
         }
         $results = [$filepath, $destination];
+        if (config('images.content_urls') === 'original') {
+            $destination = Storage::url($destination);
+
+            return $results;
+        }
         $destination = $this->unParseUrl(array_merge(
             $pattern,
             [
@@ -103,10 +108,23 @@ class Markdown
         return $results;
     }
 
-    private function convertFilePathByHttp(string $destinationPrefix, string $filepath, string &$destination): array
+    /**
+     * A link to a file on this application's own origin that is neither storage nor the images API. It is
+     * read from the application's public directory, never fetched over HTTP: inside a container the
+     * public host name (api.localhost, a tenant host) does not resolve to this application.
+     * A link that does not resolve to a file there stays as it is.
+     */
+    private function convertFilePathByHttp(string $destinationPrefix, string $filepath, string &$destination): ?array
     {
+        $local = $this->publicFile($filepath);
+        if ($local === null) {
+            $destination = $filepath;
+
+            return null;
+        }
+
         $destination = sprintf($destinationPrefix . '%s', Str::slug(basename($filepath)));
-        Storage::put($destination, file_get_contents($filepath));
+        Storage::put($destination, (string) file_get_contents($local));
         $pathInfo = pathinfo($destination);
         if (!array_key_exists(self::EXT_STRING_NAME, $pathInfo) ||
             (
@@ -117,7 +135,11 @@ class Markdown
                 )
             )
         ) {
-            $info = getimagesize(Storage::path($destination));
+            // read through the disk: on S3 Storage::path() is not a file on this machine
+            $info = @getimagesizefromstring((string) Storage::get($destination));
+            if ($info === false) {
+                return [$filepath, $this->contentUrl($destination)];
+            }
             $ext = explode('/', $info['mime']);
             if (Storage::exists($destination . '.' . $ext[1])) {
                 Storage::delete($destination . '.' . $ext[1]);
@@ -125,9 +147,22 @@ class Markdown
             Storage::copy($destination, $destination . '.' . $ext[1]);
             $destination = $destination . '.' . $ext[1];
         }
-        $destination = url('api/images/img?path=') . $destination;
+        $destination = $this->contentUrl($destination);
 
         return [$filepath, $destination];
+    }
+
+    /**
+     * The URL stored in content for an image kept at $path: the images API URL, or with
+     * images.content_urls=original (hosted demos) the plain public storage URL.
+     */
+    private function contentUrl(string $path): string
+    {
+        if (config('images.content_urls') === 'original') {
+            return Storage::url($path);
+        }
+
+        return url('api/images/img?path=') . $path;
     }
 
     private function convertFilePathByStorage(
@@ -156,5 +191,18 @@ class Markdown
 
             return $match[0];
         }, $input);
+    }
+
+    /** The file in public_path() that a same-origin URL points to, or null (also for paths that climb out of it). */
+    private function publicFile(string $url): ?string
+    {
+        $path = rawurldecode((string) parse_url($url, PHP_URL_PATH));
+        $root = realpath(public_path());
+        $file = $path === '' ? false : realpath(public_path(ltrim($path, '/')));
+        if ($root === false || $file === false || !is_file($file) || !str_starts_with($file, $root . DIRECTORY_SEPARATOR)) {
+            return null;
+        }
+
+        return $file;
     }
 }

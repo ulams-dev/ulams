@@ -14,21 +14,21 @@ use Ulams\Adapt\Services\AdaptSourceValidator;
 /**
  * Adapt Path B (behind ADAPT_SOURCE_ENABLED; 404 when off). Permission `adapt_manage`.
  *
- * @OA\Get(path="/api/admin/adapt", summary="List Adapt JSON sources", tags={"Admin Adapt"}, security={{"passport": {}}}, @OA\Response(response=200, description="sources"))
- * @OA\Post(path="/api/admin/adapt", summary="Create from Adapt JSON (course, config, contentObjects, articles, blocks, components)", tags={"Admin Adapt"}, security={{"passport": {}}},
- *     @OA\Response(response=201, description="source, version 1"), @OA\Response(response=422, description="structural errors with paths"))
- * @OA\Get(path="/api/admin/adapt/{id}", summary="Show a source and its build status", tags={"Admin Adapt"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="source"))
- * @OA\Get(path="/api/admin/adapt/{id}/source", summary="JSON of the current or a given version", tags={"Admin Adapt"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="Adapt JSON"))
- * @OA\Get(path="/api/admin/adapt/{id}/versions", summary="Version history (version, change note, author, date; no source)", tags={"Admin Adapt"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="versions, newest first"))
- * @OA\Post(path="/api/admin/adapt/{id}/versions", summary="Add a version", tags={"Admin Adapt"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=201, description="source"))
- * @OA\Post(path="/api/admin/adapt/{id}/build", summary="Build the current version into a SCORM package (queued)", tags={"Admin Adapt"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=202, description="queued"))
- * @OA\Delete(path="/api/admin/adapt/{id}", summary="Delete a source (the built SCORM package stays)", tags={"Admin Adapt"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="deleted"))
+ * @OA\Get(path="/api/admin/adapt", operationId="adapt.list", summary="List Adapt JSON sources", tags={"Admin Adapt"}, security={{"passport": {}}}, @OA\Response(response=200, description="sources", @OA\JsonContent(ref="#/components/schemas/AdaptSourceListResponse")))
+ * @OA\Post(path="/api/admin/adapt", operationId="adapt.create", summary="Create from Adapt JSON (course, config, contentObjects, articles, blocks, components)", tags={"Admin Adapt"}, security={{"passport": {}}},
+ *     @OA\Response(response=201, description="source, version 1", @OA\JsonContent(ref="#/components/schemas/AdaptSourceResponse")), @OA\Response(response=422, description="structural errors with paths"))
+ * @OA\Get(path="/api/admin/adapt/{id}", operationId="adapt.get", summary="Show a source and its build status", tags={"Admin Adapt"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="source", @OA\JsonContent(ref="#/components/schemas/AdaptSourceResponse")))
+ * @OA\Get(path="/api/admin/adapt/{id}/source", operationId="adapt.source", summary="JSON of the current or a given version", tags={"Admin Adapt"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="Adapt JSON", @OA\JsonContent(type="object", additionalProperties=true)))
+ * @OA\Get(path="/api/admin/adapt/{id}/versions", operationId="adapt.versions-list", summary="Version history (version, change note, author, date; no source)", tags={"Admin Adapt"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="versions, newest first", @OA\JsonContent(ref="#/components/schemas/AdaptVersionListResponse")))
+ * @OA\Post(path="/api/admin/adapt/{id}/versions", operationId="adapt.versions-add", summary="Add a version", tags={"Admin Adapt"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=201, description="source", @OA\JsonContent(ref="#/components/schemas/AdaptSourceResponse")))
+ * @OA\Post(path="/api/admin/adapt/{id}/build", operationId="adapt.build", summary="Build the current version into a SCORM package (queued)", tags={"Admin Adapt"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=202, description="queued", @OA\JsonContent(ref="#/components/schemas/AdaptSourceResponse")))
+ * @OA\Delete(path="/api/admin/adapt/{id}", operationId="adapt.delete", summary="Delete a source (the built SCORM package stays)", tags={"Admin Adapt"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  */
 class AdaptSourceController extends Controller
 {

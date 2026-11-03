@@ -41,6 +41,8 @@ class WorkOnceCommandTest extends TestCase
         }
     }
 
+    // The suite process itself is well over the command's default 256 MB, and a worker that sees its
+    // memory limit exceeded exits with 12; give it room so the tests do not depend on suite size.
     public function testDrainsTheQueueAndExits(): void
     {
         dispatch(function () {
@@ -50,7 +52,7 @@ class WorkOnceCommandTest extends TestCase
             WorkOnceCommandTest::$ran++;
         })->onConnection('work_once')->onQueue('default');
 
-        $this->artisan('ulams:tenant:work-once', ['--connection' => 'work_once', '--queue' => 'default'])->assertExitCode(0);
+        $this->artisan('ulams:tenant:work-once', ['--memory' => 4096, '--connection' => 'work_once', '--queue' => 'default'])->assertExitCode(0);
 
         $this->assertSame(2, self::$ran);
         $this->assertSame(0, DB::table('jobs')->count());
@@ -62,7 +64,7 @@ class WorkOnceCommandTest extends TestCase
             WorkOnceCommandTest::$ran++;
         })->onConnection('work_once')->onQueue('builder');
 
-        $this->artisan('ulams:tenant:work-once', ['--connection' => 'work_once', '--queue' => 'default'])->assertExitCode(0);
+        $this->artisan('ulams:tenant:work-once', ['--memory' => 4096, '--connection' => 'work_once', '--queue' => 'default'])->assertExitCode(0);
 
         $this->assertSame(0, self::$ran);
         $this->assertSame(1, DB::table('jobs')->where('queue', 'builder')->count());
@@ -70,7 +72,7 @@ class WorkOnceCommandTest extends TestCase
 
     public function testEmptyQueueIsNotAnError(): void
     {
-        $this->artisan('ulams:tenant:work-once', ['--connection' => 'work_once'])->assertExitCode(0);
+        $this->artisan('ulams:tenant:work-once', ['--memory' => 4096, '--connection' => 'work_once'])->assertExitCode(0);
     }
 
     public function testSchedulerTickRunsOnlyWithTheScheduleOption(): void
@@ -80,10 +82,10 @@ class WorkOnceCommandTest extends TestCase
             $ticks++;
         })->everyMinute();
 
-        $this->artisan('ulams:tenant:work-once', ['--connection' => 'work_once'])->assertExitCode(0);
+        $this->artisan('ulams:tenant:work-once', ['--memory' => 4096, '--connection' => 'work_once'])->assertExitCode(0);
         $this->assertSame(0, $ticks);
 
-        $this->artisan('ulams:tenant:work-once', ['--connection' => 'work_once', '--schedule' => true])->assertExitCode(0);
+        $this->artisan('ulams:tenant:work-once', ['--memory' => 4096, '--connection' => 'work_once', '--schedule' => true])->assertExitCode(0);
         $this->assertSame(1, $ticks);
     }
 }

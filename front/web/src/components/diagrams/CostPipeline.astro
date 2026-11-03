@@ -1,0 +1,87 @@
+---
+/** Content cost: the stages of the one measured run, from source to published course, with its real timings. */
+import DiagramFrame from "./DiagramFrame.astro";
+import type { Controls, PipelineCopy } from "../../lib/impact-diagrams.ts";
+
+interface Props {
+  copy: PipelineCopy;
+  controls: Controls;
+}
+const { copy, controls } = Astro.props;
+const LESSONS = 3;
+---
+
+<DiagramFrame id="dg-pipeline" head={copy} tone="run" control={{ kind: "replay", label: controls.replay }}>
+  <ol class="dg-pipe" role="list">
+    {
+      copy.stages.map((stage, i) => (
+        <li class:list={["dg-pipe__stage", { "dg-pipe__stage--key": i === LESSONS, "dg-pipe__stage--end": i === copy.stages.length - 1 }]} data-dg-step style={`--dg-i:${i}`}>
+          <span class="dg-pipe__num" aria-hidden="true">{i + 1}</span>
+          <div class="dg-pipe__card">
+            <h4 class="dg-pipe__title">{stage.title}</h4>
+            <p class="dg-pipe__detail">{stage.detail}</p>
+            {stage.metric && <p class="dg-pipe__metric">{stage.metric}</p>}
+            {stage.results && (
+              <ul class="dg-pipe__results" role="list">
+                {stage.results.map((r) => (
+                  <li>{r}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="dg-pipe__after">
+    <div class="dg-time">
+      <h4 class="dg-sub">{copy.timingTitle}</h4>
+      <div class="dg-time__bar" aria-hidden="true">
+        {copy.timing.map((t, i) => <span class={`dg-time__seg dg-time__seg--${i}`} style={`flex-grow:${t.seconds};--dg-i:${i * 2 + 7}`} data-dg-grow="x" />)}
+      </div>
+      <ol class="dg-time__legend" role="list">
+        {
+          copy.timing.map((t, i) => (
+            <li>
+              <span class={`dg-time__swatch dg-time__seg--${i}`} aria-hidden="true" />
+              <span>{t.label}</span>
+              <strong>{t.value}</strong>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="dg-note">{copy.timingNote}</p>
+      <dl class="dg-totals">
+        {
+          copy.totals.map((t, i) => (
+            <div data-dg-step style={`--dg-i:${i + 9}`}>
+              <dt>{t.label}</dt>
+              <dd>{t.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <div class="dg-cite">
+      <h4 class="dg-sub">{copy.citation.title}</h4>
+      <div class="dg-cite__pair">
+        <div class="dg-cite__card dg-cite__card--passage">
+          <p class="dg-cite__label">{copy.citation.passage}</p>
+          <span class="dg-cite__lines" aria-hidden="true"><i></i><i class="is-cited" data-dg-step style="--dg-i:10"></i><i></i></span>
+        </div>
+        <span class="dg-cite__link" aria-hidden="true"><i></i></span>
+        <div class="dg-cite__card dg-cite__card--block">
+          <p class="dg-cite__label">{copy.citation.block}</p>
+          <span class="dg-cite__lines" aria-hidden="true"><i></i><i></i></span>
+          <span class="dg-cite__chip" data-dg-pop style="--dg-i:9">
+            <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M6.5 9.5l3-3M7 4.5l1-1a2.5 2.5 0 0 1 3.5 3.5l-1 1M9 11.5l-1 1A2.5 2.5 0 0 1 4.5 9l1-1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+            {copy.citation.chip}
+          </span>
+        </div>
+      </div>
+      <p class="dg-note">{copy.citation.note}</p>
+    </div>
+  </div>
+</DiagramFrame>

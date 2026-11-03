@@ -1,5 +1,6 @@
 import {
   DEFAULT_FRONT_TENANT_PATTERN,
+  docsUrl,
   resolveApiUrl,
   tenantFromHost,
 } from "@ulams/tenant";
@@ -40,6 +41,14 @@ export const getAPIURL = (): string | null =>
 
 // Empty when nothing is configured; index.tsx then renders a configuration error.
 export const API_URL: string = getAPIURL() ?? "";
+
+/** Documentation links: `ULAMS_DOCS_URL` at runtime, else the published docs. */
+export const docsLink = (path = ""): string =>
+  docsUrl(
+    (typeof window !== "undefined" && window.VITE_APP_ULAMS_DOCS_URL) ||
+      import.meta.env.VITE_APP_ULAMS_DOCS_URL,
+    path
+  );
 
 /** Public URL of this front (return URLs for payments, e-mail links): the tenant host when on one. */
 export const APP_URL =
@@ -87,6 +96,16 @@ export const VITE_APP_PUBLIC_IMG_URL =
   window.VITE_APP_PUBLIC_IMG_URL ||
   import.meta.env.VITE_APP_PUBLIC_IMG_URL ||
   null;
+
+// Image service (ADR 0193): php (default) | cloudflare | noop. Build-time settings; a window value overrides them.
+export const VITE_ULAMS_IMAGE_SERVICE: string =
+  window.VITE_ULAMS_IMAGE_SERVICE || import.meta.env.VITE_ULAMS_IMAGE_SERVICE || "";
+export const VITE_ULAMS_IMAGE_SOURCES: string =
+  window.VITE_ULAMS_IMAGE_SOURCES || import.meta.env.VITE_ULAMS_IMAGE_SOURCES || "";
+export const VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN: string =
+  window.VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN ||
+  import.meta.env.VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN ||
+  "";
 
 export const VITE_APP_PUBLIC_IMG_BUCKET_FOLDER =
   window.VITE_APP_PUBLIC_IMG_BUCKET_FOLDER ||

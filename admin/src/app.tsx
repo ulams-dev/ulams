@@ -25,6 +25,7 @@ import { translations } from './services/ulams/translations';
 import './services/sentry';
 import { refreshTokenCallback } from './services/token_refresh';
 import { ensureDemoLogin } from './services/demo';
+import { adminDocsUrl } from './lib/docs';
 import type { DemoConfig } from '@ulams/demo';
 const authpaths = ['/user/login', '/user/reset-password'];
 
@@ -213,7 +214,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       <>
         <BookOutlined />
         <span>
-          <a href="http://docs.ulams.app/" target="_blank" rel="noreferrer">
+          <a href={adminDocsUrl()} target="_blank" rel="noreferrer">
             <FormattedMessage id="documentation" />
           </a>
         </span>

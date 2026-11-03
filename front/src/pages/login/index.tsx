@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { UlamsContext } from "@ulams/sdk/react/context";
 import { useHistory } from "react-router-dom";
 import Layout from "@/components/_App/Layout";
@@ -14,27 +14,30 @@ import { toast } from "@/utils/toast";
 import { APP_URL } from "@/config/index";
 import { redirectPrefix } from "@/utils/router";
 import { isMobilePlatform } from "@/utils/index";
+import { useSocialCallback } from "@/hooks/useSocialCallback";
 
 const Login = () => {
   const { search, state } = useLocation<{ referrer?: string }>();
-  const { user, socialAuthorize } = useContext(UlamsContext);
+  const { user } = useContext(UlamsContext);
   const [view, setView] = useState<
     "login" | "forgotPassword" | "register" | "success"
   >("login");
   const { t } = useTranslation();
   const history = useHistory();
-  const token = search.split("?token=")[1];
   const referrer =
     (state && state.referrer) || search.split("?referrer=")[1] || "/";
 
-  if (token) {
-    socialAuthorize(token);
-    setTimeout(() => {
-      history.push(referrer);
-    }, 1000);
-  }
+  // social login: the redirect carries a one-time code, never a token (ADR 0121)
+  const onSocialDone = useCallback(
+    (ok: boolean) => {
+      if (ok) history.push(referrer);
+      else toast(t("UnexpectedError"), "error");
+    },
+    [history, referrer, t]
+  );
+  const finishingSocialLogin = useSocialCallback(search, onSocialDone);
 
-  if (!user.loading && !token && user.value) {
+  if (!user.loading && !finishingSocialLogin && user.value) {
     history.push(referrer);
   }
 

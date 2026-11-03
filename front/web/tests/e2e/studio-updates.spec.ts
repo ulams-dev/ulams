@@ -151,7 +151,7 @@ test("stale course: markers in the workspace, banner with a link to the review, 
 test("updates list and review: decide, accept all, apply, done", async ({ page }) => {
   test.setTimeout(240_000);
   await signIn(page, `/studio/s/${sessionId}/updates`);
-  await expect(page.getByRole("heading", { name: "Source updates", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Updates and improvements", level: 1 })).toBeVisible();
   const row = page.locator("[data-updates-table] tbody tr").first();
   await expect(row).toContainText("r1 → r2");
   await expect(row).toContainText(/Ready to review|Waiting to be analysed/);

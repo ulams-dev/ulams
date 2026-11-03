@@ -2,6 +2,7 @@
 
 namespace Ulams\AssignWithoutAccount\Strategies;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
 use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,7 @@ abstract class AbstractAssignStrategy implements AssignStrategy
 
     protected function findModel(string $namespace, int $id): ?Model
     {
-        return $namespace::find($id);
+        return MorphMap::classOf($namespace)::find($id);
     }
 
     public function getModelInstance(string $namespace, int $id): Model

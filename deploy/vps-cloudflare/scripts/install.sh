@@ -5,7 +5,7 @@
 # pinned images, restarts what changed and runs `ulams:upgrade`.
 #
 #   sudo scripts/install.sh --domain ulams.app --admin-email you@example.com
-#   scripts/install.sh --local          # trial on a laptop: plain HTTP on 127.0.0.1, MinIO instead of R2
+#   scripts/install.sh --local          # trial on a laptop: plain HTTP on 127.0.0.1, SeaweedFS instead of R2
 #
 # Options:
 #   --domain D           the Cloudflare domain (default: ULAMS_DOMAIN of .env, or ulams.app)
@@ -156,7 +156,8 @@ env_setup() {
     ulams_env_set "$ULAMS_ENV_FILE" ULAMS_COOKIE_SECURE false
     local port="${LOCAL_HTTP_PORT:-8480}" s3port="${LOCAL_S3_PORT:-9190}"
     ulams_write_derived "$ULAMS_ENV_FILE" "$domain" "$style" tunnel http ":$port"
-    ulams_env_set "$ULAMS_ENV_FILE" S3_ENDPOINT "http://minio:9000"
+    ulams_env_set "$ULAMS_ENV_FILE" S3_ENDPOINT "http://storage:8333"
+    ulams_env_set "$ULAMS_ENV_FILE" TENANCY_S3_IDENTITY_DRIVER seaweedfs
     ulams_env_set "$ULAMS_ENV_FILE" S3_REGION us-east-1
     ulams_env_set "$ULAMS_ENV_FILE" S3_PLATFORM_PUBLIC_URL "http://localhost:$s3port/$(ulams_env_get "$ULAMS_ENV_FILE" S3_PLATFORM_BUCKET)"
     ulams_env_set "$ULAMS_ENV_FILE" TENANCY_BUCKET_PUBLIC_URL ""

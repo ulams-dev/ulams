@@ -1,9 +1,19 @@
 <?php
 
 return [
+    // Languages the seeder writes the default e-mail templates in, one template per language and event
+    'seed_locales' => ['en', 'pl', 'zh'],
+    'images' => [
+        // Largest image an admin can upload from the visual e-mail editor, in KB
+        'max_kb'    => (int) env('TEMPLATES_EMAIL_IMAGE_MAX_KB', 2048),
+        'directory' => 'email-images',
+    ],
     'mjml' => [
         'api_url'          => env('MJML_API_URL', false),
         'use_api'          => env('MJML_USE_API', false),
+        // Seconds; the render service is internal, so keep them short
+        'connect_timeout'  => (int) env('MJML_CONNECT_TIMEOUT', 5),
+        'timeout'          => (int) env('MJML_TIMEOUT', 20),
         //
         'binary_path'      => env('MJML_BINARY_PATH'),
         //

@@ -10,16 +10,14 @@ interface ConfigControllerContract
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/config",
+     *      path="/api/admin/config", operationId="admin.config.get",
      *      summary="Get admin config",
      *      tags={"Admin Settings"},
      *      description="Get a listing of registered config keys",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -66,13 +64,13 @@ interface ConfigControllerContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/config",
+     *     path="/api/admin/config", operationId="admin.config.post",
      *     summary="Set config for registered config keys",
      *     tags={"Admin Settings"},
      *     security={
      *          {"passport": {}},
      *      },
-     *     @OA\RequestBody(
+     *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         @OA\Property(
      *              property="config",
      *              type="array",
@@ -90,13 +88,11 @@ interface ConfigControllerContract
      *                  )
      *              )
      *         )
-     *     ),
+     *     )),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

@@ -11,7 +11,7 @@ interface StationaryEventApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/stationary-events",
+     *      path="/api/stationary-events", operationId="stationary-events.get",
      *      summary="Get a listing of published stationary events",
      *      tags={"Stationary Events"},
      *      description="Get all stationary events with published or published_unactivated status",
@@ -72,9 +72,7 @@ interface StationaryEventApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -98,7 +96,7 @@ interface StationaryEventApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/stationary-events/me",
+     *      path="/api/stationary-events/me", operationId="stationary-events.me.get",
      *      summary="Get a listing of stationary events bought by user",
      *      tags={"Stationary Events"},
      *      description="Get a listing of stationary events bought by user",
@@ -152,9 +150,7 @@ interface StationaryEventApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -178,7 +174,7 @@ interface StationaryEventApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/stationary-events/{id}",
+     *      path="/api/stationary-events/{id}", operationId="stationary-events.by-id.get",
      *      summary="Display the specified Stationary Event.",
      *      tags={"Stationary Events"},
      *      description="Get stationary event by id with published or published_unactivated status",
@@ -194,9 +190,7 @@ interface StationaryEventApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

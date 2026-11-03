@@ -9,7 +9,7 @@ interface StatementSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/cmi5/statements",
+     *     path="/api/admin/cmi5/statements", operationId="cmi5.statements",
      *     summary="Lists available statements",
      *     tags={"cmi5"},
      *     security={
@@ -116,10 +116,7 @@ interface StatementSwagger
      *             type="string"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of available statements",
-     *      ),
+     *     @OA\Response(response=200, description="List of available statements", @OA\JsonContent(ref="#/components/schemas/LrsStatementPageResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="Endpoint requires authentication",

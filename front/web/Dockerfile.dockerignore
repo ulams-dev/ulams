@@ -4,6 +4,7 @@
 !package.json
 !yarn.lock
 !front/sdk
+!front/interactive-bridge
 !front/ui
 !front/web
 # @ulams/sdk re-exports the tenant resolver shared with front and admin

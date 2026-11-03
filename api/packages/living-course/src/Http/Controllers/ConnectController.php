@@ -6,30 +6,36 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Ulams\LivingCourse\Connectors\ConnectorException;
+use Ulams\LivingCourse\Connectors\Git\PushChange;
+use Ulams\LivingCourse\Connectors\OAuthConnector;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Http\Controllers\Concerns\ResolvesLivingCourse;
 use Ulams\LivingCourse\Jobs\CheckSourceJob;
+use Ulams\LivingCourse\Oauth\OAuthService;
+use Ulams\LivingCourse\Services\ChangeNote;
 use Ulams\LivingCourse\Services\SourceConnections;
 use Ulams\LivingCourse\Support\Presenter;
 
 /**
  * Connecting a source through a connector, checking it on demand and rotating its webhook secret.
  *
- * @OA\Get(path="/api/admin/living-course/connectors", summary="The source connectors this installation offers, with their settings schema", tags={"Admin Living Course"}, security={{"passport": {}}}, @OA\Response(response=200, description="connectors"))
- * @OA\Post(path="/api/admin/living-course/sessions/{session}/sources/connect", summary="Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1", tags={"Admin Living Course"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/living-course/connectors", operationId="admin.living-course.connectors.get", summary="The source connectors this installation offers, with their settings schema", tags={"Admin Living Course"}, security={{"passport": {}}}, @OA\Response(response=200, description="connectors", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Post(path="/api/admin/living-course/sessions/{session}/sources/connect", operationId="admin.living-course.sessions.by-session.sources.connect.post", summary="Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="connector", type="string"), @OA\Property(property="config", type="object"), @OA\Property(property="secrets", type="object"), @OA\Property(property="schedule", type="string"))),
- *     @OA\Response(response=201, description="connection, source and the webhook secret (shown once)"), @OA\Response(response=422, description="settings refused by the connector"))
- * @OA\Post(path="/api/admin/living-course/connections/{connection}/check", summary="Check the source now", tags={"Admin Living Course"}, security={{"passport": {}}},
- *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="queued"), @OA\Response(response=409, description="nothing to check"))
- * @OA\Post(path="/api/admin/living-course/connections/{connection}/webhook-secret", summary="Rotate the webhook secret (returned once)", tags={"Admin Living Course"}, security={{"passport": {}}},
- *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="the new secret"))
+ *     @OA\Response(response=201, description="connection, source and the webhook secret (shown once)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="settings refused by the connector"))
+ * @OA\Post(path="/api/admin/living-course/connections/{connection}/check", operationId="admin.living-course.connections.by-connection.check.post", summary="Check the source now", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\RequestBody(required=false, @OA\JsonContent(@OA\Property(property="commit", type="string", description="the commit a CI job runs for (7 to 64 hex characters); recorded on the new revision"))),
+ *     @OA\Response(response=202, description="queued", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=409, description="nothing to check"), @OA\Response(response=422, description="not a commit id"))
+ * @OA\Post(path="/api/admin/living-course/connections/{connection}/webhook-secret", operationId="admin.living-course.connections.by-connection.webhook-secret.post", summary="Rotate the webhook secret (returned once)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="the new secret", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  */
 class ConnectController extends Controller
 {
     use ResolvesLivingCourse;
 
-    public function __construct(private readonly SourceConnectorRegistry $connectors, private readonly SourceConnections $connections)
+    public function __construct(private readonly SourceConnectorRegistry $connectors, private readonly SourceConnections $connections, private readonly OAuthService $oauth)
     {
     }
 
@@ -37,7 +43,7 @@ class ConnectController extends Controller
     {
         return self::ok(array_values(array_map(fn ($c) => [
             'key' => $c->key(), 'label' => $c->label(), 'configSchema' => $c->configSchema(), 'secretFields' => $c->secretFields(), 'webhooks' => $c->supportsWebhooks(),
-        ], $this->connectors->enabled())));
+        ] + ($c instanceof OAuthConnector ? ['oauth' => ['provider' => $c->oauthProvider(), 'configured' => $this->oauth->provider($c->oauthProvider())->configured()]] : []), $this->connectors->enabled())));
     }
 
     public function connect(Request $request, string $session): JsonResponse
@@ -71,6 +77,11 @@ class ConnectController extends Controller
         }
         if ($c->status === 'paused') {
             return self::fail('This source is paused. Resume it before checking.', 409);
+        }
+        $data = $request->validate(['commit' => ['nullable', 'string', 'regex:/^[0-9a-f]{7,64}$/i']]);
+        if (($data['commit'] ?? null) !== null) {
+            // a CI job on the merge commit: the revision records which commit set the check off
+            ChangeNote::put($c->id, PushChange::fromCommit($data['commit']));
         }
         CheckSourceJob::dispatchFor($c->id, 'manual', (int) $request->user()->getKey());
 

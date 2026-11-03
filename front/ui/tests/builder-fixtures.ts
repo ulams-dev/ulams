@@ -72,6 +72,46 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     ],
     defaultValue: { preset: "coffee" },
   },
+  SourcesPanel: {
+    sources: [
+      {
+        id: "01aaaaaaaaaaaaaaaaaaaaaaaa",
+        name: "coffee-brewing.md",
+        total: 3,
+        uncovered: 1,
+        sections: [
+          { fragmentId: "frg_aaaaaaaaaaa1", label: "§1 Brewing ratios", level: 1, citedByCount: 2, citedBy: [
+            { id: "01bbbbbbbbbbbbbbbbbbbbbbbb", target: "01bbbbbbbbbbbbbbbbbbbbbbbb", type: "block", label: "Lesson 1.1 › block 1" },
+            { id: "01cccccccccccccccccccccccc", target: "01dddddddddddddddddddddddd", type: "objective", label: "Lesson 1.1 › objective 1" },
+          ] },
+          { fragmentId: "frg_aaaaaaaaaaa2", label: "§1.1 Grind size", level: 2, citedByCount: 1, citedBy: [
+            { id: "01eeeeeeeeeeeeeeeeeeeeeeee", target: "01eeeeeeeeeeeeeeeeeeeeeeee", type: "question", label: "Lesson 1.2 › Q1" },
+          ] },
+          { fragmentId: "frg_aaaaaaaaaaa3", label: "§2 Storage", level: 1, citedByCount: 0, citedBy: [] },
+        ],
+      },
+    ],
+    highlighted: ["frg_aaaaaaaaaaa1"],
+  },
+  VariantComparison: {
+    group: "01aaaaaaaaaaaaaaaaaaaaaaaa",
+    elementId: "q1",
+    elementLabel: "Lesson 1.1 › Q1",
+    instruction: "Make the wrong answers harder",
+    status: "proposed",
+    variants: [
+      { versionId: "01v1", label: "Option A", reply: "Closer distractors.", status: "proposed", changes: [{ path: "q1.stem", label: "Lesson 1.1 › Q1 · Question", kind: "changed", before: "How much water?", after: "How much water for 20 g?" }], citations: [cite(1)] },
+      { versionId: "01v2", label: "Option B", status: "proposed", changes: [{ path: "q1.explanation", label: "Lesson 1.1 › Q1 · Explanation", kind: "changed", before: "Because ratio.", after: "Because the ratio is 1:16." }], citations: [] },
+    ],
+  },
+  OutlineEditor: {
+    modules: [
+      { id: "m1", title: "Extraction", lessons: [{ id: "l1", title: "What extraction means", minutes: 10, written: true }, { id: "l2", title: "Strength", minutes: 5, written: false }] },
+      { id: "m2", title: "Brewing", lessons: [{ id: "l3", title: "Ratios", minutes: 10, written: true }] },
+    ],
+    sections: [{ fragmentId: "frg_aaaaaaaaaaa1", label: "§1 Brewing ratios" }],
+    message: "Moved lesson “Strength” up.",
+  },
   PublishSummary: {
     title: "Brewing basics",
     url: "http://coffee.app.localhost/courses/12",
@@ -113,8 +153,12 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
         id: "m1",
         title: "Extraction",
         change: "added",
-        lessons: [{ id: "l1", title: "What extraction means", minutes: 10, change: "added", objectives: [{ id: "o1", text: "Explain extraction", citations: [cite(1)] }], citations: [cite(1)] }],
+        lessons: [{ id: "l1", title: "What extraction means", minutes: 10, change: "added", objectives: [{ id: "o1", text: "Explain extraction", citations: [cite(1)] }], citations: [cite(1)], format: "richtext" }],
       },
+    ],
+    formats: [
+      { value: "richtext", label: "Rich text", description: "Formatted text." },
+      { value: "liascript", label: "LiaScript", description: "Questions inside the text." },
     ],
     removed: [],
   },
@@ -140,6 +184,8 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
       { id: "b2", kind: "table", markdown: "| A | B |\n|---|---|\n| 1 | 2 |", citations: [cite(2)] },
     ],
     flags: [],
+    format: "LiaScript · 1 self-check",
+    extras: [{ id: "q9", kind: "check", label: "Self-check 1", text: "Which grind suits an espresso?", editable: true, citations: [cite(2)] }],
   },
   QuizQuestionCard: {
     questionId: "q1",
@@ -162,6 +208,21 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     citations: [cite(2)],
   },
   ApplySummary: { versionId: "01c", status: "proposed", firstApply: true, create: counts(1), update: counts(0), delete: counts(0), warnings: ["Lesson 1.2: Possibly unsupported claim"] },
+  VariantReview: {
+    versionId: "01var1",
+    variantKey: "expert",
+    label: "Expert",
+    level: "expert",
+    status: "proposed",
+    baseNumber: 3,
+    summary: { lessons: 3, kept: 1, changed: 1, added: 1, removed: 1, citations: 5 },
+    changes: [
+      { path: "l1.title", label: "Lesson 1.1 · Title", kind: "changed", before: "Why grind size matters", after: "Grind size in depth" },
+      { path: "l9.title", label: "Lesson 2.3 · Title", kind: "added", after: "Going further" },
+      { path: "l2.title", label: "Lesson 1.2 · Title", kind: "removed", before: "What coffee is" },
+    ],
+    costMicroUsd: 120000,
+  },
   VersionList: {
     currentVersionId: "v3",
     versions: [

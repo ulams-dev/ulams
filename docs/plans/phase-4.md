@@ -1,6 +1,6 @@
 # Phase 4 plan: Personalisation
 
-Status: **draft, waiting for the product owner's approval**. Nothing in this plan is implemented.
+Status: approved by blanket instruction 2026-10-20, defaults used (open owner decisions #58 to #63 are closed; the ADRs 0057 to 0062 stay Proposed until accepted, see #64). Implementation in progress: M4.1 to M4.4 in the first PR, M4.5 (API) in the second (see `api/packages/learner-insights/README.md`).
 
 Phase 4 adds the second pillar of the product: courses that **adapt to each learner**, with every
 recommendation explained and grounded in the course's cited sources. It covers every Phase 4 item in
@@ -958,3 +958,69 @@ M4.3 front commits (15–16) can run in parallel with M4.2 API commits.
 17. **Experiments**: remediation holdout 20 % and adaptive interface A/B, both through the experiments
     package (consent default pending #58).
 18. **No new dependencies.**
+
+---
+
+## 19. Implementation notes (M4.1 to M4.4)
+
+Where the code differs from the plan above, and what is still open:
+
+- `learner_statuses.element_key` is the empty string for the course-level row instead of NULL, so the
+  unique index also holds for it on PostgreSQL.
+- `quiz.answer` signals are written when an attempt finishes (one per graded answer), not from an
+  answer observer: open answers have no score until graded, and the finish event carries the attempt.
+  The hashed `chosen` option ids (needed for the remediation pattern key, M4.5) are not recorded yet.
+- Not yet recorded: `xapi.result` (LRS observer, cmi5 and xAPI: a statement has to be mapped to a topic through
+  the launch session first). `h5p.result` is recorded from the H5P progress model (and by the backfill).
+- `repetition` alone is evaluated and returned by the scorer (`lowWeight`), but not persisted or
+  announced: only elements with a strong rule get a stored status and a `LearnerStruggling` event.
+- Course-level reasons of a struggling or at-risk learner include the reasons of the struggling elements.
+- The admin settings page of M4.2 (a screen in `admin/`) is not built. The thresholds are tenant settings
+  (`learner_insights.rules.<rule>.<param>` through `POST /api/admin/config`) and per-course overrides
+  (`GET/PUT /api/admin/learner-insights/courses/{course}/settings`), both documented.
+- The audit of exports and erasures is the package's own `learner_insights_audit` table (counts only):
+  the Living Course audit trail is bound to builder sessions.
+- Nudges use the notifications package: `LearnerNudged` carries a `User`; the e-mail template is in
+  `templates-email`. `n=<id>.<signature>` in the continue link is verified by
+  `POST /api/learner-insights/nudges/opened`.
+
+## 20. Implementation notes (M4.5)
+
+- Remediation documents are stored as declarative blocks (`Prose`, `WorkedExample`, `PracticeQuestion`,
+  `ElaborativeQuestion`, each with props and citations). The learner catalogue components that render them
+  and the "Extra help for you" card are not built yet (front work of M4.5), so the API returns the document
+  as data.
+- One remediation row per `(pattern_key, kind)` and one model call per row; the pattern detail (the wrong
+  option ids) is empty until `quiz.answer` signals carry the chosen options.
+- `reflection_feedback` is limited per learner per day with a cache counter, not stored in the database.
+- The holdout (20 % get no remediation) belongs to M4.8 with the experiments package.
+
+## 21. Implementation notes (M4.6)
+
+- The element rates are computed live from signals, transitions, assignments and interventions for the selected
+  period, not from a nightly `learner_insights_element_daily` table: distinct-learner counts cannot be derived
+  from daily counts. Add the table when a tenant's signal volume makes the queries slow.
+- "Propose a course improvement" (`ProposalService::createFromInsights`) is open: Living Course proposals are
+  built around two source revisions, so an insights-triggered proposal needs its own entry point in
+  `living-course` (owner of that package to review).
+- The studio Insights page and the admin settings screen are not built.
+
+## 22. Implementation notes (M4.7)
+
+- Retrieval ORs the words of the question (`to_tsquery`) instead of `websearch_to_tsquery`, which ANDs them:
+  a natural-language question rarely matches every word of one chunk. Ranking is `ts_rank_cd`.
+- The attempt guard reads open `QuizAttempt` rows directly (`topic-type-gift` was not changed): an attempt without
+  an end time that was never submitted stays open.
+- The index is checked for freshness at the first question (applied version or content hash) instead of listening to
+  every builder event; `tutor:index` forces a rebuild.
+- Top terms of the questions (8.6) are not computed: the analytics are counts and the out-of-scope share.
+- The tutor panel (learner UI), streaming and the eval command are open.
+
+## 23. Implementation notes (M4.8, backend)
+
+- The experiments package (leftover L2-23) does not exist yet. The remediation holdout is a stable hash share in
+  `RemediationService` with the comparison in `OutcomeTracker::helpedVsHoldout()`, off by default (consent model
+  pending #58). The adaptive-interface A/B and the delayed-retention measure wait for that package.
+- The presentation profile is derived on every request from the statuses, not stored in
+  `learner_presentation_profiles`; only the learner's overrides are stored (`insights.presentation.<course>`).
+- `learner-insights:eval` and `tutor:eval` (real-model evals), the Playwright journey and the front work of M4.8 are open.

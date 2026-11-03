@@ -141,7 +141,7 @@ services:
       LARAVEL_SESSION_DRIVER: cookie
       LARAVEL_QUEUE_DRIVER: redis
       LARAVEL_QUEUE_CONNECTION: redis
-      LARAVEL_BROADCAST_DRIVER: log
+      LARAVEL_BROADCAST_DRIVER: "null"
       # The platform is behind Cloudflare: public catalogue responses carry s-maxage and Vary
       # (config/http_cache.php), which the cache rules of scripts/cloudflare-setup.sh use.
       LARAVEL_HTTP_CACHE_PUBLIC: "true"
@@ -188,6 +188,8 @@ services:
       # R2 has no bucket policies and one public URL per bucket (ADR 0092)
       LARAVEL_TENANCY_S3_PUBLIC_READ_POLICY: ${TENANCY_S3_PUBLIC_READ_POLICY:-false}
       LARAVEL_TENANCY_BUCKET_PUBLIC_URL: ${TENANCY_BUCKET_PUBLIC_URL:-}
+      # `none`: every tenant uses the S3 key above (R2, AWS S3). `seaweedfs`: one key per tenant, limited to its bucket (ADR 0041)
+      LARAVEL_TENANCY_S3_IDENTITY_DRIVER: ${TENANCY_S3_IDENTITY_DRIVER:-none}
       LARAVEL_TENANT_DEMO_PASSWORD: ${TENANT_INITIAL_PASSWORD:?set TENANT_INITIAL_PASSWORD}
       LARAVEL_TENANCY_PLATFORM_API: ${TENANCY_PLATFORM_API:-false}
     volumes:
@@ -291,7 +293,6 @@ services:
       ULAMS_WARM_TENANTS: ""
       ULAMS_DEFAULT_TENANT: ""
       # `final` shows every roadmap item as delivered; set `actual` before the public launch (#92)
-      ULAMS_LANDING_STATUS: ${ULAMS_LANDING_STATUS:-actual}
       # CSP of the pages: report-only until the reports are clean, then CSP_ENFORCE=true (#121)
       CSP_ENFORCE: ${CSP_ENFORCE:-false}
       ULAMS_COOKIE_SECURE: ${ULAMS_COOKIE_SECURE:-true}
@@ -314,7 +315,7 @@ services:
       REACT_APP_API_URL: ${ULAMS_SCHEME:-https}://api.${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-}
       REACT_APP_SENTRYDSN: ${ADMIN_SENTRY_DSN:-}
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -367,10 +368,11 @@ services:
         limits:
           memory: 256M
 
-  # MJML rendering for e-mail templates (internal only)
+  # MJML rendering for e-mail templates (internal only): the ulams MJML service (deploy/stack/mjml,
+  # MJML 4.x, POST /v1/render). The image has its own health check.
   mjml:
     <<: *service
-    image: danihodovic/mjml-server:4.15.3
+    image: ghcr.io/ulams-dev/mjml:${ULAMS_VERSION:?set ULAMS_VERSION}
     security_opt:
       - no-new-privileges:true
     deploy:

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/course-folder/1/ulams.schema.json",
+  "title": "ulams.yaml",
+  "description": "Course folder settings: format version, default profile, course binding, lint levels.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "type": "number",
+      "const": 1,
+      "description": "Course folder format version."
+    },
+    "blueprint": {
+      "type": "number",
+      "const": 3,
+      "description": "Blueprint schema version the folder maps to."
+    },
+    "profile": {
+      "description": "Default CLI profile; CI uses ULAMS_URL and ULAMS_TOKEN. Never put secrets here.",
+      "type": "string"
+    },
+    "course": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Course id on the server; set by the first push.",
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "session": {
+          "description": "Builder session that owns the course.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "language": {
+      "description": "Default language when course.yaml has none.",
+      "type": "string",
+      "pattern": "^[a-z]{2}$"
+    },
+    "lint": {
+      "type": "object",
+      "properties": {
+        "uncitedAuthorBlocks": {
+          "default": "warn",
+          "type": "string",
+          "enum": [
+            "warn",
+            "error",
+            "off"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "format",
+    "blueprint"
+  ],
+  "additionalProperties": false
+}

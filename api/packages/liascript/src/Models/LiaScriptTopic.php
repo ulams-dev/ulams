@@ -71,9 +71,4 @@ class LiaScriptTopic extends AbstractTopicContent
 
         return [];
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

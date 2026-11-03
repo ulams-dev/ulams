@@ -81,6 +81,30 @@ final class UpdateValidator
         return array_slice($errors, 0, 30);
     }
 
+    /**
+     * Extra rules of an improvement from learner insights (ADR 0181): the source did not change, so the facts
+     * and the correct answers must not either, and nothing is removed.
+     *
+     * @param array<string,mixed> $data decoded output
+     * @param array<string,array{type:string,node:array,removedOnly:bool}> $expected the group's elements by id
+     * @return string[]
+     */
+    public static function improvement(array $data, array $expected): array
+    {
+        $errors = [];
+        foreach ($data['items'] ?? [] as $n => $item) {
+            if (($item['decision'] ?? '') === 'remove') {
+                $errors[] = "items/{$n}: an improvement never removes an element; use update or no_change";
+            }
+            $el = $expected[(string) ($item['elementId'] ?? '')] ?? null;
+            if (($item['answerStatus'] ?? '') === 'changed' || ($el !== null && ($item['decision'] ?? '') === 'update' && is_array($item['question'] ?? null) && AnswerChange::detect($el['node'], $item['question']))) {
+                $errors[] = "items/{$n}: an improvement must not change which answer is correct; clarify the wording and keep the correct options";
+            }
+        }
+
+        return $errors;
+    }
+
     /** @return string[] */
     private static function reason(string $reason, string $where): array
     {

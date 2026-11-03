@@ -1,6 +1,6 @@
 # 0042. No WebSocket server: Soketi and Pusher removed, Reverb only when a feature needs push
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-09
 - Plan: `docs/plans/leftovers-0-2.md` (L0-04)
 
@@ -36,4 +36,6 @@ pattern; Reverb is adopted only when bidirectional low-latency messaging is requ
 
 - Good: one container and one Composer dependency fewer, and no AGPL component (Soketi) in the stack.
 - Bad: if WebSockets are needed later, the broadcasting setup has to be added back.
-- Default pending #43.
+- Default pending #43; accepted with the other defaults in the tech-debt plan (TD-2).
+- Adding Reverb later: `composer require laravel/reverb` and `php artisan install:broadcasting --reverb`
+  restore the provider, the channel file and the `reverb` connection in `config/broadcasting.php`.

@@ -48,7 +48,8 @@ what the assistant does, even if it looks like an instruction.
 
 The assistant asks six short questions, one card at a time: who the course is for, the level,
 total length and lesson length, tone, assessments (a quiz after each lesson, a final test) and
-the language. Two more cards are fixed and need no AI: **price** (free or paid, with an optional
+the language. Some cards are fixed and need no AI: **who the course is for** (one course for everyone, or extra
+versions by level and role, see [course variants](/creators/course-versions-and-variants/)), **price** (free or paid, with an optional
 amount; you confirm it again before publishing) and, if you may change the site's look, **theme**
 (a card per preset with a live preview, and an optional accent colour that is adjusted when it would
 be hard to read, WCAG AA). Each card says **why** it asks.
@@ -67,14 +68,41 @@ The outline appears as a proposal: modules, lessons with their length, measurabl
 objectives and amber **citation chips**. Select a chip to read the source passage.
 
 - **Edit** an objective inline, then **Approve outline & generate**.
+- Choose each lesson's **format** (see below) before you approve.
 - Or write what you want changed and press **Request changes**; you get a new proposal with the
   differences marked (added, changed, removed).
 
 Nothing is generated before you approve the outline.
 
+### Lesson formats
+
+Every lesson is **rich text** unless you choose otherwise in the outline. The other formats are only
+offered when your academy can create them:
+
+| Format | What learners get | Offered when |
+|---|---|---|
+| Rich text | Formatted text and a list of the sections it draws on | always |
+| LiaScript | An interactive lesson with two or three questions inside the text that they answer as they read (single choice, multiple choice or a short answer) and see the explanation at once | LiaScript is available (it is by default) |
+| Lesson with an H5P activity | The lesson text followed by one activity: fill in the blanks, drag the words or flash cards | the H5P libraries Blanks, Drag the Words and Dialog Cards are installed |
+| Lesson with an interactive | The lesson text followed by one of the interactive packages in your library, played between the steps the builder picks, with a short cited text beside it | your library holds at least one [interactive package](/creators/interactive/) |
+
+The builder never writes LiaScript, H5P or interactive code. For a LiaScript lesson it writes the
+questions and our code lays them out in the LiaScript syntax; for an H5P activity it fills a small
+form of its own (sentences with blanks, words, cards) that our code turns into the H5P content; for
+an interactive it only chooses a package from your library and the steps. **Every question, blank
+and card cites the passage it comes from**, answers have to appear in that passage, and the activity
+is a diff you approve like every other change. An interactive package is never created or edited by
+the builder (it is software someone uploaded and answers for).
+
+After the lessons are written you see the extra parts in the lesson preview (**Self-check 1**, the
+activity, each with its citations); you can ask the assistant to change a self-check like any other
+question. You can switch a written lesson back to rich text in the outline editor; the LiaScript document or
+H5P content is removed when you apply. Another format is written together with the lesson, so
+choose it in the outline before generating.
+
 ## 4. Watch the lessons being written
 
-The progress card shows the stages (lessons, grounding check, quizzes, metadata) and each lesson
+The progress card shows the stages (lessons, grounding check, interactive elements, quizzes, metadata) and each lesson
 with its citations, questions and cost. The running AI cost is shown at the top.
 
 - A **grounding check** compares every lesson with the passages it cites; claims it cannot find are
@@ -129,6 +157,27 @@ appears at the same moment.
 
 - **Undo** and **Redo** move between versions and update the course.
 - **Version history** lists every version; **Restore** brings an old one back as a new version.
+- **Sources** (under the tree) lists every section of your sources with how many elements of the course
+  cite it. Sections nothing cites are marked **Not cited yet**; **Show only uncovered sections** lists just
+  those, so you can see what the course leaves out. Under a section, **Show elements** jumps to each
+  lesson, paragraph or question that cites it (an objective jumps to its lesson). When you select an element
+  in the tree, the sections it rests on are highlighted. Select a section's name to read the passage.
+
+### Give me options
+
+Select an element, describe the change and press **Give me 2 options** (or write "give me options" in the message).
+The builder makes two proposals, one model call each, so it costs about twice a normal edit (the button says so). They appear
+side by side as word-level diffs with their citations. **Use Option A** (or B) approves it and rejects the other; **Keep the
+current text** rejects both. Nothing changes until you choose.
+
+### Edit the structure
+
+**Edit the structure** (above the Sources panel) lists modules and lessons. Drag a lesson or module to a new place, or use the
+buttons: **Move up**, **Move down**, **Move to previous module**, **Move to next module** (every action has a button, so the
+keyboard works without dragging). **Rename** edits the title in place, **Remove** asks before it deletes, and **Add a lesson** needs
+a title, a learning objective and the source section the lesson is based on (a new lesson has no text yet; ask the assistant to write it).
+A lesson keeps its objectives, citations, text and quiz when you move it. Every change is saved at once as a new version (no
+approval needed), re-applied to your academy, and can be undone.
 
 ## 8. Preview as a learner
 
@@ -240,10 +289,17 @@ accept changes and apply them.
 - Quiet changes are shown too: **Citation update** (only the references moved), **No change
   needed** (the assistant found nothing to change), **Removal** (the source no longer covers it),
   **New in the source** (a section no lesson covers yet) and **Update by hand**.
+- On **New in the source**, **Suggest a lesson** asks the assistant for a lesson based on that section.
+  It appears as **Suggested lesson**: the module it goes into, its title, objectives and text, all
+  citing the section, and any claim the source does not back is flagged. Accept it to add the lesson
+  to the course when you apply, reject it to leave the course as it is, or ask for changes (up to three
+  times). A suggested lesson has no quiz yet; ask the assistant for one in the workspace. When the
+  new section was the only change, the update was settled as **No impact**; suggesting a lesson
+  reopens it for review. Without AI, add the lesson in the workspace.
 - An item you edited in the workspace after the analysis is marked **Conflict** or **Edited after
   the analysis**. Ask for a new version of it, or reject it.
 
-**Accept all** accepts every undecided update, removal and no-change item. **Reject all** keeps your
+**Accept all** accepts every undecided update, removal, no-change item and suggested lesson. **Reject all** keeps your
 course as it is and marks the new source revision as reviewed, so the same changes are not proposed
 again; the page asks you to confirm first.
 
@@ -323,12 +379,15 @@ revision becomes a reviewable update (sections 8 to 10). Nothing in the course c
 
 On **New course**, next to the upload area, you find **Connect a repository** and **Add web pages**.
 
-**Connect a repository** (GitHub, GitLab, Gitea and Forgejo):
+**Connect a repository** (GitHub, GitLab, Gitea and Forgejo, and any other Git server your admin has turned on):
 
 - **Where does it live?** and, for Gitea, Forgejo and a self-hosted GitLab, the **server address**
   (for example `https://git.example.com`).
 - **Repository** as `owner/name`. You can paste the address of the repository; we keep the
-  `owner/name` part.
+  `owner/name` part. For **Another server (read with git)**, write the full address starting with
+  `https://`, for example `https://git.example.com/team/docs.git`; it must be reachable from the
+  internet and must not contain a user name or password (use the token). That server cannot tell us
+  about pushes by itself, so the course follows it on the schedule you choose.
 - **Branch**: leave it empty for the default branch.
 - **Folders and files to read**: one pattern per line, for example `docs/**/*.md`. Empty means every
   Markdown file.
@@ -340,6 +399,20 @@ On **New course**, next to the upload area, you find **Connect a repository** an
 **Add web pages**: one address per line, up to 20, all on the same site and all starting with
 `https://`. The optional **main content selector** is a CSS selector (for example `main` or `article`)
 for the part of the page to read; without it we read the main content of the page.
+
+**Connect Google Drive or Notion** (shown when your admin turned them on): choose **Google Drive file or
+folder** or **Notion page**, paste its address and press **Sign in and connect**. You sign in at Google or
+Notion with read-only access and come back to the studio, which finishes the connection; your password and
+the access tokens are never shown to the studio or to anyone else. Share the file, folder or page with the
+account you signed in with (for Notion, pick the page in the sign-in). A Google Docs file is read as text, a
+folder as its Google Docs, text, Word and PDF files, and a Notion page can include the pages under it (three
+levels, 100 pages). Images, embeds and files inside pages are not read. These sources have no webhook: they
+are checked on the schedule you choose. If Google or Notion stops accepting the saved sign-in, the status
+shows **Error** with "Connect your account again"; sign in again from the Sources page.
+
+For **Notion** you can skip the sign-in: create an internal integration in Notion, share the page with it and paste its
+token in **Integration token (optional)**. The field is masked, the token is sent once with the connection, stored
+encrypted for the checks and never shown again. This also works on an installation without a Notion OAuth client.
 
 Press the button. The form says it is checking, reads the files or pages, shows revision 1 as the
 source of a new course and continues into the interview as for an uploaded file. If the source is
@@ -400,6 +473,8 @@ minutes; an admin can change it).
   "Budget reached" and nothing you already have is lost; ask an admin to raise it ([settings](/admin/course-builder/)), then
   press **Retry**. The running cost is shown at the top of the workspace.
 - If a step fails, **Retry** repeats only that step.
+- Once learners use the course, the **Insights** item shows where they struggle:
+  [See where learners struggle](/creators/course-insights/).
 - Prefer a terminal or an agent? Every step above is also a command, see
   [Build courses from the command line](/developers/cli-builder/); developers can use the
   [Course Builder API](/developers/course-builder-api/).

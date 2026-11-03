@@ -35,8 +35,6 @@ You can specify the parameter from the [config.php file](src/config.php) or [sys
 ## Endpoints
 All the endpoints are defined in swagger
 
-Test details
-![Tests PHPUnit in environments](https://github.com/EscolaLMS/Tasks/actions/workflows/test.yml/badge.svg)
 
 ## Events
 - `TaskAssignedEvent` - The task has been assigned to the user.

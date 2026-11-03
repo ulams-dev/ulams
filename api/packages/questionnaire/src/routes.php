@@ -37,8 +37,8 @@ Route::group(['prefix' => 'api/admin', 'middleware' => ['auth:api']], function (
 Route::group(['prefix' => 'api/questionnaire'], function () {
     Route::get('/stars/{model_type_title}/{model_id}', [QuestionnaireApiController::class, 'stars']);
     Route::get('/{model_type_title}/{model_id}', [QuestionnaireApiController::class, 'list']);
-    Route::get('/{model_type_title}/{model_id}/{id}', [QuestionnaireApiController::class, 'read']);
-    Route::post('/{model_type_title}/{model_id}/{id}', [QuestionnaireApiController::class, 'answer']);
+    Route::get('/{model_type_title}/{model_id}/{id}', [QuestionnaireApiController::class, 'read'])->middleware('auth:api');
+    Route::post('/{model_type_title}/{model_id}/{id}', [QuestionnaireApiController::class, 'answer'])->middleware('auth:api');
     Route::get('/{model_type_title}/{model_id}/questions/{question_id}/answers', [QuestionnaireApiController::class, 'questionModelAnswers']);
     Route::get('/{model_type_title}/{model_id}/questions/{question_id}/stars', [QuestionnaireApiController::class, 'modelStars']);
 });

@@ -9,13 +9,22 @@ import Render from "@ulams/ui/Render.astro";
 import Icon from "@ulams/ui/components/Icon.astro";
 import Prose from "@ulams/ui/components/Prose.astro";
 import { formatLabel, formatMinutes } from "@ulams/ui/format";
+import { playerStrings, themeKey } from "@ulams/ui/player-strings";
 import { completionPercent, flattenTopics, topicNeighbours, type Course, type PublicSettings, type Tenant, type TopicProgress } from "@ulams/sdk";
 import Base from "../layouts/Base.astro";
+import LessonView from "./LessonView.astro";
 import PreviewBanner from "./PreviewBanner.astro";
-import { apiFor, cmi5Launch, getLearnerNotices, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
+import { apiFor, cmi5Launch, getLearnerNotices, getPublicConfig, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
 import { interactiveLaunch, interactivePreview, isImmersive } from "../lib/interactive.ts";
+import { codeExerciseLaunch, codeExercisePreview } from "../lib/code-exercise.ts";
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-docs.ts";
 import { NO_NOTICES, topicNoticeDocs } from "../lib/notices.ts";
+import { getPresentation, profileOf } from "../lib/presentation.ts";
+import { getSupport, supportCardId, supportDocs, supportIsLong } from "../lib/support.ts";
+import { contentLang, learnerPageLocale } from "../lib/locale.ts";
+import { showAiAssistedLabel } from "../lib/ai-label.ts";
+import AiLabel from "@ulams/ui/components/AiLabel.astro";
+import { uiStrings } from "@ulams/ui/i18n";
 import { PREVIEW_LINKS, isPublished, previewCourseHref, studioHref } from "../lib/preview.ts";
 import { themeFor } from "../lib/theme.ts";
 import { LEARNER_LINKS, splitLessonTitle, type CourseLinks } from "../lib/view-model.ts";
@@ -74,7 +83,29 @@ const scormUuid = (topic.topicable as { uuid?: string } | undefined)?.uuid;
 // Launches that report progress are skipped in preview (the topic then explains why).
 const tracked = Boolean(token) && !preview;
 // Living Course: "updated since you completed it", the quiz re-attempt notice and the opt-in marker.
-const noticeDocs = topicNoticeDocs(access && tracked ? await getLearnerNotices(tenant, token!, courseId) : NO_NOTICES, topicId, done);
+// and the learner's own "Extra help for you" (Learner Insights). Both are fetched together and neither is fatal.
+const locale = learnerPageLocale(course.language, settings);
+// the catalogue components read the page language from here (pageLocale in @ulams/ui/i18n)
+Astro.locals.uiLocale = locale;
+const t = playerStrings(locale);
+// course content in a language the interface does not have (a German course) says so with `lang`
+const cLang = contentLang(course.language, locale);
+// The lesson view (Learner Insights presentation profile) comes with them; without it the default view shows.
+const [notices, supportItems, presentationState] = await Promise.all([
+  access && tracked ? getLearnerNotices(tenant, token!, courseId) : NO_NOTICES,
+  access && tracked && !custom ? getSupport(tenant, token!, courseId, topicId, locale) : [],
+  access && tracked && !custom ? getPresentation(tenant, token!, courseId, locale) : null,
+]);
+const presentation = profileOf(presentationState);
+const linear = presentation.navigation === "linear";
+const lessonViewSaved = ({ ok: "ok", failed: "failed" } as const)[Astro.url.searchParams.get("lesson-view") as "ok" | "failed"] ?? null;
+const noticeDocs = topicNoticeDocs(notices, topicId, done);
+const supportNodes = supportDocs(supportItems, locale);
+const readySupport = supportNodes.find((n) => n.props?.status === "ready");
+const jumpLink = readySupport && supportIsLong(supportNodes) ? `#${supportCardId({ assignmentId: String(readySupport.props?.assignmentId) })}` : null;
+const jumpText = uiStrings(locale).supportJump;
+// the tenant switch is read only for a topic the API marks, so ordinary lessons cost no extra call
+const aiAssisted = topic.ai_assisted === true && showAiAssistedLabel(topic, await getPublicConfig(tenant).catch(() => null));
 // SCORM: the player on the tenant content origin (tracks through a SCO-scoped token), else the legacy API player.
 const contentOriginSrc = scormUuid && access && tracked ? await scormLaunch(tenant, token!, scormUuid) : null;
 const packageAvailable = scormUuid && !contentOriginSrc ? await scormAvailable(tenant, scormUuid) : true;
@@ -95,32 +126,44 @@ const interactive = !interactiveTopic
       ? await interactiveLaunch(tenant, token!, topic.id)
       : null;
 const immersive = isImmersive(interactive);
+// Code exercise: the exercise and the runner's address on the content origin; the page reports each run through the BFF.
+const codeExercise = !topic.topicable_type.endsWith("\\CodeExerciseTopic")
+  ? null
+  : preview
+    ? authorToken
+      ? await codeExercisePreview(tenant, authorToken, topic.id)
+      : null
+    : access && tracked
+      ? await codeExerciseLaunch(tenant, token!, topic.id)
+      : null;
 // External tool (LTI 1.3): the tool's login URL with a single-use hint; scores come back through AGS.
 const lti = topic.topicable_type.endsWith("\\LtiLink") && access && tracked ? await ltiLaunch(tenant, token!, topic.id) : null;
-const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, interactive, lti, preview: Boolean(preview) });
+const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, interactive, codeExercise, lti, preview: Boolean(preview), presentation, locale });
 const format = formatOf(topic);
 const minutes = topicMinutes(topic);
-const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission", gravity: "Module", poland: "Chapter", ulam: "Notebook", platform: "Lesson" }[theme];
+const lessonNoun = t.lessonNoun[themeKey(theme)];
 // Progress tracking (ping, mark complete) lives in <ulams-progress>; the preview uses a plain bar.
 const Bar = preview ? "div" : "ulams-progress";
 const barAttrs = preview ? {} : { "course-id": courseId, "topic-id": topicId, complete: completionMode(topic), status: done ? "1" : "0" };
 const locked = (t: { preview?: boolean }) => !access && !t.preview;
 const resources = topic.resources ?? [];
+// Course tutor launcher: the same place on every lesson (WCAG 3.2.6); it hides itself when the tutor is off.
+const tutorOn = access && tracked;
 ---
 
 
-<Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={preview ? null : { adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body" noindex={Boolean(preview)} baseTarget={preview?.framed ? "_top" : undefined}>
+<Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={preview ? null : { adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body" lang={locale} noindex={Boolean(preview)} baseTarget={preview?.framed ? "_top" : undefined}>
   {preview && preview.banner !== false && <PreviewBanner published={isPublished(course)} studioHref={studioHref(preview.sessionId)} publicHref={`/courses/${courseId}`} />}
-  <div class:list={["u-player", { "u-player--immersive": immersive }]}>
+  <div class:list={["u-player", { "u-player--immersive": immersive, "u-player--linear": linear }]} data-density={presentation.density === "compact" ? "compact" : undefined}>
     <header class="u-player__top">
       <a class="u-player__back" href={backHref}>
         <Icon name="back" />
-        <span class="u-player__course">{course.title}</span>
+        <span class="u-player__course" lang={cLang}>{course.title}</span>
       </a>
       <div
         class="u-player__progress"
         role="progressbar"
-        aria-label="Course progress"
+        aria-label={t.courseProgress}
         aria-valuemin="0"
         aria-valuemax="100"
         aria-valuenow={percent}
@@ -130,13 +173,14 @@ const resources = topic.resources ?? [];
         <span class="u-player__track"></span>
         <span data-progress-label>{percent}%</span>
       </div>
-      <a class="u-player__home" href="/" aria-label="Home"><Icon name="book" /></a>
+      {presentationState && <LessonView part="control" state={presentationState} courseId={courseId} locale={locale} next={Astro.url.pathname} />}
+      <a class="u-player__home" href="/" aria-label={t.home}><Icon name="book" /></a>
     </header>
 
     <details class="u-player__tree" data-tree>
-      <summary><Icon name="menu" /> Program <span>{nav.index + 1} / {nav.total}</span></summary>
-      <nav aria-label="Course program" tabindex="0">
-        <ol class="u-tree" role="list">
+      <summary><Icon name="menu" /> {t.program} <span>{nav.index + 1} / {nav.total}</span></summary>
+      <nav aria-label={t.programNav} tabindex="0">
+        <ol class="u-tree" role="list" lang={cLang}>
           {
             lessons.map((l, li) => {
               const parts = splitLessonTitle(l.title);
@@ -164,7 +208,7 @@ const resources = topic.resources ?? [];
                                 {status === "locked" ? <Icon name="lock" /> : <Icon name="check" />}
                               </span>
                               <span class="u-tree__name">{t.title}</span>
-                              {f && <span class="u-tree__fmt"><Icon name={f} label={formatLabel(f)} /></span>}
+                              {f && <span class="u-tree__fmt"><Icon name={f} label={formatLabel(f, locale)} /></span>}
                             </a>
                           </li>
                         );
@@ -185,32 +229,35 @@ const resources = topic.resources ?? [];
             <slot name="content" />
           ) : (
             <>
-        <div class="u-player__lead">
+        <div class="u-player__lead" lang={cLang}>
         <p class="u-player__kicker">
           {lessonParts.kicker ? (/^([IVXLC]+|\d+)$/.test(lessonParts.kicker) ? `${lessonNoun} ${lessonParts.kicker}` : lessonParts.kicker) : lessonNoun} · {lessonParts.title}
         </p>
         <h1 class="u-player__title">{topic.title}</h1>
         <p class="u-player__meta">
-          {format && <span class="u-tag"><Icon name={format} /> {formatLabel(format)}</span>}
-          {minutes > 0 && <span><Icon name="clock" /> {formatMinutes(minutes)}</span>}
-          {topic.preview && <span class="u-tag">Free preview</span>}
-          {done && <span class="u-player__done"><Icon name="check" /> Completed</span>}
+          {format && <span class="u-tag"><Icon name={format} /> {formatLabel(format, locale)}</span>}
+          {minutes > 0 && <span><Icon name="clock" /> {formatMinutes(minutes, locale)}</span>}
+          {topic.preview && <span class="u-tag">{t.freePreview}</span>}
+          {done && <span class="u-player__done"><Icon name="check" /> {t.completed}</span>}
         </p>
+        {jumpLink && <p class="u-player__jump"><a href={jumpLink}>{jumpText}</a></p>}
         {topic.introduction && <div class="u-player__intro"><Prose markdown={topic.introduction} size="lg" /></div>}
         </div>
+        {presentationState && <LessonView part="notice" state={presentationState} courseId={courseId} locale={locale} next={Astro.url.pathname} saved={lessonViewSaved} />}
         {
           !access && (
             <p class="u-player__notice" role="note">
-              Preview mode: this demo account has no access to the full course, so only free topics open.
+              {t.previewMode}
             </p>
           )
         }
         {noticeDocs.map((notice) => <Render doc={notice} />)}
+        {supportNodes.map((card) => <Render doc={card} />)}
         {doc && <Render doc={doc} />}
         {
           resources.length > 0 && (
-            <section class="u-player__resources" aria-label="Downloads">
-              <h2>Downloads</h2>
+            <section class="u-player__resources" aria-label={t.downloads}>
+              <h2>{t.downloads}</h2>
               <ul role="list">
                 {resources.map((r) => (
                   <li>
@@ -226,6 +273,7 @@ const resources = topic.resources ?? [];
             </>
           )
         }
+        {aiAssisted && <footer class="u-player__ai"><AiLabel text={uiStrings(locale).aiAssistedLabel} tone="assisted" /></footer>}
         <div data-end-of-content aria-hidden="true"></div>
       </div>
     </main>
@@ -233,24 +281,25 @@ const resources = topic.resources ?? [];
     <Bar class="u-player__bar" {...barAttrs}>
       {
         prevHref ? (
-          <a class="u-btn u-btn--ghost u-btn--sm" href={prevHref} rel="prev" data-key-prev aria-keyshortcuts="k" aria-label="Previous topic">
-            <Icon name="back" /> <span class="u-player__label">Previous</span>
+          <a class="u-btn u-btn--ghost u-btn--sm" href={prevHref} rel="prev" data-key-prev aria-keyshortcuts="k" aria-label={t.previousTopic}>
+            <Icon name="back" /> <span class="u-player__label">{t.previous}</span>
           </a>
         ) : (
           <span />
         )
       }
+      {tutorOn && <ulams-tutor class="u-player__tutor" course-id={courseId} topic-id={topicId} />}
       {
         access && !preview ? (
-          <button class="u-btn u-btn--sm u-player__complete" type="button" data-complete aria-pressed={done ? "true" : "false"} data-done-label="Completed" data-todo-label="Mark as complete">
-            <Icon name="check" /> <span data-label>{done ? "Completed" : "Mark as complete"}</span>
+          <button class="u-btn u-btn--sm u-player__complete" type="button" data-complete aria-pressed={done ? "true" : "false"} data-done-label={t.completed} data-todo-label={t.markComplete}>
+            <Icon name="check" /> <span data-label>{done ? t.completed : t.markComplete}</span>
           </button>
         ) : (
           <span />
         )
       }
-      <a class="u-btn u-btn--sm" href={nextHref} rel="next" data-key-next aria-keyshortcuts="j" aria-label={nav.next ? "Next topic" : "Finish the course"}>
-        <span class="u-player__label">{nav.next ? "Next" : "Finish"}</span> <Icon name="arrow" />
+      <a class="u-btn u-btn--sm" href={nextHref} rel="next" data-key-next aria-keyshortcuts="j" aria-label={nav.next ? t.nextTopic : t.finishCourse}>
+        <span class="u-player__label">{nav.next ? t.next : t.finish}</span> <Icon name="arrow" />
       </a>
       <p class="u-visually-hidden" aria-live="polite" data-live></p>
     </Bar>
@@ -259,12 +308,29 @@ const resources = topic.resources ?? [];
 
 <script>
   import "@ulams/ui/elements/progress.ts";
+  import "@ulams/ui/elements/tutor.ts";
 
   // browsers without ::details-content: open the program on desktop
   const tree = document.querySelector<HTMLDetailsElement>("[data-tree]");
-  if (tree && !CSS.supports("selector(::details-content)") && matchMedia("(min-width: 961px)").matches) tree.open = true;
+  if (tree && !document.querySelector(".u-player--linear") && !CSS.supports("selector(::details-content)") && matchMedia("(min-width: 961px)").matches) tree.open = true;
   // keep the current topic in view inside the program
-  document.querySelector(".u-tree [aria-current='page']")?.scrollIntoView({ block: "center", behavior: "instant" });
+  // (scroll the program itself: scrollIntoView moves the browser's Tab starting point to the current topic,
+  // which skips the skip link and the header for keyboard users)
+  const current = document.querySelector<HTMLElement>(".u-tree [aria-current='page']");
+  const scroller = current?.closest("nav");
+  if (current && scroller) {
+    const top = current.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+    scroller.scrollTop = Math.max(0, top - (scroller.clientHeight - current.offsetHeight) / 2);
+  }
+
+  // Escape closes the lesson view panel and returns focus to its button
+  const view = document.querySelector<HTMLDetailsElement>("[data-lesson-view]");
+  view?.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !view.open) return;
+    event.preventDefault();
+    view.open = false;
+    view.querySelector<HTMLElement>("summary")?.focus();
+  });
 
   // j / k (or [ and ]) move between topics, like the tools engineers use every day
   document.addEventListener("keydown", (event) => {
@@ -288,6 +354,10 @@ const resources = topic.resources ?? [];
 <style>
   :global(.u-player-body) {
     background-attachment: scroll;
+  }
+  /* a focused control is never hidden behind the sticky footer (WCAG 2.4.11) */
+  :global(html:has(.u-player)) {
+    scroll-padding-bottom: 96px;
   }
   .u-player {
     display: grid;
@@ -487,7 +557,7 @@ const resources = topic.resources ?? [];
   }
   .u-player__content {
     display: grid;
-    gap: 22px;
+    gap: var(--ulams-block-gap, 22px);
     max-width: 880px;
     margin: 0 auto;
     padding: clamp(24px, 4vw, 56px) clamp(16px, 4vw, 48px) 48px;
@@ -510,6 +580,13 @@ const resources = topic.resources ?? [];
     font-size: clamp(2rem, 1.4rem + 2.4vw, 3.2rem);
     letter-spacing: -0.02em;
   }
+  .u-player__jump a {
+    display: inline-block;
+    min-height: 24px;
+    font-weight: 600;
+    color: var(--ulams-color-primary-on-light);
+    text-underline-offset: 3px;
+  }
   .u-player__meta {
     display: flex;
     flex-wrap: wrap;
@@ -530,12 +607,62 @@ const resources = topic.resources ?? [];
   .u-player__intro {
     color: var(--ulams-color-muted);
   }
+  .u-player__ai {
+    margin-top: 24px;
+  }
   .u-player__notice {
     padding: 12px 16px;
     border-radius: var(--ulams-radius);
     border: 1px solid var(--ulams-color-warn);
     background: color-mix(in srgb, var(--ulams-color-warn) 12%, transparent);
     font-weight: 600;
+  }
+  /* Linear navigation: the program stays closed behind its summary on every width and the lesson uses the full column */
+  .u-player--linear {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "top"
+      "tree"
+      "main"
+      "bar";
+  }
+  .u-player--linear .u-player__tree {
+    position: relative;
+    z-index: 25;
+    top: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-player--linear .u-player__tree nav {
+    max-height: min(60dvh, 28rem);
+  }
+  .u-player--linear .u-player__tree summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .u-player--linear .u-player__tree summary span {
+    margin-left: auto;
+    font-weight: 500;
+    color: var(--ulams-color-muted);
+  }
+  .u-player--linear .u-player__tree::details-content {
+    content-visibility: hidden;
+    display: none;
+  }
+  .u-player--linear .u-player__tree[open]::details-content {
+    content-visibility: visible;
+    display: block;
+  }
+  /* the footer leads with Next: it takes the free space and the secondary actions stay compact */
+  .u-player--linear .u-player__bar [data-key-next] {
+    flex: 1 1 auto;
+    justify-content: center;
+    max-width: 22rem;
   }
   /* Interactive in background mode: the package fills the page, the heading and the text are cards */
   .u-player--immersive {

@@ -14,7 +14,7 @@ services:
     depends_on:
       - postgres
       - redis
-      - minio
+      - storage
     environment:
       PORT: 8080
       LOG_LEVEL: info
@@ -37,7 +37,7 @@ services:
       REDIS_PASSWORD: ulams
       REDIS_DB: 0
       REDIS_KEY_PREFIX: "h5p:"
-      S3_ENDPOINT: http://minio:9000
+      S3_ENDPOINT: http://storage:8333
       S3_REGION: us-east-1
       S3_KEY: admin
       S3_SECRET: minio_secretpassword

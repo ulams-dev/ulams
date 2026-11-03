@@ -1,10 +1,10 @@
 # Image processing module
 
 [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Images/)
-[![codecov](https://codecov.io/gh/Ulams/Images/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Images)
-[![phpunit](https://github.com/EscolaLMS/Images/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Courses/actions/workflows/test.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/maintainability)](https://codeclimate.com/github/Ulams/Images/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/test_coverage)](https://codeclimate.com/github/Ulams/Images/test_coverage)
+
+> **Optional legacy resize API.** Kept for self-hosted admin and third-party clients; prefer a CDN or the front's
+> image service (`ULAMS_IMAGE_SERVICE`, `REACT_APP_IMAGE_SERVICE`; see the operators guide). Nothing here is removed or
+> deprecated for removal.
 
 ## What does it do
 
@@ -17,6 +17,14 @@ The initial resize is done by [Intervention/image](https://github.com/Interventi
 After inital resized all the images are optimized with [image-optimizer](https://packagist.org/packages/spatie/image-optimizer).
 
 For best results binaries must [be installed](https://github.com/spatie/image-optimizer#optimization-tools). Ulams prepared [Docker Images](https://hub.docker.com/r/escolalms/php) are available for development (tag `work`) and production (tag `prod`).
+
+## Stored URLs: `IMAGES_CONTENT_URLS`
+
+`images.content_urls` (env `IMAGES_CONTENT_URLS`, default `api`) decides what course import and the topic-types markdown
+helper write into stored content. `api` writes `/api/images/img?path=...` URLs, as before. `original` writes the plain
+public storage URL of the file, for deployments where the front and admin resize at display time (the hosted demos).
+Existing `/api/images/img` URLs in content are still understood and keep working in both modes. The value is read once
+per deployment, not per tenant.
 
 ## Installation
 
@@ -124,9 +132,6 @@ There is API endpoints documentation [![swagger](https://img.shields.io/badge/do
 
 Run `./vendor/bin/phpunit` to run tests.
 
-Test details
-[![codecov](https://codecov.io/gh/Ulams/Images/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Images)
-[![phpunit](https://github.com/EscolaLMS/Images/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Courses/actions/workflows/test.yml)
 
 ## Events
 

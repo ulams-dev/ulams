@@ -21,16 +21,39 @@ Optional:
 ## Commands
 - `ulams:admin` - create account with role admin
 
+- `ulams:auth:prune-login-handoff` - delete login states and one-time codes that expired over a day ago (scheduled daily)
+
 ## Database
 
 1. `category_user` - Table is used to store the user categories.
 2. `groups` - Table for storing groups.
 3. `group_user` - Table for storing groups assigned to the user.
 
+4. `social_accounts` - provider identities linked to users (unique per `provider` and `provider_id`).
+5. `login_handoff_states`, `login_handoff_codes` - state of a login that goes through another party and the
+   one-time code that carries its result back to the front end (hashes only, single use, ADR 0121).
+
 ```
 User 1 -> n Categories
 User 1 -> n Groups
+User 1 -> n SocialAccounts
 ```
+
+## Login hand-off (ADR 0121)
+
+`Ulams\Auth\Services\LoginHandoffService` is the shared primitive of every browser login that goes through
+another party (social login now; OIDC and SAML reuse it):
+
+- `startState()` stores the allow-listed return URL, the front end's S256 challenge and protocol data on the
+  server and returns a signed state (HMAC with a key derived from the tenant `APP_KEY`, nonce, provider,
+  host, expiry).
+- `consumeState()` checks signature, expiry, provider and host and burns the row (`UPDATE ... WHERE consumed_at IS NULL`).
+- `issueCode()` / `redeemCode()`: a code of 60 seconds, single use, bound to tenant host and verifier.
+- `Ulams\Auth\Support\ReturnUrlPolicy` decides where a login may send the browser back to (the tenant's own
+  origins, as for the origin check of the API).
+
+Social login linking rules and the settings (`ulams_auth.social_login.trusted_domains`) are described in the
+documentation site ("Social login").
 
 ## Endpoints
 
@@ -57,6 +80,8 @@ Run `./vendor/bin/phpunit` to run tests.
 
 
 ## Listeners
+
+- `RevokeUserTokens` - listens for `AccountBlocked` and `AccountDeleted` and revokes every access and refresh token of the user.
 
 - `CreatePasswordResetToken` - The listener listens for the ForgotPassword event and executes the following method. 
 ```php

@@ -1,0 +1,63 @@
+---
+title: Translating the interface
+description: Where the interface strings of the learner pages live, how the Polish and Chinese tables are kept in step with English, how to add or fix a translation, and the checks that fail when a key or placeholder is missing.
+sidebar:
+  order: 6
+modules:
+  - ui
+  - web
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The learner pages of the reference frontend are available in English, Polish and Simplified Chinese.
+This page is for translators and for developers who add a string.
+
+## Where the strings are
+
+Every table has the same shape in three languages and lives in `front/ui/src/lib`:
+
+| File | Used by |
+|---|---|
+| `player-strings.ts` | Lesson player, course page, quiz, finish page, progress and notice elements, media components |
+| `account-strings.ts` | Sign-in, the account page, "My tokens" |
+| `training-strings.ts` | Training, certificates, skills, the team view |
+| `tutor-strings.ts` | The course tutor panel |
+| `i18n.ts` | Catalogue components (landing, extra help, lesson view, reflection) |
+| `accessibility-strings.ts` | The accessibility statement |
+
+Which language a page uses is decided by [the default language setting](/operators/language/) and the
+course language ([ADR 0106](/decisions/0106-learner-interface-language-follows-the-course/)). The
+page sets `<html lang>`; browser elements (`<ulams-quiz>`, `<ulams-progress>`, `<ulams-notice>`) read
+the closest `lang` attribute, so a card in another language translates itself.
+
+## Rules
+
+- **Placeholders** such as `{n}` and `{title}` stay exactly as in English. Their position can change.
+- **Plurals** are objects with the forms the language needs: English `one` and `other`, Polish `one`,
+  `few`, `many` and `other`, Chinese only `other`. The table picks the form with `Intl.PluralRules`.
+- **Names** (ulams, PDF, SCORM) stay as they are. API text (course titles, quiz questions, reasons) is
+  never in these tables.
+- **No new English in a page.** A template or element that holds a visible literal fails the
+  `hardcoded-strings` unit test in `front/web/tests/unit`. Add the string to a table instead.
+
+## Add or fix a string
+
+1. Change the English text in the table and add the key to the `PlayerStrings` (or the matching)
+   interface. The compiler then points at the Polish and Chinese tables.
+2. Write both translations in the same commit.
+3. Run `corepack yarn workspace @ulams/ui test` and `corepack yarn workspace @ulams/web test`. The
+   parity tests fail on a missing key, an empty text, a missing plural form or a different set of
+   placeholders.
+4. Look at the page in the language. The accessibility suite (`yarn workspace @ulams/web test:a11y`)
+   opens the main screens in all three languages, light and dark, at desktop and 360 px width.
+
+## Review
+
+New Polish and Chinese strings need a review by a native speaker before they count as final. List
+the new strings in the pull request so the reviewer can read them in one place.
+
+<Aside>
+Not translated yet: interactive lessons, practice activities, the studio, certificate verification,
+the CLI authorisation page and the legacy React app. They stay English and are tracked in the roadmap.
+</Aside>

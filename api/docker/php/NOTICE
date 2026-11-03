@@ -33,4 +33,18 @@ Anyone redistributing this image must still offer the corresponding source of th
 packages, which the Alpine aports repository and the package versions recorded in the
 image (`apk info -v`) make possible.
 
+Written offer for the corresponding source (GPL-2.0 and GPL-3.0 programs above)
+  The exact Alpine packages and versions in this image are listed in
+    /usr/share/doc/ulams/apk-packages.txt            (one "name-version-release" per line)
+  and the Alpine release it was built on is in the image label org.ulams.alpine-release.
+  For at least three years after you received this image, the ulams project will give you, on
+  request and for no more than the cost of the medium, the corresponding source code of any of
+  those packages in that exact version (the Alpine aports build recipe and the upstream source
+  archive). The project does not publish source tarballs next to each release; you can also
+  fetch them yourself from https://gitlab.alpinelinux.org/alpine/aports (the tag of the Alpine
+  release above) and https://dl-cdn.alpinelinux.org/alpine/ (the "distfiles" the recipes name).
+  To request the source, open an issue at https://github.com/ulams-dev/ulams/issues titled
+  "GPL source request" naming the package and version; if you prefer not to use a public
+  issue, use the private contact route described in SECURITY.md of that repository.
+
 Not included: install-php-extensions (MIT) is used during the build and removed afterwards.

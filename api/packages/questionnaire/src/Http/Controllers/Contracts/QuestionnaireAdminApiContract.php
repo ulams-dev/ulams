@@ -15,7 +15,7 @@ interface QuestionnaireAdminApiContract
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/questionnaire",
+     *     path="/api/admin/questionnaire", operationId="admin.questionnaire.get",
      *     summary="Lists available questionnaires",
      *     tags={"Questionnaire"},
      *     security={
@@ -95,7 +95,7 @@ interface QuestionnaireAdminApiContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/questionnaire",
+     *     path="/api/admin/questionnaire", operationId="admin.questionnaire.post",
      *     summary="Create a new questionnaire",
      *     tags={"Questionnaire"},
      *     security={
@@ -109,6 +109,11 @@ interface QuestionnaireAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Questionnaire")
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -136,7 +141,7 @@ interface QuestionnaireAdminApiContract
 
     /**
      * @OA\Patch(
-     *     path="/api/admin/questionnaire/{id}",
+     *     path="/api/admin/questionnaire/{id}", operationId="admin.questionnaire.by-id.patch",
      *     summary="Update an existing questionnaire identified by id",
      *     tags={"Questionnaire"},
      *     security={
@@ -159,6 +164,11 @@ interface QuestionnaireAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Questionnaire")
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -186,7 +196,7 @@ interface QuestionnaireAdminApiContract
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/questionnaire/{id}",
+     *     path="/api/admin/questionnaire/{id}", operationId="admin.questionnaire.by-id.delete",
      *     summary="Delete a questionnaire identified by a id",
      *     tags={"Questionnaire"},
      *     security={
@@ -204,6 +214,11 @@ interface QuestionnaireAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="boolean", example=true)
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -227,7 +242,7 @@ interface QuestionnaireAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/questionnaire/{id}",
+     *     path="/api/admin/questionnaire/{id}", operationId="admin.questionnaire.by-id.get",
      *     summary="Read a questionnaire identified by a given id identifier",
      *     tags={"Questionnaire"},
      *     security={
@@ -265,7 +280,7 @@ interface QuestionnaireAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/questionnaire-model",
+     *     path="/api/admin/questionnaire-model", operationId="admin.questionnaire-model.get",
      *     summary="Lists available questionnaire model type",
      *     tags={"QuestionnaireModelType"},
      *     security={
@@ -384,7 +399,7 @@ interface QuestionnaireAdminApiContract
      */
     /**
      * @OA\Get(
-     *     path="/api/admin/questionnaire/report/{id}/{model_type_id}/{model_id}",
+     *     path="/api/admin/questionnaire/report/{id}/{model_type_id}/{model_id}", operationId="admin.questionnaire.report.by-id.by-model-type-id.by-model-id.get",
      *     summary="Read a questionnaire report identified by a given id identifier and model type and model identified",
      *     tags={"QuestionnaireReportForModel"},
      *     security={
@@ -440,7 +455,7 @@ interface QuestionnaireAdminApiContract
 
     /**
      * @OA\Patch(
-     *     path="/api/admin/questionnaire/assign/{model_type_title}/{model_id}/{id}/{target_group}",
+     *     path="/api/admin/questionnaire/assign/{model_type_title}/{model_id}/{id}/{target_group}", operationId="admin.questionnaire.assign.by-model-type-title.by-model-id.by-id.by-target-group.patch",
      *     summary="assign a questionnaire model",
      *     tags={"Questionnaire"},
      *     security={
@@ -479,7 +494,7 @@ interface QuestionnaireAdminApiContract
      *         @OA\Schema(
      *            type="string",
      *         ),
-     *         required=false,
+     *         required=true,
      *         in="path"
      *     ),
      *     @OA\RequestBody(
@@ -495,6 +510,11 @@ interface QuestionnaireAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire model assign successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="boolean", example=true)
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -518,7 +538,7 @@ interface QuestionnaireAdminApiContract
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/questionnaire/unassign/{model_type_title}/{model_id}/{id}/{target_group}",
+     *     path="/api/admin/questionnaire/unassign/{model_type_title}/{model_id}/{id}/{target_group}", operationId="admin.questionnaire.unassign.by-model-type-title.by-model-id.by-id.by-target-group.delete",
      *     summary="unassign a questionnaire model",
      *     tags={"Questionnaire"},
      *     security={
@@ -557,12 +577,17 @@ interface QuestionnaireAdminApiContract
      *         @OA\Schema(
      *            type="string",
      *         ),
-     *         required=false,
+     *         required=true,
      *         in="path"
      *     ),
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire model unassign successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="boolean", example=true)
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,

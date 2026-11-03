@@ -11,7 +11,7 @@ interface CspReportControllerSwagger
 {
     /**
      * @OA\Post(
-     *     path="/api/csp-report",
+     *     path="/api/csp-report", operationId="csp-report.post",
      *     summary="Collect a Content Security Policy violation report",
      *     tags={"Core"},
      *     description="Public, rate limited (60 per minute and IP), body up to 16 KB. Accepts `application/csp-report` (report-uri) and `application/reports+json` (Reporting API). Only the directive, the host of the blocked resource and the path of the page are kept, aggregated with a counter, and pruned after 30 days.",
@@ -30,7 +30,7 @@ interface CspReportControllerSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/csp-reports",
+     *     path="/api/admin/csp-reports", operationId="admin.csp-reports.get",
      *     summary="List the aggregated CSP violation reports",
      *     tags={"Core Admin"},
      *     security={

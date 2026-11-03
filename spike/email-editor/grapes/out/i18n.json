@@ -1,0 +1,122 @@
+{
+  "en": {
+    "blockLabels": [
+      "1 Column",
+      "2 Columns",
+      "3 Columns",
+      "Text",
+      "Button",
+      "Image",
+      "Divider",
+      "Group Social",
+      "Social Element",
+      "Spacer",
+      "Navbar",
+      "Navbar Link",
+      "Hero",
+      "Wrapper",
+      "Raw"
+    ],
+    "panelTitles": [
+      "View components",
+      "Preview",
+      "Fullscreen",
+      "View code",
+      "Import MJML",
+      "Undo",
+      "Redo",
+      "Open Style Manager",
+      "Settings",
+      "Open Layer Manager",
+      "Open Blocks",
+      "Desktop",
+      "Tablet",
+      "Mobile"
+    ],
+    "styleSectors": [
+      "Dimension",
+      "Typography",
+      "Decorations"
+    ]
+  },
+  "pl": {
+    "blockLabels": [
+      "1 Kolumna",
+      "2 Kolumny",
+      "3 Kolumny",
+      "Tekst",
+      "Przycisk",
+      "Grafika",
+      "Rozdzielacz",
+      "Widżet społecznościowy",
+      "Element społecznościowy",
+      "Odstęp",
+      "Pasek nawigacyjny",
+      "Odnośnik paska nawigacyjnego",
+      "Hero",
+      "Grupa elementów",
+      "Surowy kod"
+    ],
+    "panelTitles": [
+      "Pokaż linie",
+      "Podgląd",
+      "Pełen ekran",
+      "Zobacz źródło",
+      "Import MJML",
+      "Cofnij",
+      "Ponów",
+      "Edytuj style i atrybuty CSS",
+      "Ustawienia elementu",
+      "Warstwy szablonu",
+      "Komponenty",
+      "Desktop",
+      "Tablet",
+      "Mobile"
+    ],
+    "styleSectors": [
+      "Wymiary",
+      "Typografia",
+      "Dekoracje"
+    ]
+  },
+  "zh": {
+    "blockLabels": [
+      "1 Column",
+      "2 Columns",
+      "3 Columns",
+      "Text",
+      "Button",
+      "Image",
+      "Divider",
+      "Group Social",
+      "Social Element",
+      "Spacer",
+      "Navbar",
+      "Navbar Link",
+      "Hero",
+      "Wrapper",
+      "Raw"
+    ],
+    "panelTitles": [
+      "查看组件",
+      "预览",
+      "全屏",
+      "查看代码",
+      "Import MJML",
+      "Undo",
+      "Redo",
+      "打开样式管理器",
+      "设置",
+      "打开布局管理器",
+      "打开块",
+      "Desktop",
+      "Tablet",
+      "Mobile"
+    ],
+    "styleSectors": [
+      "尺寸",
+      "版式",
+      "装饰"
+    ]
+  }
+}

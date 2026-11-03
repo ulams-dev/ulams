@@ -5,6 +5,7 @@
  * (`/studio/api`) with `prefix: "/living-course"`, which adds the author's token.
  */
 import { ApiError, type ClientOptions } from "./client.ts";
+import type { InsightsEvidence } from "./insights-admin.ts";
 
 export type RevisionStatus = "fetched" | "ingested" | "unchanged" | "no_impact" | "failed";
 export type ConnectionStatus = string;
@@ -60,6 +61,16 @@ export interface LivingSource {
   revisionCount: number;
 }
 
+/** The change a Git push brought, as the webhook (or `check --commit`) reported it; shown as plain text, never trusted. */
+export interface SourceChange {
+  commit: string | null;
+  subject: string | null;
+  url: string | null;
+  pullRequest: number | null;
+  pullRequestUrl: string | null;
+  source: "webhook" | "ci";
+}
+
 export interface SourceRevision {
   id: string;
   sourceId: string;
@@ -77,6 +88,8 @@ export interface SourceRevision {
   counts: ChangeCounts | null;
   error: string | null;
   detectedAt: string | null;
+  /** The Git change that produced this revision, when a webhook or a CI check said so. */
+  change?: SourceChange | null;
   /** The course reflects this revision (null when the source has no connection). */
   synced: boolean | null;
   latest: boolean | null;
@@ -166,16 +179,18 @@ export type ProposalStatus =
   | "superseded"
   | "failed";
 
-export type ItemKind = "update" | "citation_remap" | "remove" | "no_change" | "manual" | "uncovered";
+export type ItemKind = "update" | "citation_remap" | "remove" | "no_change" | "manual" | "uncovered" | "new_lesson";
 export type ItemType = "block" | "question" | "objective" | "lesson" | "course" | "section";
 export type ItemStatus = "pending" | "accepted" | "rejected" | "conflict" | "stale";
-export type ChangeClass = "none" | "minor" | "major" | "answer_changed" | "removed";
+export type ChangeClass = "none" | "minor" | "major" | "answer_changed" | "removed" | "added";
 
 export interface ProposalCounts {
   items: number;
   elements: number;
   remaps: number;
   uncovered: number;
+  /** Lessons suggested for uncovered sections (items of kind `new_lesson`). */
+  newLessons?: number;
   major: number;
   answerChecks: number;
   groups: number;
@@ -183,18 +198,41 @@ export interface ProposalCounts {
   source?: ChangeCounts | null;
   failedGroups?: string[];
   newerRevision?: number | null;
+  /** What an insights proposal is about: its element and the label shown to the author. */
+  targetElementId?: string;
+  targetLabel?: string;
+}
+
+/** A proposal follows a source change (`source`) or comes from what learners struggle with (`insights`, ADR 0181). */
+export type ProposalKind = "source" | "insights";
+
+/** The course variant a proposal is for (ADR 0192). `key` and `label` are absent when the API could not read the variant's name. */
+export interface ProposalVariant {
+  id: string;
+  key?: string;
+  label?: string;
 }
 
 export interface ProposalSummary {
   id: string;
   number: number;
   sessionId: string;
-  sourceId: string;
+  /** The course variant this proposal is for; null for the base course (and for every proposal of a course without variants). */
+  variant?: ProposalVariant | null;
+  /** Proposals made together for one source revision (the base and its variants) share this id; null for a proposal on its own. */
+  proposalGroup?: string | null;
+  /** Null for an improvement from learner insights. */
+  sourceId: string | null;
+  kind: ProposalKind;
   status: ProposalStatus;
   trigger: string;
   counts: ProposalCounts | null;
+  /** The aggregated evidence of an `insights` proposal; null for a source update. */
+  evidence: InsightsEvidence | null;
   fromRevision: RevisionRef | null;
   toRevision: (RevisionRef & { detectedAt: string | null }) | null;
+  /** The Git change (merged pull request) behind the new revision, when known. */
+  change?: SourceChange | null;
   /** Analysis run (kind `sync`); its steps are in `ProposalDetail.steps`. */
   runId?: string | null;
   baseVersionId: string | null;
@@ -214,8 +252,12 @@ export type ElementNode = Record<string, unknown> & { id?: string };
 
 export interface ItemFlags {
   grounding?: string[];
+  /** An improvement from learner insights the AI could not ground in the source passages (the item stays manual). */
+  ungrounded?: string[];
   signals?: string[];
   checkAnswer?: boolean;
+  /** A variant item that took the patch of the base proposal's item with this id, at no cost (ADR 0192). */
+  reusedFrom?: string;
 }
 
 export interface ProposalItem {
@@ -288,9 +330,33 @@ export interface ConnectorInfo {
   configSchema: Record<string, unknown>;
   secretFields: string[];
   webhooks: boolean;
+  /** Connectors that sign in with a Google or Notion account: which provider, and whether an admin set up its OAuth client. */
+  oauth?: { provider: "google" | "notion"; configured: boolean };
+}
+
+/** Settings of the `google-drive` connector; secret `refresh_token`, or `grant` from the sign-in. */
+export interface GoogleDriveConfig {
+  /** The id or the address of a Google Docs, text, Word or PDF file or of a folder. */
+  fileId: string;
+}
+
+/** Settings of the `notion` connector; secret `token`, or `grant` from the sign-in. */
+export interface NotionConfig {
+  /** The id or the address of a Notion page. */
+  pageId: string;
+  includeChildren?: boolean;
 }
 
 export type GitHost = "github" | "gitlab" | "gitea";
+
+/** `git-cli`: any server over https, read with the git command (only where an admin enabled it). Secret `token` is optional. */
+export interface GitCliConfig {
+  url: string;
+  branch?: string;
+  username?: string;
+  paths?: string[];
+  extensions?: string[];
+}
 
 export interface GitConfig {
   host: GitHost;
@@ -311,8 +377,8 @@ export interface UrlConfig {
 }
 
 export interface ConnectInput {
-  connector: "git" | "url" | string;
-  config: GitConfig | UrlConfig | Record<string, unknown>;
+  connector: "git" | "git-cli" | "url" | "google-drive" | "notion" | string;
+  config: GitConfig | GitCliConfig | UrlConfig | GoogleDriveConfig | NotionConfig | Record<string, unknown>;
   /** For Git: `{ token }`, optional for public repositories. */
   secrets?: Record<string, string>;
   schedule?: "hourly" | "daily" | "weekly" | "manual";
@@ -325,7 +391,19 @@ export interface ConnectResult {
   webhookSecret: string | null;
 }
 
+/** Another proposal of the same group, as listed on a proposal's detail. */
+export interface ProposalSibling {
+  id: string;
+  number: number;
+  status: ProposalStatus;
+  /** Null for the base course. */
+  variant: ProposalVariant | null;
+  decisions: Partial<Record<ItemStatus, number>>;
+}
+
 export interface ProposalDetail extends ProposalSummary {
+  /** The other proposals of the group (empty when the course has no variants, or on an older API). */
+  siblings?: ProposalSibling[];
   /** Absent on an API older than the learner notices. */
   learnerImpact?: LearnerImpact;
   steps?: AnalysisStep[];
@@ -336,6 +414,12 @@ export interface ProposalDetail extends ProposalSummary {
 export interface ItemResult {
   item: ProposalItem;
   proposal: ProposalSummary;
+}
+
+/** `accepted` counts the items accepted in the other proposals (not this one); `proposals` lists their ids. */
+export interface AcceptInGroupResult extends ItemResult {
+  accepted: number;
+  proposals: string[];
 }
 
 export interface AnalyseResult {
@@ -478,11 +562,24 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
       analyse: async (proposalId: string, confirmEstimate = false) =>
         (await call<AnalyseResult>("POST", `/proposals/${id(proposalId)}/analyse`, undefined, { confirmEstimate })).data,
       accept: async (proposalId: string, itemId: string) => (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/accept`)).data,
+      /**
+       * Accepts the item and the same patch (same element, text before and replacement, still undecided) in the other
+       * proposals of its group. `accepted` is the number accepted elsewhere; 0 when the item is not shared.
+       */
+      acceptInGroup: async (proposalId: string, itemId: string) =>
+        (await call<AcceptInGroupResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/accept-in-group`)).data,
       reject: async (proposalId: string, itemId: string) => (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/reject`)).data,
       reset: async (proposalId: string, itemId: string) => (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/reset`)).data,
       /** One new call for one element; at most three per item. */
       regenerate: async (proposalId: string, itemId: string, comment: string) =>
         (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/regenerate`, undefined, { comment })).data,
+      /**
+       * One AI call: a lesson for a new source section no lesson covers. The item becomes `new_lesson`
+       * (`after.lesson` holds the lesson, `after.module` where it goes); it is applied only when accepted.
+       * Throws 409 (not an uncovered section, or settled), 422 `budget` or 503 `ai_disabled`.
+       */
+      suggestLesson: async (proposalId: string, itemId: string) =>
+        (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/suggest-lesson`)).data,
       /** Saves the note learners see (plain text, up to 500 characters); an empty note brings back the suggested one. Only while the proposal is open. */
       setLearnerNote: async (proposalId: string, note: string) =>
         (await call<LearnerNoteResult>("PUT", `/proposals/${id(proposalId)}/learner-note`, undefined, { note })).data,
@@ -499,6 +596,10 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
     connectors: {
       /** The kinds of source this installation offers. */
       list: async () => (await call<ConnectorInfo[]>("GET", "/connectors")).data,
+    },
+    oauth: {
+      /** The vendor sign-in address (Google or Notion) for a session; the tokens stay on the server and come back as a one-time `grant` for `sources.connect` (`secrets: { grant }`). 422 when the sign-in is not set up. */
+      start: async (provider: "google" | "notion", sessionId: string) => (await call<{ url: string }>("POST", `/oauth/${id(provider)}/start`, undefined, { sessionId })).data,
     },
     connections: {
       /** Asks for a check now (202, queued). Throws 409 for an upload source or a paused connection. */

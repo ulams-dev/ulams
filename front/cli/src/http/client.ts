@@ -1,3 +1,4 @@
+import { loopbackFetch } from "./loopback.ts";
 import { ApiError, createClient, type HttpMethod } from "@ulams/sdk";
 import { CliError, fromApiError } from "../errors.ts";
 import { redact, redactString } from "../config/redact.ts";
@@ -12,6 +13,9 @@ export interface HttpClientOptions {
   /** "cli" or "mcp": sent as X-Ulams-Client (audit log, S1). */
   client: "cli" | "mcp";
   agent?: string | undefined;
+  /** The commit and change URL a CI job acts for (`ULAMS_COMMIT`, `ULAMS_CHANGE_URL`): sent as X-Ulams-Commit / X-Ulams-Change-Url for the audit trail of imports and approvals. */
+  commit?: string | undefined;
+  changeUrl?: string | undefined;
   timeoutMs?: number;
   /** Debug sink (already redacted by the client). */
   debug?: ((line: string) => void) | undefined;
@@ -74,7 +78,7 @@ export class HttpClient {
   }
 
   get fetchImpl(): typeof fetch | undefined {
-    return this.opts.fetch;
+    return this.opts.fetch ?? loopbackFetch;
   }
 
   get userAgent(): string {
@@ -139,7 +143,7 @@ export class HttpClient {
 
     for (let attempt = 0; ; attempt++) {
       const seen: { retryAfter?: number; status?: number } = {};
-      const baseFetch = this.opts.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init));
+      const baseFetch = this.opts.fetch ?? loopbackFetch;
       const wrapped: typeof fetch = async (input, init) => {
         const response = await baseFetch(input, init);
         seen.status = response.status;
@@ -153,6 +157,8 @@ export class HttpClient {
         "X-Request-Id": requestId,
       };
       if (this.opts.agent) headers["X-Ulams-Agent"] = this.opts.agent;
+      if (this.opts.commit) headers["X-Ulams-Commit"] = this.opts.commit;
+      if (this.opts.changeUrl) headers["X-Ulams-Change-Url"] = this.opts.changeUrl;
       if (options.idempotencyKey) headers["Idempotency-Key"] = options.idempotencyKey;
       const sdk = createClient({
         baseUrl: this.baseUrl,

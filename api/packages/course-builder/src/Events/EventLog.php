@@ -2,7 +2,9 @@
 
 namespace Ulams\CourseBuilder\Events;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event as Dispatcher;
 use Illuminate\Support\Str;
 use Ulams\CourseBuilder\Models\Event;
 use Ulams\CourseBuilder\Models\Run;
@@ -46,27 +48,38 @@ final class EventLog
 
     public function runStarted(Run $run): void
     {
-        $this->append($run->session, $run, 'RUN_STARTED', ['threadId' => $run->session_id, 'runId' => $run->id]);
+        $event = $this->append($run->session, $run, 'RUN_STARTED', ['threadId' => $run->session_id, 'runId' => $run->id]);
+        Dispatcher::dispatch(new BuilderStageStarted($run->session_id, $run->id, $run->kind, null, self::at($event)));
     }
 
     public function runFinished(Run $run, array $result = []): void
     {
-        $this->append($run->session, $run, 'RUN_FINISHED', ['threadId' => $run->session_id, 'runId' => $run->id] + ($result ? ['result' => $result] : []));
+        $event = $this->append($run->session, $run, 'RUN_FINISHED', ['threadId' => $run->session_id, 'runId' => $run->id] + ($result ? ['result' => $result] : []));
+        Dispatcher::dispatch(new BuilderStageFinished($run->session_id, $run->id, $run->kind, null, self::at($event)));
     }
 
     public function runError(Run $run, string $message, string $code = 'error'): void
     {
-        $this->append($run->session, $run, 'RUN_ERROR', ['message' => $message, 'code' => $code, 'runId' => $run->id]);
+        $event = $this->append($run->session, $run, 'RUN_ERROR', ['message' => $message, 'code' => $code, 'runId' => $run->id]);
+        Dispatcher::dispatch(new BuilderStageFinished($run->session_id, $run->id, $run->kind, null, self::at($event), 'error'));
     }
 
     public function stepStarted(Run $run, string $name): void
     {
-        $this->append($run->session, $run, 'STEP_STARTED', ['stepName' => $name]);
+        $event = $this->append($run->session, $run, 'STEP_STARTED', ['stepName' => $name]);
+        Dispatcher::dispatch(new BuilderStageStarted($run->session_id, $run->id, $run->kind, $name, self::at($event)));
     }
 
     public function stepFinished(Run $run, string $name): void
     {
-        $this->append($run->session, $run, 'STEP_FINISHED', ['stepName' => $name]);
+        $event = $this->append($run->session, $run, 'STEP_FINISHED', ['stepName' => $name]);
+        Dispatcher::dispatch(new BuilderStageFinished($run->session_id, $run->id, $run->kind, $name, self::at($event)));
+    }
+
+    /** The moment an event was logged, to the millisecond (the payload timestamp), in the application time zone. */
+    public static function at(Event $event): CarbonImmutable
+    {
+        return CarbonImmutable::createFromTimestampMs((int) $event->payload['timestamp'], config('app.timezone'));
     }
 
     /** Short assistant prose (never course content), as one start/content/end triple. */

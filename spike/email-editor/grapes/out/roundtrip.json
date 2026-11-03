@@ -1,0 +1,124 @@
+{
+  "1-reset-password": {
+    "srcBytes": 503,
+    "exportedBytes": 458,
+    "treeEqual": true,
+    "lost": [],
+    "added": [],
+    "htmlEqual": true,
+    "mjmlErrors": {
+      "src": 0,
+      "exported": 0
+    },
+    "pageErrors": []
+  },
+  "2-training-due-soon": {
+    "srcBytes": 277,
+    "exportedBytes": 232,
+    "treeEqual": true,
+    "lost": [],
+    "added": [],
+    "htmlEqual": true,
+    "mjmlErrors": {
+      "src": 0,
+      "exported": 0
+    },
+    "pageErrors": []
+  },
+  "3-branded-handwritten": {
+    "srcBytes": 1721,
+    "exportedBytes": 1628,
+    "treeEqual": false,
+    "lost": [
+      "mjml > mj-head > <mj-attributes>",
+      "mjml > mj-head > mj-attributes > <mj-all font-family=\"Inter, Arial, sans-serif\">",
+      "mjml > mj-head > mj-attributes > <mj-text color=\"#1f2937\" font-size=\"16px\" line-height=\"24px\">",
+      "mjml > mj-head > mj-attributes > <mj-button background-color=\"#4f46e5\" border-radius=\"6px\">",
+      "mjml > mj-head > mj-attributes > <mj-class color=\"#6b7280\" font-size=\"13px\" name=\"muted\">",
+      "mjml > mj-head > <mj-style>",
+      "mjml > mj-head > mj-style > #text .brand-link a { color: #4f46e5; text-decoration: underline; } @media (max-width: 480px) { .hero-title { font-size: 22px !important; } }",
+      "mjml > mj-head > <mj-style inline=\"inline\">",
+      "mjml > mj-head > mj-style > #text h1 { margin: 0 0 8px 0; }",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > <tr>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tr > <td style=\"background:#eef2ff;padding:12px\">",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tr > td > #text Raw HTML promo block:",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tr > td > <strong>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tr > td > strong > #text -20%"
+    ],
+    "added": [
+      "mjml > mj-head > mj-font > <mj-attributes>",
+      "mjml > mj-head > mj-font > mj-attributes > <mj-all font-family=\"Inter, Arial, sans-serif\">",
+      "mjml > mj-head > mj-font > mj-attributes > mj-all > <mj-text color=\"#1f2937\" font-size=\"16px\" line-height=\"24px\">",
+      "mjml > mj-head > mj-font > mj-attributes > mj-all > mj-text > <mj-button background-color=\"#4f46e5\" border-radius=\"6px\">",
+      "mjml > mj-head > mj-font > mj-attributes > mj-all > mj-text > mj-button > <mj-class color=\"#6b7280\" font-size=\"13px\" name=\"muted\">",
+      "mjml > mj-head > mj-font > <mj-style>",
+      "mjml > mj-head > mj-font > mj-style > #text .brand-link a { color: #4f46e5; text-decoration: underline; } @media (max-width: 480px) { .hero-title { font-size: 22px !important; } }",
+      "mjml > mj-head > mj-font > <mj-style inline=\"inline\">",
+      "mjml > mj-head > mj-font > mj-style > #text h1 { margin: 0 0 8px 0; }",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > <tbody>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > <tr>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > tr > <td style=\"background:#eef2ff;padding:12px;\">",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > tr > td > #text Raw HTML promo block:",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > tr > td > <strong>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > tr > td > strong > #text -20%"
+    ],
+    "htmlEqual": false,
+    "mjmlErrors": {
+      "src": 0,
+      "exported": 3
+    },
+    "pageErrors": []
+  },
+  "3b-branded-explicit-close": {
+    "srcBytes": 1772,
+    "exportedBytes": 1616,
+    "treeEqual": false,
+    "lost": [
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > <tr>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tr > <td style=\"background:#eef2ff;padding:12px\">",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tr > td > #text Raw HTML promo block:",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tr > td > <strong>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tr > td > strong > #text -20%"
+    ],
+    "added": [
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > <tbody>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > <tr>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > tr > <td style=\"background:#eef2ff;padding:12px;\">",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > tr > td > #text Raw HTML promo block:",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > tr > td > <strong>",
+      "mjml > mj-body > mj-section > mj-column > mj-raw > table > tbody > tr > td > strong > #text -20%"
+    ],
+    "htmlEqual": false,
+    "mjmlErrors": {
+      "src": 0,
+      "exported": 0
+    },
+    "pageErrors": []
+  },
+  "4-stress-constructs": {
+    "srcBytes": 1451,
+    "exportedBytes": 1213,
+    "treeEqual": false,
+    "lost": [
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > <tr>",
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > tr > <th>",
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > tr > th > #text Course",
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > tr > <th>",
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > tr > th > #text Due",
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > <tr>",
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > tr > <td>",
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > tr > td > #text @VarCourseTitle",
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > tr > <td>",
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > tr > td > #text @VarDueDate"
+    ],
+    "added": [
+      "mjml > mj-body > mj-wrapper > mj-section > mj-column > mj-table > #text CourseDue@VarCourseTitle@VarDueDate"
+    ],
+    "htmlEqual": false,
+    "mjmlErrors": {
+      "src": 0,
+      "exported": 0
+    },
+    "pageErrors": []
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "slug": "where-did-the-ai-get-that",
+  "date": "2026-10-11",
+  "series": true,
+  "en": {
+    "title": "“Where did the AI get that?”",
+    "description": "Every generated sentence and quiz question links to a passage of the source document. One click shows the original.",
+    "tags": [
+      "Citations"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "In the clip: the sentence “escalate after 10 minutes” in a lesson, the same passage in the runbook, and the quiz question whose correct answer comes from that spot."
+    },
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "citation",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Click the reference and the source passage opens: runbook §2, Escalate.",
+        "caption": "Click the reference and the source passage opens: runbook §2, Escalate."
+      },
+      {
+        "name": "quiz",
+        "width": 1080,
+        "height": 1250,
+        "alt": "The quiz question and its correct answer are tied to the same passage.",
+        "caption": "The quiz question and its correct answer are tied to the same passage."
+      }
+    ]
+  },
+  "pl": {
+    "title": "„Skąd AI to wzięło?”",
+    "description": "Każde wygenerowane zdanie i pytanie quizu prowadzi do fragmentu dokumentu źródłowego. Jedno kliknięcie pokazuje oryginał.",
+    "tags": [
+      "Cytowania"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "W filmie: zdanie „escalate after 10 minutes” w lekcji, ten sam fragment w runbooku i pytanie quizu, którego poprawna odpowiedź pochodzi z tego miejsca."
+    },
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "citation",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Kliknij odnośnik, a otworzy się fragment źródła: runbook §2, Escalate.",
+        "caption": "Kliknij odnośnik, a otworzy się fragment źródła: runbook §2, Escalate."
+      },
+      {
+        "name": "quiz",
+        "width": 1080,
+        "height": 1250,
+        "alt": "Pytanie quizu i jego poprawna odpowiedź są powiązane z tym samym fragmentem.",
+        "caption": "Pytanie quizu i jego poprawna odpowiedź są powiązane z tym samym fragmentem."
+      }
+    ]
+  }
+}

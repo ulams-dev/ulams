@@ -227,4 +227,50 @@ class AiClientTest extends TestCase
         }
         $this->assertSame('error', AiCall::query()->latest('created_at')->first()->status);
     }
+
+    public function testStreamForwardsTheFieldAndLogsOneCallWithCost(): void
+    {
+        $this->fake()->queueJson('outline', ['title' => 'Coffee basics', 'minutes' => 30], 'claude-sonnet-5-5', new Usage(1000, 200, 0, 0, 0));
+        $deltas = [];
+
+        $result = $this->client()->stream($this->request(), function (string $d) use (&$deltas) {
+            $deltas[] = $d;
+        }, 'title');
+
+        $this->assertGreaterThan(1, count($deltas));
+        $this->assertSame('Coffee basics', implode('', $deltas));
+        $this->assertSame(30, $result->data['minutes']);
+        $this->assertSame(1, AiCall::query()->whereIn('id', $result->callIds)->count());
+        $this->assertSame(1000 * 2 + 200 * 10, AiCall::query()->find($result->callIds[0])->cost_micro_usd);
+    }
+
+    public function testStreamForwardsOnlyTheFirstAttemptAndRepairsAsUsual(): void
+    {
+        $this->fake()
+            ->queueJson('outline', ['title' => 'Draft title', 'minutes' => 0])
+            ->queueJson('outline', ['title' => 'Final title', 'minutes' => 20]);
+        $deltas = [];
+
+        $result = $this->client()->stream($this->request(), function (string $d) use (&$deltas) {
+            $deltas[] = $d;
+        }, 'title');
+
+        $this->assertSame('Draft title', implode('', $deltas));
+        $this->assertSame('Final title', $result->data['title']);
+        $this->assertSame(2, $result->attempts);
+        $this->assertSame(['invalid', 'ok'], AiCall::query()->whereIn('id', $result->callIds)->orderBy('attempt')->pluck('status')->all());
+    }
+
+    public function testStreamFailuresAreLoggedAndRaiseTheSameExceptions(): void
+    {
+        $this->fake()->queue('outline', new DriverResponse('{"title":"half', 'claude-sonnet-5-5', 'refusal', new Usage(10, 1), 'r1', 'cyber'));
+
+        try {
+            $this->client()->stream($this->request(), fn () => null, 'title');
+            $this->fail('expected an exception');
+        } catch (LlmException $e) {
+            $this->assertSame(LlmException::REFUSAL, $e->reason);
+        }
+        $this->assertSame('refused', AiCall::query()->latest('created_at')->first()->status);
+    }
 }

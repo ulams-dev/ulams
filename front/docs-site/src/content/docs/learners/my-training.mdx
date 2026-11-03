@@ -1,0 +1,59 @@
+---
+title: My training, certificates and skills
+description: Where a learner sees their required training, learning paths, certificates (download, verify, badge) and skills, and what a manager sees of their team.
+sidebar:
+  order: 14
+learnerRoutes:
+  - /account/training
+  - /account/skills
+  - /account/team
+  - /account/certificates/[id].pdf
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The account page links to three pages that show what the academy expects of you and what you have
+achieved. The summary on `/account` says, for example, "2 trainings due this month", "3 certificates"
+and "5 skills", and links to each page.
+
+## My training (`/account/training`)
+
+- **Required training** lists the courses you were asked to complete. The status is written out:
+  "Assigned", "Due soon" (within 14 days), "Overdue by 3 days", "Completed" or "Cancelled", with the due
+  date. Overdue training comes first. Open training has a **Start** or **Continue** link; completed
+  training links to the certificate that satisfied it.
+- **Learning paths** show the steps of each path as Done, Available or Locked. A locked step says what
+  unlocks it ("Unlocks after: Tools").
+- **Certificates** (`#certificates`) lists each certificate with when it was issued, when it is valid
+  until (or "Does not expire"), the course version and its status: "Valid", "Expiring in 12 days",
+  "Expired" or "Revoked on 1 September 2026". **Download PDF** saves the certificate, **Verify** opens
+  the public verification page, and **Copy badge code** copies a snippet for your own page (see
+  [the certificate badge](/extending/web-components/#the-certificate-badge)). A revoked certificate has
+  no badge code.
+
+Every block says what went wrong when it cannot be loaded and offers "Try again"; the others still show.
+
+## My skills (`/account/skills`)
+
+Skills confirmed by the courses you completed, grouped by area, with the code, when you earned the
+skill, when it lapses (it lapses with the certificate that proves it, or "Does not lapse") and the
+courses that prove it. With no skills yet the page links to the catalogue.
+
+## My team (`/account/team`)
+
+Only managers see this page; for everyone else it is a 404 and there is no link. It is read-only: the
+required training of your direct reports with the learner, course, status and due date, overdue first,
+and a filter by status. Assigning training stays in the admin panel.
+
+## The certificate PDF
+
+`/account/certificates/{id}.pdf` downloads the PDF of one of your own certificates. Anyone else's id
+gives a 404. The file is not cached.
+
+<Aside>
+The interface follows the tenant's default language (English, Polish or Chinese). The finish page of a
+course uses the language of the course.
+</Aside>
+
+Tests: `front/web/tests/a11y/training.a11y.spec.ts` (axe on desktop and 360 px in a light and a dark
+theme, status wording, PDF route, badge snippet, keyboard) and `front/web/tests/unit/training.test.ts`.

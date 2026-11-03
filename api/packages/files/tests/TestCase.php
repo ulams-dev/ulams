@@ -39,6 +39,15 @@ class TestCase extends \Ulams\Core\Tests\TestCase
         Auth::setUser($user);
     }
 
+    /**
+     * RFC 3339 timestamp the API reports for an entry: read from the stored entry itself, never
+     * from the source upload (its ctime can fall in a different second than the stored copy).
+     */
+    protected function storedAt(string $path): string
+    {
+        return date(DATE_RFC3339, filemtime($this->disk->path(ltrim($path, '/'))));
+    }
+
     protected function getPackageProviders($app): array
     {
         return [

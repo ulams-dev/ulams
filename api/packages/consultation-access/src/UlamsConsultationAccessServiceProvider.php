@@ -2,6 +2,7 @@
 
 namespace Ulams\ConsultationAccess;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\ConsultationAccess\Providers\AuthServiceProvider;
 use Ulams\ConsultationAccess\Repositories\ConsultationAccessEnquiryProposedTermRepository;
 use Ulams\ConsultationAccess\Repositories\ConsultationAccessEnquiryRepository;
@@ -37,6 +38,10 @@ class UlamsConsultationAccessServiceProvider extends ServiceProvider
 
     public function register()
     {
+        MorphMap::register([
+            'consultation_access_enquiry' => \Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry::class,
+        ]);
+
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(UlamsConsultationsServiceProvider::class);
         $this->app->register(UlamsPencilSpacesServiceProvider::class);

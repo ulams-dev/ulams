@@ -9,7 +9,7 @@ interface DictionaryAccessApiControllerSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/dictionaries/access",
+     *      path="/api/dictionaries/access", operationId="dictionaries.access.get",
      *      summary="Display my dictionaries",
      *      tags={"Dictionaries"},
      *      security={
