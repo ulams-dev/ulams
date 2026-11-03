@@ -21,6 +21,9 @@ COPY front/ui/src/theme/ front/ui/src/theme/
 # the image URL builder shared with the fronts (ADR 0193)
 COPY front/sdk/src/images.ts front/sdk/src/images.ts
 COPY front/sdk/src/images/ front/sdk/src/images/
+# the review time rules of the studio, shared with the admin course editor (useReviewTime)
+COPY front/web/src/studio/review-time.ts front/web/src/studio/review-time.ts
+COPY front/web/src/studio/review-time-model.ts front/web/src/studio/review-time-model.ts
 COPY admin/ admin/
 RUN cd admin && n=1; until yarn build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn build" >&2; sleep 5; done && find dist -name '*.map' -delete
 
