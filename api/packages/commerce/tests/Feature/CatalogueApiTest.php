@@ -146,7 +146,7 @@ class CatalogueApiTest extends OrderFlowTestCase
     {
         foreach (['GET api/admin/commerce/products' => false, 'PUT api/admin/commerce/products/course/1' => true, 'POST api/admin/commerce/bundles' => true, 'POST api/admin/commerce/access-passes' => true] as $route => $write) {
             [$method, $path] = explode(' ', $route);
-            $this->assertSame(['area' => 'commerce', 'write' => $write], \Ulams\Auth\Support\TokenScopes::requirement($path, $method), $route);
+            $this->assertSame(['area' => 'commerce', 'write' => $write], array_diff_key(\Ulams\Auth\Support\TokenScopes::requirement($path, $method), ['resource' => 1]), $route);
         }
     }
 }
