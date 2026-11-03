@@ -10,10 +10,10 @@ import { runProcess } from "./process.ts";
 
 export const composeArgs = (directory:string,c:StackConfig) => ["compose","--project-name",c.name,"--env-file",join(directory,".env"),"-f",join(directory,"compose.yaml")];
 export const kubectlArgs = (c:StackConfig) => [...(c.context ? ["--context",c.context] : []),"--namespace",c.name];
-const STS = ["postgres","valkey","object-store","application"];
+export const STS = ["postgres","valkey","object-store","application"];
 const credentialsHint = (directory: string,c:StackConfig) => ({ file:join(directory,"credentials.json"), platformAdmin: c.adminEmail, academyAdmin:`admin@${c.tenant}.${c.domain}`, academyTutor:`tutor@${c.tenant}.${c.domain}`, academyStudent:`student1@${c.tenant}.${c.domain}` });
-function options(ctx:Ctx,directory:string,s:Secrets = {}) {return {cwd:directory,signal:ctx.signal,env:{...process.env,...ctx.env},secrets:Object.values(s)};}
-async function ownedDocker(ctx:Ctx,directory:string,c:StackConfig) {
+export function options(ctx:Ctx,directory:string,s:Secrets = {}) {return {cwd:directory,signal:ctx.signal,env:{...process.env,...ctx.env},secrets:Object.values(s)};}
+export async function ownedDocker(ctx:Ctx,directory:string,c:StackConfig) {
   const opts = options(ctx,directory);
   for(const kind of ["ps","volume"]){
     const args = kind === "ps" ? ["ps","-a","--filter",`label=com.docker.compose.project=${c.name}`,"--format","{{.Label \"io.ulams.stack\"}}"] : ["volume","ls","--filter",`label=com.docker.compose.project=${c.name}`,"--format","{{.Label \"io.ulams.stack\"}}"];
@@ -21,11 +21,31 @@ async function ownedDocker(ctx:Ctx,directory:string,c:StackConfig) {
     if(output.trim() && output.trim().split("\n").some(id=>id.trim() !== c.id))throw new CliError("CONFLICT",`Docker project ${c.name} contains resources owned by another installation. Use a different --name and directory.`);
   }
 }
-async function ownedKubernetes(ctx:Ctx,directory:string,c:StackConfig,allowMissing:boolean) {
+export async function ownedKubernetes(ctx:Ctx,directory:string,c:StackConfig,allowMissing:boolean) {
   const value = await runProcess("kubectl",[...(c.context?["--context",c.context]:[]),"get","namespace",c.name,"--ignore-not-found","-o","json"],options(ctx,directory));
   if(!value.trim()){if(allowMissing)return;throw new CliError("NOT_FOUND","The managed Kubernetes namespace does not exist.");}
   const namespace = JSON.parse(value) as { metadata: {labels?: Record<string,string>} };
   if(namespace.metadata.labels?.["io.ulams.stack"] !== c.id)throw new CliError("CONFLICT",`Namespace ${c.name} is not owned by this installation. Refusing to modify it.`);
+}
+/** Applies the rendered manifests and waits until the named StatefulSets run their current revision. */
+export async function applyKubernetes(directory:string,c:StackConfig,opts:ReturnType<typeof options>,sets:string[],readyTimeout:number) {
+  // Namespace first: Secret creation must happen before scheduling the application.
+  await runProcess("kubectl",[...kubectlArgs(c),"apply","-f","-"],{...opts,stdin:JSON.stringify({apiVersion:"v1",kind:"Namespace",metadata:{name:c.name,labels:{"io.ulams.stack":c.id}}})});
+  await runProcess("kubectl",[...kubectlArgs(c),"apply","-f",join(directory,"kubernetes-secret.yaml"),"-f",join(directory,"kubernetes.yaml")],opts);
+  for(const name of sets) await waitStatefulSet(c,opts,name,readyTimeout);
+}
+export async function waitStatefulSet(c:StackConfig,opts:ReturnType<typeof options>,name:string,readyTimeout:number) {
+  // OnDelete lets us recover a failed old revision without StatefulSet rollback deadlocks.
+  for(let attempt=0;attempt<30;attempt++) {
+    const set = JSON.parse(await runProcess("kubectl",[...kubectlArgs(c),"get","statefulset",name,"-o","json"],opts)) as {metadata:{generation:number};status?:{observedGeneration?:number;updateRevision?:string}};
+    if((set.status?.observedGeneration ?? 0) >= set.metadata.generation && set.status?.updateRevision) {
+      const list = JSON.parse(await runProcess("kubectl",[...kubectlArgs(c),"get","pods","-l",`io.ulams.stack=${c.id},io.ulams.role=${name}`,"-o","json"],opts)) as {items:Array<{metadata:{name:string;labels:Record<string,string>}}>};
+      for(const pod of list.items)if(pod.metadata.labels["controller-revision-hash"] !== set.status.updateRevision)await runProcess("kubectl",[...kubectlArgs(c),"delete","pod",pod.metadata.name,"--wait=true"],opts);
+      break;
+    }
+    await new Promise(done=>setTimeout(done,500));
+  }
+  await runProcess("kubectl",[...kubectlArgs(c),"wait",`pod/${name}-0`,"--for=condition=Ready",`--timeout=${readyTimeout}s`],opts);
 }
 export async function stackPlan(input:StackInput) {
   const directory = installDirectory(input.directory), prior = await readConfig(directory);
@@ -72,22 +92,7 @@ export async function stackUp(ctx:Ctx,input:StackInput) {
       await runProcess("docker",[...composeArgs(directory,c),"config","--quiet"],opts);
       await runProcess("docker",[...composeArgs(directory,c),"up","--detach","--pull","missing","--wait","--wait-timeout",String(input.ready_timeout)],opts);
     } else {
-      // Namespace first: Secret creation must happen before scheduling the application.
-      await runProcess("kubectl",[...kubectlArgs(c),"apply","-f","-"],{...opts,stdin:JSON.stringify({apiVersion:"v1",kind:"Namespace",metadata:{name:c.name,labels:{"io.ulams.stack":c.id}}})});
-      await runProcess("kubectl",[...kubectlArgs(c),"apply","-f",join(directory,"kubernetes-secret.yaml"),"-f",join(directory,"kubernetes.yaml")],opts);
-      for(const name of STS) {
-        // OnDelete lets us recover a failed old revision without StatefulSet rollback deadlocks.
-        for(let attempt=0;attempt<30;attempt++) {
-          const set = JSON.parse(await runProcess("kubectl",[...kubectlArgs(c),"get","statefulset",name,"-o","json"],opts)) as {metadata:{generation:number};status?:{observedGeneration?:number;updateRevision?:string}};
-          if((set.status?.observedGeneration ?? 0) >= set.metadata.generation && set.status?.updateRevision) {
-            const list = JSON.parse(await runProcess("kubectl",[...kubectlArgs(c),"get","pods","-l",`io.ulams.stack=${c.id},io.ulams.role=${name}`,"-o","json"],opts)) as {items:Array<{metadata:{name:string;labels:Record<string,string>}}>};
-            for(const pod of list.items)if(pod.metadata.labels["controller-revision-hash"] !== set.status.updateRevision)await runProcess("kubectl",[...kubectlArgs(c),"delete","pod",pod.metadata.name,"--wait=true"],opts);
-            break;
-          }
-          await new Promise(done=>setTimeout(done,500));
-        }
-        await runProcess("kubectl",[...kubectlArgs(c),"wait",`pod/${name}-0`,"--for=condition=Ready",`--timeout=${input.ready_timeout}s`],opts);
-      }
+      await applyKubernetes(directory,c,opts,STS,input.ready_timeout);
     }
     const exec = (args:string[]) => c.target === "docker" ? runProcess("docker",[...composeArgs(directory,c),"exec","-T","api",...args],opts) : runProcess("kubectl",[...kubectlArgs(c),"exec","statefulset/application","-c","api","--",...args],opts);
     ctx.io.stderr("Preparing the initial academy through ULAMS tenant provisioning…");

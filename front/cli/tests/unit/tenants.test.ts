@@ -126,3 +126,36 @@ describe("login on a platform host", () => {
     r.cleanup();
   });
 });
+
+describe("tenant templates and derived tenants", () => {
+  it("create sends the template and the purpose of a derived tenant", async () => {
+    const r = await runCli(["tenants", "create", "acmesales", "--template", "policy-academy", "--derived-from", "acme", "--purpose", "policy_department", "--reference", "p1:v1", "--no-wait", "--json"], { env, routes: routes() });
+
+    expect(r.code).toBe(0);
+    expect(r.requests.find((q) => q.method === "POST")?.body).toEqual({ slug: "acmesales", template: "policy-academy", derived_from: "acme", purpose: "policy_department", reference: "p1:v1" });
+  });
+
+  it("saves, lists, shows and removes templates", async () => {
+    const template = { slug: "policy-academy", name: "Policy academy", theme: "coffee", accent: null, demo: false, users: 0, env_override_keys: ["AI_DRIVER"] };
+    let body: unknown;
+    const r = routes({
+      [`GET ${P}/templates`]: ok([template]),
+      [`GET ${P}/templates/policy-academy`]: ok(template),
+      [`POST ${P}/templates`]: (req) => ((body = req.body), ok(template, 201)),
+      [`DELETE ${P}/templates/policy-academy`]: ok({ slug: "policy-academy" }),
+    });
+
+    expect(data(await runCli(["tenants", "templates", "list", "--json"], { env, routes: r }))).toEqual([template]);
+    expect(data(await runCli(["tenants", "templates", "get", "policy-academy", "--json"], { env, routes: r }))).toMatchObject({ slug: "policy-academy" });
+    await runCli(["tenants", "templates", "save", "policy-academy", "--name", "Policy academy", "--theme", "coffee", "--users", "0", "--override", "ai_driver=fake", "--json"], { env, routes: r });
+    expect(body).toEqual({ slug: "policy-academy", name: "Policy academy", theme: "coffee", users: 0, env: { AI_DRIVER: "fake" } });
+    expect((await runCli(["tenants", "templates", "delete", "policy-academy", "--yes", "--json"], { env, routes: r })).code).toBe(0);
+  });
+
+  it("lists the tenants created from one", async () => {
+    const rows = [{ tenant: "acmesales", template: "policy-academy", purpose: "policy_department", reference: "p1:v1", requested_by: "owner@example.test", created_at: "2026-10-23T10:00:00+00:00" }];
+    const r = await runCli(["tenants", "derived", "acme", "--json"], { env, routes: routes({ [`GET ${P}/tenants/acme/derived`]: ok(rows) }) });
+
+    expect(data(r)).toEqual(rows);
+  });
+});

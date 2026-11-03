@@ -77,7 +77,7 @@ Blueprint v3 (`schemas/course-blueprint/v3.json` on this site); v1 and v2 docume
 | Method and path | Purpose |
 |---|---|
 | `GET courses/{course}/blueprint` | The current version of a course as a v3 document: `courseId`, `sessionId`, `versionId`, `versionNumber`, `appliedVersionId`, `document`, and `drift` (elements an apply would change although an admin edited them) and `edits` (what an admin changed in the LMS after the last apply: `absorbable` elements, with their fields, that [`drift`](#reading-admin-edits-back-into-the-blueprint) can read back, and `unmapped` ones with the reason). 409 `NOT_ADOPTED` for a course that was not made with the builder, 409 `NO_BLUEPRINT` before any content exists |
-| `POST sessions/{session}/imports` `{document, baseVersionId, message?}` | Store the document as a **proposed** version of kind `import` (origin `author`). 201 with `version`, `counts`, the element `changes`, `warnings`, `handEdited` (AI-written elements whose text you changed by hand) and `merged` (`null`, or what the server merged when your base was behind, see below). 200 with `unchanged: true` and no version when the document equals the current version (a `meta`-only change counts as unchanged). 422 `INVALID_BLUEPRINT` with `data.errors`, 422 `BASE_UNKNOWN`, 413 for a document over `COURSE_AS_CODE_MAX_DOCUMENT_MB` (8) |
+| `POST sessions/{session}/imports` `{document, baseVersionId, message?, allowPending?}` | Store the document as a **proposed** version of kind `import` (origin `author`). 201 with `version`, `counts`, the element `changes`, `warnings`, `handEdited` (AI-written elements whose text you changed by hand) and `merged` (`null`, or what the server merged when your base was behind, see below). 200 with `unchanged: true` and no version when the document equals the current version (a `meta`-only change counts as unchanged). 422 `INVALID_BLUEPRINT` with `data.errors`, 422 `BASE_UNKNOWN`, 409 `PROPOSAL_PENDING` (see below), 413 for a document over `COURSE_AS_CODE_MAX_DOCUMENT_MB` (8) |
 | `POST sessions/{session}/drift` `{dryRun?}` | Read admin edits made in the LMS after the last apply back into a **proposed** version of kind `author` (see below). 201 with `version`, `counts`, `changes`, `absorbed[]` and `unmapped[]`; 200 with `unchanged: true` when there is nothing to absorb or with `dryRun`. 409 `NO_BLUEPRINT`, 409 `NOT_APPLIED`, 422 `INVALID_BLUEPRINT` |
 | `GET versions/{version}` | One version with its blueprint `document` (the base a three-way merge needs) |
 | `GET versions/{version}/diff?against=` | The element-aware diff, against the parent by default. It now includes self-checks and interactions |
@@ -104,6 +104,13 @@ as the CLI (`base`, your document as *ours*, the current version as *theirs*; on
   you removed what the server changed, `removed-theirs` for the reverse, `slot`, `orphan`), `field` (the first conflicting field) and
   `fields[]` with `base`, `ours` (your pushed value) and `theirs` (the server's). Removing an element together with everything in it is
   one conflict when the other side changed anything inside; `held` counts those elements.
+
+**A push waits for an open update proposal.** When a Living Course update proposal is still open (analysing, ready, awaiting analysis,
+budget blocked or failed) and the push changes an element that one of its undecided items (`update`, `citation_remap`, `remove`, `manual`)
+would also change, the server answers 409 `PROPOSAL_PENDING` and stores nothing. `data.proposals[]` lists `proposalId`, `number` and the
+`elements[]` (`elementId`, `label`) that overlap. Decide the proposal (accept, reject or apply it) and push again, or send
+`allowPending: true` to store the import anyway: the proposal's items for those elements then become conflicts by the existing fingerprint
+rule when the proposal is applied. A push that only touches other elements, and an install without Living Course, are never held back.
 
 The merge is the same algorithm as `ulams course pull`; the two implementations share their test cases
 (`api/packages/course-builder/tests/fixtures/merge/cases.json`).

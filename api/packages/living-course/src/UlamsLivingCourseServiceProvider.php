@@ -11,6 +11,7 @@ use Illuminate\Support\ServiceProvider;
 use Ulams\Ai\Fake\FakeResponders;
 use Ulams\Ai\Prompts\PromptRegistry;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
+use Ulams\CourseBuilder\Contracts\PendingChanges;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Contracts\SourceHistory;
 use Ulams\CourseBuilder\Events\ElementPatched;
@@ -21,6 +22,7 @@ use Ulams\LivingCourse\Progress\LivingCourseAttemptAllowance;
 use Ulams\LivingCourse\Progress\LivingCourseCompletionGuard;
 use Ulams\LivingCourse\Progress\LivingCourseFragmentArchive;
 use Ulams\LivingCourse\Progress\LivingCourseSourceHistory;
+use Ulams\LivingCourse\Progress\LivingCoursePendingChanges;
 use Ulams\LivingCourse\Progress\LivingCourseRemovalPolicy;
 use Ulams\LivingCourse\Services\ProgressRules;
 use Ulams\TopicTypeGift\Events\QuizAttemptFinishedEvent;
@@ -78,6 +80,8 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         $this->app->singleton(FragmentArchive::class, LivingCourseFragmentArchive::class);
         // the semantic diff of course versions (ADR 0192) reads the source history
         $this->app->singleton(SourceHistory::class, LivingCourseSourceHistory::class);
+        // a course-as-code push waits for open update proposals that edit the same elements (plan 9.5)
+        $this->app->singleton(PendingChanges::class, LivingCoursePendingChanges::class);
         $this->app->singleton(CourseCompletionGuardContract::class, LivingCourseCompletionGuard::class);
         $this->app->singleton(QuizAttemptAllowanceContract::class, LivingCourseAttemptAllowance::class);
     }

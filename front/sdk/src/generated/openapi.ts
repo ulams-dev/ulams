@@ -5155,13 +5155,13 @@ export interface paths {
         };
         /**
          * Resize an image on the fly and redirect to the cached copy
-         * @description Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.
+         * @description Optional legacy resize API, kept for self-hosted admin and third-party clients; prefer a CDN or the front's image service. Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.
          */
         get: operations["images.img.get"];
         put?: never;
         /**
          * Resize many images at once
-         * @description Public endpoint, throttled by `images.render`. Returns one entry per requested image, in the same order, with the URL of the cached copy.
+         * @description Optional legacy resize API, kept for self-hosted admin and third-party clients; prefer a CDN or the front's image service. Public endpoint, throttled by `images.render`. Returns one entry per requested image, in the same order, with the URL of the cached copy.
          */
         post: operations["images.img.post"];
         delete?: never;

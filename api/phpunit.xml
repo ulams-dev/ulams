@@ -139,6 +139,9 @@
     <testsuite name="course-variants">
       <directory suffix="Test.php">./packages/course-variants/tests</directory>
     </testsuite>
+    <testsuite name="policy-lifecycle">
+      <directory suffix="Test.php">./packages/policy-lifecycle/tests</directory>
+    </testsuite>
     <testsuite name="living-course">
       <directory suffix="Test.php">./packages/living-course/tests</directory>
     </testsuite>
@@ -153,6 +156,9 @@
     </testsuite>
     <testsuite name="authoring-metrics">
       <directory suffix="Test.php">./packages/authoring-metrics/tests</directory>
+    </testsuite>
+    <testsuite name="reporting">
+      <directory suffix="Test.php">./packages/reporting/tests</directory>
     </testsuite>
     <testsuite name="learner-insights">
       <directory suffix="Test.php">./packages/learner-insights/tests</directory>
@@ -274,10 +280,12 @@
 <directory suffix=".php">./packages/course-builder/</directory>
       <directory suffix=".php">./packages/course-variants/</directory>
       <directory suffix=".php">./packages/living-course/</directory>
+      <directory suffix=".php">./packages/policy-lifecycle/</directory>
       <directory suffix=".php">./packages/knowledge-export/</directory>
       <directory suffix=".php">./packages/identity/</directory>
       <directory suffix=".php">./packages/webhooks/</directory>
       <directory suffix=".php">./packages/authoring-metrics/</directory>
+      <directory suffix=".php">./packages/reporting/</directory>
       <directory suffix=".php">./packages/learner-insights/</directory>
       <directory suffix=".php">./packages/tutor/</directory>
       <directory suffix=".php">./packages/vouchers/</directory>

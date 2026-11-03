@@ -2,6 +2,10 @@
 
 [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Images/)
 
+> **Optional legacy resize API.** Kept for self-hosted admin and third-party clients; prefer a CDN or the front's
+> image service (`ULAMS_IMAGE_SERVICE`, `REACT_APP_IMAGE_SERVICE`; see the operators guide). Nothing here is removed or
+> deprecated for removal.
+
 ## What does it do
 
 The package creates resized images from source by given parameters. This is a headless approach so the backend doesn't know the requested sizes before frontend requests any. 
@@ -13,6 +17,14 @@ The initial resize is done by [Intervention/image](https://github.com/Interventi
 After inital resized all the images are optimized with [image-optimizer](https://packagist.org/packages/spatie/image-optimizer).
 
 For best results binaries must [be installed](https://github.com/spatie/image-optimizer#optimization-tools). Ulams prepared [Docker Images](https://hub.docker.com/r/escolalms/php) are available for development (tag `work`) and production (tag `prod`).
+
+## Stored URLs: `IMAGES_CONTENT_URLS`
+
+`images.content_urls` (env `IMAGES_CONTENT_URLS`, default `api`) decides what course import and the topic-types markdown
+helper write into stored content. `api` writes `/api/images/img?path=...` URLs, as before. `original` writes the plain
+public storage URL of the file, for deployments where the front and admin resize at display time (the hosted demos).
+Existing `/api/images/img` URLs in content are still understood and keep working in both modes. The value is read once
+per deployment, not per tenant.
 
 ## Installation
 

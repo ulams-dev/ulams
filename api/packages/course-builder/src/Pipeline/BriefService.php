@@ -21,7 +21,7 @@ final class BriefService
     public const EXTRA_KEYS = ['audiences', 'pricing', 'theme'];
 
     /** The brief's level names (beginner, intermediate, advanced) against the audiences' (beginner, intermediate, expert). */
-    private const LEVEL_OF_BRIEF = ['beginner' => 'beginner', 'intermediate' => 'intermediate', 'advanced' => 'expert'];
+    public const LEVEL_OF_BRIEF = ['beginner' => 'beginner', 'intermediate' => 'intermediate', 'advanced' => 'expert'];
 
     public function __construct(private readonly SchemaRegistry $schemas)
     {

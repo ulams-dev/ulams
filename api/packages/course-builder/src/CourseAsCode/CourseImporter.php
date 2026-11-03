@@ -5,6 +5,7 @@ namespace Ulams\CourseBuilder\CourseAsCode;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\BlueprintDiff;
 use Ulams\CourseBuilder\Blueprint\Provenance;
+use Ulams\CourseBuilder\Contracts\PendingChanges;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Events\EventLog;
@@ -33,6 +34,7 @@ final class CourseImporter
         private readonly SchemaRegistry $schemas,
         private readonly LandingValidator $landing,
         private readonly EventLog $events,
+        private readonly PendingChanges $pending,
     ) {
     }
 
@@ -41,7 +43,7 @@ final class CourseImporter
      * @param array{userId:int,tokenId?:?string,tokenKind?:?string,client?:?string,commit?:?string,changeUrl?:?string} $actor
      * @return array{unchanged:bool,version:?Version,changes:array,counts:array,warnings:string[],handEdited:string[],merged:?array}
      */
-    public function import(Session $session, array $document, string $baseVersionId, ?string $message, array $actor): array
+    public function import(Session $session, array $document, string $baseVersionId, ?string $message, array $actor, bool $allowPending = false): array
     {
         $current = $session->currentVersion;
         if ($current === null || !in_array($current->kind, VersionService::CONTENT_KINDS, true)) {
@@ -98,6 +100,9 @@ final class CourseImporter
         }
 
         $changes = BlueprintDiff::compare($current->document, $document);
+        if (!$allowPending) {
+            $this->assertNoPendingProposal($session, $changes);
+        }
         $document = Provenance::markEditedIds($document, self::textEditedAiElements($changes, BlueprintDiff::flatten($current->document)));
         $version = $this->versions->create($session, $document, 'import', 'author', Version::PROPOSED, $current, $message ?: ($merged !== null
             ? "Merged from a course repository (based on version {$base->number}, the server was at version {$current->number})"
@@ -124,6 +129,31 @@ final class CourseImporter
             'handEdited' => self::handEdited($changes, BlueprintDiff::flatten($current->document), BlueprintDiff::flatten($document)),
             'merged' => $merged,
         ];
+    }
+
+    /**
+     * An open update proposal that edits an element this push also edits would turn that proposal item into a conflict (plan 9.5):
+     * the push waits until the proposal is decided, or says `allowPending`.
+     *
+     * @param array<int,array<string,mixed>> $changes
+     */
+    private function assertNoPendingProposal(Session $session, array $changes): void
+    {
+        $touched = array_column($changes, 'label', 'id');
+        $blocking = [];
+        foreach ($this->pending->forSession($session) as $proposal) {
+            $overlap = array_values(array_intersect($proposal['elementIds'], array_keys($touched)));
+            if ($overlap !== []) {
+                $blocking[] = [
+                    'proposalId' => $proposal['id'],
+                    'number' => $proposal['number'],
+                    'elements' => array_map(fn (string $id) => ['elementId' => $id, 'label' => $touched[$id]], array_slice($overlap, 0, 20)),
+                ];
+            }
+        }
+        if ($blocking !== []) {
+            throw new CourseAsCodeException('An update proposal that is still open changes elements this push changes too. Decide the proposal first, or push with allowPending.', 409, 'PROPOSAL_PENDING', ['proposals' => $blocking]);
+        }
     }
 
     /**

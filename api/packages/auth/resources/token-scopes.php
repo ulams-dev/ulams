@@ -89,6 +89,9 @@ return [
     ['api/admin/course-versions*', 'builder'],
     ['api/admin/authoring-metrics*', 'builder'],
     ['api/admin/living-course*', 'living-course'],
+    // policy lifecycle (ADR 0140): the owner dashboard and its export are reports, everything else prepares and approves training
+    ['api/admin/policies/*/dashboard*', 'reports'],
+    ['api/admin/policies*', 'builder'],
     // the learner's own update notices; the webhook is verified by its signature, not a token
     ['api/living-course/courses/*/notices', 'learner'],
     ['api/living-course/courses/*/freshness', 'learner'],
@@ -110,6 +113,8 @@ return [
     ['api/admin/course-access-enquiries*', 'enrolments'],
     ['api/admin/consultation-access-enquiries*', 'enrolments'],
     ['api/admin/tutors/*', 'enrolments'],
+    // who is in which variant of a course, assignment rules and the family's settings (ADR 0192): a kind of enrolment
+    ['api/admin/course-variant-groups*', 'enrolments'],
 
     // ---- courses -------------------------------------------------------------------------------
     ['api/admin/courses/*/clone', 'courses', ['level' => 'write']],
@@ -175,6 +180,9 @@ return [
 
     // ---- certificates --------------------------------------------------------------------------
     ['api/admin/pdfs*', 'certificates'],
+    // the report and the scheduled reports are analytics: reports:read (ADR 0194, Q10); the rest of compliance stays with certificates
+    ['api/admin/compliance/report*', 'reports'],
+    ['api/admin/compliance/schedules*', 'reports'],
     ['api/admin/compliance*', 'certificates'],
 
     // ---- commerce ------------------------------------------------------------------------------
@@ -189,6 +197,15 @@ return [
 
     // ---- reports -------------------------------------------------------------------------------
     ['api/admin/reports*', 'reports'],
+    // report builder: datasets, queries, saved reports (the prefix avoids the legacy api/admin/reports* routes)
+    // a preview reads data through a POST, so it is a read for a reports:read token
+    ['api/admin/reporting/query', 'reports', ['level' => 'read']],
+    // a token limited to one saved report may read that report and run it, nothing else of the builder
+    ['api/admin/reporting/saved/*/run', 'reports', ['methods' => ['GET'], 'resource' => ['param' => 'id']]],
+    ['api/admin/reporting/saved/*', 'reports', ['methods' => ['GET'], 'resource' => ['param' => 'id']]],
+    ['api/admin/reporting*', 'reports'],
+    // the read-only OData feed of a saved report (BI tools): reports:read; a limited token names its report in the entity set
+    ['api/reporting/odata*', 'reports', ['resource' => ['param' => 'entity', 'prefix' => 'Report_', 'optional' => true]]],
     ['api/admin/stats*', 'reports'],
     ['api/admin/questionnaire*', 'reports'],
     ['api/admin/tasks*', 'reports'],
@@ -236,6 +253,8 @@ return [
     ['api/content/*', 'learner'],
     ['api/pdfs*', 'learner'],
     ['api/compliance/*', 'learner'],
+    // the learner's own policy change notices (policy lifecycle)
+    ['api/policies/*', 'learner'],
     ['api/questionnaire/*', 'learner'],
     ['api/scorm/*', 'learner'],
     ['api/cmi5/*', 'learner'],

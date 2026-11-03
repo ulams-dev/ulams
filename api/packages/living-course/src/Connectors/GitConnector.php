@@ -14,6 +14,7 @@ use Ulams\LivingCourse\Connectors\Git\GitHubClient;
 use Ulams\LivingCourse\Connectors\Git\FileLimits;
 use Ulams\LivingCourse\Connectors\Git\GitLabClient;
 use Ulams\LivingCourse\Connectors\Git\PathFilter;
+use Ulams\LivingCourse\Connectors\Git\PushChange;
 use Ulams\LivingCourse\Models\Connection;
 use Ulams\LivingCourse\Models\Revision;
 use Ulams\LivingCourse\Services\RevisionService;
@@ -177,7 +178,7 @@ final class GitConnector implements SourceConnector
         }
         $id = $request->header('X-GitHub-Delivery') ?? $request->header('X-Gitea-Delivery') ?? $request->header('X-Forgejo-Delivery') ?? $request->header('X-Gitlab-Event-UUID') ?? ($payload['after'] ?? hash('sha256', $body));
 
-        return new WebhookDelivery(mb_substr((string) $id, 0, 100));
+        return new WebhookDelivery(mb_substr((string) $id, 0, 100), 'push', PushChange::fromPayload($payload, $c));
     }
 
     private function signatureMatches(string $host, Request $request, string $secret, string $body): bool

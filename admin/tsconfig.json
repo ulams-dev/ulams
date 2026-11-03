@@ -24,7 +24,8 @@
       "@ulams/markdown-editor": ["./src/lib/markdown-editor"],
       "@ulams/scorm-player": ["../front/src/lib/scorm-player"],
       "@ulams/tenant": ["../front/src/lib/tenant/resolveApiUrl"],
-      "@ulams/demo": ["../front/src/lib/demo/demoMode"]
+      "@ulams/demo": ["../front/src/lib/demo/demoMode"],
+      "@ulams/images": ["../front/sdk/src/images"]
     },
 
     "inlineSources": true,

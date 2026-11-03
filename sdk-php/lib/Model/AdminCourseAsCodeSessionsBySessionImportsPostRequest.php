@@ -57,6 +57,7 @@ class AdminCourseAsCodeSessionsBySessionImportsPostRequest implements ModelInter
       * @var string[]
       */
     protected static $openAPITypes = [
+        'allow_pending' => 'bool',
         'base_version_id' => 'string',
         'document' => 'object',
         'message' => 'string'
@@ -70,6 +71,7 @@ class AdminCourseAsCodeSessionsBySessionImportsPostRequest implements ModelInter
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'allow_pending' => null,
         'base_version_id' => null,
         'document' => null,
         'message' => null
@@ -81,6 +83,7 @@ class AdminCourseAsCodeSessionsBySessionImportsPostRequest implements ModelInter
       * @var boolean[]
       */
     protected static array $openAPINullables = [
+        'allow_pending' => false,
         'base_version_id' => false,
         'document' => false,
         'message' => false
@@ -172,6 +175,7 @@ class AdminCourseAsCodeSessionsBySessionImportsPostRequest implements ModelInter
      * @var string[]
      */
     protected static $attributeMap = [
+        'allow_pending' => 'allowPending',
         'base_version_id' => 'baseVersionId',
         'document' => 'document',
         'message' => 'message'
@@ -183,6 +187,7 @@ class AdminCourseAsCodeSessionsBySessionImportsPostRequest implements ModelInter
      * @var string[]
      */
     protected static $setters = [
+        'allow_pending' => 'setAllowPending',
         'base_version_id' => 'setBaseVersionId',
         'document' => 'setDocument',
         'message' => 'setMessage'
@@ -194,6 +199,7 @@ class AdminCourseAsCodeSessionsBySessionImportsPostRequest implements ModelInter
      * @var string[]
      */
     protected static $getters = [
+        'allow_pending' => 'getAllowPending',
         'base_version_id' => 'getBaseVersionId',
         'document' => 'getDocument',
         'message' => 'getMessage'
@@ -256,6 +262,7 @@ class AdminCourseAsCodeSessionsBySessionImportsPostRequest implements ModelInter
      */
     public function __construct(array $data = null)
     {
+        $this->setIfExists('allow_pending', $data ?? [], null);
         $this->setIfExists('base_version_id', $data ?? [], null);
         $this->setIfExists('document', $data ?? [], null);
         $this->setIfExists('message', $data ?? [], null);
@@ -308,6 +315,33 @@ class AdminCourseAsCodeSessionsBySessionImportsPostRequest implements ModelInter
         return count($this->listInvalidProperties()) === 0;
     }
 
+
+    /**
+     * Gets allow_pending
+     *
+     * @return bool|null
+     */
+    public function getAllowPending()
+    {
+        return $this->container['allow_pending'];
+    }
+
+    /**
+     * Sets allow_pending
+     *
+     * @param bool|null $allow_pending store the import although an open update proposal edits the same elements
+     *
+     * @return self
+     */
+    public function setAllowPending($allow_pending)
+    {
+        if (is_null($allow_pending)) {
+            throw new \InvalidArgumentException('non-nullable allow_pending cannot be null');
+        }
+        $this->container['allow_pending'] = $allow_pending;
+
+        return $this;
+    }
 
     /**
      * Gets base_version_id

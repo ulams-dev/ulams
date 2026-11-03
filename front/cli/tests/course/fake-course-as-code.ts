@@ -28,6 +28,8 @@ export interface FakeOptions {
   publishWarnings?: string[];
   /** The publish check blocks. */
   publishBlocking?: string[];
+  /** Open Living Course update proposals and the element ids they would change: a push that edits one waits (PROPOSAL_PENDING) unless `allowPending`. */
+  pending?: Array<{ id: string; number: number; elements: string[] }>;
   /** Fail every call with this status (network and server error tests). */
   failWith?: number;
 }
@@ -162,6 +164,14 @@ export function fakeCourseAsCode(options: FakeOptions = {}) {
         return ok({ unchanged: true, version: null, counts: { added: 0, changed: 0, removed: 0 }, changes: [], warnings: [], handEdited: [], merged });
       }
       const changes = compareDocuments(cur.document, document);
+      if (!body.allowPending) {
+        const touched = new Map(changes.map((c) => [c.id, c.label]));
+        const blocking = (options.pending ?? []).flatMap((p) => {
+          const hit = p.elements.filter((e) => touched.has(e));
+          return hit.length > 0 ? [{ proposalId: p.id, number: p.number, elements: hit.map((e) => ({ elementId: e, label: touched.get(e) })) }] : [];
+        });
+        if (blocking.length > 0) return fail(409, "An update proposal that is still open changes elements this push changes too.", "PROPOSAL_PENDING", { proposals: blocking });
+      }
       const v: Version = { id: vid(versions.length + 1), number: versions.length + 1, kind: "import", status: "proposed", parentId: cur.id, document };
       versions.push(v);
       return ok({ unchanged: false, version: { id: v.id, number: v.number, kind: v.kind, status: v.status, parentId: v.parentId }, counts: countChanges(changes), changes, warnings: [], handEdited: [], merged }, 201);

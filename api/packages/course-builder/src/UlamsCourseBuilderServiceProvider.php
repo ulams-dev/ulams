@@ -18,9 +18,11 @@ use Ulams\CourseBuilder\ContentTypes\InteractiveType;
 use Ulams\CourseBuilder\ContentTypes\LiaScriptType;
 use Ulams\CourseBuilder\ContentTypes\RichTextType;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
+use Ulams\CourseBuilder\Contracts\PendingChanges;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Contracts\SourceHistory;
 use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
+use Ulams\CourseBuilder\CourseAsCode\NoPendingChanges;
 use Ulams\CourseBuilder\Ingestion\NoSourceHistory;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Console\BackfillReleasesCommand;
@@ -112,12 +114,17 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
         SourceHistory::class => NoSourceHistory::class,
+        PendingChanges::class => NoPendingChanges::class,
     ];
 
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/course_builder.php', 'course_builder');
         $this->mergeConfigFrom(__DIR__ . '/../config/course_as_code.php', 'course_as_code');
+        $this->app->register(UlamsCourseVariantsServiceProvider::class);
+        // what the course-variants package asks the builder for (bound after its provider registered, so ours wins)
+        $this->app->bind(\Ulams\CourseVariants\Contracts\TopicCorrespondence::class, \Ulams\CourseBuilder\Services\BuilderTopicCorrespondence::class);
+        $this->app->bind(\Ulams\CourseVariants\Contracts\PlacementSource::class, \Ulams\CourseBuilder\Services\BuilderPlacementSource::class);
         foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class, UlamsLiaScriptServiceProvider::class, UlamsH5PServiceProvider::class, UlamsInteractiveServiceProvider::class, UlamsCourseVariantsServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }

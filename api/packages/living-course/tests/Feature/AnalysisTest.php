@@ -54,7 +54,8 @@ class AnalysisTest extends TestCase
         $this->assertSame($proposal->cost_micro_usd, (int) $calls->sum('cost_micro_usd'));
         $this->assertNotNull($calls->first()->model_requested);
 
-        $items = ProposalItem::query()->where('proposal_id', $proposal->id)->get();
+        // the order the API lists them in (Proposal::items): two blocks of a lesson can match one filter
+        $items = $proposal->items()->get();
         $this->assertSame(0, $items->where('kind', 'manual')->count());
         $this->assertSame(['no_change' => 6, 'remove' => 4, 'update' => 12], $items->whereIn('kind', ['update', 'no_change', 'remove'])->countBy('kind')->sortKeys()->all());
         $this->assertSame(['accepted'], $items->where('kind', 'citation_remap')->pluck('status')->unique()->values()->all());

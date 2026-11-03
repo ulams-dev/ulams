@@ -5,6 +5,8 @@
  */
 import type { AnalysisStep, ElementNode, ProposalDetail, ProposalGroup, ProposalItem, ProposalStatus, ProposalSummary } from "@ulams/sdk";
 import { compact } from "./living.ts";
+import { groupItemProps } from "./variants-model.ts";
+import type { VariantStrings } from "./variants-i18n.ts";
 
 type Props = Record<string, unknown>;
 
@@ -119,6 +121,10 @@ export interface ItemContext {
   canRegenerate: boolean;
   /** "Suggest a lesson" is offered on uncovered sections (AI enabled, proposal open or just closed as no impact). */
   canSuggest?: boolean;
+  /** Courses with variants (ADR 0192): the words of "Accept in all versions" and the reused note; absent outside a group. */
+  variants?: VariantStrings;
+  /** The proposal has siblings, so a shared patch can be accepted in all of them. */
+  hasSiblings?: boolean;
 }
 
 export function sourcesText(item: ProposalItem): string | undefined {
@@ -151,6 +157,7 @@ export function itemProps(item: ProposalItem, ctx: ItemContext): Props {
     canDecide: ctx.canDecide,
     canRegenerate: ctx.canRegenerate,
     canSuggest: ctx.canSuggest,
+    ...groupItemProps(ctx.variants, item, ctx.hasSiblings ?? false),
     href: `/studio/s/${ctx.sessionId}/workspace`,
   });
 }

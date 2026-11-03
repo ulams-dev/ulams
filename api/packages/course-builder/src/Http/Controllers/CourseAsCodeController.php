@@ -29,11 +29,11 @@ use Ulams\Courses\Models\Course;
  *     @OA\Response(response=403, description="another author's course"), @OA\Response(response=404, description="unknown course"), @OA\Response(response=409, description="NOT_ADOPTED (no builder session) or NO_BLUEPRINT"))
  * @OA\Post(path="/api/admin/course-as-code/sessions/{session}/imports", operationId="admin.course-as-code.sessions.by-session.imports.post", summary="Import a Blueprint v3 document as a proposed version of kind import", tags={"Admin Course-as-code"}, security={{"passport": {}}},
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\RequestBody(required=true, @OA\JsonContent(required={"document","baseVersionId"}, @OA\Property(property="document", type="object"), @OA\Property(property="baseVersionId", type="string"), @OA\Property(property="message", type="string"))),
+ *     @OA\RequestBody(required=true, @OA\JsonContent(required={"document","baseVersionId"}, @OA\Property(property="document", type="object"), @OA\Property(property="baseVersionId", type="string"), @OA\Property(property="message", type="string"), @OA\Property(property="allowPending", type="boolean", description="store the import although an open update proposal edits the same elements"))),
  *     @OA\Response(response=201, description="proposed version, element diff and warnings", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=200, description="unchanged: the document equals the current version, no version is created", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown session"),
- *     @OA\Response(response=409, description="BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT"), @OA\Response(response=413, description="document too large"), @OA\Response(response=422, description="INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field"))
+ *     @OA\Response(response=409, description="BASE_OUTDATED (with the remote diff), PROPOSAL_PENDING (an open update proposal edits the same elements) or NO_BLUEPRINT"), @OA\Response(response=413, description="document too large"), @OA\Response(response=422, description="INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field"))
  * @OA\Get(path="/api/admin/course-as-code/versions/{version}", operationId="admin.course-as-code.versions.by-version.get", summary="One version with its Blueprint v3 document (what a three-way merge needs as the base)", tags={"Admin Course-as-code"}, security={{"passport": {}}},
  *     @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="the version and its document", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown version"))
  * @OA\Post(path="/api/admin/course-as-code/sessions/{session}/drift", operationId="admin.course-as-code.sessions.by-session.drift.post", summary="Read admin edits made after the last apply back into a proposed author version", tags={"Admin Course-as-code"}, security={{"passport": {}}},
@@ -94,10 +94,11 @@ class CourseAsCodeController extends Controller
             'document' => ['required', 'array'],
             'baseVersionId' => ['required', 'string', 'regex:/^[0-9a-z]{26}$/i'],
             'message' => ['nullable', 'string', 'max:500'],
+            'allowPending' => ['nullable', 'boolean'],
         ]);
 
         return $this->guard(function () use ($request, $s, $data) {
-            $result = $this->importer->import($s, $data['document'], strtolower($data['baseVersionId']), $data['message'] ?? null, $this->actor($request));
+            $result = $this->importer->import($s, $data['document'], strtolower($data['baseVersionId']), $data['message'] ?? null, $this->actor($request), (bool) ($data['allowPending'] ?? false));
             $version = $result['version'];
 
             return self::ok([

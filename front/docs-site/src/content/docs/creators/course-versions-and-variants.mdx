@@ -13,11 +13,12 @@ learnerRoutes:
 import { Aside } from "@astrojs/starlight/components";
 
 <Aside type="note" title="What is built and what is coming">
-**Built:** course variants in the Course Builder: the interview question, one outline and one generation run
+**Built:** course variants in the Course Builder (the interview question, one outline and one generation run
 per audience from the same sources, each variant reviewed as a diff against the base, each approved variant
-created as its own course and grouped with the base as a family; numbered course releases and a screen that compares
-any two versions, a variant included. **Coming:** learners choosing or being routed
-to a variant, one purchase for the whole family, and variant-aware Living Course updates and certificates. Progress is tracked in the [roadmap](/roadmap/)
+created as its own course and grouped with the base as a family); numbered course releases and a screen that compares
+any two versions, a variant included; the **routing of learners between variants**: the learner's own choice, an assignment by an
+administrator or a rule, the optional placement check, hints to switch, one entitlement for the whole family, progress carried over between variants and
+mandatory training that accepts any variant; the **learner screens** for variants (the picker on the course page, the hint to switch and the optional placement check, see [Choosing your version](/learners/course-versions/)); a source update that reaches every variant as its own reviewable proposal (one analysis for all, shared elements take the base's patch at no cost); and certificates that name the variant. **Coming:** rebasing a variant on a newer base. Progress is tracked in the [roadmap](/roadmap/)
 (Phase 3.1 and Phase 4.4); the design is in `docs/plans/course-versions-and-variants.md` and ADR 0192.
 </Aside>
 
@@ -137,14 +138,56 @@ ulams course variants retire <variant> --yes
 The endpoints are in the [Course Builder API](/developers/course-builder-api/) (`sessions/{session}/variants`, `variants/{variant}`). Review a variant with
 `GET versions/{version}/diff?against=<base version>`: it is the same element diff the builder uses everywhere.
 
+### Learners and variants
+
+Learners are routed to a variant by their own choice, by an administrator or by a rule, never silently. The endpoints are in the
+[Course variants API](/developers/course-variants-api/).
+
+- **The picker.** The default course and every published variant of the family, each with its label, level, role and a line on who it is for, for anyone who can see the
+  course page. The base course is one of the choices, usually labelled "Intermediate".
+- **Choosing and switching.** A learner who has access to the course picks a variant and can switch later. Switching opens the other course for them, keeps the old
+  course and its progress, and **carries completion over** for lessons that are the same in both variants. Quizzes are taken again in the new variant.
+- **Assigned by your organisation.** An administrator can put learners or whole user groups in a variant, and **assignment rules** do the same by attribute
+  (for example `department` equals `Sales`). A rule only routes learners who already have access and have no variant yet; it never enrols anyone and never overrides a learner's own choice or an
+  administrator's assignment. A learner may change an assigned variant unless an administrator **locks** the course.
+- **The placement check** (optional, off by default). A short set of questions made of the quiz questions the family already has, cited and tied to objectives, scored by code. It
+  only advises: the result suggests a variant with its reason and the learner confirms it or picks another. Nothing is generated for it and nothing about the learner leaves the server.
+- **A hint to switch.** If the variant looks too hard (struggling in the first two modules) or too easy (every quiz passed first time in the first two modules and under half the
+  usual time), the learner sees a dismissible hint with the reasons. At most one per week, never an automatic switch, and dismissing it stops hints for that course. It needs Learner Insights.
+- **One purchase, all variants.** One entitlement for any course of the family opens every variant: sell or assign the default course, and learners can use any variant. A
+  refund or an expiry ends all of them, and the learner's progress is kept.
+- **Mandatory training.** An obligation on the course is fulfilled by finishing any variant, unless an administrator **pins** one; then the learner is given the pinned variant and only it counts.
+
+### What learners see
+
+A learner of a course with variants finds **Choose your version** on the course page: every published variant with its level, role, duration and who it is for, the
+version they are in, and **Switch to this version**. Switching keeps the old course and its progress and carries completed lessons over when they are the same in both
+variants; quizzes are taken again. Where an administrator turned the placement check on, an enrolled learner can take it (advisory only: it suggests a variant and the learner
+chooses), and a transparent hint can suggest an easier or more advanced variant, never switching on its own. A learner whose organisation assigned a variant sees
+**Assigned by your organisation**, with the rule name, and cannot change it when the course is locked. The screens work with the keyboard and a screen reader, without JavaScript, in
+English, Polish and Chinese: see [Choosing your version](/learners/course-versions/).
+
+### Updates when a source changes
+
+When a source of a course with variants changes, Living Course (see [the Git sync example](/creators/git-sync-worked-example/)) makes one update proposal for the base course and one for each
+variant, together. A variant gets its own proposal because it can cite passages the base does not, and because it is its own course. The element you did not
+change in a variant takes the base course's proposed edit without a new analysis (the item says "Same change as in the base course; no extra analysis was
+needed."), so it costs nothing extra. Only the elements you changed in the variant are analysed for it.
+
+On the update list and at the top of the review screen a text badge names the course a proposal is for: the variant's name, or "Base course". On the review
+screen, "Versions of this update" lists every proposal of the group with its status and how many items are decided and undecided; choose one to review it. Each
+proposal is still decided and applied on its own, and the base course is untouched when you apply a variant's proposal.
+
+Next to Accept, an item whose edit is the same in other versions has **Accept in all versions**. It accepts the item here and the identical edit (same element,
+same text before and after) in the other versions that have not decided it yet, and says how many: "Accepted here and in 2 other versions". Edits that differ
+stay for you to decide in their own version. Applying a variant's proposal does not mark the source revision as reviewed; only the base proposal does.
+
+**Certificates name the variant.** Each variant course has its own certificate template (its title already carries the variant), a template can print the variant with
+`@VarCourseVariant`, and the public verification record of a certificate shows it.
+
 ### What is not built yet
 
-- **Learners choosing a variant.** A variant course is hidden from the catalogue and reachable by an administrator (or by enrolling learners in it by hand).
-  The picker on the course page, the optional placement check, assignment by an admin or an enrolment rule, the adaptive hint to switch, and carrying completed
-  lessons over when a learner switches are planned.
-- **One purchase, all variants.** A variant has no product of its own: the plan is one entitlement for the family. Until then a paid base course sells the base only.
-- **Living Course for variants.** When a source changes, Living Course still proposes the update for the base course only. Proposing the matching patch for every variant
-  that inherits the changed element, rebasing a variant on a newer base, and certificates that name the variant are planned.
+- **Rebasing a variant on a newer base**, and improvements from learner insights for a variant (they propose for the base course).
 - **Chat edits on a variant.** The element chat edits the base course.
 
 ## Decisions behind it
@@ -152,5 +195,5 @@ The endpoints are in the [Course Builder API](/developers/course-builder-api/) (
 The plan's open questions were settled with the recommended defaults. A variant is its own LMS course, so progress, completion, quizzes,
 H5P and SCORM work exactly as in any course. The cap is 6 variants per course and the operator can change it. The base course is itself
 an audience learners can pick. Mandatory training will accept any variant unless an administrator pins one, and a learner may change
-a variant an administrator assigned unless the course locks it; both belong to the learner-routing milestone. The decision record is ADR 0192
+a variant an administrator assigned unless the course locks it; both are built with the routing endpoints. The decision record is ADR 0192
 and the full list is section 18 of the plan.

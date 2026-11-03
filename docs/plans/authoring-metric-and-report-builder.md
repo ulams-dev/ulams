@@ -298,7 +298,11 @@ interface ReportDataset {
 0142) when it exists. Datasets in v1: `assignments`, `certificates`, `audit` (moved unchanged from
 `ComplianceReportService`, which becomes a thin wrapper so existing routes and CLI commands do not change),
 `authoring` (from `authoring_course_metrics`), `ai_usage` (`ai_calls` per day, task, model, subject type; no prompt
-text). Planned by P6R-3: `course_health` (aggregates only). Later candidates (open question Q9): `enrolments`
+text). Built in RB-1 with three additions to the interface: `description()` (for the picker), `aggregateOnly()` and `available()` (false when
+an optional package's tables are missing). The datasets are registered by the package that owns the data (`compliance`,
+`authoring-metrics`); `ai_usage` ships in `reporting` and needs the new permission `reporting_ai_usage` (admin), because no
+existing permission covers AI spend. The authoring dataset exposes cost as `cost_*_usd` decimals, not micro USD.
+Planned by P6R-3: `course_health` (aggregates only). Later candidates (open question Q9): `enrolments`
 (course access and progress), `quiz_results` (GIFT attempts).
 
 ### 6.7 Report definitions, query compiler, privacy (RB-2)

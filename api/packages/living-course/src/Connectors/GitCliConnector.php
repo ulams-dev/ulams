@@ -12,6 +12,7 @@ use Ulams\CourseBuilder\Ingestion\SourceIngestor;
 use Ulams\LivingCourse\Connectors\Git\FileLimits;
 use Ulams\LivingCourse\Connectors\Git\GitRunner;
 use Ulams\LivingCourse\Connectors\Git\PathFilter;
+use Ulams\LivingCourse\Connectors\Git\PushChange;
 use Ulams\LivingCourse\Models\Connection;
 use Ulams\LivingCourse\Models\Revision;
 use Ulams\LivingCourse\Services\RevisionService;
@@ -167,7 +168,9 @@ final class GitCliConnector implements SourceConnector
         }
         $id = $request->header('X-Ulams-Delivery') ?? (is_array($payload) ? ($payload['after'] ?? null) : null) ?? hash('sha256', $body);
 
-        return new WebhookDelivery(mb_substr((string) $id, 0, 100));
+        $change = is_array($payload) ? PushChange::fromPayload($payload, ['host' => 'generic', 'base_url' => '', 'repository' => '']) : null;
+
+        return new WebhookDelivery(mb_substr((string) $id, 0, 100), 'push', $change);
     }
 
     /* ------------------------------------------------------------------ git */

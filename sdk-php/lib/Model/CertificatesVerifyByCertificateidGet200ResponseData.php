@@ -59,12 +59,14 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $openAPITypes = [
         'certificate_id' => 'string',
         'course_title' => 'string',
+        'course_variant' => 'string',
         'expires_at' => '\DateTime',
         'holder_name' => 'string',
         'issued_at' => '\DateTime',
         'issuer' => 'string',
         'revoked_at' => '\DateTime',
         'status' => 'string',
+        'superseded_by_policy_version' => 'int',
         'title' => 'string'
     ];
 
@@ -78,12 +80,14 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $openAPIFormats = [
         'certificate_id' => null,
         'course_title' => null,
+        'course_variant' => null,
         'expires_at' => 'date-time',
         'holder_name' => null,
         'issued_at' => 'date-time',
         'issuer' => null,
         'revoked_at' => 'date-time',
         'status' => null,
+        'superseded_by_policy_version' => null,
         'title' => null
     ];
 
@@ -95,12 +99,14 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static array $openAPINullables = [
         'certificate_id' => false,
         'course_title' => true,
+        'course_variant' => true,
         'expires_at' => true,
         'holder_name' => true,
         'issued_at' => false,
         'issuer' => false,
         'revoked_at' => true,
         'status' => false,
+        'superseded_by_policy_version' => true,
         'title' => false
     ];
 
@@ -192,12 +198,14 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $attributeMap = [
         'certificate_id' => 'certificate_id',
         'course_title' => 'course_title',
+        'course_variant' => 'course_variant',
         'expires_at' => 'expires_at',
         'holder_name' => 'holder_name',
         'issued_at' => 'issued_at',
         'issuer' => 'issuer',
         'revoked_at' => 'revoked_at',
         'status' => 'status',
+        'superseded_by_policy_version' => 'superseded_by_policy_version',
         'title' => 'title'
     ];
 
@@ -209,12 +217,14 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $setters = [
         'certificate_id' => 'setCertificateId',
         'course_title' => 'setCourseTitle',
+        'course_variant' => 'setCourseVariant',
         'expires_at' => 'setExpiresAt',
         'holder_name' => 'setHolderName',
         'issued_at' => 'setIssuedAt',
         'issuer' => 'setIssuer',
         'revoked_at' => 'setRevokedAt',
         'status' => 'setStatus',
+        'superseded_by_policy_version' => 'setSupersededByPolicyVersion',
         'title' => 'setTitle'
     ];
 
@@ -226,12 +236,14 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $getters = [
         'certificate_id' => 'getCertificateId',
         'course_title' => 'getCourseTitle',
+        'course_variant' => 'getCourseVariant',
         'expires_at' => 'getExpiresAt',
         'holder_name' => 'getHolderName',
         'issued_at' => 'getIssuedAt',
         'issuer' => 'getIssuer',
         'revoked_at' => 'getRevokedAt',
         'status' => 'getStatus',
+        'superseded_by_policy_version' => 'getSupersededByPolicyVersion',
         'title' => 'getTitle'
     ];
 
@@ -311,12 +323,14 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     {
         $this->setIfExists('certificate_id', $data ?? [], null);
         $this->setIfExists('course_title', $data ?? [], null);
+        $this->setIfExists('course_variant', $data ?? [], null);
         $this->setIfExists('expires_at', $data ?? [], null);
         $this->setIfExists('holder_name', $data ?? [], null);
         $this->setIfExists('issued_at', $data ?? [], null);
         $this->setIfExists('issuer', $data ?? [], null);
         $this->setIfExists('revoked_at', $data ?? [], null);
         $this->setIfExists('status', $data ?? [], null);
+        $this->setIfExists('superseded_by_policy_version', $data ?? [], null);
         $this->setIfExists('title', $data ?? [], null);
     }
 
@@ -428,6 +442,40 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
             }
         }
         $this->container['course_title'] = $course_title;
+
+        return $this;
+    }
+
+    /**
+     * Gets course_variant
+     *
+     * @return string|null
+     */
+    public function getCourseVariant()
+    {
+        return $this->container['course_variant'];
+    }
+
+    /**
+     * Sets course_variant
+     *
+     * @param string|null $course_variant The variant of the course the holder completed (for example Expert), null for a course without variants
+     *
+     * @return self
+     */
+    public function setCourseVariant($course_variant)
+    {
+        if (is_null($course_variant)) {
+            array_push($this->openAPINullablesSetToNull, 'course_variant');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('course_variant', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['course_variant'] = $course_variant;
 
         return $this;
     }
@@ -621,6 +669,40 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
             );
         }
         $this->container['status'] = $status;
+
+        return $this;
+    }
+
+    /**
+     * Gets superseded_by_policy_version
+     *
+     * @return int|null
+     */
+    public function getSupersededByPolicyVersion()
+    {
+        return $this->container['superseded_by_policy_version'];
+    }
+
+    /**
+     * Sets superseded_by_policy_version
+     *
+     * @param int|null $superseded_by_policy_version the policy version that replaced what the certificate certified, when it was revoked for that reason
+     *
+     * @return self
+     */
+    public function setSupersededByPolicyVersion($superseded_by_policy_version)
+    {
+        if (is_null($superseded_by_policy_version)) {
+            array_push($this->openAPINullablesSetToNull, 'superseded_by_policy_version');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('superseded_by_policy_version', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['superseded_by_policy_version'] = $superseded_by_policy_version;
 
         return $this;
     }

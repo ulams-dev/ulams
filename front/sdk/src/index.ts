@@ -15,3 +15,4 @@ export * from "./tutor.ts";
 export * from "./rest.ts";
 export * from "./compliance.ts";
 export * from "./certificates.ts";
+export * from "./policies.ts";

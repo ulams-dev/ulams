@@ -77,7 +77,7 @@ final class StalenessService
         $pending = (clone $open)->count();
         $since = (clone $open)->min('since');
         // an improvement from learner insights is not a source change: it does not make the course stale
-        $proposal = Proposal::query()->where('session_id', $session->id)->where('kind', Proposal::KIND_SOURCE)->whereIn('status', Proposal::OPEN)->latest('created_at')->first();
+        $proposal = Proposal::query()->where('session_id', $session->id)->where('kind', Proposal::KIND_SOURCE)->whereNull('variant_id')->whereIn('status', Proposal::OPEN)->latest('created_at')->first();
         $dismissed = ElementStatus::query()->where('session_id', $session->id)->where('status', 'dismissed')->exists();
         $synced = $connections->map(fn (Connection $c) => $c->synced_revision_id ? Revision::query()->find($c->synced_revision_id) : null)->filter()->max('number');
         $latest = $connections->map(fn (Connection $c) => $c->latest_revision_id ? Revision::query()->find($c->latest_revision_id) : null)->filter()->max('number');
