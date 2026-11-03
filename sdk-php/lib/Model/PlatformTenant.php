@@ -68,7 +68,7 @@ class PlatformTenant implements ModelInterface, ArrayAccess, \JsonSerializable
         'steps' => 'object',
         'theme' => 'string',
         'updated_at' => '\DateTime',
-        'urls' => '\Ulams\Sdk\Model\PlatformTenantUrls'
+        'urls' => '\Ulams\Sdk\Model\PlatformTenantsBySlugTokenPost200ResponseDataUrls'
     ];
 
     /**
@@ -723,7 +723,7 @@ class PlatformTenant implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets urls
      *
-     * @return \Ulams\Sdk\Model\PlatformTenantUrls|null
+     * @return \Ulams\Sdk\Model\PlatformTenantsBySlugTokenPost200ResponseDataUrls|null
      */
     public function getUrls()
     {
@@ -733,7 +733,7 @@ class PlatformTenant implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets urls
      *
-     * @param \Ulams\Sdk\Model\PlatformTenantUrls|null $urls urls
+     * @param \Ulams\Sdk\Model\PlatformTenantsBySlugTokenPost200ResponseDataUrls|null $urls urls
      *
      * @return self
      */

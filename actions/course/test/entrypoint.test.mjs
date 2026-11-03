@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { changeContext, cliCommand, COMMENT_MARKER, parseInputs, previewComment, run, SYNC_BRANCH, syncBody, ulamsArgs } from "../entrypoint.mjs";
+import { changeContext, cliCommand, COMMENT_MARKER, parseInputs, previewComment, previewTarget, run, SYNC_BRANCH, syncBody, ulamsArgs } from "../entrypoint.mjs";
 
 const base = { INPUT_COMMAND: "validate", INPUT_PATH: "course", INPUT_CLI_VERSION: "cli-v1", GITHUB_WORKSPACE: "/ws", GITHUB_REPOSITORY: "acme/course", GITHUB_SHA: "abc1234def", RUNNER_TEMP: "/tmp/r", GITHUB_STEP_SUMMARY: "/tmp/r/summary.md", ULAMS_URL: "https://coffee.example", ULAMS_TOKEN: "tok-secret" };
 
@@ -174,4 +174,64 @@ test("the sync pull request body says it is safe to merge", () => {
   assert.match(body, /version 6/);
   assert.match(body, /unchanged/);
   assert.match(body, /never touches `sources\/`/);
+});
+
+test("a preview academy is named after the repository and the pull request, within the slug rules", () => {
+  const a = previewTarget("Acme/Course", 7);
+  assert.match(a.slug, /^pr[0-9a-f]{6}7$/);
+  assert.equal(a.group, "acme-course");
+  assert.deepEqual(previewTarget("acme/course", 7), a, "the same repository and number always give the same academy");
+  assert.notEqual(previewTarget("acme/other", 7).slug, a.slug);
+  assert.notEqual(previewTarget("acme/course", 8).slug, a.slug);
+  assert.ok(previewTarget("a/b", 123456789).slug.length <= 30);
+  assert.match(previewTarget("a/b", 12).slug, /^[a-z][a-z0-9]{1,29}$/);
+});
+
+const preview = { ULAMS_PREVIEW_URL: "https://platform.example", ULAMS_PREVIEW_TOKEN: "platform-secret" };
+const prEvent = { pull_request: { number: 7, title: "Fix the install step", html_url: "https://github.com/acme/course/pull/7", head: { sha: "feedbeef" } } };
+
+test("with a preview platform the pull request gets its own academy and a comment that links it", () => {
+  const out = { ok: true, data: { tenant: "x", created: true, versionNumber: 2, expiresAt: "2026-10-30T10:00:00+00:00", urls: { front: "https://x.app.example", admin: "https://x.admin.example" } } };
+  const h = harness({ INPUT_COMMAND: "preview", ...preview }, prEvent, { docker: { stdout: JSON.stringify(out) } });
+
+  const r = run(h.io);
+
+  const { slug, group } = previewTarget("acme/course", 7);
+  const args = h.calls[0].args;
+  assert.deepEqual(args.slice(args.indexOf("course")).slice(0, 2), ["course", "preview"]);
+  assert.deepEqual([args[args.indexOf("--tenant") + 1], args[args.indexOf("--group") + 1]], [slug, group]);
+  assert.equal(h.calls[0].env.ULAMS_PREVIEW_TOKEN, "platform-secret");
+  assert.ok(!JSON.stringify(h.calls.map((c) => c.args)).includes("platform-secret"), "the platform token is passed by name only");
+  assert.ok(args.includes("ULAMS_PREVIEW_TOKEN") && !args.includes("ULAMS_PREVIEW_TOKEN=platform-secret"));
+  assert.match(r.outputs["comment-body"], /preview academy created/);
+  assert.match(r.outputs["comment-body"], /https:\/\/x\.app\.example/);
+  assert.match(r.outputs["comment-body"], /citations are dropped/);
+});
+
+test("without a preview platform, or outside a pull request, preview falls back to a proposed version", () => {
+  const out = JSON.stringify({ ok: true, data: { pushed: true, version: { id: "01v", number: 3 }, counts: {}, changes: [] } });
+  const noPlatform = harness({ INPUT_COMMAND: "preview" }, prEvent, { docker: { stdout: out } });
+  run(noPlatform.io);
+  assert.ok(noPlatform.calls[0].args.includes("push") && !noPlatform.calls[0].args.includes("--tenant"));
+  const noPr = harness({ INPUT_COMMAND: "preview", ...preview }, { head_commit: { message: "x" } }, { docker: { stdout: out } });
+  run(noPr.io);
+  assert.ok(noPr.calls[0].args.includes("push") && !noPr.calls[0].args.includes("--tenant"));
+});
+
+test("closing the pull request deletes its preview academy through the platform, and a missing one is fine", () => {
+  const { slug } = previewTarget("acme/course", 7);
+  const gone = harness({ INPUT_COMMAND: "preview-cleanup", ...preview }, prEvent, { docker: { status: 0, stdout: "{}" } });
+  const r = run(gone.io);
+  const args = gone.calls[0].args;
+  assert.deepEqual(args.slice(args.indexOf("tenants")), ["tenants", "delete", slug, "--yes", "--json"]);
+  assert.deepEqual([gone.calls[0].env.ULAMS_URL, gone.calls[0].env.ULAMS_TOKEN], ["https://platform.example", "platform-secret"]);
+  assert.equal(r.exitCode, 0);
+
+  const missing = harness({ INPUT_COMMAND: "preview-cleanup", ...preview }, prEvent, { docker: { status: 5, stdout: "{}" } });
+  assert.equal(run(missing.io).exitCode, 0);
+  const failed = harness({ INPUT_COMMAND: "preview-cleanup", ...preview }, prEvent, { docker: { status: 9, stdout: "{}" } });
+  assert.equal(run(failed.io).exitCode, 9);
+  const none = harness({ INPUT_COMMAND: "preview-cleanup" }, prEvent, {});
+  assert.equal(run(none.io).exitCode, 0);
+  assert.equal(none.calls.length, 0);
 });

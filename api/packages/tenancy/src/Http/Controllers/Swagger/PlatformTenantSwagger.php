@@ -62,10 +62,12 @@ interface PlatformTenantSwagger
      *         @OA\Property(property="demo", type="boolean"),
      *         @OA\Property(property="template", type="string", description="A tenant template: its theme, accent, demo flag and settings are the starting point; the fields above win"),
      *         @OA\Property(property="derived_from", type="string", description="The tenant this one is created for (a department academy); needs purpose and reference, counts against its quota and is recorded"),
-     *         @OA\Property(property="purpose", type="string", example="policy_department"), @OA\Property(property="reference", type="string", description="Asking again with the same reference finds the same tenant"))),
+     *         @OA\Property(property="purpose", type="string", example="policy_department"), @OA\Property(property="reference", type="string", description="Asking again with the same reference finds the same tenant"),
+     *         @OA\Property(property="ttl_days", type="integer", minimum=1, maximum=30, description="A throwaway tenant (a preview academy): deleted by ulams:tenant:reap after this many days"),
+     *         @OA\Property(property="group", type="string", description="Required with ttl_days: the repository the preview belongs to; at most TENANCY_PREVIEW_CAP (5) live previews per group"))),
      *     @OA\Response(response=202, description="Queued", @OA\JsonContent(@OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
      *         @OA\Property(property="data", type="object", @OA\Property(property="operation", ref="#/components/schemas/PlatformOperation"), @OA\Property(property="tenant", ref="#/components/schemas/PlatformTenant")))),
-     *     @OA\Response(response=409, description="The tenant exists, an operation for it is in progress, or the parent's quota or the reference's tenant forbids it"),
+     *     @OA\Response(response=409, description="The tenant exists, an operation for it is in progress, the parent's quota or the reference's tenant forbids it, or the preview limit of the group is reached (code preview_limit)"),
      *     @OA\Response(response=422, description="Invalid slug or option, or an unknown template"))
      */
     public function store(CreatePlatformTenantRequest $request): JsonResponse;
@@ -81,6 +83,17 @@ interface PlatformTenantSwagger
      *     @OA\Response(response=422, description="A key outside the allow-list"))
      */
     public function env(SetPlatformTenantEnvRequest $request, string $slug): JsonResponse;
+
+    /**
+     * @OA\Post(path="/api/platform/tenants/{slug}/token", operationId="platform.tenants.by-slug.token.post", summary="A one-day administrator token (builder:read, builder:write) for a preview academy", tags={"Platform"}, security={{"passport": {}}},
+     *     @OA\Parameter(name="slug", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="The token (shown once), its expiry, scopes and the tenant's addresses", @OA\JsonContent(@OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
+     *         @OA\Property(property="data", type="object", @OA\Property(property="token", type="string"), @OA\Property(property="expires_at", type="string", nullable=true), @OA\Property(property="scopes", type="array", @OA\Items(type="string")),
+     *             @OA\Property(property="urls", type="object", @OA\Property(property="api", type="string"), @OA\Property(property="front", type="string"), @OA\Property(property="admin", type="string"))))),
+     *     @OA\Response(response=404, description="Unknown tenant, or the platform API is off"),
+     *     @OA\Response(response=409, description="Not a preview academy, or it is not active"))
+     */
+    public function token(ListPlatformRequest $request, string $slug): JsonResponse;
 
     /**
      * @OA\Delete(path="/api/platform/tenants/{slug}", operationId="platform.tenants.by-slug.delete", summary="Delete a tenant and all its data (queued; send the slug as confirm)", tags={"Platform"}, security={{"passport": {}}},

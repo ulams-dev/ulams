@@ -44,6 +44,7 @@ approve only when the tenant allows it. The rules are in the
 | `course status` | One request plus the folder: local edits since the base, whether the server moved on (*behind*), a proposal waiting for approval, whether the current version is applied, drift (elements edited in the LMS since the last apply), open conflicts, and the next command to run. Always exits 0. |
 | `course diff` | Folder against its base: elements added, changed or removed, **offline**. `--remote` compares with the server's current version, field by field (what a push would change). `--version <id>` shows what a version on the server changes against its parent (or `--against <id>`). `--exit-code` exits 13 when there are differences. `--from <id> --to <id>` compares any two versions or releases instead (see `course compare` below). |
 | `course push [--message] [--approve] [--apply] [--allow-pending]` | Validates the folder, sends it as a proposed version based on the base, prints the diff. `--approve` approves it; `--apply` approves and applies it and waits for the apply (`--no-wait` returns at once with the run handle). A folder equal to its base sends nothing. While an open Living Course update proposal changes the same elements the push stops with `SYNC_CONFLICT` (`PROPOSAL_PENDING`); `--allow-pending` stores the push anyway. |
+| `course preview [dir] [--tenant <slug>] [--ttl-days] [--group]` | Without `--tenant`, a push that never approves. With it, builds the folder into a throwaway **preview academy** (see [Preview academies](#preview-academies)). |
 | `course sources-connect [dir] [--host] [--branch] [--paths] [--token]` | Lets Living Course watch the `sources/` folder of the repository the course folder lives in (see [Git merges and Living Course](#git-merges-and-living-course)). |
 | `course apply [session] [--approve] [--version <id>]` | Applies the current version (an unpublished draft). When the folder holds a proposal nobody approved, refuses with `CONFIRMATION_REQUIRED` (exit 11) unless `--approve`. Pass a session id to run it outside a folder. |
 | `course publish [session] [--acknowledge-warnings]` | Runs the publish check and publishes. Blocking items stop it (exit 6, `error.details.blocking`); warnings stop it until you pass `--acknowledge-warnings` (exit 11, `error.details.warnings`). The course must be applied first. |
@@ -185,6 +186,23 @@ ulams living connections check <connection> --commit "$GITHUB_SHA"   # records t
 The loop does not run twice: an applied update proposal is pulled into Git as a pull request; merging it pushes a document equal to the
 current version, which the server answers with `unchanged` (no version, no new proposal). A sync pull request never touches `sources/`.
 
+### Preview academies
+
+`ulams course preview --tenant pr7acme --group acme-course` builds the course folder into a throwaway academy and prints where to look. It
+needs a **preview platform**, any ulams install with `TENANCY_PLATFORM_API=true` ([platform API](/operators/platform-api/#preview-academies)),
+and two settings: `ULAMS_PREVIEW_URL` (its API address) and `ULAMS_PREVIEW_TOKEN` (a `platform:write` token). The command
+
+1. creates the tenant when it does not exist (`--ttl-days`, default 7; `--group` counts it against the 5 previews per repository, default the
+   GitHub repository name) and waits for it, or finds it, refusing any tenant that is not a throwaway preview (exit 4);
+2. takes a one-day administrator token for it (never printed);
+3. creates the course there (`POST courses` with a key, so a second run finds the same course), imports the folder, approves it and applies it;
+4. prints the learner view, the studio and the expiry. A second run with the same `--tenant` updates the same preview, and an unchanged folder
+   pushes nothing.
+
+A preview academy has no sources, so the citations are dropped and every element reads as written by the author; the folder and your real
+academy are never touched. Without `--tenant` the command is the fallback that works on a single academy: it proposes the folder as a version
+(never approving) and you review it in the studio.
+
 ### GitHub Action and Docker image
 
 `ulams course init --ci github` also writes `.github/workflows/ulams.yml` at the root of the repository around the folder (it refuses to
@@ -194,7 +212,8 @@ Set the repository secrets `ULAMS_URL` and `ULAMS_TOKEN` (a `ci` token).
 
 | Trigger | What the workflow does |
 |---|---|
-| Pull request | `validate` (SARIF for code scanning, so issues show inline), `diff` against the server in the job summary, `preview`: proposes the folder as a version (never approves) and keeps **one** pull request comment up to date. A fork has no secrets, so only `validate` runs |
+| Pull request | `validate` (SARIF for code scanning, so issues show inline), `diff` against the server in the job summary, `preview`: with the secrets `ULAMS_PREVIEW_URL` and `ULAMS_PREVIEW_TOKEN` it builds a [preview academy](#preview-academies) named after the pull request (`pr`, six hex characters of the repository, the number), otherwise it proposes the folder as a version (never approving); **one** pull request comment is kept up to date either way. A fork has no secrets, so only `validate` runs |
+| Pull request closed | `preview-cleanup`: deletes the preview academy of the pull request (a missing one is fine; the reaper deletes it after its time anyway) |
 | Push to the default branch | `push`: proposes the merged course as a version; add `apply: true` only when the academy lets `ci` tokens approve (`course_as_code.ci_may_approve`), otherwise a person approves it in the studio |
 | Hourly, manual, `repository_dispatch` `ulams-course-changed` | `pull-pr`: `course pull`; when files changed, opens or updates the pull request `ulams/sync` (never stages `sources/`). A conflict fails the job with the conflict list |
 
@@ -317,6 +336,6 @@ ulams course fmt && git add -A courses/
 
 ## Not there yet
 
-Adopting a course that was not made with the builder, downloading assets (`pull --assets`), SCORM, video and file lessons, preview
-academies are later milestones of the
+Adopting a course that was not made with the builder, downloading assets (`pull --assets`), and SCORM, video and file lessons are later
+milestones of the
 [course-as-code plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-7-course-as-code.md).
