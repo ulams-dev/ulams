@@ -38,7 +38,9 @@ return [
         'stack' => [
             'driver' => 'stack',
             'channels' => ['daily'],
-            'ignore_exceptions' => false,
+            // A log file the web process cannot open (the day's file created by a worker or an `artisan` command
+            // running as root) must not turn every request that logs into an unlogged HTTP 500 (#495).
+            'ignore_exceptions' => true,
         ],
 
         'single' => [

@@ -15,6 +15,59 @@ import { Aside, Steps } from "@astrojs/starlight/components";
 Tenancy in ulams is **one database, one bucket and one key pair per tenant**, plus a registry in
 the platform database. A complete backup covers all of them.
 
+## Stacks started with `ulams stack up`
+
+An install made by the CLI ([one-command Docker and Kubernetes](/operators/one-command-stack/))
+is backed up and restored with two commands. Both work on Docker and Kubernetes installs, and both
+take the install's lock, so they never run alongside `stack up` or `stack down`.
+
+```bash
+# Back up: a new directory under ./ulams-stack/backups
+ULAMS_BACKUP_PASSPHRASE="$(cat ~/.ulams-backup-pass)" ulams stack backup --directory ./ulams-stack
+
+# Also copy it off the machine with your rclone configuration
+ulams stack backup --directory ./ulams-stack --passphrase-file ~/.ulams-backup-pass --remote offsite:ulams-backups
+
+# Restore into the same install (replaces its data)
+ulams stack restore ./ulams-stack/backups/ulams-ulams-20261023T020000Z --directory ./ulams-stack --yes
+
+# Rebuild the install on a new machine, into an empty directory
+ulams stack restore --remote offsite:ulams-backups/ulams-ulams-20261023T020000Z \
+  --directory ./ulams-stack --restore-secrets --passphrase-file ~/.ulams-backup-pass --yes
+```
+
+One backup is a directory:
+
+| File | Contents |
+|---|---|
+| `manifest.json` | Format, the install's id, name and target, the image release, the databases and buckets, the size and SHA-256 of every file |
+| `globals.sql` | PostgreSQL roles, one per tenant, with their password hashes |
+| `db-<name>.dump` | `pg_dump -Fc` of the platform database and of every tenant database |
+| `buckets.tar.gz` | Every `ulams*` bucket of the bundled object store, copied with rclone |
+| `api-storage.tar.gz`, `h5p-libraries.tar.gz` | The API storage volume (without logs and the H5P service config, which is rebuilt) and the installed H5P libraries |
+| `install.json.enc` | `stack.json` and `credentials.json`, encrypted with the passphrase. Only written when a passphrase is given |
+
+`install.json.enc` uses the same format as the VPS scripts, so you can open it without the CLI:
+`openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in install.json.enc`. Without a passphrase the
+backup restores only into the install directory it came from, because the credentials stay there.
+Keep the passphrase in a password manager. Without it a backup cannot rebuild the install on
+another machine.
+
+`stack restore` checks every file against the manifest before it changes anything. It refuses a backup
+from a newer release or another installation. It then stops the application, replaces the roles,
+every database, the bucket contents and the volumes, and starts everything again. Last, it
+re-applies the bucket policies (`ulams:tenant:ensure-buckets`) and gives every tenant a new storage
+key (`ulams:tenant:sync-env --rotate-storage-keys`), because a restored object store has no tenant
+identities. Then it runs `ulams:upgrade`. To restore an older backup into a newer release, the release runs
+first and `ulams:upgrade` brings the restored data forward. To restore into an older release, run
+`ulams stack up --image-tag <the backup's release>` first.
+
+The nightly `Nightly operations` workflow runs this on a real stack: a backup, `stack down --purge`,
+which deletes every volume, and a restore. It then checks that the courses, media, H5P content and
+learner progress came back.
+
+The rest of this page covers installs you operate yourself with Compose or Kubernetes.
+
 ## What to back up
 
 | Item | Where (example) | Why it matters |
