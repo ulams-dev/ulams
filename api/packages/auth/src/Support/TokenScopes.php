@@ -15,7 +15,7 @@ final class TokenScopes
 {
     public const AREAS = [
         'courses', 'users', 'enrolments', 'settings', 'events', 'certificates', 'commerce',
-        'reports', 'lti', 'builder', 'living-course', 'learner', 'tokens', 'webhooks', 'platform', 'identity',
+        'reports', 'lti', 'builder', 'living-course', 'learner', 'tokens', 'webhooks', 'platform', 'identity', 'scim',
     ];
 
     /** @var array<string,list<string>> */

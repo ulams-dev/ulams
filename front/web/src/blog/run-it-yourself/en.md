@@ -13,6 +13,6 @@ ulams stack up
 What's real: the local trial uses simulated AI responses, so you pay for no model calls. Real generation needs a provider configured. Production also needs domains, HTTPS and services — there's a separate guide for that.
 
 Guide:
-[/operators/one-command-stack/](/operators/one-command-stack/)
+[/operators/one-command-stack/](https://ulams-dev.github.io/ulams/operators/one-command-stack/)
 
 If you run it — let me know how it went. Every reported issue is a gift to me 🎁

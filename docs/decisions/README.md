@@ -126,6 +126,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0130](0130-entitlements-are-the-access-source-of-truth.md) | Entitlements are the access source of truth, fed by verified Sylius order events | Accepted (2026-10-22, owner-approved defaults of the Phase 6.4 plan) |
 | [0131](0131-sylius-service-and-bridge-bundle.md) | One Sylius 2.3 service with a channel per tenant and a ulams bridge bundle | Proposed |
 | [0132](0132-commerce-identity-lms-issued-shop-tokens.md) | Single login for commerce: LMS-issued shop tokens trusted by Sylius | Proposed |
+| [0133](0133-catalogue-sync-and-the-sylius-adapter.md) | The LMS owns prices and intent; the Sylius adapter mirrors them and reads orders back | Proposed |
 | [0140](0140-policy-lifecycle-package.md) | Policy lifecycle as a package orchestrating Living Course, Course Builder and compliance | Accepted |
 | [0141](0141-department-academies-as-host-aliases.md) | Department academies as branded host aliases inside one tenant | Proposed |
 | [0142](0142-scoped-admins-by-group.md) | Scoped admins for partner and customer portals, scoped by group | Proposed |
@@ -147,5 +148,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0195](0195-academy-entry-points-as-front-hosts.md) | Academy entry points: branded front hosts that target a department, a course or a role inside one tenant | Proposed |
 | [0196](0196-style-profile-shapes-generated-course-design.md) | A cited, author-approved style profile shapes the theme and the generated course design | Proposed |
 | [0197](0197-scorm-playback-regression-harness.md) | SCORM playback is pinned by a browser regression harness with original fixture packages and golden runtime traces | Proposed |
+| [0198](0198-scim-server-visibility-adoption-and-deprovisioning.md) | SCIM server: visibility per provider, adoption by trust, tombstones and content-hash ETags | Proposed |
+| [0199](0199-scim-groups-managed-membership-and-roles-from-groups.md) | SCIM groups: managed groups, provider-visible members and roles from group names | Proposed |
 
 <!-- END GENERATED: adr-index -->

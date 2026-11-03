@@ -66,6 +66,8 @@ class FamilyAccessTest extends TestCase
 
     public function testTheDerivedEntitlementFollowsTheEndDateOfTheOrder(): void
     {
+        // the dates are compared to the second: a clock that ticks over between two now() calls must not fail the test
+        $this->freezeTime();
         ['group' => $group, 'default' => $default, 'variants' => $variants] = $this->family();
         $learner = $this->student();
         $this->buy($learner, $default, now()->addDays(30)->startOfSecond());

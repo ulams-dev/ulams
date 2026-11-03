@@ -17,6 +17,7 @@ import { operationCommands } from "./operations.ts";
 import { reportingCommands } from "./reporting.ts";
 import { tenantCommands } from "./tenants.ts";
 import { stackCommands } from "./stack.ts";
+import { styleProfileCommands } from "./style-profiles.ts";
 import { topicCommands } from "./topics.ts";
 
 export const handWritten: AnyCommand[] = [
@@ -40,6 +41,7 @@ export const handWritten: AnyCommand[] = [
   ...curatedCommands,
   ...applyCommands,
   ...builderCommands,
+  ...styleProfileCommands,
   ...courseCommands,
   ...courseFolderCommands,
   ...courseSyncCommands,

@@ -46,6 +46,9 @@ COPY --from=prod-deps --chown=node:node /repo/api/pdf/node_modules ./node_module
 COPY --from=build --chown=node:node /repo/api/pdf/dist ./dist
 COPY --chown=node:node api/pdf/fonts ./fonts
 COPY --chown=node:node api/pdf/package.json api/pdf/LICENSE ./
+# The runtime never runs a package manager: drop npm (and yarn) with the dependencies bundled in the base image,
+# whose advisories (brace-expansion, picomatch, ...) the base image does not fix yet. Nothing here needs them.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /opt/yarn-v* /usr/local/bin/yarn /usr/local/bin/yarnpkg
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
