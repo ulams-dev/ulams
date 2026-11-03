@@ -23,6 +23,12 @@ final class FakeSylius
     /** @var list<array<string,mixed>> */
     public array $feed = [];
     public bool $channelExists = true;
+    /** @var array<string,array<string,array<string,mixed>>> generic collections (currencies, zones, tax-rates, payment-methods ...) by code */
+    public array $resources = ['tax-categories' => ['e-service' => ['code' => 'e-service']]];
+    /** @var array<string,array<string,mixed>> channels made through the API, by code */
+    public array $channelsStore = [];
+    /** @var array<string,array<string,mixed>> channel links (the bridge), by channel code */
+    public array $links = [];
     public string $currency = 'EUR';
     public bool $down = false;
     public int $tokenRequests = 0;
@@ -59,11 +65,24 @@ final class FakeSylius
         $admin = '/api/v2/admin';
         $rel = substr($path, strlen($admin));
 
-        if ($rel === '/channels/acme') {
-            return $this->channelExists ? Http::response(['baseCurrency' => "{$admin}/currencies/{$this->currency}", 'defaultLocale' => "{$admin}/locales/en_US"]) : Http::response([], 404);
+        if (preg_match('#^/channels/([^/]+)$#', $rel, $m)) {
+            return $this->channel($m[1], $method, $body);
         }
-        if ($rel === '/tax-categories/e-service') {
-            return Http::response(['code' => 'e-service']);
+        if ($rel === '/channels' && $method === 'POST') {
+            return $this->channel($body['code'], 'POST', $body);
+        }
+        if (preg_match('#^/ulams/channel-links/([^/]+)$#', $rel, $m) && $method === 'PUT') {
+            $this->links[$m[1]] = $body;
+
+            return Http::response(['channelCode' => $m[1], 'webhookUrl' => $body['webhookUrl']], isset($this->links[$m[1]]) ? 200 : 201);
+        }
+        foreach (['currencies', 'locales', 'countries', 'zones', 'tax-rates', 'tax-categories', 'payment-methods'] as $collection) {
+            if (preg_match('#^/' . $collection . '/([^/]+)$#', $rel, $m)) {
+                return $this->generic($collection, $m[1], $method, $body);
+            }
+            if ($rel === "/{$collection}" && $method === 'POST') {
+                return $this->generic($collection, (string) $body['code'], 'POST', $body);
+            }
         }
         if (preg_match('#^/products/([^/]+)$#', $rel, $m)) {
             return $this->resource($this->products, $m[1], $method, $body, 'product');
@@ -99,6 +118,38 @@ final class FakeSylius
         }
 
         return Http::response(['detail' => "unexpected {$method} {$path}"], 500);
+    }
+
+    private function channel(string $code, string $method, mixed $body)
+    {
+        $stored = $this->channelsStore[$code] ?? ($code === 'acme' && $this->channelExists ? ['code' => 'acme', 'baseCurrency' => "/api/v2/admin/currencies/{$this->currency}", 'defaultLocale' => '/api/v2/admin/locales/en_US'] : null);
+        if ($method === 'GET') {
+            return $stored === null ? Http::response([], 404) : Http::response($stored);
+        }
+        if ($method === 'POST') {
+            return Http::response($this->channelsStore[$code] = $body, 201);
+        }
+        if ($stored === null) {
+            return Http::response([], 404);
+        }
+
+        return Http::response($this->channelsStore[$code] = $body + $stored);
+    }
+
+    private function generic(string $collection, string $code, string $method, mixed $body)
+    {
+        $stored = $this->resources[$collection][$code] ?? null;
+        if ($method === 'GET') {
+            return $stored === null ? Http::response([], 404) : Http::response($stored);
+        }
+        if ($method === 'POST') {
+            return Http::response($this->resources[$collection][$code] = $body, 201);
+        }
+        if ($stored === null) {
+            return Http::response([], 404);
+        }
+
+        return Http::response($this->resources[$collection][$code] = $body + $stored);
     }
 
     /** @param array<string,array<string,mixed>> $store */

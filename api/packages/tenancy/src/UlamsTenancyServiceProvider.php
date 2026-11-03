@@ -7,6 +7,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Ulams\Tenancy\Console\CommerceChannelCommand;
 use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
 use Ulams\Tenancy\Console\EnsureTenantBucketsCommand;
@@ -25,10 +26,12 @@ use Ulams\Tenancy\Observability\TenantMetrics;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
+use Ulams\Tenancy\Services\Contracts\CommerceChannelProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\StorageIdentityProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 use Ulams\Tenancy\Services\H5PServiceConfigExporter;
 use Ulams\Tenancy\Services\ManualDatabaseProvisioner;
+use Ulams\Tenancy\Services\NullCommerceChannelProvisioner;
 use Ulams\Tenancy\Services\NullStorageIdentityProvisioner;
 use Ulams\Tenancy\Services\MultidomainRegistry;
 use Ulams\Tenancy\Services\PostgresDatabaseProvisioner;
@@ -43,6 +46,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
 
     public $singletons = [
         DomainRegistryContract::class => MultidomainRegistry::class,
+        // the commerce adapter (commerce-sylius) rebinds this when a provider with channels is configured
+        CommerceChannelProvisionerContract::class => NullCommerceChannelProvisioner::class,
     ];
 
     public function register(): void
@@ -101,6 +106,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
             $this->commands([
                 CreateTenantCommand::class,
                 TemplateCommand::class,
+                CommerceChannelCommand::class,
                 ListTenantsCommand::class,
                 DeleteTenantCommand::class,
                 SyncTenantEnvCommand::class,

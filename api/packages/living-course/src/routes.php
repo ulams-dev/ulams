@@ -10,6 +10,7 @@ use Ulams\LivingCourse\Http\Controllers\ProposalsController;
 use Ulams\LivingCourse\Http\Controllers\SourcesController;
 use Ulams\LivingCourse\Http\Controllers\WebhookController;
 use Ulams\LivingCourse\Http\Controllers\StalenessController;
+use Ulams\LivingCourse\Http\Controllers\StyleProposalsController;
 
 // Authors and admins (session policy). Detection and staleness work with AI disabled; only the
 // analysis endpoints answer 503 then.
@@ -28,6 +29,7 @@ Route::group([
     Route::get('audit/export', [AuditController::class, 'exportAll']);
     Route::get('audit/verify', [AuditController::class, 'verifyAll']);
     Route::get('sessions/{session}/proposals', [ProposalsController::class, 'index']);
+    Route::post('sessions/{session}/style-proposals', [StyleProposalsController::class, 'store']);
     Route::get('proposals/{proposal}', [ProposalsController::class, 'show']);
     Route::post('proposals/{proposal}/analyse', [ProposalsController::class, 'analyse']);
     Route::post('proposals/{proposal}/items/{item}/accept', [ProposalsController::class, 'accept']);

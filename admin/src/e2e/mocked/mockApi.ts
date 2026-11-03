@@ -351,6 +351,7 @@ export async function mockApi(
     : JSON.stringify(options.template ?? SAMPLE_TEMPLATE);
   let uploads = 0;
   let logoRemovals = 0;
+  let reviewDeletes = 0;
   let nextSettingId = 500;
   const themeRows: MockSetting[] = [];
   const addThemeRow = (key: string, value: string | undefined, type = 'text') => {
@@ -382,7 +383,6 @@ export async function mockApi(
     metricRequests: [],
     reviewTimeDeletes: () => reviewDeletes,
   };
-  let reviewDeletes = 0;
   let metricFailures = options.authoring?.failFirst ? 1 : 0;
 
   let nextSaved = 1;

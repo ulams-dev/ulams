@@ -6,7 +6,9 @@ import { renderHook } from '@testing-library/react';
 
 const mockRequest = jest.fn<(...args: unknown[]) => Promise<unknown>>();
 const mockStop = jest.fn();
-const mockStart = jest.fn((..._args: unknown[]) => ({ stop: mockStop }));
+const mockStart = jest.fn<(...args: unknown[]) => { stop: typeof mockStop }>(() => ({
+  stop: mockStop,
+}));
 
 jest.mock('umi', () => ({ request: (...args: unknown[]) => mockRequest(...args) }));
 jest.mock('../../../front/web/src/studio/review-time', () => ({
