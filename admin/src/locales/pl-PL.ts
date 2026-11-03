@@ -1,3 +1,4 @@
+import authoringMetrics from './pl-PL/authoringMetrics';
 import bulkNotifications from './pl-PL/bulkNotifications';
 import codeExercises from './pl-PL/codeExercises';
 import component from './pl-PL/component';
@@ -11,6 +12,7 @@ import menu from './pl-PL/menu';
 import notifications from './pl-PL/notifications';
 import pages from './pl-PL/pages';
 import pwa from './pl-PL/pwa';
+import reportBuilder from './pl-PL/reportBuilder';
 import settingDrawer from './pl-PL/settingDrawer';
 import settings from './pl-PL/settings';
 import templates from './pl-PL/templates';
@@ -106,6 +108,7 @@ export default {
   ...settings,
   ...theme,
   ...pwa,
+  ...reportBuilder,
   ...component,
   ...pages,
   ...notifications,
@@ -116,6 +119,7 @@ export default {
   ...codeExercises,
   ...courses,
   ...insights,
+  ...authoringMetrics,
   ...events,
   ...bulkNotifications,
   branding: 'Branding',

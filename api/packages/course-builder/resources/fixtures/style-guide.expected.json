@@ -1,0 +1,11 @@
+{
+  "_comment": "What a reader finds in style-guide.md. The style eval scores the extracted profile against it, per rule.",
+  "voice": { "person": "you", "formality": 3, "sentenceLength": 20 },
+  "readingLevel": { "en": "grade-8", "pl": "B1" },
+  "terminology": ["learner", "Northwind Academy", "lesson"],
+  "banned": ["simply", "just", "obviously"],
+  "components": { "preferred": ["Callout", "WorkedExample"], "disallowed": ["FlipCards"] },
+  "imagery": { "altTextRequired": true, "decorativeAllowed": false, "noTextInImages": true },
+  "theme": { "preset": "coffee", "accent": "#1d6f5c", "fonts": ["Source Serif", "Inter"] },
+  "examples": 2
+}

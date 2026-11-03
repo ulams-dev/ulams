@@ -513,6 +513,20 @@
         access: 'reportListPermission',
         component: './Reports',
       },
+      {
+        name: 'report-builder',
+        icon: 'table',
+        path: '/analytics/report-builder',
+        access: 'reportingPermission',
+        component: './ReportBuilder',
+      },
+      {
+        name: 'authoring',
+        icon: 'experiment',
+        path: '/analytics/authoring',
+        access: 'authoringMetricsPermission',
+        component: './AuthoringMetrics',
+      },
     ],
   },
   {

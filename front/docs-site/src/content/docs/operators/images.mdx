@@ -34,6 +34,22 @@ Settings are plain environment variables, read when the container starts:
 | `admin` | every `REACT_APP_*` | `REACT_APP_TENANT_API_HOST_PATTERN`, `REACT_APP_API_URL`, `REACT_APP_STUDIO_URL`, `REACT_APP_SENTRYDSN`, `REACT_APP_YBUG` |
 | `front` | every `VITE_APP_*` | `VITE_APP_API_URL`, `VITE_APP_TENANT_API_HOST_PATTERN`, `VITE_APP_SENTRYDSN`, `VITE_APP_FIREBASE_*` |
 
+### Image service (admin)
+
+`REACT_APP_IMAGE_SERVICE` chooses how the admin builds image URLs (course cards, avatars, images inserted in the
+rich text editor):
+
+| Value | Behaviour |
+|---|---|
+| `php` (default) | The API resizer, `/api/images/img?path=...&w=...`. Nothing changes if you do not set it. |
+| `cloudflare` | `/cdn-cgi/image/...` on the admin host, with the file's public storage URL as source. Needs a Cloudflare zone with Image Transformations in front of the admin host, and the storage host in that zone (or allow-listed). A failed transformation serves the original file. Images inserted in the editor are stored as their plain public URL instead of an API resizer URL. |
+| `noop` | Originals, no resizing. Use it as a kill switch. |
+
+Files without a public URL keep using the API resizer in every mode. Optional companions:
+`REACT_APP_IMAGE_SOURCES` (comma-separated storage origins allowed as sources, in addition to the API origin) and
+`REACT_APP_IMAGE_TRANSFORM_ORIGIN` (serve transformations from another host; empty: the admin host). To go back to
+the original files, set `noop` and restart the container; no rebuild is needed. Design: ADR 0193.
+
 Documentation links in the admin panel and the front come from `ULAMS_DOCS_URL`, set as
 `REACT_APP_ULAMS_DOCS_URL` (admin) and `VITE_APP_ULAMS_DOCS_URL` (front). It defaults to
 `https://ulams-dev.github.io/ulams/` until `docs.ulams.app` serves the docs.

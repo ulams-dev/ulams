@@ -130,7 +130,12 @@ class TenantNaming
             'AWS_SECRET_ACCESS_KEY' => $storage->secret(),
         ];
 
-        return self::inheritedValues($tenant) + $storageKeys + [
+        // the tenant's sales channel and the secret its order-event webhook is signed with (ADR 0130)
+        $commerce = $tenant->commerce_channel && $tenant->commerce_webhook_secret
+            ? ['COMMERCE_CHANNEL' => $tenant->commerce_channel, 'COMMERCE_WEBHOOK_SECRET' => $tenant->commerce_webhook_secret]
+            : [];
+
+        return self::inheritedValues($tenant) + $storageKeys + $commerce + [
             'APP_NAME' => $tenant->name,
             'APP_URL' => $tenant->apiUrl(),
             'APP_KEY' => $tenant->app_key,

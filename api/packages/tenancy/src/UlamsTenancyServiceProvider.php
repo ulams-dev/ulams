@@ -7,6 +7,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Ulams\Tenancy\Console\CommerceChannelCommand;
 use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
 use Ulams\Tenancy\Console\EnsureTenantBucketsCommand;
@@ -19,16 +20,20 @@ use Ulams\Tenancy\Console\SeedTenantDemoCommand;
 use Ulams\Tenancy\Console\SetTenantEnvCommand;
 use Ulams\Tenancy\Console\RecreateViewsCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
+use Ulams\Tenancy\Console\TemplateCommand;
 use Ulams\Tenancy\Console\UpgradeCommand;
 use Ulams\Tenancy\Console\WorkOnceCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
+use Ulams\Tenancy\Observability\TenantMetrics;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
+use Ulams\Tenancy\Services\Contracts\CommerceChannelProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\StorageIdentityProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 use Ulams\Tenancy\Services\H5PServiceConfigExporter;
 use Ulams\Tenancy\Services\ManualDatabaseProvisioner;
+use Ulams\Tenancy\Services\NullCommerceChannelProvisioner;
 use Ulams\Tenancy\Services\NullStorageIdentityProvisioner;
 use Ulams\Tenancy\Services\MultidomainRegistry;
 use Ulams\Tenancy\Services\PostgresDatabaseProvisioner;
@@ -43,6 +48,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
 
     public $singletons = [
         DomainRegistryContract::class => MultidomainRegistry::class,
+        // the commerce adapter (commerce-sylius) rebinds this when a provider with channels is configured
+        CommerceChannelProvisionerContract::class => NullCommerceChannelProvisioner::class,
     ];
 
     public function register(): void
@@ -87,6 +94,9 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        if (\Ulams\Tenancy\Support\TenantContext::isPlatform()) {
+            $this->app->make(\Ulams\Core\Observability\MetricsRegistry::class)->register('tenancy', new TenantMetrics());
+        }
         RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
 
         // preview academies expire (plan 8.3); `schedule:run` also runs per tenant, so only the platform reaps
@@ -100,6 +110,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateTenantCommand::class,
+                TemplateCommand::class,
+                CommerceChannelCommand::class,
                 ListTenantsCommand::class,
                 DeleteTenantCommand::class,
                 SyncTenantEnvCommand::class,

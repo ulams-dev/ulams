@@ -29,15 +29,25 @@ and a maintainer will reach out.
 
 ## Supported versions
 
-ulams has no versioned releases yet. Security fixes land on the `main` branch and in the container
-images published from it (`ghcr.io/ulams-dev/*`, tag `latest` and `sha-<short>` tags from `main`).
-Run the latest images and update to new fixes. Older commits, branches and image tags are not
-patched. When versioned releases start, this section will list the supported release lines.
+The images, the CLI and (from the Helm chart on) the chart share one version, `vX.Y.Z`
+(semantic versioning). Each release is published as image tags `X.Y.Z` and `X.Y`, and two channels
+move with releases:
+
+- `stable`: the newest release.
+- `lts`: the newest patch of a long-term support line. One minor line a year is declared LTS (from
+  1.0 on), listed in `.github/release-channels.json`, and gets security fixes for 12 months.
+
+`latest` and `sha-<short>` keep meaning the `main` branch.
 
 | Version | Supported |
 |---|---|
+| The newest release (`stable`) | Yes |
+| LTS lines, for 12 months from their first release (`lts`) | Security fixes |
 | `main` and the `latest` images | Yes |
-| Anything older | No |
+| Older releases and image tags | No: upgrade to `stable` or the current `lts` |
+
+No release has been cut yet (the first one needs the owner's approval); until then only `main` and the
+`latest` images are supported.
 
 ## Patch policy
 

@@ -28,9 +28,10 @@ env:
     living=living-course,authoring-metrics,learner-insights,tutor,knowledge-export
     tasks-topics=tasks,topic-types,topic-type-layout,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
-    commerce=cart,commerce,entitlements,vouchers,payments,invoices,consultations,consultation-access,webinar,youtube,jitsi,assign-without-account
+    commerce=cart,commerce,commerce-sylius,entitlements,vouchers,payments,invoices,consultations,consultation-access,webinar,youtube,jitsi,assign-without-account
     platform=Integrations,auth,identity,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai,webhooks
     content=compliance,reporting,templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
+    policy=policy-lifecycle
 
 jobs:
   changes:
@@ -46,6 +47,7 @@ jobs:
       scorm: ${{ steps.filter.outputs.scorm }}
       deploy: ${{ steps.filter.outputs.deploy }}
       sdk: ${{ steps.filter.outputs.sdk }}
+      sylius: ${{ steps.filter.outputs.sylius }}
       php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
     steps:
       - uses: actions/checkout@v7
@@ -126,6 +128,10 @@ jobs:
               - "sdk-php/**"
               - "front/cli/spec/openapi.json"
               - ".github/**"
+            sylius:
+              - "api/sylius/**"
+              - "api/packages/commerce/tests/fixtures/**"
+              - ".github/**"
             deploy:
               - "deploy/**"
               - "front/docs-site/examples/**"
@@ -142,6 +148,7 @@ jobs:
               - "api/**"
               - "!api/h5p/**"
               - "!api/pdf/**"
+              - "!api/sylius/**"
 
   js:
     name: JS (admin, front, web, ui, sdk, api-h5p, api-pdf)
@@ -232,7 +239,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # about 6 min of install on a cache miss plus 9-10 min of specs
+    timeout-minutes: 25
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
@@ -342,7 +350,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.demo == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
@@ -375,7 +383,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content]
+        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content, policy]
     defaults:
       run:
         working-directory: api
@@ -668,7 +676,9 @@ jobs:
           node --test scripts/check-trivyignore.test.mjs
           node scripts/check-trivyignore.mjs
       - name: Shellcheck of the supply-chain scripts
-        run: docker run --rm -v "$PWD/.github/scripts:/mnt" koalaman/shellcheck:stable -e SC1091 /mnt/trivy.sh /mnt/supply-chain.sh /mnt/release-assets.sh /mnt/test-supply-chain.sh
+        run: docker run --rm -v "$PWD/.github/scripts:/mnt" koalaman/shellcheck:stable -e SC1091 /mnt/trivy.sh /mnt/supply-chain.sh /mnt/release-assets.sh /mnt/test-supply-chain.sh /mnt/release-channels.sh /mnt/test-release-channels.sh
+      - name: Release channel rules (stable and lts tags)
+        run: sh .github/scripts/test-release-channels.sh
       - name: Trivy database cache
         uses: actions/cache@v6
         with:
@@ -818,6 +828,31 @@ jobs:
 
   # The PHP client in sdk-php/ is generated from front/cli/spec/openapi.json (openapi-generator, pinned image):
   # regenerate and fail on any difference, then run its tests against canned answers.
+  # The headless Sylius service (api/sylius, ADR 0131): its own composer project, so its own job. Unit tests of the
+  # ulams bridge bundle only (no database); the LMS side runs against a real Sylius in the commerce-e2e job (CM-7).
+  sylius:
+    name: Sylius bridge (api/sylius)
+    needs: changes
+    if: needs.changes.outputs.sylius == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: api/sylius
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: intl, gd, pdo_pgsql, zip, bcmath, exif, sodium
+          ini-values: memory_limit=1G
+          coverage: none
+          tools: composer:v2
+      - run: composer validate --no-check-publish --strict
+      - run: composer install --no-interaction --no-progress --prefer-dist --no-scripts
+      - name: Bridge bundle tests
+        run: vendor/bin/phpunit --testsuite "Test Suite"
+
   php-sdk:
     name: PHP SDK (generated client)
     needs: changes
@@ -849,7 +884,7 @@ jobs:
 
   ci-ok:
     name: CI OK
-    needs: [changes, js, demo-content, scorm-playback, php, php-no-dev, php-sdk, images, deploy, security-scan]
+    needs: [changes, js, demo-content, scorm-playback, php, php-no-dev, php-sdk, sylius, images, deploy, security-scan]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -857,6 +892,6 @@ jobs:
       - name: Fail if any job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} scorm-playback=${{ needs.scorm-playback.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} php-sdk=${{ needs.php-sdk.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }} security-scan=${{ needs.security-scan.result }}"
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} scorm-playback=${{ needs.scorm-playback.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} php-sdk=${{ needs.php-sdk.result }} sylius=${{ needs.sylius.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }} security-scan=${{ needs.security-scan.result }}"
           exit 1
       - run: echo "All required jobs passed or were skipped by the path filters."

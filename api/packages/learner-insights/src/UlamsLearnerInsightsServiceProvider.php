@@ -60,6 +60,8 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/learner_insights.php', 'learner_insights');
         $this->app->register(UlamsCourseBuilderServiceProvider::class);
+        // the rules that say a course variant is too easy or too hard (ADR 0192); bound after the builder registered the family package
+        $this->app->bind(\Ulams\CourseVariants\Contracts\FitSignals::class, \Ulams\LearnerInsights\Variants\VariantFitSignals::class);
         // "Propose an improvement" creates Living Course proposals (ADR 0181)
         $this->app->register(UlamsLivingCourseServiceProvider::class);
         // AI tasks of this package (the profile of a task is never a model id, ADR 0013)

@@ -1,0 +1,14 @@
+---
+/** The learning elements, live, on the public product site (pl). */
+import LearningBody from "../../components/learning/LearningBody.astro";
+import Base from "../../layouts/Base.astro";
+import { learningPage } from "../../lib/learning-elements.ts";
+
+if (!Astro.locals.platform) return Astro.rewrite("/404");
+const shell = learningPage("pl", Astro.request, Astro.url);
+if (!shell) return Astro.rewrite("/404");
+---
+
+<Base theme="platform" title={shell.meta.title} description={shell.meta.description} lang={shell.meta.lang} canonical={shell.canonical} alternates={shell.alternates} ogLocale={shell.ogLocale} jsonLd={shell.jsonLd}>
+  <LearningBody shell={shell} locale="pl" />
+</Base>

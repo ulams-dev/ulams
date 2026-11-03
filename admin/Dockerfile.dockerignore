@@ -14,4 +14,6 @@ front
 !front/src/lib
 !front/ui/src/schema.ts
 !front/ui/src/theme
+!front/sdk/src/images.ts
+!front/sdk/src/images
 !front/ui/catalogue/learner-layout-manifest.json

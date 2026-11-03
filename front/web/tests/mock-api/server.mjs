@@ -14,6 +14,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { codeExerciseTopics, launchOf } from "./code-exercises.mjs";
+import { createVariantMock } from "./variants.mjs";
 
 const fixture = (name) => JSON.parse(readFileSync(fileURLToPath(new URL(`../fixtures/${name}.json`, import.meta.url)), "utf8"));
 const coffee = fixture("coffee");
@@ -434,6 +435,88 @@ const improveRoutes = [
   }],
 ];
 
+/**
+ * Update proposals of a course with a variant (ADR 0192, CV-5): one proposal for the base course and one for the variant
+ * "Expert", in one proposal group, on the Course Builder session below. Per tenant. Paragraph 1 is the same patch in both
+ * (the variant's item is marked `reusedFrom`), paragraph 2 exists only in the base proposal, paragraph 3 only in the variant's.
+ * `accept-in-group` accepts the item and, when it is still undecided there, its twin in the other proposal.
+ */
+const GROUP_SESSION = `01s${"0".repeat(22)}2`;
+const GROUP_ID = `01g${"0".repeat(22)}1`;
+const GROUP_BASE = `01p${"0".repeat(22)}2`;
+const GROUP_VARIANT = `01p${"0".repeat(22)}3`;
+const groupState = new Map();
+const groupOf = (tenant) => {
+  if (!groupState.has(tenant)) groupState.set(tenant, { [GROUP_BASE]: { 1: "pending", 2: "pending" }, [GROUP_VARIANT]: { 1: "pending", 3: "pending" } });
+  return groupState.get(tenant);
+};
+const groupItemId = (proposal, n) => `01${proposal === GROUP_BASE ? "i" : "j"}${"0".repeat(22)}${n}`;
+const groupItem = (proposal, n, status) => {
+  const shared = n === 1;
+  const text = shared ? "Use 16 g of coffee for every 250 ml." : n === 2 ? "Rinse the filter with hot water." : "Grind finer for espresso.";
+  return {
+    id: groupItemId(proposal, n), groupKey: "lesson:l1", elementId: `blk-${n}`, type: "block", label: `Lesson 1.1 › Paragraph ${n}`, kind: "update",
+    reason: shared ? "Section 3.2 changed the ratio." : "Section 4.1 changed the rinse.", severity: "minor",
+    before: { id: `blk-${n}`, kind: "paragraph", markdown: shared ? "Use 15 g of coffee for every 250 ml." : "Rinse the filter.", citations: ["frg_aaaaaaaaaaa1"] },
+    after: { id: `blk-${n}`, kind: "paragraph", markdown: text, citations: ["frg_aaaaaaaaaaa2"] },
+    changeClass: "minor", answerStatus: null, answerCheck: false, status, flags: shared && proposal === GROUP_VARIANT ? { reusedFrom: groupItemId(GROUP_BASE, 1) } : {}, regenerations: 0,
+    fragments: [{ fragmentId: "frg_aaaaaaaaaaa2", label: "§3.2 Ratios" }], changeIds: [1], decidedAt: null,
+  };
+};
+const groupItemsOf = (tenant, proposal) => Object.entries(groupOf(tenant)[proposal]).map(([n, status]) => groupItem(proposal, Number(n), status));
+const groupSummary = (tenant, proposal) => {
+  const items = groupItemsOf(tenant, proposal);
+  const decisions = {};
+  for (const i of items) decisions[i.status] = (decisions[i.status] ?? 0) + 1;
+  return {
+    id: proposal, number: proposal === GROUP_BASE ? 1 : 2, sessionId: GROUP_SESSION, sourceId: "01s000000000000000000src01", kind: "source", status: "ready", trigger: "manual",
+    variant: proposal === GROUP_BASE ? null : { id: "01v000000000000000000exp01", key: "expert", label: "Expert" }, proposalGroup: GROUP_ID,
+    counts: { items: items.length, elements: items.length, remaps: 0, uncovered: 0, major: 0, answerChecks: 0, groups: 1, source: { changed: 1, moved: 0, removed: 0, added: 0, trivial: 0, minor: 1, substantive: 0, total: 1 } }, evidence: null,
+    fromRevision: { id: "r1", number: 1 }, toRevision: { id: "r2", number: 2, detectedAt: null }, runId: null, baseVersionId: "v1", resultVersionId: null, estimatedCostMicroUsd: 120000, costMicroUsd: 98000,
+    decisions, learnerNote: null, error: null, createdAt: isoDay(0), decidedAt: null, appliedAt: null,
+  };
+};
+const groupDetail = (tenant, proposal) => {
+  const items = groupItemsOf(tenant, proposal);
+  const o = groupSummary(tenant, proposal === GROUP_BASE ? GROUP_VARIANT : GROUP_BASE);
+  return {
+    ...groupSummary(tenant, proposal),
+    siblings: [{ id: o.id, number: o.number, status: o.status, variant: o.variant, decisions: o.decisions }],
+    learnerImpact: { learners: { topic_updated: 12, question_reattempt: 0, topic_retired: 0, course_extended: 0 }, note: "Section 3.2 changed the ratio." }, steps: [],
+    groups: [{ key: "lesson:l1", label: "Lesson 1.1: Ratios", items }], items,
+  };
+};
+const groupRev = (n) => ({ id: `r${n}`, sourceId: "01s000000000000000000src01", number: n, origin: "upload", originRef: null, trigger: "manual", triggeredBy: 1, status: "ingested", fragmentCount: 3, tokens: 9, title: null, name: "brewing.md", files: null, counts: null, error: null, detectedAt: null, synced: n === 1, latest: n === 2 });
+const groupFragment = (text) => ({ fragmentId: "frg_aaaaaaaaaaa1", label: "§3.2 Ratios", section: "3.2", headingPath: ["Ratios"], file: null, text, pages: null });
+const groupRoutes = [
+  ["POST", /^\/__mock\/groups\/reset$/, ({ tenant }) => (groupState.delete(tenant), { reset: true })],
+  ["GET", new RegExp(`^/api/admin/course-builder/sessions/${GROUP_SESSION}$`), () => ({
+    session: { id: GROUP_SESSION, title: "Brewing for every level", status: "applied", courseId: 9, currentVersionId: "v1", appliedVersionId: "v1" },
+    brief: null, briefRows: [], cost: { usedMicroUsd: 0, budgetMicroUsd: 5000000, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0, calls: 0 }, sources: [],
+    aiEnabled: true, profiles: { default: "default", light: "light" }, budgetReached: false, activeRunId: null, canUndo: false, canRedo: false, links: {},
+  })],
+  ["GET", new RegExp(`^/api/admin/living-course/sessions/${GROUP_SESSION}/proposals$`), ({ tenant }) => [groupSummary(tenant, GROUP_VARIANT), groupSummary(tenant, GROUP_BASE)]],
+  ["GET", new RegExp(`^/api/admin/living-course/sessions/${GROUP_SESSION}/sources$`), () => []],
+  ["GET", /^\/api\/admin\/living-course\/revisions\/r2\/changes$/, () => ({
+    from: groupRev(1), to: groupRev(2), counts: null,
+    changes: [{ id: 1, kind: "changed", magnitude: "minor", similarity: 0.9, signals: [], wordDiff: [["=", "Use "], ["-", "15"], ["+", "16"], ["=", " g"]], old: groupFragment("Use 15 g"), new: groupFragment("Use 16 g") }],
+  })],
+  ["GET", new RegExp(`^/api/admin/living-course/proposals/(${GROUP_BASE}|${GROUP_VARIANT})$`), ({ tenant, match }) => groupDetail(tenant, match[1])],
+  ["POST", new RegExp(`^/api/admin/living-course/proposals/(${GROUP_BASE}|${GROUP_VARIANT})/items/([0-9a-z]{26})/(accept|reject|reset|accept-in-group)$`), ({ tenant, match }) => {
+    const [, proposal, itemId, action] = match;
+    const n = Number(itemId.slice(-1));
+    const state = groupOf(tenant);
+    if (!(n in state[proposal])) return { __status: 404, message: "Item not found." };
+    state[proposal][n] = { accept: "accepted", "accept-in-group": "accepted", reject: "rejected", reset: "pending" }[action];
+    const item = groupItem(proposal, n, state[proposal][n]);
+    if (action !== "accept-in-group") return { item, proposal: groupSummary(tenant, proposal) };
+    const other = proposal === GROUP_BASE ? GROUP_VARIANT : GROUP_BASE;
+    const twin = n === 1 && state[other][1] === "pending";
+    if (twin) state[other][1] = "accepted";
+    return { item, proposal: groupSummary(tenant, proposal), accepted: twin ? 1 : 0, proposals: twin ? [other] : [] };
+  }],
+];
+
 // Code exercises (ADR 0170): launches, and the attempts the lesson page reports, kept per tenant and topic
 const codeAttempts = new Map();
 const attemptsOf = (tenant, topic) => codeAttempts.get(`${tenant}:${topic}`) ?? [];
@@ -623,10 +706,316 @@ const courseVersionsRoutes = [
   ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/compare$/, ({ match, query, tenant }) => courseCompare(Number(match[1]), query, tenant)],
 ];
 
+// ---- policy lifecycle (ADR 0140): the policies of the studio. Policies: A has an approved first version and a change in
+// review (28 people, two pages), B is a draft whose second department is not ready, C is unknown, D belongs to someone
+// else, E fails its first dashboard request. Every tenant has its own decisions.
+const POLICY_A = `01pola${"0".repeat(20)}`;
+const POLICY_B = `01polb${"0".repeat(20)}`;
+const POLICY_D = `01pold${"0".repeat(20)}`;
+const POLICY_E = `01pole${"0".repeat(20)}`;
+const policyState = new Map();
+const policyFails = new Map();
+const policyOf = (tenant) => {
+  if (!policyState.has(tenant)) policyState.set(tenant, { approved: false, rejected: false, academy: null });
+  return policyState.get(tenant);
+};
+const POLICY_THEMES = ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"];
+const polSession = (n) => `01s${String(n).padStart(23, "0")}`;
+const polVariants = (stages) => stages.map((stage, i) => ({ id: `01var${i}${"0".repeat(20)}`, department: ["Engineering", "Sales"][i], groupId: 10 + i, brief: { seniority: i ? "mixed" : "senior", priorExperience: i ? "none" : "expert" }, stage, sessionId: stage === "not_started" ? null : polSession(i + 1), courseId: stage === "applied" ? 40 + i : null, pathId: null, ruleId: null, examCourseId: null, position: i }));
+const polVersion = (number, status, changeClass, over = {}) => ({ id: `01ver${number}${"0".repeat(20)}`, number, status, changeClass, summary: changeClass === "initial" ? null : "Sections 2 changed: §1.1 Approval and working hours; §2.2 Sharing and retention.", fileName: "policy.md", fileSha256: "a".repeat(64), fileSize: 4200, submittedBy: 1, approvedBy: null, approvedAt: null, effectiveAt: null, suggestedClass: null, classReason: null, rejectedBy: null, rejectReason: null, rolledOutAt: null, createdAt: "2026-10-20T09:00:00+00:00", ...over });
+const polBrief = { totalMinutes: 30, lessonMinutes: 10, language: "en", tone: "professional" };
+const polSummary = (id, title, current, pending, departments = 2) => ({ id, title, ownerUserId: 1, status: "active", minorDueDays: 14, majorDueDays: 30, brief: polBrief, currentVersion: current, latestVersion: pending ?? current ?? 1, pendingReview: pending, departments, createdAt: "2026-10-20T09:00:00+00:00" });
+const polDetail = (id, tenant) => {
+  const state = policyOf(tenant);
+  if (id === POLICY_A) {
+    const v2 = state.approved ? polVersion(2, "approved", "minor", { suggestedClass: "major", classReason: "Wording only.", approvedAt: "2026-10-22T10:00:00+00:00" }) : state.rejected ? polVersion(2, "rejected", "minor", { rejectReason: "Sent by mistake." }) : polVersion(2, "in_review", "minor");
+    return { ...polSummary(id, "Remote work and data handling", state.approved ? 2 : 1, state.approved || state.rejected ? null : 2), versions: [polVersion(1, state.approved ? "superseded" : "approved", "initial", { approvedAt: "2026-10-21T10:00:00+00:00" }), v2], variants: polVariants(["applied", "applied"]).map((v, i) => ({ ...v, academy: i === 0 ? state.academy : null })), estimate: { perVariant: [], totalMicroUsd: 0 }, academyAvailable: true, academyThemes: POLICY_THEMES };
+  }
+  if (id === POLICY_B) return { ...polSummary(id, "Acceptable use of company laptops", null, null), versions: [polVersion(1, "draft", "initial")], variants: polVariants(["applied", "outline_review"]), estimate: { perVariant: [], totalMicroUsd: 0 } };
+  if (id === POLICY_E) return { ...polSummary(id, "Visitor access", 1, null, 1), versions: [polVersion(1, "approved", "initial")], variants: polVariants(["applied"]).slice(0, 1), estimate: { perVariant: [], totalMicroUsd: 0 } };
+  return null;
+};
+const polPeople = (page) => {
+  const names = ["Ada", "Linus", "Grace", "Alan", "Edsger", "Barbara", "Donald", "Margaret", "Ken", "Dennis", "Tim", "Radia", "Guido", "Bjarne", "Brian", "Anders", "Yukihiro", "Rob", "Larry", "James", "Brendan", "John", "Niklaus", "Leslie", "Fran", "Frances", "Vint", "Katherine"];
+  const all = names.map((first, i) => ({
+    assignmentId: 100 + i,
+    user: { id: 200 + i, name: `${first} Tester`, email: `${first.toLowerCase()}@example.test` },
+    department: i % 2 ? "Sales" : "Engineering", variantId: `01var${i % 2}${"0".repeat(20)}`, courseId: 40 + (i % 2), courseVersion: i % 3 === 0 ? 2 : 1, exam: i === 0,
+    status: i % 5 === 0 ? "completed" : i % 7 === 0 ? "overdue" : "assigned", source: i === 0 ? "policy_change" : "rule",
+    assignedAt: "2026-10-21T10:00:00+00:00", dueAt: "2026-11-20T10:00:00+00:00", completedAt: i % 5 === 0 ? "2026-10-25T10:00:00+00:00" : null,
+    policyVersion: i % 5 === 0 ? (i === 0 ? 2 : 1) : null,
+    certificate: i % 5 === 0 ? { id: 900 + i, certificateId: `aaaaaaaa-0000-4000-8000-0000000000${String(10 + i)}`, status: i === 5 ? "revoked" : "valid", expiresAt: null, verifyPath: `/api/certificates/verify/aaaaaaaa-0000-4000-8000-0000000000${String(10 + i)}` } : null,
+  }));
+  return all.slice((page - 1) * 25, page * 25);
+};
+const polDashboard = (id, tenant, query) => {
+  const detail = polDetail(id, tenant);
+  if (!detail) return { __status: 404, message: "No query results for model [Policy]." };
+  if (id === POLICY_E && !policyFails.get(`${tenant}:e`)) {
+    policyFails.set(`${tenant}:e`, true);
+    return { __status: 500, message: "The dashboard is temporarily unavailable." };
+  }
+  const page = Math.max(1, Number(query.get("page") ?? 1));
+  const big = id === POLICY_A;
+  const status = query.get("status");
+  const variant = query.get("variant");
+  let people = big ? polPeople(1).concat(polPeople(2)) : [];
+  if (variant) people = people.filter((p) => p.variantId === variant);
+  if (status) people = people.filter((p) => (status === "assigned" ? p.status === "assigned" : p.status === status));
+  const slice = people.slice((page - 1) * 25, page * 25);
+  return {
+    __raw: {
+      success: true,
+      message: "OK",
+      data: {
+        policy: { id, title: detail.title, currentVersion: detail.currentVersion },
+        departments: detail.variants.map((v, i) => ({ id: v.id, department: v.department, groupId: v.groupId, courseId: v.courseId, stage: v.stage, assigned: big ? 14 : 0, completed: big ? 3 - i : 0, pending: big ? 9 : 0, overdue: big ? 2 : 0, completionRate: big ? 0.2143 : null })),
+        people: slice,
+      },
+      meta: { total: people.length, per_page: 25, current_page: page, last_page: Math.max(1, Math.ceil(people.length / 25)) },
+    },
+  };
+};
+const polReview = (tenant, cls) => {
+  const state = policyOf(tenant);
+  const open = !state.approved && !state.rejected;
+  const chosen = cls ?? "major";
+  return {
+    ...polVersion(2, state.approved ? "approved" : state.rejected ? "rejected" : "in_review", state.approved ? "minor" : "minor", state.approved ? { suggestedClass: "major", classReason: "Wording only." } : {}),
+    suggestion: { class: "major", reasons: ["A substantial change: Lesson 1.1 › block 1", "The correct answer of a question changes: Lesson 1.1 › Q1"] },
+    rollouts: [
+      { id: `01rol0${"0".repeat(20)}`, variantId: `01var0${"0".repeat(20)}`, department: "Engineering", status: state.approved ? "applied" : "ready", error: null, proposal: { id: `01prp0${"0".repeat(20)}`, sessionId: polSession(1), status: state.approved ? "applied" : "ready", number: 1 }, undecided: 0, rolledOutAt: null },
+      { id: `01rol1${"0".repeat(20)}`, variantId: `01var1${"0".repeat(20)}`, department: "Sales", status: "no_change", error: null, proposal: null, undecided: 0, rolledOutAt: null },
+    ],
+    changes: { counts: { changed: 2, moved: 0, added: 0, removed: 0 }, sections: [{ kind: "changed", label: "§1.1 Approval and working hours", fragmentId: "frg_aaaaaaaaaaaa", magnitude: "substantive" }, { kind: "changed", label: "§2.2 Sharing and retention", fragmentId: "frg_bbbbbbbbbbbb", magnitude: "minor" }] },
+    blockers: [],
+    preflight: open ? { changeClass: chosen, departments: [{ id: `01var0${"0".repeat(20)}`, department: "Engineering", affected: true, certificatesToRevoke: chosen === "major" ? 3 : 2, peopleToReassign: chosen === "major" ? 3 : 2, assigns: chosen === "major" ? "course" : "exam" }, { id: `01var1${"0".repeat(20)}`, department: "Sales", affected: false, certificatesToRevoke: 0, peopleToReassign: 0, assigns: chosen === "major" ? "course" : "exam" }] } : null,
+  };
+};
+const policyRoutes = [
+  ["POST", /^\/__mock\/policies\/reset$/, ({ tenant }) => (policyState.delete(tenant), policyFails.delete(`${tenant}:e`), { reset: true })],
+  ["GET", /^\/api\/admin\/policies$/, () => [polSummary(POLICY_A, "Remote work and data handling", 1, 2), polSummary(POLICY_B, "Acceptable use of company laptops", null, null), polSummary(POLICY_E, "Visitor access", 1, null, 1)]],
+  ["POST", /^\/api\/admin\/policies$/, ({ tenant }) => polDetail(POLICY_B, tenant)],
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})$/, ({ match, tenant }) => (match[1] === POLICY_D ? { __status: 403, message: "This action is unauthorized." } : (polDetail(match[1], tenant) ?? { __status: 404, message: "No query results for model [Policy]." }))],
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})\/dashboard$/, ({ match, tenant, query }) => (match[1] === POLICY_D ? { __status: 403, message: "This action is unauthorized." } : polDashboard(match[1], tenant, query))],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/variants\/generate$/, () => polVariants(["ingesting"])],
+  // a department's own academy: asking queues it; the next read finds it done
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})\/variants\/([0-9a-z]{26})\/academy$/, ({ tenant }) => {
+    const state = policyOf(tenant);
+    if (state.academy?.status === "queued") state.academy = { ...state.academy, status: "done", invited: true, studioUrl: `http://${state.academy.slug}.app.localhost/studio/s/01s${"0".repeat(23)}`, adminUrl: `http://${state.academy.slug}.admin.localhost`, frontUrl: `http://${state.academy.slug}.app.localhost` };
+    return { academy: state.academy, available: true, themes: POLICY_THEMES };
+  }],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/variants\/([0-9a-z]{26})\/academy$/, ({ tenant, body }) => {
+    const state = policyOf(tenant);
+    if (state.academy?.status === "done") return { __status: 409, message: "This department already has an academy. Remove it first to create another." };
+    state.academy = { status: "queued", slug: "acmeengineerabcd", name: "Remote work and data handling / Engineering", theme: body?.theme ?? null, accent: body?.accent ?? null, template: null, error: null };
+    return { academy: state.academy, available: true, themes: POLICY_THEMES };
+  }],
+  ["DELETE", /^\/api\/admin\/policies\/([0-9a-z]{26})\/variants\/([0-9a-z]{26})\/academy$/, ({ tenant }) => ((policyOf(tenant).academy = null), { academy: null })],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions$/, ({ tenant }) => polReview(tenant, null)],
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions\/(\d+)$/, ({ match, tenant, query }) => (match[1] === POLICY_A && match[2] === "2" ? polReview(tenant, query.get("class")) : { __status: 404, message: "No query results for model [PolicyVersion]." })],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions\/(\d+)\/approve$/, ({ match, tenant, body }) => {
+    if (match[1] === POLICY_B) return { __status: 422, message: "The policy cannot be approved yet.\nSales: review and apply the course in the Studio first." };
+    if ((body?.change_class ?? "minor") === "minor" && !String(body?.reason ?? "").trim()) return { __status: 422, message: "The changes suggest a major change. To approve it as minor, say why." };
+    policyOf(tenant).approved = true;
+    return polVersion(Number(match[2]), "applying", "minor");
+  }],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions\/(\d+)\/reject$/, ({ tenant }) => ((policyOf(tenant).rejected = true), polVersion(2, "rejected", "minor"))],
+];
+// Course variants (CV-5): five families, one per case of the learner's picker (tests/mock-api/variants.mjs)
+const variantMock = createVariantMock({ program, progressRows, courseFor });
+
+/**
+ * Style profiles for the studio Style page (/studio/style, ADR 0196). Every tenant has its own list: a suggested profile
+ * with citations, dropped values and a diff against the approved one, the approved one, and a superseded one. A profile
+ * named "Forbidden" is refused on approve (403), as for a tutor. A style guide upload makes a new suggestion.
+ */
+const STYLE_F1 = "frg_aaaaaaaaaaaa";
+const STYLE_F2 = "frg_bbbbbbbbbbbb";
+const STYLE_FRAGMENTS = {
+  [STYLE_F1]: { label: "§1 Voice", preview: "Write to the learner as \"you\". Keep sentences under 20 words." },
+  [STYLE_F2]: { label: "§2 Terminology", preview: "Use \"learner\", not \"student\" or \"user\"." },
+};
+const styleId = (n) => `01styleprofile${String(n).padStart(12, "0")}`;
+const styleFresh = () => [
+  {
+    id: styleId(1), name: "Northwind", scope: { type: "tenant", id: null }, status: "suggested", sourceId: "s1", createdBy: 1, approvedBy: null, approvedAt: null, createdAt: "2026-10-22T09:30:00+00:00",
+    warnings: ["components.disallowed named Marquee, which is not in the catalogue, and it was dropped", "theme.accent does not reach a 5:1 contrast on the coffee theme; the site will show #1d6f5c"],
+    profile: {
+      schemaVersion: 1,
+      theme: { preset: "coffee", accent: "#1d6f5c", fonts: ["Inter"], citations: [STYLE_F1] },
+      voice: { person: "you", formality: 3, sentenceLength: 20, citations: [STYLE_F1] },
+      readingLevel: [{ language: "en", level: "grade-8", citations: [STYLE_F1] }],
+      terminology: [{ use: "learner", avoid: ["student", "user"], citations: [STYLE_F2] }, { use: "lesson", avoid: [], citations: [] }],
+      banned: { blocking: false, phrases: [{ phrase: "simply", citations: [STYLE_F2] }, { phrase: "just", citations: [STYLE_F2] }] },
+      components: { preferred: ["Callout"], disallowed: ["FlipCards"], citations: [STYLE_F1] },
+      imagery: { altTextRequired: true, decorativeAllowed: false, citations: [STYLE_F1] },
+      examples: [{ text: "You start with one small task.", citations: [STYLE_F1] }],
+    },
+  },
+  {
+    id: styleId(2), name: "Academy v1", scope: { type: "tenant", id: null }, status: "approved", sourceId: "s0", createdBy: 1, approvedBy: 1, approvedAt: "2026-10-20T10:00:00+00:00", createdAt: "2026-10-19T09:30:00+00:00", warnings: [],
+    profile: { schemaVersion: 1, voice: { person: "we", formality: 2, citations: [STYLE_F1] }, banned: { blocking: true, phrases: [{ phrase: "simply", citations: [STYLE_F2] }] }, terminology: [{ use: "student", avoid: [], citations: [STYLE_F2] }] },
+  },
+  {
+    id: styleId(3), name: "Old guide", scope: { type: "tenant", id: null }, status: "superseded", sourceId: "s00", createdBy: 1, approvedBy: 1, approvedAt: "2026-09-01T10:00:00+00:00", createdAt: "2026-08-30T09:30:00+00:00", warnings: [],
+    profile: { schemaVersion: 1, voice: { person: "neutral", citations: [STYLE_F1] } },
+  },
+];
+const styleState = new Map();
+const styleOf = (tenant) => {
+  if (!styleState.has(tenant)) styleState.set(tenant, { list: styleFresh(), next: 10 });
+  return styleState.get(tenant);
+};
+const styleDiff = (p, current) => {
+  if (p.status === "approved") return [];
+  const out = [];
+  const v = p.profile;
+  const c = current?.profile ?? {};
+  if (v.voice?.person && v.voice.person !== c.voice?.person) out.push({ path: "voice.person", change: c.voice?.person ? "changed" : "added", before: c.voice?.person ?? null, after: v.voice.person, citations: v.voice.citations });
+  if (v.voice?.formality && v.voice.formality !== c.voice?.formality) out.push({ path: "voice.formality", change: c.voice?.formality ? "changed" : "added", before: c.voice?.formality ?? null, after: v.voice.formality, citations: v.voice.citations });
+  for (const t of v.terminology ?? []) if (!(c.terminology ?? []).some((x) => x.use === t.use)) out.push({ path: `terminology.${t.use}`, change: "added", before: null, after: t.avoid, citations: t.citations });
+  for (const t of c.terminology ?? []) if (!(v.terminology ?? []).some((x) => x.use === t.use)) out.push({ path: `terminology.${t.use}`, change: "removed", before: t.avoid, after: null, citations: [] });
+  for (const b of v.banned?.phrases ?? []) if (!(c.banned?.phrases ?? []).some((x) => x.phrase === b.phrase)) out.push({ path: `banned.phrase.${b.phrase.toLowerCase()}`, change: "added", before: null, after: b.phrase, citations: b.citations });
+  if (v.banned && (v.banned.blocking ?? false) !== (c.banned?.blocking ?? false)) out.push({ path: "banned.blocking", change: "changed", before: c.banned?.blocking ?? false, after: v.banned.blocking ?? false, citations: [] });
+  return out;
+};
+const styleDetail = (tenant, p) => {
+  const current = styleOf(tenant).list.find((x) => x.status === "approved" && x.id !== p.id);
+  return { ...p, current: current ? { id: current.id, name: current.name, profile: current.profile } : null, diff: styleDiff(p, current), fragments: STYLE_FRAGMENTS };
+};
+const styleFind = (tenant, id) => styleOf(tenant).list.find((x) => x.id === id);
+const STYLE_NOT_FOUND = { __status: 404, message: "Style profile not found." };
+const styleRoutes = [
+  ["POST", /^\/__mock\/style\/reset$/, ({ tenant }) => (styleState.delete(tenant), { reset: true })],
+  ["GET", /^\/api\/admin\/course-builder\/style-profiles$/, ({ tenant }) => styleOf(tenant).list.map((p) => ({ ...p }))],
+  ["POST", /^\/api\/admin\/course-builder\/style-profiles$/, ({ tenant, body, raw }) => {
+    const state = styleOf(tenant);
+    const name = body?.name ?? /name="name"\r\n\r\n([^\r]*)/.exec(raw ?? "")?.[1] ?? "From a style guide";
+    const from = body?.from ? styleFind(tenant, body.from) : null;
+    if (body?.from && !from) return STYLE_NOT_FOUND;
+    const created = {
+      id: styleId(state.next++), name, scope: { type: "tenant", id: null }, status: "suggested", sourceId: from ? from.sourceId : "s9", createdBy: 1, approvedBy: null, approvedAt: null, createdAt: "2026-10-23T08:00:00+00:00",
+      warnings: from ? [] : ["AI is off on this installation: fill the profile in by hand."],
+      profile: from ? JSON.parse(JSON.stringify(from.profile)) : { schemaVersion: 1 },
+    };
+    state.list.unshift(created);
+    return styleDetail(tenant, created);
+  }],
+  ["GET", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/, ({ tenant, match }) => {
+    const p = styleFind(tenant, match[1]);
+    return p ? styleDetail(tenant, p) : STYLE_NOT_FOUND;
+  }],
+  ["PATCH", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/, ({ tenant, match, body }) => {
+    const p = styleFind(tenant, match[1]);
+    if (!p) return STYLE_NOT_FOUND;
+    if (p.status !== "suggested") return { __status: 409, message: "An approved profile is not edited: create a revision (POST with `from`) and approve that." };
+    if (body?.name) p.name = body.name;
+    const warnings = [];
+    const next = { ...(body?.profile ?? p.profile) };
+    if (next.voice && next.voice.formality !== undefined && !(Number.isInteger(next.voice.formality) && next.voice.formality >= 1 && next.voice.formality <= 5)) {
+      warnings.push("voice.formality must be a whole number from 1 to 5 and was dropped");
+      delete next.voice.formality;
+    }
+    p.profile = next;
+    p.warnings = warnings;
+    return styleDetail(tenant, p);
+  }],
+  ["POST", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})\/approve$/, ({ tenant, match }) => {
+    const p = styleFind(tenant, match[1]);
+    if (!p) return STYLE_NOT_FOUND;
+    if (p.name === "Forbidden") return { __status: 403, message: "Only an admin approves a style profile." };
+    if (p.status !== "suggested") return { __status: 409, message: "Only a suggested profile can be approved." };
+    for (const x of styleOf(tenant).list) if (x.status === "approved") x.status = "superseded";
+    Object.assign(p, { status: "approved", approvedBy: 1, approvedAt: "2026-10-23T08:30:00+00:00" });
+    return styleDetail(tenant, p);
+  }],
+  // the style check: course 12 has a banned phrase that blocks (with its passage), a term to avoid and a hint; 13 is clean; 14 is not a builder course; 15 is another author's
+  ["GET", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})\/check$/, ({ tenant, match, query }) => {
+    const p = styleFind(tenant, match[1]);
+    if (!p) return STYLE_NOT_FOUND;
+    const course = Number(query.get("course"));
+    if (!Number.isInteger(course) || course < 1) return { __status: 422, message: "The course field is required." };
+    if (course === 14) return { __status: 404, message: "That course was not made with the Course Builder." };
+    if (course === 15) return { __status: 403, message: "This course belongs to another author." };
+    const cite = [{ id: STYLE_F2, label: "§2 Terminology" }];
+    const base = { profile: { id: p.id, name: p.name, status: p.status }, course: { id: course, title: "Brewing", sessionId: course === 13 ? "01stylesession000000000002" : "01stylesession000000000001", variantId: null, versionId: "v" } };
+    if (course === 13) return { ...base, blocking: [], warnings: [], hints: [], counts: { blocking: 0, warnings: 0, hints: 0 }, blocksPublishing: false };
+    return {
+      ...base,
+      blocking: [{ code: "style_banned", rule: "banned", severity: "blocking", elementId: "e1", message: "“Grinding”: “simply” is a banned phrase of the style guide (style guide §2 Terminology)", term: "simply", quote: "…Simply grind the beans…", citations: cite }],
+      warnings: [{ code: "style_terminology", rule: "terminology", severity: "warning", elementId: "e2", message: "“Grinding”: use “learner”, not “student” (style guide §2 Terminology)", term: "student", quote: "…each student opens…", citations: cite }],
+      hints: [{ code: "style_reading_level", rule: "reading_level", severity: "hint", elementId: "e3", message: "“Grinding” reads at about grade 11 (an approximate formula) and the style guide asks for grade-8", citations: [{ id: STYLE_F1, label: "§1 Voice" }] }],
+      counts: { blocking: 1, warnings: 1, hints: 1 },
+      blocksPublishing: true,
+    };
+  }],
+  // a restyle of a course (Living Course): session ...01 has something to restyle, ...02 has not, and a created proposal is remembered
+  ["POST", /^\/api\/admin\/living-course\/sessions\/([0-9a-z]{26})\/style-proposals$/, ({ tenant, match, body }) => {
+    const state = styleOf(tenant);
+    if (match[1] === "01stylesession000000000002") return { __status: 422, message: "Nothing in this course departs from the style profile in a way a rewrite can fix, so there is nothing to restyle.", code: "nothing_to_restyle" };
+    if (state.restyle) return { state: "kept_existing", proposal: { id: state.restyle, kind: "style" } };
+    if (!body?.confirmEstimate) return { state: "estimate", profile: { id: body?.styleProfileId, name: "Academy v1" }, elements: 4, findings: 6, skipped: 1, answerKeys: 1, estimateMicroUsd: 120000 };
+    state.restyle = "01styleproposal000000000001";
+    return { state: "started", runId: null, proposal: { id: state.restyle, kind: "style", status: "ready" } };
+  }],
+  ["DELETE", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/, ({ tenant, match }) => {
+    const state = styleOf(tenant);
+    const p = styleFind(tenant, match[1]);
+    if (!p) return STYLE_NOT_FOUND;
+    if (p.status === "approved") return { __status: 409, message: "An approved profile cannot be deleted: approve a revision to replace it." };
+    state.list = state.list.filter((x) => x.id !== p.id);
+    return { id: p.id };
+  }],
+];
+
+/**
+ * Authoring metrics (ADR 0194): the production figures of a course. Course 1 is the measured run (outline 24 s, lessons
+ * to quizzes 6 min 57 s, apply 23 s), 2 an older build with whole-run times only and nothing the AI wrote yet, 3 was not
+ * made with the builder (404), 4 is another author's (403), 5 fails once and then works, 6 has elements from before
+ * provenance was recorded, 7 has recorded review time.
+ */
+const metricsFails = new Map();
+const metricStages = [
+  ["outline", "outline", 24], ["generate", "lessons", 190], ["generate", "grounding", 40], ["generate", "interactions", 60], ["generate", "quizzes", 127], ["apply", "apply", 23],
+].map(([kind, stage, seconds], i) => ({ run_id: `01r${"0".repeat(22)}${i}`, run_kind: kind, stage, started_at: "2026-10-20T09:00:00+00:00", finished_at: "2026-10-20T09:03:10+00:00", seconds, quality: "exact" }));
+const courseMetric = (id) => {
+  const base = {
+    course_id: id, session_id: `01s${"0".repeat(22)}${id}`, method_version: 1, computed_at: "2026-10-22T12:00:00+00:00",
+    time: { generation_seconds: 464, ai_edit_seconds: 0, interview_seconds: 18, model_seconds: 902, author_minutes: null },
+    cost: { build_micro_usd: 284100, maintenance_micro_usd: 0, llm_calls: 27, llm_calls_failed: 1 },
+    counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
+    elements: { ai_elements: 59, accepted_unchanged: 49, revised_on_request: 4, edited_by_author: 6, unknown: 0, author_written: 2 },
+    stages: metricStages,
+  };
+  if (id === 2) return { ...base, time: { ...base.time, generation_seconds: 31, interview_seconds: 0, model_seconds: 0 }, cost: { build_micro_usd: 0, maintenance_micro_usd: 0, llm_calls: 0, llm_calls_failed: 0 }, elements: { ai_elements: 0, accepted_unchanged: 0, revised_on_request: 0, edited_by_author: 0, unknown: 0, author_written: 0 }, stages: [{ ...metricStages[0], stage: "generate", run_kind: "generate", seconds: 31, quality: "coarse" }] };
+  if (id === 6) return { ...base, elements: { ai_elements: 59, accepted_unchanged: 0, revised_on_request: 0, edited_by_author: 0, unknown: 59, author_written: 0 } };
+  if (id === 7) return { ...base, time: { ...base.time, author_minutes: 135 }, cost: { ...base.cost, maintenance_micro_usd: 1520000 }, stages: [{ ...metricStages[5], quality: "incomplete" }] };
+  return base;
+};
+const authoringMetricsRoutes = [
+  ["POST", /^\/__mock\/authoring-metrics\/reset$/, ({ tenant }) => (metricsFails.delete(`${tenant}:5`), { reset: true })],
+  ["GET", /^\/api\/admin\/authoring-metrics\/courses\/(\d+)$/, ({ match, tenant }) => {
+    const id = Number(match[1]);
+    if (id === 3) return { __status: 404, message: "Not found" };
+    if (id === 4) return { __status: 403, message: "This action is unauthorized." };
+    if (id === 5 && !metricsFails.get(`${tenant}:5`)) {
+      metricsFails.set(`${tenant}:5`, true);
+      return { __status: 500, message: "The figures are temporarily unavailable." };
+    }
+    return insightsTitles[id] ? courseMetric(id) : { __status: 404, message: "Not found" };
+  }],
+];
+
 const routes = [
+  ...styleRoutes,
+  ...variantMock.routes,
   ...insightsRoutes,
   ...courseVersionsRoutes,
+  ...policyRoutes,
+  ...authoringMetricsRoutes,
   ...improveRoutes,
+  ...groupRoutes,
   ["POST", /^\/api\/code-exercises\/launches\/(\d+)$/, ({ tenant, match }) => {
     const topic = CODE_TOPICS.get(Number(match[1]));
     return topic ? launchOf(topic, RUNNER_URL, attemptsOf(tenant, topic.id)) : { __status: 404, message: "Not a code exercise" };
@@ -645,6 +1034,8 @@ const routes = [
     return { attempt: row, status: score >= topic.topicable.pass_score ? 1 : 2 };
   }],
   ["GET", /^\/api\/compliance\/my-assignments$/, () => assignments],
+  // an approved policy change gave "Food safety" again (assignment 2): what changed and which exam or course
+  ["GET", /^\/api\/policies\/my-changes$/, () => [{ assignmentId: 2, policy: { id: `01pola${"0".repeat(20)}`, title: "Food handling policy" }, version: 3, kind: "exam", summary: "Sections 1 changed: §2.1 Cold storage.", dueAt: isoDay(6), status: "assigned" }]],
   ["GET", /^\/api\/compliance\/my-paths$/, () => myPaths],
   ["GET", /^\/api\/compliance\/my-skills$/, () => mySkills],
   ["GET", /^\/api\/compliance\/team\/assignments$/, () => teamRows],
@@ -794,6 +1185,7 @@ const server = createServer((req, res) => {
     supportState.delete(url.searchParams.get("tenant") ?? "");
     reflectionCount.delete(url.searchParams.get("tenant") ?? "");
     presentationOverrides.delete(url.searchParams.get("tenant") ?? "");
+    variantMock.reset(url.searchParams.get("tenant") ?? "");
     res.end(JSON.stringify({ reset: true }));
     return;
   }
@@ -932,7 +1324,11 @@ function respond(req, res, path, route, rawBody) {
     }
   })();
   const match = route[1].exec(path);
-  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
+  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, raw: rawBody, headers: req.headers, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
+  if (data && typeof data === "object" && "__raw" in data) {
+    res.end(JSON.stringify(data.__raw));
+    return;
+  }
   if (data && typeof data === "object" && "__status" in data) {
     res.statusCode = data.__status;
     res.end(JSON.stringify({ success: false, message: data.message, ...(data.code ? { code: data.code } : {}) }));

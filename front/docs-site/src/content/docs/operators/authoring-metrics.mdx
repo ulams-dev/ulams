@@ -10,8 +10,9 @@ modules:
 Authoring cost is what a course really costs to produce. The Course Builder already records what the model
 cost; the **authoring metrics** module adds how long each stage of a build took, so a course can state its own
 time to produce. This page covers what is recorded today: stage times, element provenance and the per-course snapshot
-with its API. Exports, the studio and admin screens, review time and the hours-per-learner-hour figure follow in later
-releases (ADR 0194).
+with its API, the export and the screens: **Analytics > Authoring** in the admin ([Reports and analytics](/admin/reports-and-analytics/))
+and **Production** per course in the studio ([How a course was produced](/creators/course-production/)). Review time
+and the hours-per-learner-hour figure follow in later releases (ADR 0194).
 
 ## What is recorded
 
@@ -102,9 +103,10 @@ Scoped personal access tokens reach them through the `builder` area.
 | Request | Returns |
 |---|---|
 | `GET /api/admin/authoring-metrics/courses?from=&to=&course_id[]=` | the snapshots, optionally of courses created in a date range or of the listed courses |
+| `GET /api/admin/authoring-metrics/courses/export?format=csv\|jsonl` | the same rows as a file, with the same filters; one flat row per course with every figure and the `method_version`, only numbers, identifiers and dates, and an empty cell where author time is not recorded |
 | `GET /api/admin/authoring-metrics/courses/{course}` | one snapshot with the time of every pipeline stage (and whether each is `exact`, `coarse` or `incomplete`) and the element split. `404` when the course was not built with the Course Builder |
 
-From the CLI: `ulams authoring-metrics list` and `ulams authoring-metrics get <course>`. The figures are the tenant's
+From the CLI: `ulams authoring-metrics list`, `get <course>` and `export --out file.csv`. The figures are the tenant's
 own measurements; no industry figure appears anywhere.
 
 ## Failure behaviour

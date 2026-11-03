@@ -1,0 +1,47 @@
+{
+  "@context": "/api/v2/contexts/Channel",
+  "@id": "/api/v2/admin/channels/acme",
+  "@type": "Channel",
+  "baseCurrency": "/api/v2/admin/currencies/EUR",
+  "defaultLocale": "/api/v2/admin/locales/en_US",
+  "defaultTaxZone": null,
+  "taxCalculationStrategy": "order_items_based",
+  "currencies": [
+    "/api/v2/admin/currencies/EUR"
+  ],
+  "locales": [
+    "/api/v2/admin/locales/en_US"
+  ],
+  "countries": [
+    "/api/v2/admin/countries/PL"
+  ],
+  "themeName": null,
+  "contactEmail": null,
+  "contactPhoneNumber": null,
+  "skippingShippingStepAllowed": true,
+  "skippingPaymentStepAllowed": false,
+  "accountVerificationRequired": true,
+  "shippingAddressInCheckoutRequired": false,
+  "shopBillingData": {
+    "@type": "ShopBillingData",
+    "company": null,
+    "taxId": null,
+    "countryCode": null,
+    "street": null,
+    "city": null,
+    "postcode": null
+  },
+  "menuTaxon": null,
+  "channelPriceHistoryConfig": {
+    "@type": "ChannelPriceHistoryConfig",
+    "lowestPriceForDiscountedProductsCheckingPeriod": 30,
+    "lowestPriceForDiscountedProductsVisible": true,
+    "taxonsExcludedFromShowingLowestPrice": []
+  },
+  "code": "acme",
+  "name": "Acme",
+  "description": null,
+  "hostname": "acme.localhost",
+  "color": null,
+  "enabled": true
+}

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property string $id
  * @property int $number
- * @property string $kind source | insights (ADR 0181)
+ * @property string $kind source | insights (ADR 0181) | style (ADR 0196)
  * @property array|null $evidence aggregated learner evidence of an insights proposal
  * @property string $session_id
  * @property string|null $source_id
@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property array|null $counts
  * @property int $estimated_cost_micro_usd
  * @property int $cost_micro_usd
+ * @property string|null $variant_id the course variant this proposal is for; null for the base course (ADR 0192)
+ * @property string|null $proposal_group links the proposals made together for the base and its variants
  * @property string|null $learner_note
  * @property string|null $error
  */
@@ -39,6 +41,9 @@ class Proposal extends Model
     public const KIND_SOURCE = 'source';
 
     public const KIND_INSIGHTS = 'insights';
+
+    /** A restyle after a style profile changed (ADR 0196): like insights it has no source revision. */
+    public const KIND_STYLE = 'style';
 
     public const SUBJECT_TYPE = 'living_course_proposal';
 
@@ -71,9 +76,25 @@ class Proposal extends Model
         return $this->belongsTo(Revision::class, 'to_revision_id');
     }
 
+    public function isVariant(): bool
+    {
+        return $this->variant_id !== null;
+    }
+
     public function isInsights(): bool
     {
         return $this->kind === self::KIND_INSIGHTS;
+    }
+
+    public function isStyle(): bool
+    {
+        return $this->kind === self::KIND_STYLE;
+    }
+
+    /** No source revision on either side: an improvement from learner insights or a restyle. They read the live fragments and promote nothing. */
+    public function isSourceless(): bool
+    {
+        return $this->isInsights() || $this->isStyle();
     }
 
     public function isOpen(): bool

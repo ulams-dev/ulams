@@ -29,6 +29,8 @@ use Ulams\Tenancy\Storage\StorageCredentials;
  * @property string $redis_prefix
  * @property string $status
  * @property ?array $env_overrides
+ * @property ?string $commerce_channel
+ * @property ?string $commerce_webhook_secret
  * @property ?array $steps
  * @property ?string $last_error
  * @property ?\Illuminate\Support\Carbon $expires_at set for a throwaway tenant (a preview academy); `ulams:tenant:reap` deletes it afterwards
@@ -61,6 +63,8 @@ class Tenant extends Model
         'storage_key',
         'storage_secret',
         'redis_prefix',
+        'commerce_channel',
+        'commerce_webhook_secret',
         'env_overrides',
         'status',
         'steps',
@@ -76,6 +80,7 @@ class Tenant extends Model
         'passport_public_key' => 'encrypted',
         'storage_key' => 'encrypted',
         'storage_secret' => 'encrypted',
+        'commerce_webhook_secret' => 'encrypted',
         'env_overrides' => 'encrypted:array',
         'steps' => 'array',
         'demo' => 'boolean',
@@ -89,6 +94,7 @@ class Tenant extends Model
         'passport_public_key',
         'storage_key',
         'storage_secret',
+        'commerce_webhook_secret',
         'env_overrides',
     ];
 

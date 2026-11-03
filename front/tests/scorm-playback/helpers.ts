@@ -30,6 +30,11 @@ export function collectApiState(pinned: string[]) {
   const api = w.API_1484_11 ?? w.API;
   const settings: Record<string, unknown> = {};
   for (const key of pinned) settings[key] = api.settings && key in api.settings ? api.settings[key] : null;
+  // scorm-again 3 replaced asyncCommit by useAsynchronousCommits + throttleCommits. Report the 2.6 name:
+  // false = commit sent at once with fetch, true = batched for 500 ms, "synchronous" = XMLHttpRequest (3 default).
+  if (api.settings && "useAsynchronousCommits" in api.settings) {
+    settings.asyncCommit = api.settings.useAsynchronousCommits ? api.settings.throttleCommits : "synchronous";
+  }
   const render = (terminate: boolean) => {
     try {
       return JSON.parse(JSON.stringify(api.renderCommitObject(terminate)));
@@ -44,4 +49,38 @@ export function collectApiState(pinned: string[]) {
     finalCmi: JSON.parse(JSON.stringify(api.cmi)),
     settings,
   };
+}
+
+/** Wait until `count()` stops growing: scorm-again 2.6 fires some commit events after the SCO has finished. */
+export async function settle(count: () => Promise<number>, quietMs = 600, maxMs = 8000) {
+  const start = Date.now();
+  let last = await count();
+  let stableSince = Date.now();
+  while (Date.now() - start < maxMs) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const now = await count();
+    if (now !== last) {
+      last = now;
+      stableSince = Date.now();
+    } else if (Date.now() - stableSince >= quietMs) {
+      return;
+    }
+  }
+}
+
+// The explicit 2.6-behaviour settings (front/src/lib/scorm-player/settings.ts, content-player/player.js) reach
+// scorm-again; scorm-again 2 ignores the keys it does not know, scorm-again 3 needs them.
+export const LEGACY_EXPECTED = {
+  mastery_override: false,
+  useAsynchronousCommits: true,
+  throttleCommits: false,
+  strict_errors: true,
+  autoCompleteLessonStatus: false,
+  accumulateSessionTimeOnTerminate: false,
+};
+
+export function readLegacySettings(expected: Record<string, unknown>) {
+  const w = window as any;
+  const api = w.API_1484_11 ?? w.API;
+  return Object.fromEntries(Object.keys(expected).map((key) => [key, api.settings[key]]));
 }

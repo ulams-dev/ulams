@@ -41,7 +41,7 @@ users, `access_grant`, `reports_metrics`, plus three meta tools that reach every
 | `commands_run` | run any exposed command by id, with the same confirmation rules |
 
 `--toolsets core,courses,users,settings` adds the generated tools of those nouns (a toolset is the first word of the command:
-`courses`, `lessons`, `topics`, `users`, `groups`, `settings`, `reports`, `builder`, `living`, ...; `ulams schema` shows the
+`courses`, `lessons`, `topics`, `users`, `groups`, `settings`, `reports`, `builder`, `living`, `analytics` for the report builder, ...; `ulams schema` shows the
 toolset of every command as `mcp.toolset`). `--toolsets all` exposes every command that is not local to the CLI. The
 meta tools search and run all commands the server's modes allow, whatever the toolsets, so a small server can still reach
 everything. `--read-only` exposes read commands only; `--no-destructive` hides destructive ones (deletes, replaces).

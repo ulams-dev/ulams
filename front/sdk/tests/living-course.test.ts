@@ -86,6 +86,7 @@ describe("living course client", () => {
       { body: { data: { item, proposal } } },
       { body: { data: { item, proposal } } },
       { body: { data: { item, proposal } } },
+      { body: { data: { item, proposal, accepted: 2, proposals: ["p2", "p3"] } } },
       { body: { data: { accepted: 3, proposal } } },
       { body: { data: proposal } },
       { status: 202, body: { data: { runId: "r1", proposal } } },
@@ -97,6 +98,8 @@ describe("living course client", () => {
     await lc.proposals.reset("p1", "i1");
     await lc.proposals.regenerate("p1", "i1", "Keep the example");
     await lc.proposals.suggestLesson("p1", "i1");
+    const group = await lc.proposals.acceptInGroup("p1", "i1");
+    expect([group.accepted, group.proposals]).toEqual([2, ["p2", "p3"]]);
     expect((await lc.proposals.acceptAll("p1")).accepted).toBe(3);
     await lc.proposals.rejectAll("p1");
     expect((await lc.proposals.apply("p1", true)).runId).toBe("r1");
@@ -107,6 +110,7 @@ describe("living course client", () => {
       "POST /proposals/p1/items/i1/reset",
       "POST /proposals/p1/items/i1/regenerate",
       "POST /proposals/p1/items/i1/suggest-lesson",
+      "POST /proposals/p1/items/i1/accept-in-group",
       "POST /proposals/p1/accept-all",
       "POST /proposals/p1/reject",
       "POST /proposals/p1/apply",
@@ -116,8 +120,9 @@ describe("living course client", () => {
     expect(JSON.parse(String(calls[3]!.init.body))).toEqual({ comment: "Keep the example" });
     expect((calls[3]!.init.headers as Record<string, string>)["Content-Type"]).toBe("application/json");
     expect(calls[4]!.init.body).toBeUndefined();
-    expect(JSON.parse(String(calls[7]!.init.body))).toEqual({ overwrite: true });
-    expect(JSON.parse(String(calls[8]!.init.body))).toEqual({ confirmEstimate: true });
+    expect(calls[5]!.init.body).toBeUndefined();
+    expect(JSON.parse(String(calls[8]!.init.body))).toEqual({ overwrite: true });
+    expect(JSON.parse(String(calls[9]!.init.body))).toEqual({ confirmEstimate: true });
   });
 
   it("exposes the code and data of a refused apply or analysis", async () => {
