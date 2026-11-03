@@ -290,7 +290,10 @@ export async function mockApi(
     /** Serve the report builder (adds reporting_read): the datasets (default REPORT_DATASETS) and the saved reports. */
     reporting?: { datasets?: typeof REPORT_DATASETS; saved?: Partial<MockSavedReport>[] };
     /** Style profiles by id (GET /api/admin/course-builder/style-profiles/:id), for the theme hand-off from the studio. */
-    styleProfiles?: Record<string, { name: string; status: string; profile: Record<string, unknown> }>;
+    styleProfiles?: Record<
+      string,
+      { name: string; status: string; profile: Record<string, unknown> }
+    >;
   } = {},
 ): Promise<MockApi> {
   const email = options.kind === 'email';
