@@ -1,8 +1,8 @@
 # Academy entry points: per-department, per-course and per-role hosts with their own branding
 
-Status: Proposed (2026-10-22). Written after the owner decision "everything labelled Coming must be implemented".
-Open questions in section 9 have recommended defaults that are used unless the owner says otherwise. ADR 0195
-(Proposed) records the decision; it amends ADR 0141.
+Status: Approved for implementation (2026-10-23): the owner decided that everything labelled Coming is built and approved the
+recommended defaults of section 9. Implemented in milestones EP-1 to EP-7, one PR each. ADR 0195 (Proposed) records the
+decision; it amends ADR 0141.
 
 ## 1. Goal
 
@@ -178,3 +178,15 @@ hostname setup for the hosted service (with the first production deployment, iss
 | EP-7 | Custom domains: TXT verification job, Caddy `ask` endpoint, operator docs for Caddy and Cloudflare | a custom host goes from pending to active in the local stack |
 
 Recommended first: **EP-1**, then EP-2 and EP-3. EP-4 is what the policy lifecycle (P6R-8 onwards) needs.
+
+## 11. Implementation notes
+
+- **EP-1, reaching the platform table.** A tenant process has no credentials for the platform database, so the tenant admin
+  API (`/api/admin/entry-points`) asks a platform child process (`ulams:entry-points:gateway`, hidden) through
+  `PlatformEntryPointGateway`, the way "new site" provisions a tenant. `EntryPointService` is the only writer; the tenant is the
+  process's own `TENANT_SLUG`, never a request value. Target existence (group, course) is checked in the tenant process.
+- **Host status.** Hosts under `TENANCY_ENTRY_PLATFORM_SUFFIXES` (flat `{slug}-name`) are active at once; other hosts are custom
+  domains and start as `pending_dns` until EP-7 verifies them; `TENANCY_ENTRY_TRUSTED_SUFFIXES` (development and CI only, for
+  `.example.test`) activates any host under it.
+- **Ids** are ULIDs (no guessable sequence); host, key and kind are fixed after creation.
+- **Not in EP-1:** the logo file of an entry point theme (comes with the admin screen in EP-4) and the `verify` CLI command (EP-7).
