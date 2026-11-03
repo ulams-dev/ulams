@@ -39,6 +39,12 @@ changed default set explicitly to the 2.6 behaviour.
 - Bad: golden traces must be kept stable (timestamps and durations normalised).
 - Bad: the content-player job needs the API and is nightly, not per pull request.
 
+## Outcome of the first use (2026-10-23)
+
+The harness showed that scorm-again 3.4.7 cannot reproduce the 2.6 behaviour with settings alone (error codes,
+suspend_data limit, time formats, commit event timing); the upgrade is therefore not made and the decision goes
+to the owner. See section 11 of the plan.
+
 ## Alternatives considered
 
 - Option 2 does not exercise the service worker, the iframe, the content origin or the commit transport.

@@ -1,0 +1,172 @@
+---
+/**
+ * The theme presets, the AA contrast guard and the brand-import diff (lib/style-guide.ts), shared by the home-page
+ * section and the /style-guide/ page. Colours that fail AA are only ever shown as swatches, never as text.
+ */
+import Icon from "@ulams/ui/components/Icon.astro";
+import { brandExample, fill, guardExamples, presetCards, type StyleGuideCopy } from "../../lib/style-guide.ts";
+
+interface Props {
+  copy: StyleGuideCopy;
+  /** Heading level of the three parts: 3 inside the home section, 2 on the style-guide page. */
+  level?: 2 | 3;
+  /** Prefix of the element ids, so the two uses never collide. */
+  prefix: string;
+}
+
+const { copy, level = 3, prefix } = Astro.props;
+const H = level === 2 ? "h2" : "h3";
+const presets = presetCards();
+const guards = guardExamples();
+const brand = brandExample();
+const ratio = (value: number) => `${value}:1`;
+---
+
+<div class="sg-show">
+  <section class="sg-part" id={`${prefix}-presets`} aria-labelledby={`${prefix}-presets-title`}>
+    <H class="sg-part__title" id={`${prefix}-presets-title`}>{copy.presets.title}</H>
+    <p class="sg-part__intro">{copy.presets.intro}</p>
+    <ul class="sg-presets" role="list">
+      {
+        presets.map((preset) => (
+          <li class="sg-preset">
+            <div class="sg-preset__sample" style={`background:${preset.swatches[0]!.value};color:${preset.swatches[2]!.value}`}>
+              <span class="sg-preset__name">{preset.label}</span>
+              <span class="sg-preset__mood" style={`color:${preset.muted.foreground}`}>
+                {copy.presets.moods[preset.name]}
+              </span>
+              <span class="sg-preset__mode">{preset.dark ? copy.presets.dark : copy.presets.light}</span>
+            </div>
+            <ul class="sg-swatches" role="list">
+              {preset.swatches.map((swatch) => (
+                <li>
+                  <span class="sg-swatch" style={`background:${swatch.value}`} aria-hidden="true" />
+                  <span class="sg-swatches__role">{copy.presets.roles[swatch.role]}</span>
+                  <code>{swatch.value}</code>
+                </li>
+              ))}
+            </ul>
+            <dl class="sg-ratios">
+              {[
+                [copy.presets.text, preset.text],
+                [copy.presets.muted, preset.muted],
+              ].map(([label, check]) => (
+                <div>
+                  <dt>{label as string}</dt>
+                  <dd>
+                    <span>{ratio((check as typeof preset.text).ratio)}</span>
+                    <span class={(check as typeof preset.text).pass ? "sg-pass" : "sg-fail"}>
+                      <Icon name={(check as typeof preset.text).pass ? "check" : "close"} />
+                      {(check as typeof preset.text).pass ? copy.guard.pass : copy.guard.fail}
+                    </span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <div class="sg-pair">
+    <section class="sg-part" id={`${prefix}-guard`} aria-labelledby={`${prefix}-guard-title`}>
+      <H class="sg-part__title" id={`${prefix}-guard-title`}>{copy.guard.title}</H>
+      <p class="sg-part__intro">{copy.guard.intro}</p>
+      <ul class="sg-guards" role="list">
+        {
+          guards.map((guard) => (
+            <li class={`sg-guard ${guard.blocked ? "is-blocked" : "is-saved"}`}>
+              <p class="sg-guard__head">
+                <span class="sg-swatch sg-swatch--lg" style={`background:${guard.accent}`} aria-hidden="true" />
+                <span>
+                  {copy.guard.accent} <code>{guard.accent}</code>
+                </span>
+                <span class={`sg-verdict ${guard.blocked ? "sg-verdict--blocked" : "sg-verdict--saved"}`}>
+                  <Icon name={guard.blocked ? "lock" : "check"} />
+                  {guard.blocked ? copy.guard.blocked : copy.guard.saved}
+                </span>
+              </p>
+              <ul class="sg-checks" role="list">
+                {guard.checks.map((check) => (
+                  <li>
+                    <span>{copy.guard.checks[check.id as keyof StyleGuideCopy["guard"]["checks"]]}</span>
+                    <span class="sg-checks__ratio">{ratio(check.ratio)}</span>
+                    <span class={check.pass ? "sg-pass" : "sg-fail"}>
+                      <Icon name={check.pass ? "check" : "close"} />
+                      {check.pass ? copy.guard.pass : copy.guard.fail}
+                    </span>
+                    <span class="sg-checks__needs">{fill(copy.guard.needs, { ratio: check.required })}</span>
+                  </li>
+                ))}
+              </ul>
+              {guard.suggestion && (
+                <p class="sg-guard__suggest">
+                  <span class="sg-swatch" style={`background:${guard.suggestion}`} aria-hidden="true" />
+                  {fill(copy.guard.suggestion, { hex: guard.suggestion })}
+                </p>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="sg-part" id={`${prefix}-brand`} aria-labelledby={`${prefix}-brand-title`}>
+      <H class="sg-part__title" id={`${prefix}-brand-title`}>{copy.brand.title}</H>
+      <p class="sg-part__intro">{copy.brand.intro}</p>
+      <p class="sg-brand__label">{copy.brand.input}</p>
+      <pre class="sg-brand__input"><code>{brand.input}</code></pre>
+      <table class="sg-diff">
+        <caption>{copy.brand.diffLabel}</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="u-visually-hidden">{copy.brand.diffLabel}</span></th>
+            <th scope="col">{copy.brand.before}</th>
+            <th scope="col">{copy.brand.after}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            brand.changes.map((change) => {
+              const colour = change.field === "theme.accent";
+              return (
+                <tr>
+                  <th scope="row">{copy.brand.field[change.field]}</th>
+                  <td class="sg-diff__from">
+                    <del>
+                      {colour && change.from && <span class="sg-swatch" style={`background:${change.from}`} aria-hidden="true" />}
+                      <code>{change.from ?? ""}</code>
+                    </del>
+                  </td>
+                  <td class="sg-diff__to">
+                    <ins>
+                      {colour && <span class="sg-swatch" style={`background:${change.to}`} aria-hidden="true" />}
+                      <code>{change.to}</code>
+                    </ins>
+                  </td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+      <ul class="sg-checks" role="list">
+        {
+          brand.checks.map((check, i) => (
+            <li>
+              <span>{copy.brand.checks[i]}</span>
+              <span class="sg-checks__ratio">{ratio(check.ratio)}</span>
+              <span class={check.pass ? "sg-pass" : "sg-fail"}>
+                <Icon name={check.pass ? "check" : "close"} />
+                {check.pass ? copy.guard.pass : copy.guard.fail}
+              </span>
+              <span class="sg-checks__needs">{fill(copy.guard.needs, { ratio: check.required })}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="sg-part__note">{copy.brand.note}</p>
+    </section>
+  </div>
+</div>

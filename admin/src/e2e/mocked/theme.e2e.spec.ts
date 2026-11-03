@@ -331,9 +331,15 @@ test.describe('admin theme screen', () => {
       [PROFILE]: {
         name: 'Northwind',
         status: 'suggested',
-        profile: { theme: { preset: 'coffee', accent: '#1d6f5c', citations: ['frg_aaaaaaaaaaaa'] } },
+        profile: {
+          theme: { preset: 'coffee', accent: '#1d6f5c', citations: ['frg_aaaaaaaaaaaa'] },
+        },
       },
-      '01j9z3k8m2x4q7r5t6v8w0y1ac': { name: 'No colours', status: 'approved', profile: { voice: {} } },
+      '01j9z3k8m2x4q7r5t6v8w0y1ac': {
+        name: 'No colours',
+        status: 'approved',
+        profile: { voice: {} },
+      },
     };
 
     const openFromProfile = async (page: Page, id: string, theme: MockTheme = STORED) => {
@@ -360,7 +366,12 @@ test.describe('admin theme screen', () => {
 
       await diff.getByRole('button', { name: 'Approve and save' }).click();
       await expect(page.getByText('Theme saved.')).toBeVisible();
-      expect(state.theme()).toEqual({ theme: 'coffee', accent: '#1d6f5c', logoAlt: 'Acme Coffee logo', logo: 'theme/logo-1.png' });
+      expect(state.theme()).toEqual({
+        theme: 'coffee',
+        accent: '#1d6f5c',
+        logoAlt: 'Acme Coffee logo',
+        logo: 'theme/logo-1.png',
+      });
     });
 
     test('says when the profile has no theme part or cannot be read, and proposes nothing', async ({
@@ -378,9 +389,15 @@ test.describe('admin theme screen', () => {
     });
 
     test('in Polish', async ({ page }) => {
-      const state = await mockApi(page, { theme: STORED, styleProfiles: profiles, locale: 'pl-PL' });
+      const state = await mockApi(page, {
+        theme: STORED,
+        styleProfiles: profiles,
+        locale: 'pl-PL',
+      });
       await page.goto(`${THEME_URL}?styleProfile=${PROFILE}`);
-      await expect(page.getByTestId('style-profile-note')).toContainText('Propozycja z profilu stylu „Northwind”');
+      await expect(page.getByTestId('style-profile-note')).toContainText(
+        'Propozycja z profilu stylu „Northwind”',
+      );
       expect(state.themeWrites).toEqual([]);
     });
   });

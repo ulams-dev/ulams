@@ -1,0 +1,106 @@
+---
+/**
+ * The hint to switch version (CV-5): a transparent Learner Insights rule found the learner's version too hard or too
+ * easy. A dismissible notice (a status, not an alert) with the reasons in the learner's language and two buttons. It
+ * never switches anything by itself; "No thanks" stops hints for this course. A plain form like the picker.
+ */
+import { fill, variantStrings } from "@ulams/ui/variant-strings";
+import type { UiLocale } from "@ulams/ui/i18n";
+import type { HintView } from "../lib/variants.ts";
+
+interface Props {
+  hint: HintView;
+  courseId: number;
+  locale: UiLocale;
+  next: string;
+}
+const { hint, courseId, locale, next } = Astro.props;
+const t = variantStrings(locale);
+const lang = locale === "en" ? undefined : locale;
+---
+
+<section class="u-variant-hint" role="status" aria-labelledby="variant-hint-title" lang={lang} data-variant-hint>
+  <div class="u-container u-variant-hint__inner">
+    <p class="u-variant-hint__eyebrow">{t.hintHeading}</p>
+    <h2 class="u-variant-hint__title" id="variant-hint-title">{hint.direction === "harder" ? t.hintTitleHarder : t.hintTitleEasier}</h2>
+    {
+      hint.reasons.length > 0 && (
+        <>
+          <p class="u-variant-hint__why" id="variant-hint-why">{t.hintWhy}</p>
+          <ul class="u-variant-hint__reasons" aria-labelledby="variant-hint-why">
+            {hint.reasons.map((reason) => <li>{reason}</li>)}
+          </ul>
+        </>
+      )
+    }
+    <p class="u-variant-hint__lead">{t.hintLead}</p>
+    <form class="u-variant-hint__form" method="post" action={`/learn/${courseId}/variant`}>
+      <input type="hidden" name="course_id" value={hint.suggested.courseId} />
+      <input type="hidden" name="hint_id" value={hint.id} />
+      <input type="hidden" name="next" value={next} />
+      <div class="u-variant-hint__actions">
+        <button class="u-btn" type="submit" name="action" value="hint-switch">{fill(t.hintSwitch, { label: hint.suggested.label })}</button>
+        <button class="u-btn u-btn--ghost" type="submit" name="action" value="hint-dismiss" aria-describedby="variant-hint-dismiss-note">{t.hintDismiss}</button>
+      </div>
+      <p class="u-variant-hint__note" id="variant-hint-dismiss-note">{t.hintDismissNote}</p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .u-variant-hint {
+    padding-block: 20px;
+    border-block: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-card-bg);
+    border-left: 4px solid var(--ulams-color-primary);
+    color: var(--ulams-color-text);
+  }
+  .u-variant-hint__inner {
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+  }
+  .u-variant-hint__eyebrow {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ulams-color-primary-on-light);
+  }
+  .u-variant-hint__title {
+    margin: 0;
+    font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+  }
+  .u-variant-hint__why {
+    margin: 0;
+    font-weight: 700;
+  }
+  .u-variant-hint__reasons {
+    margin: 0;
+    padding-left: 1.25rem;
+    max-width: 68ch;
+  }
+  .u-variant-hint__lead,
+  .u-variant-hint__note {
+    margin: 0;
+    max-width: 68ch;
+  }
+  .u-variant-hint__note {
+    font-size: 0.9375rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-variant-hint__form {
+    display: grid;
+    gap: 10px;
+  }
+  .u-variant-hint__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .u-variant-hint .u-btn:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+</style>

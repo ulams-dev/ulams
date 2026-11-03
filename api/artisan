@@ -3,6 +3,10 @@
 
 define('LARAVEL_START', microtime(true));
 
+// Run as root (workers, `docker compose exec`), artisan still creates files the php-fpm user (www-data, same
+// group through the setgid directories, see init.sh) can write.
+umask(0002);
+
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader

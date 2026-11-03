@@ -24,6 +24,7 @@ async function scan(page: Page) {
 const noSidewaysScroll = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
 const slugOf = (project: string) => (project === "desktop" ? "coffee" : "nightsky");
 
+// eslint-disable-next-line no-empty-pattern
 test.beforeEach(async ({}, info) => {
   const reset = await fetch(`http://127.0.0.1:${process.env.MOCK_API_PORT ?? "4390"}/__mock/style/reset`, { method: "POST", headers: { "x-ulams-api-host": `${slugOf(info.project.name)}.localhost` } });
   expect(reset.ok).toBe(true);

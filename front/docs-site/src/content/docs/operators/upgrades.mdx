@@ -25,6 +25,17 @@ manual runs, with these tags:
 | `main` | The branch name, moves with every merge |
 | `latest` | The default branch, same as `main` |
 | `<version>`, `<major>.<minor>` | Release tags (`v1.2.3` gives `1.2.3` and `1.2`), once releases are cut |
+| `stable` | The newest release; moves only when a newer release is published |
+| `lts` | The newest patch of the current long-term support line (one minor a year, security fixes for 12 months) |
+
+Releases follow [semantic versioning](https://semver.org) and are cut from Conventional Commits:
+`release-please` keeps a release pull request open on `main` with the next version and
+`CHANGELOG.md`, and merging it tags `vX.Y.Z`. The images, the CLI and the Helm chart share that
+version. The `stable` and `lts` tags point at the same digests as the version tags, so once image signing is on
+`cosign verify` works on them too. Supported versions are listed in
+[`SECURITY.md`](https://github.com/ulams-dev/ulams/blob/main/SECURITY.md#supported-versions).
+For production, pin `<version>` and upgrade deliberately; `stable` suits installs that should follow
+releases automatically.
 
 Use the same tag for `api`, `h5p`, `pdf`, `web` and `admin`: they are built from one commit and
 talk to each other through internal contracts. In the example that is one variable,

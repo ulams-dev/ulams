@@ -24,9 +24,12 @@ ulams stack status --json
 ulams stack down                 # retain data
 ulams stack up                   # resume the same installation
 ulams stack down --purge --yes   # deliberately delete persistent data
+ulams stack backup --passphrase-file ~/.ulams-backup-pass      # databases, buckets, volumes, encrypted credentials
+ulams stack restore ulams-stack/backups/ulams-ulams-<time> --yes
 ```
 
-Keep `ulams-stack/credentials.json` and the persistent volumes backed up together. The CLI
+`stack backup` writes one directory with a checksummed manifest; `stack restore` verifies it,
+refuses a backup from a newer release and runs `ulams:upgrade` after. The CLI
 pins one matching image release, preserves keys and checks resource ownership. It never prints
 passwords. Generated files are regenerated on `stack up`; derive a separate deployment for
 advanced configuration.
@@ -77,3 +80,7 @@ selected kubeconfig context and its own namespace. Each test creates and deletes
 own installation. Tests use deterministic AI, inspect frontend pages, render PDF/MJML, check
 H5P and verify credentials and courses survive stop/resume. Set `ULAMS_STACK_E2E_CLI` to an
 installed package's `dist/ulams.mjs` to test the release outside this checkout.
+
+`ULAMS_STACK_BACKUP_E2E=1 corepack yarn workspace ulams exec vitest run tests/e2e/stack-backup.test.ts`
+backs up a Docker stack with demo content and learner progress, deletes every volume, restores it
+and compares (the `Nightly operations` workflow runs it).

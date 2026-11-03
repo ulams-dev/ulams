@@ -187,7 +187,7 @@
         },
         {
           "q": "Czy ULAMS obsługuje jednokrotne logowanie (SSO)?",
-          "a": "Uczący się mogą logować się przez Google lub Facebooka, a każda akademia może połączyć własnego dostawcę tożsamości przez OpenID Connect lub SAML 2.0. Dostawców konfiguruje się przez API lub wiersz poleceń. Nie ma jeszcze ekranu w panelu administratora, logowanie SAML musi zaczynać się w ULAMS, a nie u dostawcy, grupy i role nie są mapowane, a provisioning SCIM nie jest gotowy. SAML przetestowano z Keycloak; Entra ID i Okta są opisane w dokumentacji, ale projekt ich nie uruchamiał."
+          "a": "Uczący się mogą logować się przez Google lub Facebooka, a każda akademia może połączyć własnego dostawcę tożsamości przez OpenID Connect lub SAML 2.0. Dostawców konfiguruje się przez API lub wiersz poleceń. Dostawca tożsamości może też zakładać, zmieniać i dezaktywować konta oraz grupy przez SCIM 2.0, a dezaktywowana osoba od razu traci wszystkie sesje i tokeny. Nie ma jeszcze ekranu w panelu administratora, logowanie SAML musi zaczynać się w ULAMS, a nie u dostawcy, a grupy z asercji logowania nie są mapowane (grupy SCIM mogą nadawać rolę ucznia lub nauczyciela). SAML przetestowano z Keycloak, a SCIM na nagranych żądaniach Entra ID i Okta; projekt sam nie uruchamiał Entra ID ani Okta."
         }
       ]
     },
