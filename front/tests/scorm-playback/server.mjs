@@ -17,7 +17,9 @@ const scormPackage = join(root, 'api', 'packages', 'scorm');
 const PLAYER_FILES = {
   'player.html': join(scormPackage, 'resources', 'content-player', 'player.html'),
   'player.js': join(scormPackage, 'resources', 'content-player', 'player.js'),
-  'scorm-again.min.js': join(scormPackage, 'resources', 'js', 'vendor', 'scorm-again', 'scorm-again.min.js'),
+  'scorm-again.min.js': process.env.SCORM_AGAIN_DIR
+    ? join(resolve(process.env.SCORM_AGAIN_DIR), 'dist', 'scorm-again.min.js')
+    : join(scormPackage, 'resources', 'js', 'vendor', 'scorm-again', 'scorm-again.min.js'),
 };
 export const TRACKING_TOKEN = 'fixture-token';
 

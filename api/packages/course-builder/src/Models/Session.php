@@ -39,6 +39,8 @@ class Session extends Model
     public const APPLYING = 'applying';
     public const APPLIED = 'applied';
     public const FAILED = 'failed';
+    /** Holds an uploaded style guide and its fragments for a style profile (ADR 0196); never listed, never a course. */
+    public const STYLE_GUIDE = 'style_guide';
 
     public const SUBJECT_TYPE = 'course_builder_session';
 

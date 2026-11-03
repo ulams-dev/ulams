@@ -11,6 +11,20 @@ use Illuminate\Support\Carbon;
 
 abstract class CommonUserAndCourseVariables extends PdfVariables
 {
+    /** @var list<callable(Course): array<string,string>> */
+    private static array $courseExtensions = [];
+
+    /**
+     * Lets a package add variables about the course (the course-variants package adds the variant). Each callback gets the
+     * course and returns variable name => value.
+     *
+     * @param callable(Course): array<string,string> $extension
+     */
+    public static function extendCourseVariables(callable $extension): void
+    {
+        self::$courseExtensions[] = $extension;
+    }
+
     const VAR_USER_NAME                             = '@VarUserName';
     const VAR_COURSE_TITLE                          = '@VarCourseTitle';
     const VAR_COURSE_SUBTITLE                       = '@VarCourseSubtitle';
@@ -20,6 +34,8 @@ abstract class CommonUserAndCourseVariables extends PdfVariables
     const VAR_COURSE_CATEGORIES_WITH_BREADCRUMBS    = '@VarCourseCategoriesWithBreadcrumbs';
     const VAR_CATEGORIES_ID                         = '@VarCategoriesId';
     const VAR_COURSE_ID                             = '@VarCourseId';
+    /** The variant of the course the learner completed (ADR 0192); empty for a course without variants. */
+    const VAR_COURSE_VARIANT                        = '@VarCourseVariant';
     const VAR_CONTINUOUS_CERT_NUMBER                = '@VarContinuousCertNumber';
     const VAR_ANNUAL_CERT_NUMBER                    = '@VarAnnualCertNumber';
 
@@ -36,6 +52,7 @@ abstract class CommonUserAndCourseVariables extends PdfVariables
             self::VAR_COURSE_CATEGORIES_WITH_BREADCRUMBS    => $faker->word(),
             self::VAR_CATEGORIES_ID                         => $faker->numberBetween(1),
             self::VAR_COURSE_ID                             => $faker->numberBetween(1),
+            self::VAR_COURSE_VARIANT                        => $faker->word(),
             self::VAR_CONTINUOUS_CERT_NUMBER                => $faker->numberBetween(1),
             self::VAR_ANNUAL_CERT_NUMBER                    => $faker->numberBetween(1) . '/' . now()->year,
         ]);
@@ -43,7 +60,12 @@ abstract class CommonUserAndCourseVariables extends PdfVariables
 
     public static function variablesFromEvent(EventWrapper $event): array
     {
-        return array_merge(parent::variablesFromEvent($event), [
+        $extra = [self::VAR_COURSE_VARIANT => ''];
+        foreach (self::$courseExtensions as $extension) {
+            $extra = array_merge($extra, $extension($event->getCourse()));
+        }
+
+        return array_merge(parent::variablesFromEvent($event), $extra, [
             self::VAR_USER_NAME                             => $event->user()->name,
             self::VAR_COURSE_TITLE                          => $event->getCourse()->title,
             self::VAR_COURSE_SUBTITLE                       => $event->getCourse()->subtitle,

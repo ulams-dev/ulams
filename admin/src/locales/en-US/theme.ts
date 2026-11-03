@@ -62,4 +62,11 @@ export default {
   'theme.saved': 'Theme saved.',
   'theme.save_blocked': 'The theme was not saved: the accent fails WCAG 2.2 AA.',
   'theme.save_failed': 'The theme could not be saved.',
+  'theme.profile_from_approved':
+    'Proposed from the approved style profile "{name}". Nothing changes until you approve it below.',
+  'theme.profile_from_suggested':
+    'Proposed from the style profile "{name}", which is not approved yet. Nothing changes until you approve the theme below.',
+  'theme.profile_missing':
+    'The style profile in the link could not be read. Check that it still exists and that you may use the Course Builder.',
+  'theme.profile_no_theme': 'The style profile has no theme part, so there is nothing to propose.',
 };

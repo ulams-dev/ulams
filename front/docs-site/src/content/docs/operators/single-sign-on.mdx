@@ -16,7 +16,7 @@ import { Aside } from "@astrojs/starlight/components";
 Staff and learners can sign in with the identity provider (IdP) of their organisation: Keycloak, Microsoft
 Entra ID, Okta, Google Workspace or any other OpenID Connect provider. Each tenant has its own providers; a
 provider of one tenant is unknown to every other. This page is for the person who runs the instance and covers OpenID Connect;
-for SAML 2.0 see [Single sign-on (SAML 2.0)](/operators/single-sign-on-saml/). SCIM provisioning and HR import follow in later milestones of [the identity plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-6-identity.md);
+for SAML 2.0 see [Single sign-on (SAML 2.0)](/operators/single-sign-on-saml/). [SCIM provisioning of users and groups](/operators/scim/) is available; HR import follows in a later milestone of [the identity plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-6-identity.md);
 for the code exchange protocol see [Authentication](/developers/authentication/#single-sign-on).
 
 What this version does:
@@ -29,7 +29,7 @@ What this version does:
 - the learner app shows one "Continue with ..." button per enabled provider on `/login`.
 
 Not in this version: roles and groups from the provider (everything the provider sends beyond e-mail and name is
-ignored, so a claim can never make anybody an administrator), enforcing single sign-on for a domain, SCIM,
+ignored, so a claim can never make anybody an administrator), enforcing single sign-on for a domain,
 an admin screen (use the API or the CLI below), logout at the provider (SAML has it).
 
 ## Set it up
@@ -165,7 +165,7 @@ and linking by an admin arrive with the next milestone.)
 
 `GET /api/admin/identity/audit` (permission `identity_audit_read`) lists, newest first: `sso.login`,
 `sso.login_failed` (with a reason code such as `wrong_audience`, `expired`, `nonce_mismatch`,
-`bad_signature`, `state_replayed`), `sso.link`, `provider.created|updated|deleted`, and for SAML the `saml.*` rows described in [its guide](/operators/single-sign-on-saml/). Rows carry ids and reason
+`bad_signature`, `state_replayed`), `sso.link`, `provider.created|updated|deleted`, and for SAML the `saml.*` rows described in [its guide](/operators/single-sign-on-saml/), and for [SCIM](/operators/scim/) `scim.token_created|revoked` and `scim.user_created|updated|deactivated|reactivated|deleted`, `scim.group_created|updated|deleted|members_changed` and `role.granted_by_mapping|revoked_by_mapping`. Rows carry ids and reason
 codes only, never a token, code, assertion or secret. Each row includes the hash of the one before, the database
 refuses updates and deletes, and `GET /api/admin/identity/audit/verify` recomputes the chain and tells where it
 breaks.

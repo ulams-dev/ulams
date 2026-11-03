@@ -9,7 +9,7 @@ namespace Ulams\Auth\Http\Controllers\Swagger;
  *     @OA\Property(property="id", type="string"),
  *     @OA\Property(property="name", type="string"),
  *     @OA\Property(property="scopes", type="array", @OA\Items(type="string", example="courses:write")),
- *     @OA\Property(property="kind", type="string", enum={"cli","agent","ci","integration"}),
+ *     @OA\Property(property="kind", type="string", enum={"cli","agent","ci","integration","scim"}),
  *     @OA\Property(property="agent_name", type="string", nullable=true),
  *     @OA\Property(property="created_via", type="string", enum={"admin","cli","device"}),
  *     @OA\Property(property="rate_limit_per_minute", type="integer", nullable=true),
@@ -18,6 +18,7 @@ namespace Ulams\Auth\Http\Controllers\Swagger;
  *     @OA\Property(property="expires_at", type="string", format="date-time"),
  *     @OA\Property(property="last_used_at", type="string", format="date-time", nullable=true),
  *     @OA\Property(property="last_used_ip", type="string", nullable=true),
+ *     @OA\Property(property="resource_ids", type="array", nullable=true, description="The resources (saved report ids) the token is limited to; null: not limited", @OA\Items(type="string")),
  *     @OA\Property(property="revoked", type="boolean"))
  *
  * @OA\Schema(schema="ApiTokenCreated", allOf={@OA\Schema(ref="#/components/schemas/ApiToken")},

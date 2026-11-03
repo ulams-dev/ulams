@@ -31,7 +31,8 @@ interface TokenSwagger
      *         @OA\Property(property="expires_in_days", type="integer", minimum=1, maximum=365, example=90),
      *         @OA\Property(property="kind", type="string", enum={"cli","agent","ci","integration"}),
      *         @OA\Property(property="agent_name", type="string", nullable=true),
-     *         @OA\Property(property="rate_limit_per_minute", type="integer", nullable=true))),
+     *         @OA\Property(property="rate_limit_per_minute", type="integer", nullable=true),
+     *         @OA\Property(property="resource_ids", type="array", nullable=true, description="Limit the token to these resources, for example the id of one saved report for a BI tool: it can then call only the endpoints that name one of them", @OA\Items(type="string")))),
      *     @OA\Response(response=201, description="Created", @OA\JsonContent(
      *         @OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
      *         @OA\Property(property="data", ref="#/components/schemas/ApiTokenCreated"))),

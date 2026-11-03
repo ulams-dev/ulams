@@ -1,0 +1,83 @@
+{
+  "title": "ulams — Najczęstsze pytania",
+  "description": "Odpowiedzi o ULAMS: headless LMS, kursy ze źródeł, AI i dane, self-hosting, integracje, akademie i sprzedaż.",
+  "eyebrow": "FAQ",
+  "heading": "Najczęstsze pytania",
+  "intro": "Czym jest ULAMS, jak powstają kursy z Twoich źródeł, czego wymaga własny hosting i jak platforma łączy się z resztą Twoich systemów.",
+  "contact": "Zadaj nam pytanie",
+  "docs": "Przeczytaj dokumentację",
+  "sections": [
+    {
+      "id": "about",
+      "title": "O ULAMS",
+      "items": [
+        {
+          "q": "Czym jest ULAMS i dla kogo powstał?",
+          "a": "ULAMS to otwarta platforma LMS do tworzenia i udostępniania kursów. Pomaga zespołom przekształcać dokumentację produktu, instrukcje i materiały wewnętrzne w szkolenia dla klientów, developerów i pracowników."
+        },
+        {
+          "q": "Co oznacza „headless LMS”? Czy muszę budować własny frontend?",
+          "a": "Headless oznacza, że treści i funkcje platformy są dostępne przez API, niezależnie od interfejsu użytkownika. Możesz korzystać z dostarczonego interfejsu ULAMS albo zbudować własne doświadczenie edukacyjne w swojej aplikacji."
+        },
+        {
+          "q": "Czy mogę wypróbować ULAMS przed instalacją?",
+          "a": "Tak. Na stronie znajdziesz dema dostępne z perspektywy uczestnika i administratora, bez zakładania konta. Środowiska demonstracyjne są regularnie resetowane, więc nie służą do przechowywania własnych materiałów."
+        },
+        {
+          "q": "Czy muszę umieć programować, żeby korzystać z ULAMS?",
+          "a": "Autorzy mogą tworzyć i zarządzać kursami przez panel administracyjny oraz Studio. Instalacja i utrzymanie własnego środowiska wymagają wiedzy technicznej. Programowanie jest potrzebne, jeśli chcesz zbudować własny frontend, rozszerzyć platformę lub przygotować niestandardową integrację."
+        },
+        {
+          "q": "Czym ULAMS różni się od innych LMS-ów?",
+          "a": "ULAMS łączy backend dostępny przez API, możliwość samodzielnego hostowania oraz opcjonalne tworzenie kursów ze źródeł z kontrolą autora. Możesz korzystać z gotowego interfejsu lub zaprojektować własny. To szczególnie przydatne, gdy edukacja ma być częścią Twojego produktu i potrzebujesz kontroli nad integracjami, danymi oraz sposobem prezentacji kursów."
+        },
+        {
+          "q": "Czy ULAMS będzie dobrym wyborem dla każdej organizacji?",
+          "a": "Najlepiej sprawdzi się tam, gdzie ważne są integracje, własna infrastruktura lub niestandardowe doświadczenie edukacyjne. Samodzielne wdrożenie oznacza odpowiedzialność za konfigurację, aktualizacje i utrzymanie. Jeśli potrzebujesz gotowej usługi zarządzanej, warto najpierw ustalić, kto będzie odpowiadał za te zadania."
+        }
+      ]
+    },
+    {
+      "id": "courses",
+      "title": "Kursy, źródła i AI",
+      "items": [
+        {
+          "q": "Z jakich materiałów mogę stworzyć kurs?",
+          "a": "Course Builder przyjmuje dokumenty Markdown, PDF i DOCX. Najlepiej sprawdzają się materiały z czytelną strukturą i tekstem — zeskanowany PDF bez warstwy tekstowej wymaga wcześniejszego rozpoznania tekstu. Domyślny limit pliku wynosi 20 MB, a dokumentu PDF — 300 stron. Możesz też połączyć repozytorium Git, plik lub folder na Dysku Google albo stronę Notion; konektory Dysku i Notion są wyłączone, dopóki administrator ich nie włączy."
+        },
+        {
+          "q": "Co oznaczają odwołania do źródeł w wygenerowanym kursie?",
+          "a": "Odwołania pozwalają sprawdzić fragment dokumentu, na którym opiera się lekcja lub pytanie. ULAMS sprawdza zgodność wygenerowanych lekcji z cytowanymi fragmentami i oznacza treści wymagające uwagi. To ułatwia weryfikację, ale nie zastępuje oceny autora."
+        },
+        {
+          "q": "Czy AI może opublikować kurs bez mojej zgody?",
+          "a": "W procesie Course Builder autor zatwierdza strukturę kursu i proponowane zmiany. Kurs jest najpierw tworzony jako nieopublikowany, a publikacja jest osobnym krokiem. Możesz sprawdzić podgląd i poprawić treść przed udostępnieniem jej uczestnikom."
+        },
+        {
+          "q": "Co się dzieje, gdy moja dokumentacja się zmieni?",
+          "a": "Living Course porównuje wersje źródeł i wskazuje powiązane elementy kursu, które mogą wymagać aktualizacji. Możesz przesłać nową wersję dokumentu lub połączyć repozytorium Git, plik na Dysku Google, stronę Notion albo stronę internetową. Zmiany w kursie wymagają decyzji autora — wykrycie nowej wersji źródła nie nadpisuje automatycznie opublikowanej treści. Learner Insights potrafi też zamienić sekcję, z którą wielu uczących się ma trudność, w propozycję poprawki, którą przeglądasz tak samo."
+        },
+        {
+          "q": "Czy moje dokumenty trafiają do zewnętrznego dostawcy AI?",
+          "a": "Przy korzystaniu z generowania AI fragmenty materiałów potrzebne do wykonania zadania są przekazywane do skonfigurowanej usługi modelu. Obecny Course Builder korzysta z Claude przez API Anthropic. Self-hosting platformy nie oznacza lokalnego przetwarzania przez model AI. Funkcje AI można wyłączyć, nadal korzystając z pozostałych funkcji LMS."
+        },
+        {
+          "q": "Czy mogę korzystać z ULAMS bez AI?",
+          "a": "Tak. AI jest opcjonalne. Możesz ręcznie tworzyć kursy, dodawać materiały, zarządzać uczestnikami i dostępem oraz śledzić postępy. Wyłączenie AI nie wyłącza pozostałych funkcji LMS i nie wymaga posiadania klucza do usługi modelu."
+        },
+        {
+          "q": "Jak sprawdzić, co zmieniło AI?",
+          "a": "Każda zmiana AI, niezależnie od tego, czy pochodzi z generowania, edycji w czacie, aktualizacji źródła czy propozycji z danych o uczących się, trafia do Ciebie jako różnica: co zostaje usunięte, co dodane i jaki fragment za tym stoi. Akceptujesz całość, akceptujesz element po elemencie albo odrzucasz, a dziennik audytu zapisuje, kto co zatwierdził i kiedy. Nic nie trafia do uczących się bez zatwierdzenia, a historia wersji pozwala wrócić do wcześniejszej wersji."
+        },
+        {
+          "q": "Czy jeden kurs może mieć wersje dla różnych poziomów i ról?",
+          "a": "Tak, w Course Builder. Wywiad może poprosić o wersję dla początkujących, średnio zaawansowanych lub ekspertów oraz o role, które podasz. Każda wersja powstaje z tych samych źródeł, jest sprawdzana jako różnica względem kursu bazowego i zatwierdzana osobno jako własny, nieopublikowany kurs. Kierowanie każdego uczącego się do właściwej wersji nie jest jeszcze gotowe: dziś administrator zapisuje uczących się do wariantu ręcznie."
+        },
+        {
+          "q": "Czy mogę zobaczyć, co zmieniło się między dwiema wersjami kursu?",
+          "a": "Tak. Każde zastosowanie zmiany jest zapisywane jako numerowane wydanie widoczne w Studio. Na ekranie porównania wybierasz dowolne dwie wersje lub wydania albo kurs bazowy i wariant i widzisz zmienione elementy, zmiany w tekście co do słowa, zmienione cytowania z ich fragmentami i wpływ na odpowiedzi w quizach. To samo porównanie jest dostępne przez API, wiersz poleceń i agenta AI. Obejmuje kursy stworzone w Course Builder."
+        }
+      ]
+    }
+  ]
+}

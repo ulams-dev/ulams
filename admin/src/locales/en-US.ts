@@ -4,6 +4,7 @@ import globalHeader from './en-US/globalHeader';
 import menu from './en-US/menu';
 import pages from './en-US/pages';
 import pwa from './en-US/pwa';
+import reportBuilder from './en-US/reportBuilder';
 import settingDrawer from './en-US/settingDrawer';
 import settings from './en-US/settings';
 import theme from './en-US/theme';
@@ -57,6 +58,7 @@ export default {
   ...settings,
   ...theme,
   ...pwa,
+  ...reportBuilder,
   ...component,
   ...pages,
 

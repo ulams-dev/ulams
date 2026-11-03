@@ -76,7 +76,22 @@ export function matchGolden(player, fixture, actual, { update = process.env.UPDA
   }
   const expected = JSON.parse(readFileSync(file, 'utf8'));
   if (isDeepStrictEqual(expected, actual)) return { ok: true, written: false, message: 'match' };
-  return { ok: false, written: false, message: `trace differs from ${file}\n${firstDifference(expected, actual)}` };
+  const found = differences(expected, actual);
+  const more = found.length > MAX_DIFFERENCES ? `\n... and ${found.length - MAX_DIFFERENCES} more` : '';
+  return { ok: false, written: false, message: `trace differs from ${file}\n${found.slice(0, MAX_DIFFERENCES).join('\n')}${more}` };
+}
+
+const MAX_DIFFERENCES = 25;
+
+/** Every leaf difference between two JSON values, as `path: expected X, got Y` lines. */
+export function differences(expected, actual, path = '$') {
+  if (isDeepStrictEqual(expected, actual)) return [];
+  const bothObjects = expected && actual && typeof expected === 'object' && typeof actual === 'object';
+  if (bothObjects && Array.isArray(expected) === Array.isArray(actual)) {
+    const keys = [...new Set([...Object.keys(expected), ...Object.keys(actual)])];
+    return keys.flatMap((key) => differences(expected[key], actual[key], Array.isArray(expected) ? `${path}[${key}]` : `${path}.${key}`));
+  }
+  return [`${path}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`];
 }
 
 /** A short path-and-values description of the first difference between two JSON values. */

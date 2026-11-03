@@ -62,7 +62,8 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
         'format' => 'string',
         'frequency' => 'string',
         'name' => 'string',
-        'recipient_ids' => 'int[]'
+        'recipient_ids' => 'int[]',
+        'saved_report_id' => 'string'
     ];
 
     /**
@@ -78,7 +79,8 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
         'format' => null,
         'frequency' => null,
         'name' => null,
-        'recipient_ids' => null
+        'recipient_ids' => null,
+        'saved_report_id' => null
     ];
 
     /**
@@ -92,7 +94,8 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
         'format' => false,
         'frequency' => false,
         'name' => false,
-        'recipient_ids' => false
+        'recipient_ids' => false,
+        'saved_report_id' => false
     ];
 
     /**
@@ -186,7 +189,8 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
         'format' => 'format',
         'frequency' => 'frequency',
         'name' => 'name',
-        'recipient_ids' => 'recipient_ids'
+        'recipient_ids' => 'recipient_ids',
+        'saved_report_id' => 'saved_report_id'
     ];
 
     /**
@@ -200,7 +204,8 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
         'format' => 'setFormat',
         'frequency' => 'setFrequency',
         'name' => 'setName',
-        'recipient_ids' => 'setRecipientIds'
+        'recipient_ids' => 'setRecipientIds',
+        'saved_report_id' => 'setSavedReportId'
     ];
 
     /**
@@ -214,7 +219,8 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
         'format' => 'getFormat',
         'frequency' => 'getFrequency',
         'name' => 'getName',
-        'recipient_ids' => 'getRecipientIds'
+        'recipient_ids' => 'getRecipientIds',
+        'saved_report_id' => 'getSavedReportId'
     ];
 
     /**
@@ -263,6 +269,7 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
     public const DATASET_AUDIT = 'audit';
     public const FORMAT_CSV = 'csv';
     public const FORMAT_JSONL = 'jsonl';
+    public const FORMAT_XLSX = 'xlsx';
     public const FREQUENCY_DAILY = 'daily';
     public const FREQUENCY_WEEKLY = 'weekly';
     public const FREQUENCY_MONTHLY = 'monthly';
@@ -291,6 +298,7 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
         return [
             self::FORMAT_CSV,
             self::FORMAT_JSONL,
+            self::FORMAT_XLSX,
         ];
     }
 
@@ -329,6 +337,7 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
         $this->setIfExists('frequency', $data ?? [], null);
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('recipient_ids', $data ?? [], null);
+        $this->setIfExists('saved_report_id', $data ?? [], null);
     }
 
     /**
@@ -358,9 +367,6 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
-        if ($this->container['dataset'] === null) {
-            $invalidProperties[] = "'dataset' can't be null";
-        }
         $allowedValues = $this->getDatasetAllowableValues();
         if (!is_null($this->container['dataset']) && !in_array($this->container['dataset'], $allowedValues, true)) {
             $invalidProperties[] = sprintf(
@@ -415,7 +421,7 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
     /**
      * Gets dataset
      *
-     * @return string
+     * @return string|null
      */
     public function getDataset()
     {
@@ -425,7 +431,7 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
     /**
      * Sets dataset
      *
-     * @param string $dataset dataset
+     * @param string|null $dataset A compliance dataset; give this or saved_report_id
      *
      * @return self
      */
@@ -462,7 +468,7 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
     /**
      * Sets filters
      *
-     * @param object|null $filters course_id, user_id, status, from, to
+     * @param object|null $filters course_id, user_id, status, from, to (datasets only)
      *
      * @return self
      */
@@ -489,7 +495,7 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
     /**
      * Sets format
      *
-     * @param string|null $format format
+     * @param string|null $format xlsx only for a saved report
      *
      * @return self
      */
@@ -600,6 +606,33 @@ class AdminComplianceSchedulesPostRequest implements ModelInterface, ArrayAccess
             throw new \InvalidArgumentException('non-nullable recipient_ids cannot be null');
         }
         $this->container['recipient_ids'] = $recipient_ids;
+
+        return $this;
+    }
+
+    /**
+     * Gets saved_report_id
+     *
+     * @return string|null
+     */
+    public function getSavedReportId()
+    {
+        return $this->container['saved_report_id'];
+    }
+
+    /**
+     * Sets saved_report_id
+     *
+     * @param string|null $saved_report_id A saved report the caller can see (report builder); it runs once per recipient with the recipient's own permissions
+     *
+     * @return self
+     */
+    public function setSavedReportId($saved_report_id)
+    {
+        if (is_null($saved_report_id)) {
+            throw new \InvalidArgumentException('non-nullable saved_report_id cannot be null');
+        }
+        $this->container['saved_report_id'] = $saved_report_id;
 
         return $this;
     }
