@@ -55,7 +55,7 @@
   "devDependencies": {
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "turbo": "^2.11.9"
+    "turbo": "^2.11.10"
   },
   "resolutions": {
     "@types/mjml-core": "4.15.2",
